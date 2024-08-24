@@ -1,0 +1,38 @@
+{
+	"schemaVersion": 1,
+	"id": "origins-genshin",
+	"version": "1.0.0-1.20.2",
+	"name": "Origins: Genshin",
+	"description": "Adds Genshin-styled power rendering to the Origins mod.",
+	"authors": [
+		"_xRickAstley"
+	],
+	"contact": {
+		"sources": "https://github.com/botcoder69/origins-genshin",
+		"issues": "https://github.com/botcoder69/origins-genshin/issues"
+	},
+	"license": "CC0-1.0",
+	"icon": "assets/origins-genshin/icon.png",
+	"environment": "*",
+	"entrypoints": {
+		"main": [
+			"io.github.botcoder69.originsgenshin.OriginsGenshin"
+		],
+		"client": [
+			"io.github.botcoder69.originsgenshin.OriginsGenshinClient"
+		],
+		"modmenu": [
+			"io.github.botcoder69.originsgenshin.OriginsGenshinModMenu"
+		]
+	},
+	"mixins": [
+		"origins-genshin.mixins.json"
+	],
+	"depends": {
+		"fabricloader": ">=0.16.2",
+		"minecraft": "~1.20.2",
+		"java": ">=17",
+		"fabric-api": "*",
+		"origins": ">=1.11.3"
+	}
+}

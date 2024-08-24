@@ -1,0 +1,11 @@
+{
+	"providers": [
+		{
+			"type": "ttf",
+			"file": "origins-genshin:genshin.ttf",
+			"shift": [0, 0],
+			"size": 12.0,
+			"oversample": 30
+		}
+	]
+}
