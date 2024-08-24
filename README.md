@@ -6,7 +6,7 @@ This is the GitHub repo for the Origins: Genshin mod.
 
 Wanna get started? You can visit the [wiki](https://origins-genshin.readthedocs.io/en/latest/). *Almost* everything you need should be there.
 
-Wanna report a bug? You can use GitHub's [issue tracker](https://github.com/botcoder69/origins-genshin/issues)! Make sure to search for existing issues first, I don't really wanna run into duplicate issues.
+Wanna report a bug? You can use GitHub's [issue tracker](https://github.com/xrickastley/origins-genshin/issues)! Make sure to search for existing issues first, I don't really wanna run into duplicate issues.
 It would be really helpful if you can provide:
 - Mods that you were using
 - Your Minecraft version (should be 1.20.2, that's the only version this mod supports at the moment.)

@@ -8,21 +8,21 @@
 		"_xRickAstley"
 	],
 	"contact": {
-		"sources": "https://github.com/botcoder69/origins-genshin",
-		"issues": "https://github.com/botcoder69/origins-genshin/issues"
+		"sources": "https://github.com/xrickastley/origins-genshin",
+		"issues": "https://github.com/xrickastley/origins-genshin/issues"
 	},
 	"license": "CC0-1.0",
 	"icon": "assets/origins-genshin/icon.png",
 	"environment": "*",
 	"entrypoints": {
 		"main": [
-			"io.github.botcoder69.originsgenshin.OriginsGenshin"
+			"io.github.xrickastley.originsgenshin.OriginsGenshin"
 		],
 		"client": [
-			"io.github.botcoder69.originsgenshin.OriginsGenshinClient"
+			"io.github.xrickastley.originsgenshin.OriginsGenshinClient"
 		],
 		"modmenu": [
-			"io.github.botcoder69.originsgenshin.OriginsGenshinModMenu"
+			"io.github.xrickastley.originsgenshin.OriginsGenshinModMenu"
 		]
 	},
 	"mixins": [
