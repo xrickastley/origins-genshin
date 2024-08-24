@@ -1,4 +1,4 @@
-# Origins-Genshin Mod
+# Origins: Genshin Mod
 
 Mod link: https://modrinth.com/mod/origins-genshin (Status: pending review)
 
