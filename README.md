@@ -1,6 +1,6 @@
 # Origins: Genshin Mod
 
-Mod link: https://modrinth.com/mod/origins-genshin (Status: pending review)
+Mod link: https://modrinth.com/mod/origins-genshin
 
 This is the GitHub repo for the Origins: Genshin mod.
 
