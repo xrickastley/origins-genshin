@@ -69,8 +69,6 @@ public class ElementalBurstRenderer extends PowerRenderer {
 
 			final double percentFilled = this.getProgress(burstIcon, tickDeltaManager);
 
-			// System.out.println(percentFilled);
-
 			RenderSystem.enableBlend();
 			RenderSystem.defaultBlendFunc();
 			RenderSystem.enableCull();
@@ -139,14 +137,13 @@ public class ElementalBurstRenderer extends PowerRenderer {
 	}
 
 	private void renderCooldown(ElementalBurst burstData, ElementalBurstIcon icon, DrawContext drawContext, Matrix4f posMatrix, Rescaler rescaler, double percentFilled) {
-		// System.out.println(percentFilled);
-
 		if (percentFilled == 0 || !burstData.shouldShowCooldown()) return;
 			
 		MatrixStack matrices = drawContext.getMatrices();
+		float scale = 1.25f;
 
 		matrices.push();
-		matrices.scale(1.25F, 1.25F, 1F);
+		matrices.scale(scale, scale, 1F);
 		
 		PowerRenderer.drawCenteredText(
 			drawContext,
@@ -181,7 +178,6 @@ public class ElementalBurstRenderer extends PowerRenderer {
 	}
 
 	public double resolveFillResource(ElementalBurstIcon skillIcon) {
-		// System.out.println(skillIcon.getResource());
 		if (skillIcon.getResource() == null) return -1;
 
 		return PowerRenderer.resolveResourceAsOptional(skillIcon.getResource(), client.player)

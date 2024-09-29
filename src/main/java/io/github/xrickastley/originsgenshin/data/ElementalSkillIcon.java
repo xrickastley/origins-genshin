@@ -13,8 +13,6 @@ public class ElementalSkillIcon extends RenderableIcon {
 	public ElementalSkillIcon(Identifier icon, PowerType<?> cooldown, boolean reverse, int charges, ChargeRender chargeRender, ConditionFactory<Entity>.Instance condition, ConditionFactory<Entity>.Instance disableCondition) {
 		super(icon, cooldown, reverse, condition, disableCondition);
 
-		System.out.println(charges);
-
 		this.charges = Math.min(Math.max(1, charges), 3);
 		this.chargeRender = chargeRender;
 		this.chargeRender.setElementalSkillIcon(this);

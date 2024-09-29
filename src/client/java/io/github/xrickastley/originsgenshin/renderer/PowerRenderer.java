@@ -58,13 +58,9 @@ public abstract class PowerRenderer {
 	 * @return A double representing the power or cooldown's progress, with {@code 0.0} representing none and {@code 1.0} representing full.
 	 */
 	public double getProgress(RenderableIcon icon, float tickDeltaManager) {
-		// System.out.println(power.getProgress());
-
 		if (icon.getCooldown() == null) return 1 - power.getProgress();
 
 		Pair<Integer, Integer> pair = icon.resolveCooldownResource(client.player);
-		
-		System.out.printf("Pair<%s, %s>\n", pair.getLeft(), pair.getRight());
 
 		if (pair.getLeft().equals(pair.getRight())) return Math.min(Math.max(0, 1 - ((double) pair.getLeft() / pair.getRight())), 1);
 

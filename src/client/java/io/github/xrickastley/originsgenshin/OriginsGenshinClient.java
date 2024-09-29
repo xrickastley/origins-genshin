@@ -11,8 +11,10 @@ import io.github.xrickastley.originsgenshin.renderer.ElementalBurstRenderer;
 import io.github.xrickastley.originsgenshin.renderer.ElementalSkillRenderer;
 import io.github.xrickastley.originsgenshin.util.ClientConfig;
 import io.github.xrickastley.originsgenshin.util.Rescaler;
+
 import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
+
 import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;

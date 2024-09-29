@@ -11,7 +11,7 @@
 		"sources": "https://github.com/xrickastley/origins-genshin",
 		"issues": "https://github.com/xrickastley/origins-genshin/issues"
 	},
-	"license": "CC0-1.0",
+	"license": "MIT",
 	"icon": "assets/origins-genshin/icon.png",
 	"environment": "*",
 	"entrypoints": {

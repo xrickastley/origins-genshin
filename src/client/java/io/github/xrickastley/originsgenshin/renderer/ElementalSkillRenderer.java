@@ -115,8 +115,6 @@ public class ElementalSkillRenderer extends PowerRenderer {
 	private double resolvePercentFilled(ElementalSkillIcon skillIcon, float tickDeltaManager) {
 		Pair<Integer, Integer> pair = skillIcon.resolveCooldownResource(client.player);
 
-		// System.out.println(skillIcon.getCharges());
-
 		double newMaximum = pair.getRight() / skillIcon.getCharges();
 		
 		// pair.getLeft() should be a multiple of newMaximum (that isn't 0) for this to return 0 (no cooldown).
@@ -127,7 +125,7 @@ public class ElementalSkillRenderer extends PowerRenderer {
 
 	private void renderIcon(ElementalSkillIcon icon, CircleRenderer circleRenderer, DrawContext drawContext, Matrix4f posMatrix, Rescaler rescaler, double percentFilled) {
 		final int scaleES = (int) (76.0 * rescaler.getRescaleFactor());
-		
+
 		circleRenderer
 			.add(38 * rescaler.getRescaleFactorWindow(), 1, 0x64646464)
 			.draw(tessellator, posMatrix);
