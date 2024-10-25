@@ -12,7 +12,6 @@ import io.github.xrickastley.originsgenshin.data.ElementalBurstIcon;
 import io.github.xrickastley.originsgenshin.interfaces.IActiveCooldownPower;
 import io.github.xrickastley.originsgenshin.util.CircleRenderer;
 import io.github.xrickastley.originsgenshin.util.ClientConfig;
-import io.github.xrickastley.originsgenshin.util.Color;
 import io.github.xrickastley.originsgenshin.util.Rescaler;
 
 import me.shedaniel.autoconfig.AutoConfig;
@@ -64,8 +63,8 @@ public class ElementalBurstRenderer extends PowerRenderer {
 
 			if (elementalBurstData == null || !elementalBurstData.shouldRender() || burstIcon == null) return;
 			
-			final Matrix4f posMatrix = drawContext.getMatrices().peek().getPositionMatrix();
-			final CircleRenderer circleRenderer = new CircleRenderer(rescaler.rescaleXWindow(1819), rescaler.rescaleYWindow(972), 0);
+			final MatrixStack matrices = drawContext.getMatrices();
+			final CircleRenderer circleRenderer = new CircleRenderer(0, 0, 0);
 
 			final double percentFilled = this.getProgress(burstIcon, tickDeltaManager);
 
@@ -73,9 +72,18 @@ public class ElementalBurstRenderer extends PowerRenderer {
 			RenderSystem.defaultBlendFunc();
 			RenderSystem.enableCull();
 
+			matrices.push();
+			matrices.translate(rescaler.rescaleX(1820), rescaler.rescaleY(972), 0);
+			matrices.scale(1, 1, 1);
+
+			final Matrix4f posMatrix = matrices.peek().getPositionMatrix();
+
 			this.renderFill(burstIcon, circleRenderer, drawContext, posMatrix);
 			this.renderIcon(elementalBurstData, burstIcon, circleRenderer, drawContext, posMatrix, rescaler, percentFilled);
-			this.renderCooldown(elementalBurstData, burstIcon, drawContext, posMatrix, rescaler, percentFilled);
+			
+			matrices.pop();
+			
+			this.renderCooldown(elementalBurstData, burstIcon, drawContext, rescaler, percentFilled);
 		} catch (Exception e) {
 			OriginsGenshin
 				.sublogger(ElementalBurstRenderer.class)
@@ -84,8 +92,10 @@ public class ElementalBurstRenderer extends PowerRenderer {
 	}
 
 	private void renderFill(ElementalBurstIcon icon, CircleRenderer circleRenderer, DrawContext drawContext, Matrix4f posMatrix) {
+		final double radiusEB = 56 * rescaler.getRescaleFactorWindow();
+
 		circleRenderer
-			.add(56 * rescaler.getRescaleFactorWindow(), 1, 0x64646464)
+			.add(radiusEB, 1, 0x64646464)
 			.draw(tessellator, posMatrix);
 		
 		if (icon.getColor() == null) return;
@@ -93,20 +103,23 @@ public class ElementalBurstRenderer extends PowerRenderer {
 		final double resourceMultiplier = this.resolveFillResource(icon);
 
 		if (resourceMultiplier == -1) return;
-
+		
 		drawContext.enableScissor(
-			rescaler.rescaleX(1763),
-			rescaler.rescaleY(1029 - (56 * 2) * resourceMultiplier),
-			rescaler.rescaleX(1763 + (56 * 2)),
-			rescaler.rescaleY(1029)
+			rescaler.rescaleX(1762),
+			rescaler.rescaleY(1028 - (112 * resourceMultiplier)),
+			rescaler.rescaleX(1762 + 112),
+			rescaler.rescaleY(1028)
 		);
 
 		circleRenderer
-			.add(56 * rescaler.getRescaleFactorWindow(), 1, icon.getColor().asARGB());
+			.add(radiusEB, 1, icon.getColor().asARGB());
 
 		if (resourceMultiplier == 1 && icon.getOutlineColor() != null) {
+			final double innerRadiusEB = 50 * rescaler.getRescaleFactorWindow();
+			final double outerRadiusEB = 6 * rescaler.getRescaleFactorWindow();
+
 			circleRenderer
-				.addOutline(50 * rescaler.getRescaleFactorWindow(), 6 * rescaler.getRescaleFactorWindow(), 1, icon.getOutlineColor().asARGB());
+				.addOutline(innerRadiusEB, outerRadiusEB, 1, icon.getOutlineColor().asARGB());
 		}
 
 		circleRenderer.draw(tessellator, posMatrix);
@@ -118,17 +131,15 @@ public class ElementalBurstRenderer extends PowerRenderer {
 		final int scaleEB = (int) (112.0 * rescaler.getRescaleFactor());
 		final boolean disable = percentFilled > 0 || burstData.isDisabled(client.player) || icon.renderAsDisabled(client.player);
 
-		if (disable) {
-			final Color colorDisabled = Color.fromARGBHex(0x80969696);
-			
+		if (disable) {			
 			renderExtraFill(icon, percentFilled, circleRenderer, drawContext, posMatrix);
 
-			RenderSystem.setShaderColor(colorDisabled.getRedAsPercent(), colorDisabled.getGreenAsPercent(), colorDisabled.getBlueAsPercent(), colorDisabled.getAlpha());
+			RenderSystem.setShaderColor(1, 1, 1, 0.375f);
 		}
 
-		drawContext.drawTexture(icon.getIcon(), rescaler.rescaleX(1763), rescaler.rescaleY(916), 0, 0, scaleEB, scaleEB, scaleEB, scaleEB);
+		drawContext.drawTexture(icon.getIcon(), -scaleEB / 2, -scaleEB / 2, 0, 0, scaleEB, scaleEB, scaleEB, scaleEB);
 
-		RenderSystem.setShaderColor(1, 1, 1, 0);
+		RenderSystem.setShaderColor(1, 1, 1, 1);
 
 		circleRenderer
 			.add(56 * rescaler.getRescaleFactorWindow(), percentFilled, 0x26c8c8c8)
@@ -136,21 +147,22 @@ public class ElementalBurstRenderer extends PowerRenderer {
 			.draw(tessellator, posMatrix);
 	}
 
-	private void renderCooldown(ElementalBurst burstData, ElementalBurstIcon icon, DrawContext drawContext, Matrix4f posMatrix, Rescaler rescaler, double percentFilled) {
+	private void renderCooldown(ElementalBurst burstData, ElementalBurstIcon icon, DrawContext drawContext, Rescaler rescaler, double percentFilled) {
 		if (percentFilled == 0 || !burstData.shouldShowCooldown()) return;
-			
+
 		MatrixStack matrices = drawContext.getMatrices();
-		float scale = 1.25f;
+		float scale = (float) (1.35 * rescaler.getRescaleFactorWindow());
 
 		matrices.push();
+		matrices.translate(rescaler.rescaleX(1820 - 1), rescaler.rescaleY(976), 0);
 		matrices.scale(scale, scale, 1F);
 		
 		PowerRenderer.drawCenteredText(
 			drawContext,
 			client.textRenderer,
 			PowerRenderer.changeTextFont(Text.literal(String.format("%.1f", ((double) resolveCooldown(icon) / 20))), OriginsGenshin.identifier("genshin")),
-			rescaler.rescaleX(1455),
-			rescaler.rescaleY(780),
+			0,
+			0,
 			0xFFFFFFFF,
 			false
 		);
@@ -169,9 +181,12 @@ public class ElementalBurstRenderer extends PowerRenderer {
 			.add(56 * rescaler.getRescaleFactorWindow(), 1, icon.getColor().from().multiply(1, 1, 1, 0.5).asARGB());
 
 		if (icon.getOutlineColor() != null) {
+			final double innerRadiusEB = 50 * rescaler.getRescaleFactorWindow();
+			final double outerRadiusEB = 6 * rescaler.getRescaleFactorWindow();
+
 			circleRenderer
-			.addOutline(50 * rescaler.getRescaleFactorWindow(), 6 * rescaler.getRescaleFactorWindow(), 1, icon.getOutlineColor().from().multiply(1.25, 1.25, 1.25, 0.5).asARGB())
-			.addOutline(50 * rescaler.getRescaleFactorWindow(), 6 * rescaler.getRescaleFactorWindow(), percentFilled, icon.getOutlineColor().from().multiply(1.5, 1.5, 1.5, 0.5).asARGB());
+				.addOutline(innerRadiusEB, outerRadiusEB, 1, icon.getOutlineColor().from().multiply(1.25, 1.25, 1.25, 0.5).asARGB())
+				.addOutline(innerRadiusEB, outerRadiusEB, percentFilled, icon.getOutlineColor().from().multiply(1.5, 1.5, 1.5, 0.5).asARGB());
 		}
 
 		circleRenderer.draw(tessellator, posMatrix);

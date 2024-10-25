@@ -21,6 +21,7 @@ import io.github.xrickastley.originsgenshin.util.Rescaler;
 import me.shedaniel.autoconfig.AutoConfig;
 
 import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
@@ -85,17 +86,26 @@ public class ElementalSkillRenderer extends PowerRenderer {
 
 			if (elementalSkillData == null || !elementalSkillData.shouldRender() || skillIcon == null) return;
 
-			final Matrix4f posMatrix = drawContext.getMatrices().peek().getPositionMatrix();
-			final CircleRenderer circleRenderer = new CircleRenderer(rescaler.rescaleXWindow(1692), rescaler.rescaleYWindow(992), 0);
-
+			final MatrixStack matrices = drawContext.getMatrices();
+			final CircleRenderer circleRenderer = new CircleRenderer(0, 0, 0);
+			
 			final double percentFilled = resolvePercentFilled(skillIcon, tickDeltaManager);
-
+			
 			RenderSystem.enableBlend();
 			RenderSystem.defaultBlendFunc();
 			RenderSystem.enableCull();
 
+			matrices.push();
+			matrices.translate(rescaler.rescaleX(1700), rescaler.rescaleY(992), 0);
+			matrices.scale(1, 1, 1);
+			
+			final Matrix4f posMatrix = matrices.peek().getPositionMatrix();
+
 			this.renderIcon(skillIcon, circleRenderer, drawContext, posMatrix, rescaler, percentFilled);
 			this.renderCharges(skillIcon, circleRenderer, drawContext, tickDeltaManager, posMatrix);
+			
+			matrices.pop();
+			
 			this.renderCooldown(elementalSkillData, skillIcon, drawContext, percentFilled);
 		} catch (Exception e) {
 			OriginsGenshin
@@ -125,12 +135,19 @@ public class ElementalSkillRenderer extends PowerRenderer {
 
 	private void renderIcon(ElementalSkillIcon icon, CircleRenderer circleRenderer, DrawContext drawContext, Matrix4f posMatrix, Rescaler rescaler, double percentFilled) {
 		final int scaleES = (int) (76.0 * rescaler.getRescaleFactor());
+		final boolean disable = (percentFilled > 0 && icon.getChargeRender().getCurrentCharges(client.player) == 0) 
+			|| icon.getSkill().isDisabled(client.player) 
+			|| icon.renderAsDisabled(client.player);
 
 		circleRenderer
-			.add(38 * rescaler.getRescaleFactorWindow(), 1, 0x64646464)
+			.add(36 * rescaler.getRescaleFactorWindow(), 1, 0x64646464)
 			.draw(tessellator, posMatrix);
 
-		drawContext.drawTexture(icon.getIcon(), rescaler.rescaleX(1654), rescaler.rescaleY(954), 0, 0, scaleES, scaleES, scaleES, scaleES);
+		if (disable) RenderSystem.setShaderColor(1, 1, 1, 0.375f);
+
+		drawContext.drawTexture(icon.getIcon(), -scaleES / 2, -scaleES / 2, 0, 0, scaleES, scaleES, scaleES, scaleES);
+
+		RenderSystem.setShaderColor(1, 1, 1, 1);
 	}
 
 	private void renderCharges(ElementalSkillIcon skillIcon, CircleRenderer circleRenderer, DrawContext drawContext, float tickDeltaManager, Matrix4f posMatrix) {
@@ -142,10 +159,9 @@ public class ElementalSkillRenderer extends PowerRenderer {
 
 		if (skillIcon.getChargeRender() == null || skillIcon.getCharges() == 1) {
 			circleRenderer
-				.add(38 * rescaler.getRescaleFactorWindow(), disable, 0x80646464)
-				.add(38 * rescaler.getRescaleFactorWindow(), percentFilled, 0x26c8c8c8)
-				.addOutline(34 * rescaler.getRescaleFactorWindow(), 4 * rescaler.getRescaleFactorWindow(), disable, 0x4dc8c8c8)
-				.addOutline(34 * rescaler.getRescaleFactorWindow(), 4 * rescaler.getRescaleFactorWindow(), percentFilled, 0x26c8c8c8)
+				.add(36 * rescaler.getRescaleFactorWindow(), percentFilled, 0x0dc8c8c8)
+				.addOutline(32 * rescaler.getRescaleFactorWindow(), 4 * rescaler.getRescaleFactorWindow(), disable, 0x1ac8c8c8)
+				.addOutline(32 * rescaler.getRescaleFactorWindow(), 4 * rescaler.getRescaleFactorWindow(), percentFilled, 0x80c8c8c8)
 				.draw(tessellator, posMatrix);
 		} else {
 			final int charges = skillIcon.getCharges();
@@ -153,31 +169,29 @@ public class ElementalSkillRenderer extends PowerRenderer {
 
 			if (currentCharges == 0) {
 				circleRenderer
-					.add(38 * rescaler.getRescaleFactorWindow(), disable, 0x80646464)
-					.add(38 * rescaler.getRescaleFactorWindow(), percentFilled, 0x26c8c8c8)
-					.addOutline(34 * rescaler.getRescaleFactorWindow(), 4 * rescaler.getRescaleFactorWindow(), disable, 0x26c8c8c8)
-					.addOutline(34 * rescaler.getRescaleFactorWindow(), 4 * rescaler.getRescaleFactorWindow(), percentFilled, 0x99c8c8c8);
+					.add(36 * rescaler.getRescaleFactorWindow(), percentFilled, 0x0dc8c8c8)
+					.addOutline(32 * rescaler.getRescaleFactorWindow(), 4 * rescaler.getRescaleFactorWindow(), disable, 0x1ac8c8c8)
+					.addOutline(32 * rescaler.getRescaleFactorWindow(), 4 * rescaler.getRescaleFactorWindow(), percentFilled, 0x80c8c8c8);
 			}
 
 			if (charges > currentCharges) {
 				// Render a small cooldown indicator as a circle outline
 				circleRenderer
-					.addOutline(34 * rescaler.getRescaleFactorWindow(), 4 * rescaler.getRescaleFactorWindow(), percentFilled, 0x99c8c8c8);
+					.addOutline(32 * rescaler.getRescaleFactorWindow(), 4 * rescaler.getRescaleFactorWindow(), percentFilled, 0x99c8c8c8);
 			}
 
 			circleRenderer.draw(tessellator, posMatrix);
 
-			final ArrayList<Pair<Integer, Integer>> positions = generateChargesWithCenter(1692, 948, 12, 12, 4, charges);
+			final int scaleCharge = (int) (12.0 * rescaler.getRescaleFactor());
+			final ArrayList<Pair<Double, Double>> positions = generateChargesWithCenter(0, (int) (-44 * rescaler.getRescaleFactor()), scaleCharge, scaleCharge, (int) (4 * rescaler.getRescaleFactor()), charges);
 
 			for (int i = 0; i < positions.size(); i++) {
-				final Pair<Integer, Integer> pos = positions.get(i);
+				final Pair<Double, Double> pos = positions.get(i);
 				final Identifier chargeTexture = i < currentCharges
 					? OriginsGenshin.identifier("textures/skill/charge.png")
 					: OriginsGenshin.identifier("textures/skill/charge_empty.png");
 
-				final int scaleCharge = (int) (12.0 * rescaler.getRescaleFactor());
-
-				drawContext.drawTexture(chargeTexture, rescaler.rescaleX(pos.getLeft()), rescaler.rescaleY(pos.getRight()), 0, 0, scaleCharge, scaleCharge, scaleCharge, scaleCharge);
+				drawContext.drawTexture(chargeTexture, pos.getLeft().intValue(), pos.getRight().intValue(), 0, 0, scaleCharge, scaleCharge, scaleCharge, scaleCharge);
 			}
 		}
 	}
@@ -185,15 +199,24 @@ public class ElementalSkillRenderer extends PowerRenderer {
 	private void renderCooldown(ElementalSkill skillData, ElementalSkillIcon skillIcon, DrawContext drawContext, double percentFilled) {
 		if (skillIcon.getChargeRender().getMethod() == ChargeRender.Method.CONDITIONAL || !skillData.shouldShowCooldown() || percentFilled == 0) return;
 
+		MatrixStack matrices = drawContext.getMatrices();
+		float scale = (float) (1f * rescaler.getRescaleFactorWindow());
+
+		matrices.push();
+		matrices.translate(rescaler.rescaleX(1692), rescaler.rescaleY(992), 0);
+		matrices.scale(scale, scale, 1F);
+
 		PowerRenderer.drawCenteredText(
 			drawContext,
 			client.textRenderer,
 			PowerRenderer.changeTextFont(Text.literal(String.format("%.1f", ((double) resolveCooldown(skillIcon) / 20))), OriginsGenshin.identifier("genshin")),
-			rescaler.rescaleX(1692),
-			rescaler.rescaleY(992),
+			0,
+			0,
 			0xFFFFFFFF,
 			false
 		);
+
+		matrices.pop();
 	}
 
 	/**
@@ -204,37 +227,22 @@ public class ElementalSkillRenderer extends PowerRenderer {
 	 * @param s Spacing in-between textures
 	 * @param n Number of textures to render.
 	 */
-	private ArrayList<Pair<Integer, Integer>> generateChargesWithCenter(int x, int y, int w, int l, int s, int n) {
-		final ArrayList<Pair<Integer, Integer>> positions = new ArrayList<>();
+	private ArrayList<Pair<Double, Double>> generateChargesWithCenter(int x, int y, int w, int l, int s, int n) {
+		final ArrayList<Pair<Double, Double>> positions = new ArrayList<>();
 
-		/**
-		 * final int spacingOffset = Math.max((int) Math.floor((n - 1) / 2) * 2, 0);
-		 * -> Math.floor((n - 1) / 2) => For charges of 3 and 4, the first and last charge is brought closer by 1. **Presumably,** for charges 5 and 6, first and last: +2, second-first and second-last: +1
-		 * -> ... * 2 => Charges brought closer should always be in pairs.
-		 * -> Math.min() => self-explanatory.
-		 */
-		final int spacingOffset = Math.max((int) Math.floor((n - 1) / 2) * 2, 0);
-
-		/**
-		 * final int totalWidth = (w * n) + (s * (n - 1)) - spacingOffset;
-		 * -> (w * n) => Total texture length.
-		 * -> + (s * (n - 1)) => How many spacing should be inside. This is `(count - 1)` because spacing should be `0` for just one texture.
-		 * -> - spacingOffset => How much spacing is "subtracted".
-		 */
-		final int totalWidth = (w * n) + (s * (n - 1)) - spacingOffset;
-		final int offset = totalWidth / 2;
+		final double totalSpacing = (-Math.abs(n - 2) + 4) * (n - 1) / 2;
+		final double totalWidth = (w * n) + totalSpacing;
+		final double offset = totalWidth / 2;
+		final double highestYOffset = s * Math.abs(Math.min(Math.floor(n / 2), n - (Math.floor(n / 2) + 1)) - (Math.ceil(n / 2) - 1));
 
 		for (int i = 0; i < n; i++) {
-			final int indivOffset = Math.max(Math.max((spacingOffset / 2) - i, (spacingOffset / 2) - ((n - 1) - i)), 0);
+			final double j = Math.ceil(n / 2) - 1;
+			final double yOffset = s * Math.abs(Math.min(i, n - (i + 1)) - j);
+			final double spacing = i * (totalSpacing / (n - 1));
 
-			/**
-			 * pointX = x - offset + (i * (w + s));
-			 * -> (x, y) is the center, not the start, so we subtract `x` by this so we can get the rendering start point, which is (x - offset, y)
-			 * -> (i * (w + s)) => The "x-offset" for this texture. `x` should increase by (width + spacing) every time, starting at `1`.
-			 * -> - indivOffset => Subtract the individual offset for this texture.
-			 */
+			final Pair<Double, Double> pair = new Pair<Double, Double>((x - offset) + (spacing + (i * w)), y + (highestYOffset - yOffset));
 
-			positions.add(new Pair<Integer, Integer>(x - offset + (i * (w + s)) - indivOffset, y + (indivOffset * 4)));
+			positions.add(pair);
 		}
 
 		return positions;
