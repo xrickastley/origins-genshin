@@ -15,7 +15,7 @@ public class ElementalReactions {
 	public static final ElementalReaction PYRO_VAPORIZE = new PyroVaporizeElementalReaction();
 	// Keeps the entity in place, preventing movement, attacks and actions.
 	public static final ElementalReaction FROZEN = new FrozenElementalReaction();
-	// Keeps the entity in place, preventing movement, attacks and actions.
+	// Deals DoT Electro DMG to the target and nearby entities.
 	public static final ElementalReaction ELECTRO_CHARGED = new ElectroChargedElementalReaction();
 
 	public static void register() {

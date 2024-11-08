@@ -4,7 +4,9 @@ import com.llamalad7.mixinextras.sugar.Local;
 
 import org.spongepowered.asm.mixin.Debug;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
@@ -13,7 +15,7 @@ import io.github.xrickastley.originsgenshin.elements.Element;
 import io.github.xrickastley.originsgenshin.elements.ElementalDamageSource;
 import io.github.xrickastley.originsgenshin.elements.reactions.AmplifyingElementalReaction;
 import io.github.xrickastley.originsgenshin.elements.reactions.ElementalReaction;
-
+import io.github.xrickastley.originsgenshin.elements.reactions.ElementalReactions;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -27,6 +29,9 @@ public abstract class LivingEntityMixin extends Entity {
 		super(entityType, world);
 		throw new AssertionError();
 	}
+
+	@Unique
+	protected int electroChargedCD = -1;
 
 	@ModifyVariable(
 		method = "damage",
@@ -73,6 +78,18 @@ public abstract class LivingEntityMixin extends Entity {
 		System.out.printf("amount: %.2f; multiplier: %.2f; result: %.2f\n", amount, multiplier, amount * multiplier);
 
 		return amount * multiplier;
+	}
+
+	@Inject(
+		method = "tick",
+		at = @At("HEAD")
+	)
+	public void tick() {
+		if (!(ElementalReactions.ELECTRO_CHARGED.isTriggerable(this) && electroChargedCD <= this.age)) return;
+
+		this.electroChargedCD = this.age + 20;
+
+		ElementalReactions.ELECTRO_CHARGED.trigger(((LivingEntity)(Entity) this));
 	}
 
 	/*

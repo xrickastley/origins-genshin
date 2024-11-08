@@ -9,6 +9,7 @@ import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.components.ElementComponent;
 import io.github.xrickastley.originsgenshin.elements.Element;
 import io.github.xrickastley.originsgenshin.elements.ElementalApplication;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
@@ -87,6 +88,12 @@ public abstract class ElementalReaction {
 
 	public Identifier getId() {
 		return id;
+	}
+
+	public boolean isTriggerable(Entity entity) {
+		return entity instanceof final LivingEntity livingEntity
+			? isTriggerable(livingEntity)
+			: false;
 	}
 
 	public boolean isTriggerable(LivingEntity entity) {
