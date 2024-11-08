@@ -8,8 +8,6 @@ import io.github.xrickastley.originsgenshin.elements.ElementalDamageSource;
 import io.github.xrickastley.originsgenshin.factories.OriginsGenshinParticleFactory;
 
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.Box;
 import net.minecraft.world.World;
 
@@ -57,15 +55,11 @@ public class ElectroChargedElementalReaction extends ElementalReaction {
 		final float ElectroChargedDMG = OriginsGenshin.getLevelMultiplier(world) * 1.2f;
 		
 		for (LivingEntity target : world.getNonSpectatingEntities(LivingEntity.class, Box.of(entity.getLerpedPos(1f), radius * 2, radius * 2, radius * 2))) {
-			final DamageSource ds = entity instanceof final PlayerEntity player
-				? world.getDamageSources().playerAttack(player)
-				: world.getDamageSources().mobAttack(entity);
-
 			final ElementalApplication application = ElementalApplication.usingGaugeUnits(target, Element.PYRO, 0);
-			final ElementalDamageSource source = new ElementalDamageSource(ds, application, "reactions:overloaded");
+			final ElementalDamageSource source = new ElementalDamageSource(world.getDamageSources().generic(), application, "reactions:overloaded");
 			
 			final boolean inCircleRadius = entity.squaredDistanceTo(target) <= (radius * radius);
-			final ElementComponent component = ElementComponent.KEY.get(entity);
+			final ElementComponent component = ElementComponent.KEY.get(target);
 
 			if (inCircleRadius && component.hasElementalApplication(Element.HYDRO)) target.damage(source, ElectroChargedDMG);
 		}
