@@ -7,7 +7,7 @@ import io.github.xrickastley.originsgenshin.factories.OriginsGenshinParticleFact
 public final class CryoMeltElementalReaction extends AmplifyingElementalReaction {
 	protected CryoMeltElementalReaction() {
 		super(
-			new ElementalReactionSettings("melt", OriginsGenshin.identifier("melt_cryo"), OriginsGenshinParticleFactory.Vaporize)
+			new ElementalReactionSettings("Melt", OriginsGenshin.identifier("melt_cryo"), OriginsGenshinParticleFactory.Vaporize)
 				.setReactionCoefficient(0.5)
 				.setAuraElement(Element.PYRO, 2)
 				.setTriggeringElement(Element.CRYO),
