@@ -120,7 +120,7 @@ public abstract class ElementalReaction {
 		
 		LOGGER.info("Phase: BEFORE - Aura element: {} GU {}; Triggering elements: {} GU {}; Reaction coefficient: {}", df.format(applicationAE.getCurrentGauge()), applicationAE.getElement(), df.format(applicationTE.getCurrentGauge()), applicationTE.getElement(), reactionCoefficient);
 		
-		final double reducedGauge = component.reduceElementalApplication(auraElement.getLeft(), reactionCoefficient * applicationTE.getCurrentGauge());
+		final double reducedGauge = applicationAE.reduceGauge(reactionCoefficient * applicationTE.getCurrentGauge());
 		/**
 		 * TODO: Multi-elemental aura triggers
 		 * 
@@ -131,7 +131,7 @@ public abstract class ElementalReaction {
 		 */
 		// component.reduceElementalApplication(triggeringElement.getLeft(), reducedGauge * reactionCoefficient);
 
-		component.reduceElementalApplication(triggeringElement.getLeft(), applicationTE.getCurrentGauge());
+		applicationTE.reduceGauge(applicationTE.getCurrentGauge());
 		
 		LOGGER.info("Phase: AFTER - Aura element: {} GU {}; Triggering elements: {} GU {}; Reaction coefficient: {}", df.format(applicationAE.getCurrentGauge()), applicationAE.getElement(), df.format(applicationTE.getCurrentGauge()), applicationTE.getElement(), reactionCoefficient);
 
