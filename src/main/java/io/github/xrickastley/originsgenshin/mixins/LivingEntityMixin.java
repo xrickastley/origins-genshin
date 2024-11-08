@@ -12,10 +12,12 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.components.ElementComponent;
 import io.github.xrickastley.originsgenshin.elements.Element;
+import io.github.xrickastley.originsgenshin.elements.ElementalApplication;
 import io.github.xrickastley.originsgenshin.elements.ElementalDamageSource;
 import io.github.xrickastley.originsgenshin.elements.reactions.AmplifyingElementalReaction;
 import io.github.xrickastley.originsgenshin.elements.reactions.ElementalReaction;
 import io.github.xrickastley.originsgenshin.elements.reactions.ElementalReactions;
+import io.github.xrickastley.originsgenshin.factories.OriginsGenshinAttributes;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -32,6 +34,17 @@ public abstract class LivingEntityMixin extends Entity {
 
 	@Unique
 	protected int electroChargedCD = -1;
+
+	@ModifyVariable(
+		method = "damage",
+		at = @At("HEAD"),
+		argsOnly = true
+	)
+	private float applyDMGModifiers(float amount, @Local(argsOnly = true) DamageSource source) {
+		return source instanceof final ElementalDamageSource eds
+			? OriginsGenshinAttributes.modifyDamage((LivingEntity)(Entity) this, eds, amount)
+			: OriginsGenshinAttributes.modifyDamage((LivingEntity)(Entity) this, new ElementalDamageSource(source, ElementalApplication.usingGaugeUnits((LivingEntity)(Entity) this, Element.PHYSICAL, 0), "dmg"), amount);
+	}
 
 	@ModifyVariable(
 		method = "damage",

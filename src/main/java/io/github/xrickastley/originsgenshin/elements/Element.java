@@ -9,6 +9,14 @@ import io.github.xrickastley.originsgenshin.util.Colors;
 import net.minecraft.util.Identifier;
 
 public enum Element {
+	// Only here for Attribute Identification. Other than that, this serves no use, since Physical isn't really an Element.
+	PHYSICAL(
+		OriginsGenshin.identifier("physical"),
+		ElementSettings
+			.create()
+			.setDamageColor(Color.fromRGBAHex("#ffffff"))
+			.setAsAura(false)
+	),
 	PYRO(
 		OriginsGenshin.identifier("pyro"),
 		ElementSettings
