@@ -14,6 +14,7 @@ public class ElementalReactionSettings {
 	protected Pair<Element, Integer> auraElement;
 	protected Pair<Element, Integer> triggeringElement;
 	protected boolean reversable = false;
+	protected boolean allowChildElements = false;
 
 	public ElementalReactionSettings(String name, Identifier id, DefaultParticleType particle) {
 		this.name = name;
@@ -22,9 +23,9 @@ public class ElementalReactionSettings {
 	}
 
 	/**
-	 * Sets the reaction coefficient of this Elemental Reaction. This is a multiplier that dictates how many gauge units are
+	 * Sets the reaction coefficient of the Elemental Reaction. This is a multiplier that dictates how many gauge units are
 	 * consumed from the aura element.
-	 * @param reactionCoefficient The reaction coefficient of this Elemental Reaction.
+	 * @param reactionCoefficient The reaction coefficient of the Elemental Reaction.
 	 */
 	public ElementalReactionSettings setReactionCoefficient(double reactionCoefficient) {
 		this.reactionCoefficient = reactionCoefficient;
@@ -37,8 +38,8 @@ public class ElementalReactionSettings {
 	}
 
 	/**
-	 * Sets the Aura Element of this Elemental Reaction.
-	 * @param auraElement The Aura Element of this Elemental Reaction.
+	 * Sets the Aura Element of the Elemental Reaction.
+	 * @param auraElement The Aura Element of the Elemental Reaction.
 	 * @param priority The priority of this reaction triggering when {@code auraElement} is one of the currently applied aura elements.
 	 */
 	public ElementalReactionSettings setAuraElement(Element auraElement, int priority) {
@@ -52,8 +53,8 @@ public class ElementalReactionSettings {
 	}
 
 	/**
-	 * Sets the Triggering Element of this Elemental Reaction.
-	 * @param triggeringElement The Triggering Element of this Elemental Reaction.
+	 * Sets the Triggering Element of the Elemental Reaction.
+	 * @param triggeringElement The Triggering Element of the Elemental Reaction.
 	 * @param priority The priority of this reaction triggering when {@code triggeringElement} is one of the currently applied aura 
 	 * elements. {@code priority} will only be applied when {@code reversable} is true, as that is the only instance the 
 	 * {@code triggeringElement} can be considered an aura element.
@@ -67,10 +68,24 @@ public class ElementalReactionSettings {
 	/**
 	 * Sets the Elemental Reaction as reversable. When this is {@code true}, {@code triggeringElement} can be considered as an aura
 	 * element.
-	 * @param reversable Whether or not this Elemental Reaction is reversable.
+	 * @param reversable Whether or not the Elemental Reaction is reversable.
 	 */
 	public ElementalReactionSettings setAsReversable(boolean reversable) {
 		this.reversable = reversable;
+
+		return this;
+	}
+
+	/**
+	 * Whether or not the Elemental Reaction allows child elements. <br> <br>
+	 * 
+	 * When an Element is applied and possible elemental reactions are being searched for, 
+	 * a child element will share the same priority set for it's parent element.
+	 * 
+	 * @param allowChildElements Whether or not the Elemental Reaction allows child elements. 
+	 */
+	public ElementalReactionSettings setAsAllowingChildElements(boolean allowChildElements) {
+		this.allowChildElements = allowChildElements;
 
 		return this;
 	}

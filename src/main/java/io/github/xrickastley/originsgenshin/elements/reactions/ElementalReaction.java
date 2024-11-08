@@ -5,6 +5,7 @@ import java.util.Comparator;
 
 import org.slf4j.Logger;
 
+import blue.endless.jankson.annotation.Nullable;
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.components.ElementComponent;
 import io.github.xrickastley.originsgenshin.elements.Element;
@@ -21,6 +22,7 @@ public abstract class ElementalReaction {
 	protected final Pair<Element, Integer> auraElement;
 	protected final Pair<Element, Integer> triggeringElement;
 	protected final boolean reversable;
+	protected final boolean allowChildElements;
 	
 	protected ElementalReaction(ElementalReactionSettings settings) {
 		this.name = settings.name;
@@ -29,6 +31,16 @@ public abstract class ElementalReaction {
 		this.auraElement = settings.auraElement;
 		this.triggeringElement = settings.triggeringElement;
 		this.reversable = settings.reversable;
+		this.allowChildElements = settings.allowChildElements;
+	}
+
+	private @Nullable ElementalApplication getPossibleChildElement(Element element, ElementComponent component) {
+		return component
+			.getAppliedElements()
+			.filter(application -> auraElement.getLeft().isChild(application.getElement()))
+			.sorted(Comparator.comparingDouble(application -> application.getElement().getPriority()))
+			.findFirst()
+			.orElseGet(() -> null);
 	}
 
 	public Element getAuraElement() {
@@ -99,8 +111,14 @@ public abstract class ElementalReaction {
 	public boolean isTriggerable(LivingEntity entity) {
 		final ElementComponent component = ElementComponent.KEY.get(entity);
 
-		final ElementalApplication applicationAE = component.getElementalApplication(auraElement.getLeft());
-		final ElementalApplication applicationTE = component.getElementalApplication(triggeringElement.getLeft());
+		ElementalApplication applicationAE = component.getElementalApplication(auraElement.getLeft());
+		ElementalApplication applicationTE = component.getElementalApplication(triggeringElement.getLeft());
+
+		if (this.allowChildElements) {
+			// Supply them with their respective child elements if they are null.
+			if (applicationAE == null) applicationAE = getPossibleChildElement(auraElement.getLeft(), component);
+			if (applicationTE == null) applicationTE = getPossibleChildElement(triggeringElement.getLeft(), component);
+		}
 
 		return reversable
 			// Any of the elements can be an Aura element.

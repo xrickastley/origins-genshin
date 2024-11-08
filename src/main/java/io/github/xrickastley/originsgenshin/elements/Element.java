@@ -150,7 +150,23 @@ public enum Element {
 	}
 
 	public ArrayList<Element> getChildrenElements() {
-		return this.children;
+		// Prevents modification to the original array.
+		return new ArrayList<>(this.children);
+	}
+
+	/**
+	 * Checks if the provided {@code element} is a first-child of this {@link Element}. <br> <br>
+	 * 
+	 * This does not work recursively, meaning that a child-of-child element will not be considered
+	 * as a child of this element.
+	 * 
+	 * @param element The element to check.
+	 * @return Whether or not {@code element} is a first-child of this {@link Element}.
+	 */
+	public boolean isChild(Element element) {
+		return this.children
+			.stream()
+			.anyMatch(childElement -> childElement == element);
 	}
 
 	/**
@@ -238,11 +254,7 @@ public enum Element {
 		 * Sets the element as a child of {@code parentElement}. <br> <br>
 		 * 
 		 * A child element is able to be used in-place of it's parent element in an Elemental Reaction if
-		 * it has {@code allowChildElements()} set to {@code true}. <br> <br>
-		 * 
-		 * Additionally, if a parent element and a child element co-exist as Elemental Auras and an 
-		 * Elemental Reaction is triggered, the gauge units of the child element is consumed first before
-		 * the gauge units of it's parent element.
+		 * it has {@code allowChildElements} set to {@code true}.
 		 *  
 		 * @param parentElement The parent element of the element.
 		 */
