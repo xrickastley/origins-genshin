@@ -17,6 +17,8 @@ public class ElementalReactions {
 	public static final ElementalReaction FROZEN = new FrozenElementalReaction();
 	// Deals DoT Electro DMG to the target and nearby entities.
 	public static final ElementalReaction ELECTRO_CHARGED = new ElectroChargedElementalReaction();
+	// Creates an Explosion at the source, damaging all nearby "enemy" entities.
+	public static final ElementalReaction OVERLOADED = new OverloadedElementalReaction();
 
 	public static void register() {
 		register(ElementalReactions.CRYO_MELT);

@@ -8,6 +8,7 @@
 		"BlockItemMixin",
 		"CooldownPowerMixin",
 		"EntityMixin",
+		"ExplosionAccessor",
 		"ItemStackMixin",
 		"LivingEntityMixin",
 		"OriginMixin",
