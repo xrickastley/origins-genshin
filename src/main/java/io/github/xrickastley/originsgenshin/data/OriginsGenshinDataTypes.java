@@ -6,13 +6,16 @@ import io.github.apace100.calio.ClassUtil;
 import io.github.apace100.calio.data.SerializableData;
 import io.github.apace100.calio.data.SerializableDataType;
 import io.github.apace100.calio.data.SerializableDataTypes;
-
+import io.github.xrickastley.originsgenshin.elements.Element;
 import io.github.xrickastley.originsgenshin.util.Color;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.util.Pair;
 
 public class OriginsGenshinDataTypes {
+	public static final SerializableDataType<Element> ELEMENT
+		= SerializableDataType.enumValue(Element.class);
+
 	public static final SerializableDataType<Color> COLOR
 		= SerializableDataType.compound(
 			Color.class,

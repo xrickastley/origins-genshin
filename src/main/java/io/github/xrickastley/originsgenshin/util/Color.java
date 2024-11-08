@@ -5,15 +5,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Color {
-	public static final Color BLANK = Color.fromRGBAHex("#ffffff00");
-	public static final Color PYRO = Color.fromRGBAHex("#fda96f");
-	public static final Color HYDRO = Color.fromRGBAHex("#0ae5ff");
-	public static final Color ANEMO = Color.fromRGBAHex("#a7f4ce");
-	public static final Color ELECTRO = Color.fromRGBAHex("#e2b9ff");
-	public static final Color DENDRO = Color.fromRGBAHex("#b2ec2b");
-	public static final Color CRYO = Color.fromRGBAHex("#d0fdfe");
-	public static final Color GEO = Color.fromRGBAHex("#f3d862");
-
 	protected int red;
 	protected int green;
 	protected int blue;
