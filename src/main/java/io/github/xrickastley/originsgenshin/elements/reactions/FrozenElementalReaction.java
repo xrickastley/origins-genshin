@@ -9,7 +9,6 @@ import io.github.xrickastley.originsgenshin.factories.OriginsGenshinStatusEffect
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.server.MinecraftServer;
 
 public final class FrozenElementalReaction extends ElementalReaction {
 	public FrozenElementalReaction() {
