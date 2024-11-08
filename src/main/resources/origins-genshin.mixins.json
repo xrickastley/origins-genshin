@@ -12,7 +12,7 @@
 		"ItemStackMixin",
 		"LivingEntityMixin",
 		"OriginMixin",
-		"PlayerEntityMixin"
+		"PrioritizedPlayerEntityMixin"
 	],
 	"injectors": {
 		"defaultRequire": 1
