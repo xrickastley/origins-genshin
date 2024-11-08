@@ -137,6 +137,6 @@ public abstract class ElementalReaction {
 
 		onReaction(entity, applicationAE, applicationTE, reducedGauge);
 
-		return false;
+		return true;
 	}
 }
