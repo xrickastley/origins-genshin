@@ -31,6 +31,8 @@ public class ElementalReactions {
 		register(ElementalReactions.FROZEN);
 		register(ElementalReactions.ELECTRO_CHARGED);
 		register(ElementalReactions.OVERLOADED);
+		register(ElementalReactions.SUPERCONDUCT);
+		register(ElementalReactions.FROZEN_SUPERCONDUCT);
 	}
 
 	private static ElementalReaction register(ElementalReaction reaction) {
