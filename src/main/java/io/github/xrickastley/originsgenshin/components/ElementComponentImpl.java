@@ -156,15 +156,6 @@ public class ElementComponentImpl implements ElementComponent {
 		if (reaction.isPresent()) {
 			// Trigger said reaction.
 			reaction.get().value().trigger(owner);
-		} else {
-			// Otherwise, our applied element is considered an Aura Element
-			// Remove the application.
-			appliedElements.remove(application);
-			
-			// Only create Aura Elements out of Elements that allow it.
-			if (element.canBeAura()) appliedElements.add(
-				ElementalApplication.usingDuration(owner, element, gaugeUnits, duration)
-			);
 		}
 
 		if (!owner.getWorld().isClient()) ElementComponent.sync(owner);
