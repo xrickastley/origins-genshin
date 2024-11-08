@@ -80,10 +80,6 @@ public interface ElementComponent extends AutoSyncedComponent, CommonTickingComp
 	public @Nullable ElementalReaction applyFromDamageSource(final ElementalDamageSource source);
 
 	public static void sync(Entity entity) {
-
 		KEY.sync(entity);
 	}
-
-	// TODO: Fix elemental Reactions not triggering.
-	// TODO: Sync client component with server
 }
