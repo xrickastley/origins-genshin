@@ -55,6 +55,8 @@ public interface ElementComponent extends AutoSyncedComponent, CommonTickingComp
 	 * @return The eventual amount of gauge units reduced. If this value is lower than {@code gaugeUnits}, the current 
 	 * element had a current gauge value lesser than {@code gaugeUnits}. However, if this value is {@code -1.0}, the provided
 	 * {@code element} was not found or did not exist.
+	 * 
+	 * @see {@link ElementalApplication#reduceGauge}
 	 */
 	public double reduceElementalApplication(Element element, double gaugeUnits);
 

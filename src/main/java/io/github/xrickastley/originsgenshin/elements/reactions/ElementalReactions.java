@@ -15,6 +15,8 @@ public class ElementalReactions {
 	public static final ElementalReaction PYRO_VAPORIZE = new PyroVaporizeElementalReaction();
 	// Keeps the entity in place, preventing movement, attacks and actions.
 	public static final ElementalReaction FROZEN = new FrozenElementalReaction();
+	// Keeps the entity in place, preventing movement, attacks and actions.
+	public static final ElementalReaction ELECTRO_CHARGED = new ElectroChargedElementalReaction();
 
 	public static void register() {
 		register(ElementalReactions.CRYO_MELT);
@@ -22,6 +24,7 @@ public class ElementalReactions {
 		register(ElementalReactions.PYRO_MELT);
 		register(ElementalReactions.PYRO_VAPORIZE);
 		register(ElementalReactions.FROZEN);
+		register(ElementalReactions.ELECTRO_CHARGED);
 	}
 
 	private static ElementalReaction register(ElementalReaction reaction) {

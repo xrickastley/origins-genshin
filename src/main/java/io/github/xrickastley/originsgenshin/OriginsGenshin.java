@@ -4,8 +4,10 @@ import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleFactory;
 import net.fabricmc.fabric.api.gamerule.v1.GameRuleRegistry;
 import net.fabricmc.fabric.api.gamerule.v1.rule.DoubleRule;
+import net.minecraft.entity.Entity;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.GameRules;
+import net.minecraft.world.World;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,5 +60,16 @@ public class OriginsGenshin implements ModInitializer {
 		
 	public static Logger sublogger(Object sublogger) {
 		return LoggerFactory.getLogger(MOD_ID + "/" + sublogger.getClass().getSimpleName());
+	}
+
+	public static double getLevelMultiplier(Entity entity) {
+		return getLevelMultiplier(entity.getWorld());
+	}
+
+	public static double getLevelMultiplier(World world) {
+		return world
+			.getGameRules()
+			.get(OriginsGenshin.LEVEL_MULTIPLIER)
+			.get();
 	}
 }
