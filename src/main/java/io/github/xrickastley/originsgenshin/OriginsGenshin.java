@@ -62,12 +62,12 @@ public class OriginsGenshin implements ModInitializer {
 		return LoggerFactory.getLogger(MOD_ID + "/" + sublogger.getClass().getSimpleName());
 	}
 
-	public static double getLevelMultiplier(Entity entity) {
+	public static float getLevelMultiplier(Entity entity) {
 		return getLevelMultiplier(entity.getWorld());
 	}
 
-	public static double getLevelMultiplier(World world) {
-		return world
+	public static float getLevelMultiplier(World world) {
+		return (float) world
 			.getGameRules()
 			.get(OriginsGenshin.LEVEL_MULTIPLIER)
 			.get();
