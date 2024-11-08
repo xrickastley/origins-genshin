@@ -55,7 +55,7 @@ public class ElectroChargedElementalReaction extends ElementalReaction {
 		final ElementalApplication application = ElementalApplication.usingGaugeUnits(entity, Element.ELECTRO, 0);
 		final ElementalDamageSource source = new ElementalDamageSource(world.getDamageSources().generic(), application, "reactions:electro-charged");
 
-		final float ElectroChargedDMG = (float) (OriginsGenshin.getLevelMultiplier(world) * 1.2);
+		final float ElectroChargedDMG = OriginsGenshin.getLevelMultiplier(world) * 1.2f;
 
 		for (LivingEntity target : world.getNonSpectatingEntities(LivingEntity.class, Box.of(entity.getLerpedPos(1f), radius * 2, radius * 2, radius * 2))) {
 			final boolean inCircleRadius = entity.squaredDistanceTo(target) <= (radius * radius);

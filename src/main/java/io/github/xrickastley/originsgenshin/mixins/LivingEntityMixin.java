@@ -27,16 +27,6 @@ public abstract class LivingEntityMixin extends Entity {
 		super(entityType, world);
 		throw new AssertionError();
 	}
-	
-	protected double getLevelMultiplier() {
-		World world = this.getWorld();
-
-		return world.getGameRules().get(OriginsGenshin.LEVEL_MULTIPLIER).get();
-	}
-		
-	protected float getLevelMultiplierAsFloat() {
-		return (float) getLevelMultiplier();
-	}
 
 	@ModifyVariable(
 		method = "damage",
@@ -52,8 +42,8 @@ public abstract class LivingEntityMixin extends Entity {
 			final Element element = elementalSource.getElementalApplication().getElement();
 
 			// The "Level Multiplier" can't really exist here, so just modify the DMG Bonus by a factor and then multiply directly. 
-			if (element.equals(Element.DENDRO)) addedBaseDMG = (1.25f * this.getLevelMultiplierAsFloat());
-			else if (element.equals(Element.ELECTRO)) addedBaseDMG = (1.15f * this.getLevelMultiplierAsFloat());
+			if (element.equals(Element.DENDRO)) addedBaseDMG = (1.25f * OriginsGenshin.getLevelMultiplier(this));
+			else if (element.equals(Element.ELECTRO)) addedBaseDMG = (1.15f * OriginsGenshin.getLevelMultiplier(this));
 		}
 
 		return amount + addedBaseDMG;
