@@ -40,7 +40,7 @@ public final class FrozenElementalReaction extends ElementalReaction {
 					.get(entity)
 					.addElementalApplication(
 						ElementalApplication.usingDuration(entity, Element.FROZEN, freezeAuraGauge, freezeDuration),
-						"frozen-reaction"
+						"reactions:frozen"
 					);
 			});
 	}
