@@ -3,13 +3,15 @@ package io.github.xrickastley.originsgenshin.element.reaction;
 import java.text.DecimalFormat;
 import java.util.Comparator;
 
+import javax.annotation.Nullable;
+
 import org.slf4j.Logger;
 
-import blue.endless.jankson.annotation.Nullable;
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.component.ElementComponent;
 import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.Identifier;
@@ -96,7 +98,11 @@ public abstract class ElementalReaction {
 	 * @param triggeringElement The triggering element that reacted with the aura element.
 	 * @param reducedGauge The gauge units reduced from both Elements. This will always be {@code Math.min(auraElementGU, triggeringElementGU * reactionCoefficient)}
 	 */
-	protected abstract void onReaction(LivingEntity entity, ElementalApplication auraElement, ElementalApplication triggeringElement, double reducedGauge);
+	protected abstract void onReaction(LivingEntity entity, ElementalApplication auraElement, ElementalApplication triggeringElement, double reducedGauge, @Nullable LivingEntity origin);
+
+	protected void onReaction(LivingEntity entity, ElementalApplication auraElement, ElementalApplication triggeringElement, double reducedGauge) {
+		this.onReaction(entity, auraElement, triggeringElement, reducedGauge);
+	}
 
 	public Identifier getId() {
 		return id;

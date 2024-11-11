@@ -1,5 +1,7 @@
 package io.github.xrickastley.originsgenshin.element.reaction;
 
+import javax.annotation.Nullable;
+
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
@@ -32,14 +34,14 @@ public abstract class AbstractSwirlElementalReaction extends ElementalReaction {
 	}
 
 	@Override
-	protected void onReaction(LivingEntity entity, ElementalApplication auraElement, ElementalApplication triggeringElement, double reducedGauge) {
+	protected void onReaction(LivingEntity entity, ElementalApplication auraElement, ElementalApplication triggeringElement, double reducedGauge, @Nullable LivingEntity origin) {
 		final World world = entity.getWorld();
 
 		for (final LivingEntity target : world.getNonSpectatingEntities(LivingEntity.class, Box.of(entity.getLerpedPos(1F), radius * 2, radius * 2, radius * 2))) {
 			final ElementalDamageSource source = new ElementalDamageSource(
 				world
 					.getDamageSources()
-					.create(DamageTypes.PLAYER_ATTACK),
+					.create(DamageTypes.PLAYER_ATTACK, origin),
 				ElementalApplication.usingGaugeUnits(target, swirlElement, Math.min(auraElement.getGaugeUnits(), triggeringElement.getGaugeUnits())),
 				String.format("swirl-%s", swirlElement.toString().toLowerCase())
 			);

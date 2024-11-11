@@ -1,5 +1,7 @@
 package io.github.xrickastley.originsgenshin.element.reaction;
 
+import javax.annotation.Nullable;
+
 import com.google.common.collect.HashMultimap;
 
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
@@ -16,7 +18,7 @@ public abstract class AbstractSuperconductElementalReaction extends ElementalRea
 	}
 
 	@Override
-	protected void onReaction(LivingEntity entity, ElementalApplication auraElement, ElementalApplication triggeringElement, double reducedGauge) {
+	protected void onReaction(LivingEntity entity, ElementalApplication auraElement, ElementalApplication triggeringElement, double reducedGauge, @Nullable LivingEntity origin) {
 		final HashMultimap<EntityAttribute, EntityAttributeModifier> modifiers = HashMultimap.create();
 
 		modifiers.put(OriginsGenshinAttributes.PHYSICAL_RES, new EntityAttributeModifier("superconduct", -0.4, Operation.ADDITION));

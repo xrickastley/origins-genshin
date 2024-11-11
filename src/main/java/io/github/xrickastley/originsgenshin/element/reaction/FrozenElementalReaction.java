@@ -1,5 +1,7 @@
 package io.github.xrickastley.originsgenshin.element.reaction;
 
+import javax.annotation.Nullable;
+
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.component.ElementComponent;
 import io.github.xrickastley.originsgenshin.element.Element;
@@ -22,7 +24,7 @@ public final class FrozenElementalReaction extends ElementalReaction {
 	}
 
 	@Override
-	protected void onReaction(LivingEntity entity, ElementalApplication auraElement, ElementalApplication triggeringElement, double reducedGauge) {
+	protected void onReaction(LivingEntity entity, ElementalApplication auraElement, ElementalApplication triggeringElement, double reducedGauge, @Nullable LivingEntity origin) {
 		// Gauge-FreezeAura = 2 * min(Gauge-OriginAura, Gauge-TriggerElement)
 		final double freezeAuraGauge = 2 * Math.min(auraElement.getCurrentGauge() + reducedGauge, triggeringElement.getCurrentGauge() + reducedGauge);
 		// Freeze Duration (Seconds) = 2√(5 * freezeAuraGauge) + 4) - 4
