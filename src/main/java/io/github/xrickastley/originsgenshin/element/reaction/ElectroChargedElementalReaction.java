@@ -27,9 +27,9 @@ public class ElectroChargedElementalReaction extends ElementalReaction {
 	public boolean isTriggerable(LivingEntity entity) {
 		final ElementComponent component = ElementComponent.KEY.get(entity);
 
-		// We only need both Elements to exist for Electro-Charged.
+		// We need both Elements to exist for Electro-Charged.
 		return component.hasElementalApplication(auraElement.getLeft()) 
-			|| component.hasElementalApplication(triggeringElement.getLeft());
+			&& component.hasElementalApplication(triggeringElement.getLeft());
 	}
 
 	@Override
