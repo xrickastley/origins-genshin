@@ -7,6 +7,7 @@ import io.github.apace100.origins.origin.Origin;
 import io.github.apace100.origins.registry.ModComponents;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinEntities;
 import io.github.xrickastley.originsgenshin.interfaces.IOrigin;
+import io.github.xrickastley.originsgenshin.networking.OriginsGenshinPacketsS2C;
 import io.github.xrickastley.originsgenshin.renderer.entity.DendroCoreEntityRenderer;
 import io.github.xrickastley.originsgenshin.renderer.entity.model.DendroCoreEntityModel;
 import io.github.xrickastley.originsgenshin.renderer.genshin.ElementalBurstRenderer;
@@ -41,6 +42,7 @@ public class OriginsGenshinClient implements ClientModInitializer {
 
 		EntityRendererRegistry.register(OriginsGenshinEntities.DENDRO_CORE, DendroCoreEntityRenderer::new);
 		EntityModelLayerRegistry.registerModelLayer(DendroCoreEntityModel.MODEL_LAYER, DendroCoreEntityModel::getTexturedModelData);
+		OriginsGenshinPacketsS2C.register();
 		
 		AutoConfig.register(ClientConfig.class, GsonConfigSerializer::new);
 	}

@@ -14,12 +14,14 @@ import io.github.xrickastley.originsgenshin.element.ElementalApplication;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.particle.DefaultParticleType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
 
 public abstract class ElementalReaction {
 	protected final String name;
 	protected final Identifier id;
+	protected final DefaultParticleType particle;
 	protected final double reactionCoefficient;
 	protected final Pair<Element, Integer> auraElement;
 	protected final Pair<Element, Integer> triggeringElement;
@@ -29,6 +31,8 @@ public abstract class ElementalReaction {
 	protected ElementalReaction(ElementalReactionSettings settings) {
 		this.name = settings.name;
 		this.id = settings.id;
+		this.particle = settings.particle;
+
 		this.reactionCoefficient = settings.reactionCoefficient;
 		this.auraElement = settings.auraElement;
 		this.triggeringElement = settings.triggeringElement;
@@ -59,6 +63,10 @@ public abstract class ElementalReaction {
 
 	public int getTriggeringElementPriority() {
 		return triggeringElement.getRight();
+	}
+
+	public DefaultParticleType getParticle() {
+		return this.particle;
 	}
 
 	public Pair<Element, Integer> getElementPair(Element element) {
