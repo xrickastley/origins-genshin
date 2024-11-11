@@ -27,6 +27,6 @@ public class QuickenElementalReaction extends ElementalReaction {
 
 		final ElementComponent component = ElementComponent.KEY.get(entity);
 
-		component.addElementalApplication(Element.QUICKEN, "reactions:quicken", quickenAuraGauge, duration);
+		component.addElementalApplication(Element.QUICKEN, "reactions:quicken", quickenAuraGauge, duration, origin);
 	}
 }

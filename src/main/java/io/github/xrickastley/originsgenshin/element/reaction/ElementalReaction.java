@@ -97,12 +97,9 @@ public abstract class ElementalReaction {
 	 * @param auraElement The aura element that triggered this reaction.
 	 * @param triggeringElement The triggering element that reacted with the aura element.
 	 * @param reducedGauge The gauge units reduced from both Elements. This will always be {@code Math.min(auraElementGU, triggeringElementGU * reactionCoefficient)}
+	 * @param origin The {@code LivingEntity} that triggered this Elemental Reaction.
 	 */
 	protected abstract void onReaction(LivingEntity entity, ElementalApplication auraElement, ElementalApplication triggeringElement, double reducedGauge, @Nullable LivingEntity origin);
-
-	protected void onReaction(LivingEntity entity, ElementalApplication auraElement, ElementalApplication triggeringElement, double reducedGauge) {
-		this.onReaction(entity, auraElement, triggeringElement, reducedGauge);
-	}
 
 	public Identifier getId() {
 		return id;
@@ -134,6 +131,10 @@ public abstract class ElementalReaction {
 	}
 
 	public boolean trigger(LivingEntity entity) {
+		return this.trigger(entity, null);
+	}
+
+	public boolean trigger(LivingEntity entity, @Nullable LivingEntity origin) {
 		if (!isTriggerable(entity)) return false;
 
 		final ElementComponent component = ElementComponent.KEY.get(entity);
@@ -166,7 +167,7 @@ public abstract class ElementalReaction {
 		
 		LOGGER.info("Phase: AFTER - Aura element: {} GU {}; Triggering elements: {} GU {}; Reaction coefficient: {}", df.format(applicationAE.getCurrentGauge()), applicationAE.getElement(), df.format(applicationTE.getCurrentGauge()), applicationTE.getElement(), reactionCoefficient);
 
-		onReaction(entity, applicationAE, applicationTE, reducedGauge);
+		onReaction(entity, applicationAE, applicationTE, reducedGauge, origin);
 
 		return true;
 	}

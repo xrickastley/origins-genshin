@@ -33,7 +33,7 @@ public class ElectroChargedElementalReaction extends ElementalReaction {
 	}
 
 	@Override
-	public boolean trigger(LivingEntity entity) {
+	public boolean trigger(LivingEntity entity, @Nullable LivingEntity origin) {
 		if (!isTriggerable(entity)) return false;
 
 		final ElementComponent component = ElementComponent.KEY.get(entity);
@@ -43,7 +43,7 @@ public class ElectroChargedElementalReaction extends ElementalReaction {
 		final double reducedGauge = auraElement.reduceGauge(0.4);
 		triggeringElement.reduceGauge(reducedGauge);
 
-		this.onReaction(entity, auraElement, triggeringElement, reducedGauge);
+		this.onReaction(entity, auraElement, triggeringElement, reducedGauge, origin);
 
 		return true;
 	}

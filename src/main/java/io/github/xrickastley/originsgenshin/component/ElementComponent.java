@@ -15,6 +15,7 @@ import io.github.xrickastley.originsgenshin.element.ElementalApplication;
 import io.github.xrickastley.originsgenshin.element.ElementalDamageSource;
 import io.github.xrickastley.originsgenshin.element.reaction.ElementalReaction;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 
 public interface ElementComponent extends AutoSyncedComponent, CommonTickingComponent {
 	public static final ComponentKey<ElementComponent> KEY = ComponentRegistry.getOrCreate(OriginsGenshin.identifier("elements"), ElementComponent.class);
@@ -34,11 +35,11 @@ public interface ElementComponent extends AutoSyncedComponent, CommonTickingComp
 	 */
 	public boolean canApplyElement(Element element, String sourceTag, boolean handleICD);
 
-	public @Nullable ElementalReaction addElementalApplication(ElementalApplication application, String sourceTag);
+	public @Nullable ElementalReaction addElementalApplication(ElementalApplication application, String sourceTag, @Nullable LivingEntity origin);
 
-	public @Nullable ElementalReaction addElementalApplication(Element element, String sourceTag, double gaugeUnits);
+	public @Nullable ElementalReaction addElementalApplication(Element element, String sourceTag, double gaugeUnits, @Nullable LivingEntity origin);
 	
-	public @Nullable ElementalReaction addElementalApplication(Element element, String sourceTag, double gaugeUnits, double duration);
+	public @Nullable ElementalReaction addElementalApplication(Element element, String sourceTag, double gaugeUnits, double duration, @Nullable LivingEntity origin);
 	
 	/**
 	 * Checks if this entity has a specified Elemental Application with the provided {@code element}.

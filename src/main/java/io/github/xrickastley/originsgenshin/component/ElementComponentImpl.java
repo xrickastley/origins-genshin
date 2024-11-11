@@ -64,14 +64,14 @@ public class ElementComponentImpl implements ElementComponent {
 	}
 
 	@Override
-	public @Nullable ElementalReaction addElementalApplication(ElementalApplication application, String sourceTag) {
+	public @Nullable ElementalReaction addElementalApplication(ElementalApplication application, String sourceTag, @Nullable LivingEntity origin) {
 		return application.isUsingGaugeUnits()
-			? this.addElementalApplication(application.getElement(), sourceTag, application.getGaugeUnits())
-			: this.addElementalApplication(application.getElement(), sourceTag, application.getGaugeUnits(), application.getDuration());
+			? this.addElementalApplication(application.getElement(), sourceTag, application.getGaugeUnits(), origin)
+			: this.addElementalApplication(application.getElement(), sourceTag, application.getGaugeUnits(), application.getDuration(), origin);
 	}
 
 	@Override
-	public @Nullable ElementalReaction addElementalApplication(final Element element, String sourceTag, double gaugeUnits) {
+	public @Nullable ElementalReaction addElementalApplication(final Element element, String sourceTag, double gaugeUnits, @Nullable LivingEntity origin) {
 		// The Element is still in ICD.
 		if (!canApplyElement(element, sourceTag, true)) return null; 
 
@@ -122,7 +122,7 @@ public class ElementComponentImpl implements ElementComponent {
 	}	
 
 	@Override
-	public @Nullable ElementalReaction addElementalApplication(final Element element, String sourceTag, double gaugeUnits, double duration) {
+	public @Nullable ElementalReaction addElementalApplication(final Element element, String sourceTag, double gaugeUnits, double duration, @Nullable LivingEntity origin) {
 		// The Element is still in ICD.
 		if (!canApplyElement(element, sourceTag, true)) return null;
 		
@@ -196,7 +196,13 @@ public class ElementComponentImpl implements ElementComponent {
 
 	@Override
 	public @Nullable ElementalReaction applyFromDamageSource(ElementalDamageSource source) {
-		return addElementalApplication(source.getElementalApplication(), source.getSourceTag());
+		return addElementalApplication(
+			source.getElementalApplication(), 
+			source.getSourceTag(), 
+			source.getAttacker() instanceof LivingEntity origin 
+				? origin
+				: null
+		);
 	};
 
 	@Override
