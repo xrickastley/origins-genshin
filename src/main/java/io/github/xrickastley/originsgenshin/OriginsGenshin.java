@@ -12,15 +12,17 @@ import net.minecraft.world.World;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import io.github.xrickastley.originsgenshin.elements.reactions.ElementalReactions;
-import io.github.xrickastley.originsgenshin.factories.OriginsGenshinBiEntityActions;
-import io.github.xrickastley.originsgenshin.factories.OriginsGenshinStatusEffects;
-import io.github.xrickastley.originsgenshin.registries.OriginsGenshinRegistries;
-import io.github.xrickastley.originsgenshin.registries.OriginsGenshinRegistryKeys;
+import io.github.apace100.apoli.util.Scheduler;
+import io.github.xrickastley.originsgenshin.element.reaction.ElementalReactions;
+import io.github.xrickastley.originsgenshin.factory.OriginsGenshinBiEntityActions;
+import io.github.xrickastley.originsgenshin.factory.OriginsGenshinStatusEffects;
+import io.github.xrickastley.originsgenshin.registry.OriginsGenshinRegistries;
+import io.github.xrickastley.originsgenshin.registry.OriginsGenshinRegistryKeys;
 
 public class OriginsGenshin implements ModInitializer {
 	public static final String MOD_ID = "origins-genshin";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+	public static final Scheduler SCHEDULER = new Scheduler();
 	
 	public static final GameRules.Key<GameRules.BooleanRule> OVERLOADED_EXPLOSIONS_DAMAGE_BLOCKS = GameRuleRegistry.register(
 		"overloadedBlockDestruction", 

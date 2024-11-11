@@ -1,7 +1,7 @@
 package io.github.xrickastley.originsgenshin.particle;
 
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
-import io.github.xrickastley.originsgenshin.factories.OriginsGenshinParticleFactory;
+import io.github.xrickastley.originsgenshin.factory.OriginsGenshinParticleFactory;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;

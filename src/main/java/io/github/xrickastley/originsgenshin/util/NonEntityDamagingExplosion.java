@@ -10,8 +10,7 @@ import javax.annotation.Nullable;
 
 import com.google.common.collect.Sets;
 
-import io.github.xrickastley.originsgenshin.mixins.ExplosionAccessor;
-
+import io.github.xrickastley.originsgenshin.mixin.ExplosionAccessor;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 import net.minecraft.block.BlockState;

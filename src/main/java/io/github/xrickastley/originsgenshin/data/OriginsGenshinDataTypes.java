@@ -6,7 +6,7 @@ import io.github.apace100.calio.ClassUtil;
 import io.github.apace100.calio.data.SerializableData;
 import io.github.apace100.calio.data.SerializableDataType;
 import io.github.apace100.calio.data.SerializableDataTypes;
-import io.github.xrickastley.originsgenshin.elements.Element;
+import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.util.Color;
 
 import net.minecraft.entity.Entity;
