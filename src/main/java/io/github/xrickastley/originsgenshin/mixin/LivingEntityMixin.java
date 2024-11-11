@@ -1,5 +1,6 @@
 package io.github.xrickastley.originsgenshin.mixin;
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
 
 import org.spongepowered.asm.mixin.Debug;
@@ -8,6 +9,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.component.ElementComponent;
@@ -18,9 +20,11 @@ import io.github.xrickastley.originsgenshin.element.reaction.AmplifyingElemental
 import io.github.xrickastley.originsgenshin.element.reaction.ElementalReaction;
 import io.github.xrickastley.originsgenshin.element.reaction.ElementalReactions;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinAttributes;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.world.World;
 
@@ -97,13 +101,21 @@ public abstract class LivingEntityMixin extends Entity {
 		method = "tick",
 		at = @At("HEAD")
 	)
-	public void tick() {
+	public void tick(CallbackInfo ci) {
 		if (!(ElementalReactions.ELECTRO_CHARGED.isTriggerable(this) && electroChargedCD <= this.age)) return;
 
 		this.electroChargedCD = this.age + 20;
 
 		ElementalReactions.ELECTRO_CHARGED.trigger(((LivingEntity)(Entity) this));
 	}
+
+	@ModifyReturnValue(
+		method = "createLivingAttributes",
+		at = @At("RETURN")
+	)
+	public static DefaultAttributeContainer.Builder addToLivingAttributes(DefaultAttributeContainer.Builder builder) {
+        return OriginsGenshinAttributes.apply(builder);
+    }
 
 	/*
 	@Inject(

@@ -1,5 +1,6 @@
 package io.github.xrickastley.originsgenshin.factory;
 
+import java.util.ArrayList;
 import java.util.concurrent.ConcurrentHashMap;
 
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
@@ -7,11 +8,13 @@ import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementalDamageSource;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.ClampedEntityAttribute;
+import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 
 public class OriginsGenshinAttributes {
+	private static final ArrayList<EntityAttribute> ADDED_ATTRIBUTES = new ArrayList<>();
 	private static final ConcurrentHashMap<Element, ConcurrentHashMap<ModifierType, EntityAttribute>> LINKS = new ConcurrentHashMap<>();
 
 	public static final EntityAttribute PHYSICAL_DMG_BONUS = createAttribute("physical_dmg_bonus", 0, 0, 400);
@@ -72,6 +75,12 @@ public class OriginsGenshinAttributes {
 		return amount * dmgBonusMultiplier * resMultiplier;
 	}
 
+	public static DefaultAttributeContainer.Builder apply(DefaultAttributeContainer.Builder builder) {
+		ADDED_ATTRIBUTES.forEach(builder::add);
+
+		return builder;
+	}
+
 	private static double getRESMultiplier(LivingEntity target, EntityAttribute resAttribute) {
 		final double elementalRes = target.getAttributes().getValue(resAttribute) / 100;
 
@@ -88,6 +97,12 @@ public class OriginsGenshinAttributes {
 		modifierMap.put(modifierType, attribute);
 
 		OriginsGenshinAttributes.LINKS.put(element, modifierMap);
+
+		return register(name, attribute);
+	}
+
+	private static EntityAttribute register(String name, EntityAttribute attribute) {
+		OriginsGenshinAttributes.ADDED_ATTRIBUTES.add(attribute);
 
 		return Registry.register(Registries.ATTRIBUTE, OriginsGenshin.identifier(name), attribute);
 	}
