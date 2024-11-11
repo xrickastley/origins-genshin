@@ -113,7 +113,7 @@ public abstract class LivingEntityMixin extends Entity {
 		method = "createLivingAttributes",
 		at = @At("RETURN")
 	)
-	public static DefaultAttributeContainer.Builder addToLivingAttributes(DefaultAttributeContainer.Builder builder) {
+	private static DefaultAttributeContainer.Builder addToLivingAttributes(DefaultAttributeContainer.Builder builder) {
         return OriginsGenshinAttributes.apply(builder);
     }
 
