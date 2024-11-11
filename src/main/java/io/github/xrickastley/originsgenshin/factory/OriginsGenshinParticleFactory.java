@@ -23,6 +23,7 @@ public class OriginsGenshinParticleFactory {
 	public static final DefaultParticleType Bloom = register("bloom");
 	public static final DefaultParticleType Melt = register("melt");
 	public static final DefaultParticleType Vaporize = register("vaporize");
+	public static final DefaultParticleType Swirl = register("swirl");
 
 	public static final DefaultParticleType DAMAGE_TEXT = register("damage_text");
 

@@ -31,8 +31,9 @@ public class ClientParticleFactory {
 			register(OriginsGenshinParticleFactory.Superconduct, SuperconductParticleFactory::new);
 			register(OriginsGenshinParticleFactory.Frozen, FrozenParticleFactory::new);
 			register(OriginsGenshinParticleFactory.Bloom, BloomParticleFactory::new);
-			register(OriginsGenshinParticleFactory.Vaporize, VaporizeParticleFactory::new);
 			register(OriginsGenshinParticleFactory.Melt, MeltParticleFactory::new);
+			register(OriginsGenshinParticleFactory.Vaporize, VaporizeParticleFactory::new);
+			register(OriginsGenshinParticleFactory.Swirl, SwirlParticleFactory::new);
 			
 			register(OriginsGenshinParticleFactory.DAMAGE_TEXT, DamageTextParticle.Factory::new);
 		} catch (Exception e) {
