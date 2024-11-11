@@ -18,7 +18,7 @@ import net.minecraft.registry.Registry;
 public class OriginsGenshinEntities {
 	public static final EntityType<DendroCoreEntity> DENDRO_CORE = FabricEntityTypeBuilder
 		.<DendroCoreEntity>create(SpawnGroup.MISC, DendroCoreEntity::new)
-		.dimensions(EntityDimensions.fixed(0.5f, 0.6875f))
+		.dimensions(EntityDimensions.fixed(0.3125f, 0.4296875f))
 		.trackRangeBlocks(24)
 		.build();
 	

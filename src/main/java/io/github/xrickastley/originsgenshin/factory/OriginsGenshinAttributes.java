@@ -69,8 +69,13 @@ public class OriginsGenshinAttributes {
 		final EntityAttribute dmgBonusAttribute = modifierMap.get(ModifierType.DMG_BONUS);
 		final EntityAttribute resAttribute = modifierMap.get(ModifierType.RES);
 
-		final float dmgBonusMultiplier = (float) (target.getAttributes().getValue(dmgBonusAttribute) / 100);
-		final float resMultiplier = (float) getRESMultiplier(target, resAttribute);
+		final float dmgBonusMultiplier = target.getAttributes().hasAttribute(dmgBonusAttribute)
+			? (float) (target.getAttributes().getValue(dmgBonusAttribute) / 100)
+			: 1;
+
+		final float resMultiplier = target.getAttributes().hasAttribute(resAttribute)
+			? (float) getRESMultiplier(target, resAttribute)
+			: 1;
 
 		return amount * dmgBonusMultiplier * resMultiplier;
 	}

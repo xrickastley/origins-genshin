@@ -6,11 +6,14 @@ import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
 import io.github.xrickastley.originsgenshin.element.ElementalDamageSource;
-
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
+import net.minecraft.entity.attribute.EntityAttributes;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Arm;
@@ -18,6 +21,7 @@ import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.Box;
 import net.minecraft.world.World;
 
+// TODO: FIX THIS SHIT
 // Should technically extend Entity, but extends LivingEntity instead to NOT deal with more Networking and Spawn Packets.
 public class DendroCoreEntity extends LivingEntity {
 	private static final double radius = 2.5;
@@ -57,7 +61,22 @@ public class DendroCoreEntity extends LivingEntity {
 	}
 
 	public static DefaultAttributeContainer.Builder getAttributeBuilder() {
-		return DefaultAttributeContainer.builder();
+		return LivingEntity.createLivingAttributes()
+			.add(EntityAttributes.GENERIC_MAX_HEALTH, 1);
+	}
+
+	@Override
+	public boolean damage(DamageSource source, float amount) {
+		if (source != this.getWorld().getDamageSources().genericKill() || amount != Float.MAX_VALUE) return false;
+		
+		remove(RemovalReason.KILLED);
+
+		return true;
+	}
+
+	@Override
+	public boolean collidesWith(Entity other) {
+		return false;
 	}
 
 	@Override
@@ -65,7 +84,7 @@ public class DendroCoreEntity extends LivingEntity {
 		super.tick();
 		
 		if (this.age < 120) return;
-		
+	
 		for (final LivingEntity target : this.getWorld().getNonSpectatingEntities(LivingEntity.class, Box.of(this.getLerpedPos(1F), radius * 2, radius * 2, radius * 2))) {
 			final ElementalDamageSource source = new ElementalDamageSource(
 				this

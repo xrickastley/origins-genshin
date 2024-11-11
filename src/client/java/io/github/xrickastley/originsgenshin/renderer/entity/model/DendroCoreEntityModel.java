@@ -1,5 +1,7 @@
 package io.github.xrickastley.originsgenshin.renderer.entity.model;
 
+import org.joml.Vector3f;
+
 import com.google.common.collect.ImmutableList;
 
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
@@ -20,7 +22,7 @@ import net.minecraft.client.util.math.MatrixStack;
 
 public class DendroCoreEntityModel extends EntityModel<DendroCoreEntity> {
 	public static final EntityModelLayer MODEL_LAYER = new EntityModelLayer(OriginsGenshin.identifier("cube"), "all");
-	
+
 	private final ModelPart base;
 	
 	public DendroCoreEntityModel(ModelPart root) {
@@ -84,7 +86,16 @@ public class DendroCoreEntityModel extends EntityModel<DendroCoreEntity> {
 
 	@Override
 	public void setAngles(DendroCoreEntity entity, float limbAngle, float limbDistance, float animationProgress, float headYaw, float headPitch) {
-		
+
+	}
+
+	@Override
+	public void animateModel(DendroCoreEntity entity, float limbAngle, float limbDistance, float tickDelta) {
+		float progress = (entity.age + tickDelta) % 60 == 0
+			? 1
+			: (entity.age + tickDelta) % 60;
+
+		base.setAngles(0, -progress * 0.05f, 0);
 	}
 
 	@Override

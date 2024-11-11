@@ -35,6 +35,7 @@ public class ElementalReactions {
 	// TODO: Reaction: Burning
 	// TODO: Reaction: Crystallize (+ Crystallize Shards)
 	// TODO: Reaction: Spread + Aggravate (indicators, reactions already handled by LivingEntityMixin)
+	// TODO: Reaction: Hyperbloom + Burgeon
 	// TODO: Reaction display.
 
 	public static void register() {
