@@ -15,6 +15,7 @@ import org.slf4j.LoggerFactory;
 import io.github.apace100.apoli.util.Scheduler;
 import io.github.xrickastley.originsgenshin.element.reaction.ElementalReactions;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinBiEntityActions;
+import io.github.xrickastley.originsgenshin.factory.OriginsGenshinEntities;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinStatusEffects;
 import io.github.xrickastley.originsgenshin.registry.OriginsGenshinRegistries;
 import io.github.xrickastley.originsgenshin.registry.OriginsGenshinRegistryKeys;
@@ -43,8 +44,9 @@ public class OriginsGenshin implements ModInitializer {
 		OriginsGenshinRegistryKeys.load();
 		OriginsGenshinRegistries.load();
 
-		OriginsGenshinStatusEffects.register();
+		OriginsGenshinEntities.register();
 		OriginsGenshinBiEntityActions.register();
+		OriginsGenshinStatusEffects.register();
 		ElementalReactions.register();
 	}
 

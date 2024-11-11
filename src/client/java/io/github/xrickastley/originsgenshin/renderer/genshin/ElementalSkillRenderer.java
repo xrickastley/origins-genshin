@@ -1,4 +1,4 @@
-package io.github.xrickastley.originsgenshin.renderer;
+package io.github.xrickastley.originsgenshin.renderer.genshin;
 
 import java.util.ArrayList;
 

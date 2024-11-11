@@ -1,5 +1,7 @@
 package io.github.xrickastley.originsgenshin.element.reaction;
 
+import javax.annotation.Nullable;
+
 import io.github.xrickastley.originsgenshin.element.Element;
 import net.minecraft.particle.DefaultParticleType;
 import net.minecraft.util.Identifier;
@@ -8,14 +10,14 @@ import net.minecraft.util.Pair;
 public final class ElementalReactionSettings {
 	protected final String name;
 	protected final Identifier id;
-	protected final DefaultParticleType particle;
+	protected final @Nullable DefaultParticleType particle;
 	protected double reactionCoefficient = 1.0;
 	protected Pair<Element, Integer> auraElement;
 	protected Pair<Element, Integer> triggeringElement;
 	protected boolean reversable = false;
 	protected boolean allowChildElements = false;
 
-	public ElementalReactionSettings(String name, Identifier id, DefaultParticleType particle) {
+	public ElementalReactionSettings(String name, Identifier id, @Nullable DefaultParticleType particle) {
 		this.name = name;
 		this.id = id;
 		this.particle = particle;

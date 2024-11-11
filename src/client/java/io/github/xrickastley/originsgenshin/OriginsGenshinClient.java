@@ -5,10 +5,12 @@ import org.slf4j.LoggerFactory;
 
 import io.github.apace100.origins.origin.Origin;
 import io.github.apace100.origins.registry.ModComponents;
-
+import io.github.xrickastley.originsgenshin.factory.OriginsGenshinEntities;
 import io.github.xrickastley.originsgenshin.interfaces.IOrigin;
-import io.github.xrickastley.originsgenshin.renderer.ElementalBurstRenderer;
-import io.github.xrickastley.originsgenshin.renderer.ElementalSkillRenderer;
+import io.github.xrickastley.originsgenshin.renderer.entity.DendroCoreEntityRenderer;
+import io.github.xrickastley.originsgenshin.renderer.entity.model.DendroCoreEntityModel;
+import io.github.xrickastley.originsgenshin.renderer.genshin.ElementalBurstRenderer;
+import io.github.xrickastley.originsgenshin.renderer.genshin.ElementalSkillRenderer;
 import io.github.xrickastley.originsgenshin.util.ClientConfig;
 import io.github.xrickastley.originsgenshin.util.Rescaler;
 
@@ -16,6 +18,8 @@ import me.shedaniel.autoconfig.AutoConfig;
 import me.shedaniel.autoconfig.serializer.GsonConfigSerializer;
 
 import net.fabricmc.api.ClientModInitializer;
+import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
+import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
@@ -34,6 +38,9 @@ public class OriginsGenshinClient implements ClientModInitializer {
 		OriginsGenshinClient.LOGGER.info("Origins-Genshin (Client) Initialized!");
 
 		HudRenderCallback.EVENT.register(this::renderSkills);
+
+		EntityRendererRegistry.register(OriginsGenshinEntities.DENDRO_CORE, DendroCoreEntityRenderer::new);
+		EntityModelLayerRegistry.registerModelLayer(DendroCoreEntityModel.MODEL_LAYER, DendroCoreEntityModel::getTexturedModelData);
 		
 		AutoConfig.register(ClientConfig.class, GsonConfigSerializer::new);
 	}

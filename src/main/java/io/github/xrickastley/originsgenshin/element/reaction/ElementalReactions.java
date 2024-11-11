@@ -23,6 +23,15 @@ public class ElementalReactions {
 	public static final ElementalReaction FROZEN_SUPERCONDUCT = new FrozenSuperconductElementalReaction();
 	// Applies the Quicken aura to the target.
 	public static final ElementalReaction QUICKEN = new QuickenElementalReaction();
+	// Creates a Dendro Core at the source.
+	public static final ElementalReaction DENDRO_BLOOM = new DendroBloomElementalReaction();
+	public static final ElementalReaction HYDRO_BLOOM = new HydroBloomElementalReaction();
+	public static final ElementalReaction QUICKEN_BLOOM = new QuickenBloomElementalReaction();
+	// Affects the applied swirlable element to all other opponents.
+	public static final ElementalReaction PYRO_SWIRL = new PyroSwirlElementalReaction();
+	public static final ElementalReaction HYDRO_SWIRL = new HydroSwirlElementalReaction();
+	public static final ElementalReaction ELECTRO_SWIRL = new ElectroSwirlElementalReaction();
+	public static final ElementalReaction CRYO_SWIRL = new CryoSwirlElementalReaction();
 
 	public static void register() {
 		register(ElementalReactions.CRYO_MELT);
@@ -35,6 +44,13 @@ public class ElementalReactions {
 		register(ElementalReactions.SUPERCONDUCT);
 		register(ElementalReactions.FROZEN_SUPERCONDUCT);
 		register(ElementalReactions.QUICKEN);
+		register(ElementalReactions.DENDRO_BLOOM);
+		register(ElementalReactions.HYDRO_BLOOM);
+		register(ElementalReactions.QUICKEN_BLOOM);
+		register(ElementalReactions.PYRO_SWIRL);
+		register(ElementalReactions.HYDRO_SWIRL);
+		register(ElementalReactions.ELECTRO_SWIRL);
+		register(ElementalReactions.CRYO_SWIRL);
 	}
 
 	private static ElementalReaction register(ElementalReaction reaction) {
