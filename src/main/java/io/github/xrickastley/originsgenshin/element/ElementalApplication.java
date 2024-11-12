@@ -147,7 +147,7 @@ public final class ElementalApplication {
 	}
 
 	public int getRemainingTicks() {
-		if (type == Type.DURATION) return (int) (entity.age - (appliedAt + duration));
+		if (type == Type.DURATION) return (int) (appliedAt + duration) - entity.age;
 
 		// Currently in s/GU
 		double decayRate = 35 / (4 * this.gaugeUnits) + (25 / 8.0);
