@@ -11,10 +11,14 @@ import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.component.ElementComponent;
 import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
+import io.github.xrickastley.originsgenshin.networking.ShowElementalReactionS2CPacket;
 
+import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.particle.DefaultParticleType;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
 
@@ -175,8 +179,25 @@ public abstract class ElementalReaction {
 		
 		LOGGER.info("Phase: AFTER - Aura element: {} GU {}; Triggering elements: {} GU {}; Reaction coefficient: {}", df.format(applicationAE.getCurrentGauge()), applicationAE.getElement(), df.format(applicationTE.getCurrentGauge()), applicationTE.getElement(), reactionCoefficient);
 
-		onReaction(entity, applicationAE, applicationTE, reducedGauge, origin);
+		this.onReaction(entity, applicationAE, applicationTE, reducedGauge, origin);
+		this.displayReaction(entity);
 
 		return true;
+	}
+
+	protected void displayReaction(LivingEntity target) {
+		if (target.getWorld().isClient()) return;
+
+		System.out.println("Sending packet!");
+		
+		ShowElementalReactionS2CPacket packet = new ShowElementalReactionS2CPacket(target.getId(), this.getId());
+
+		if (target instanceof final ServerPlayerEntity serverPlayer) ServerPlayNetworking.send(serverPlayer, packet);
+		
+		for (ServerPlayerEntity otherPlayer : PlayerLookup.tracking(target)) {
+			if (otherPlayer.getId() == target.getId()) continue;
+			
+			ServerPlayNetworking.send(otherPlayer, packet);
+		}
 	}
 }

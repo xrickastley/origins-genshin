@@ -2,7 +2,9 @@ package io.github.xrickastley.originsgenshin.mixin.client;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.Iterator;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.joml.Matrix4f;
@@ -19,6 +21,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.component.ElementComponent;
+import io.github.xrickastley.originsgenshin.element.ElementalApplication;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.GameRenderer;
@@ -134,13 +137,13 @@ public abstract class EntityRendererMixin {
 		RenderSystem.setShader(GameRenderer::getPositionTexProgram);
 		RenderSystem.setShaderTexture(0, texture);
 		RenderSystem.setShaderColor(1f, 1f, 1f, alpha);
+
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();
-		RenderSystem.disableCull();
+		RenderSystem.enableCull();
 
         tessellator.draw();
 
-		RenderSystem.enableCull();
 		RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
 
 		matrixStack.pop();
@@ -167,8 +170,28 @@ public abstract class EntityRendererMixin {
 				logCooldowns.put(livingEntity.getUuidAsString(), Util.getMeasuringTimeMs() + 2500);
 			}
 
+			// System.out.println("Getting first element!");
+
+			Optional<ElementalApplication> first = component
+				.getAppliedElements()
+				.filter(application -> {
+					System.out.printf("Element: %s, hasTexture: %b", application.getElement().toString(), application.getElement().hasTexture());
+
+					return application.getElement().hasTexture();
+				})
+				.sorted(Comparator.comparingDouble(application -> application.getElement().getPriority()))
+				.peek(System.out::println)
+				.findFirst();
+
+			if (!first.isPresent()) return;
+
+			int priority = first.get().getElement().getPriority();
+
+			// System.out.println(priority);
+
 			component
 				.getAppliedElements()
+				.filter(application -> application.getElement().getPriority() == priority)
 				.forEach(application -> 
 					renderElement(matrixStack, (float) coords.next().getZ(), application.getElement().getTexture(), application.getRemainingTicks() / 20.0f)
 				);

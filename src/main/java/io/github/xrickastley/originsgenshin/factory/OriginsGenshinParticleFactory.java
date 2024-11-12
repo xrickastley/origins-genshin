@@ -7,23 +7,23 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 
 public class OriginsGenshinParticleFactory {
-	public static final DefaultParticleType Pyro = register("pyro");
-	public static final DefaultParticleType Hydro = register("hydro");
-	public static final DefaultParticleType Anemo = register("anemo");
-	public static final DefaultParticleType Electro = register("electro");
-	public static final DefaultParticleType Dendro = register("dendro");
-	public static final DefaultParticleType Cryo = register("cryo");
-	public static final DefaultParticleType Geo = register("geo");
+	public static final DefaultParticleType PYRO = register("pyro");
+	public static final DefaultParticleType HYDRO = register("hydro");
+	public static final DefaultParticleType ANEMO = register("anemo");
+	public static final DefaultParticleType ELECTRO = register("electro");
+	public static final DefaultParticleType DENDRO = register("dendro");
+	public static final DefaultParticleType CRYO = register("cryo");
+	public static final DefaultParticleType GEO = register("geo");
 
-	public static final DefaultParticleType Overloaded = register("overloaded");
-	public static final DefaultParticleType ElectroCharged = register("electro-charged");
-	public static final DefaultParticleType Superconduct = register("superconduct");
-	public static final DefaultParticleType Frozen = register("frozen");
-	public static final DefaultParticleType Quicken = register("quicken");
-	public static final DefaultParticleType Bloom = register("bloom");
-	public static final DefaultParticleType Melt = register("melt");
-	public static final DefaultParticleType Vaporize = register("vaporize");
-	public static final DefaultParticleType Swirl = register("swirl");
+	public static final DefaultParticleType OVERLOADED = register("overloaded");
+	public static final DefaultParticleType ELECTRO_CHARGED = register("electro-charged");
+	public static final DefaultParticleType SUPERCONDUCT = register("superconduct");
+	public static final DefaultParticleType FROZEN = register("frozen");
+	public static final DefaultParticleType QUICKEN = register("quicken");
+	public static final DefaultParticleType BLOOM = register("bloom");
+	public static final DefaultParticleType MELT = register("melt");
+	public static final DefaultParticleType VAPORIZE = register("vaporize");
+	public static final DefaultParticleType SWIRL = register("swirl");
 
 	public static final DefaultParticleType DAMAGE_TEXT = register("damage_text");
 

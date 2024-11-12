@@ -8,6 +8,7 @@ import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
 import io.github.xrickastley.originsgenshin.element.ElementalDamageSource;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinParticleFactory;
+import io.github.xrickastley.originsgenshin.interfaces.ILivingEntity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.math.Box;
 import net.minecraft.world.World;
@@ -15,7 +16,7 @@ import net.minecraft.world.World;
 public class ElectroChargedElementalReaction extends ElementalReaction {
 	public ElectroChargedElementalReaction() {
 		super(
-			new ElementalReactionSettings("Electro-Charged", OriginsGenshin.identifier("electro-charged"), OriginsGenshinParticleFactory.ElectroCharged)
+			new ElementalReactionSettings("Electro-Charged", OriginsGenshin.identifier("electro-charged"), OriginsGenshinParticleFactory.ELECTRO_CHARGED)
 				.setReactionCoefficient(0)
 				.setAuraElement(Element.HYDRO, 6)
 				.setTriggeringElement(Element.ELECTRO, 5)
@@ -44,6 +45,7 @@ public class ElectroChargedElementalReaction extends ElementalReaction {
 		triggeringElement.reduceGauge(reducedGauge);
 
 		this.onReaction(entity, auraElement, triggeringElement, reducedGauge, origin);
+		this.displayReaction(entity);
 
 		return true;
 	}
@@ -64,5 +66,7 @@ public class ElectroChargedElementalReaction extends ElementalReaction {
 
 			if (inCircleRadius && component.hasElementalApplication(Element.HYDRO)) target.damage(source, ElectroChargedDMG);
 		}
+		
+		((ILivingEntity) entity).resetElectroChargedCD();
 	}
 }

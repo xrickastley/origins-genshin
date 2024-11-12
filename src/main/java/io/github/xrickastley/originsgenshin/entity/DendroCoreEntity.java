@@ -7,7 +7,6 @@ import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
 import io.github.xrickastley.originsgenshin.element.ElementalDamageSource;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
@@ -21,11 +20,10 @@ import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.Box;
 import net.minecraft.world.World;
 
-// TODO: FIX THIS SHIT
 // Should technically extend Entity, but extends LivingEntity instead to NOT deal with more Networking and Spawn Packets.
 public class DendroCoreEntity extends LivingEntity {
 	private static final double radius = 2.5;
-	private final @Nullable LivingEntity owner;
+	private @Nullable LivingEntity owner;
 
 	public DendroCoreEntity(EntityType<? extends LivingEntity> entityType, World world) {
 		super(entityType, world);
@@ -37,6 +35,12 @@ public class DendroCoreEntity extends LivingEntity {
 		super(entityType, world);
 
 		this.owner = owner;
+	}
+
+	public DendroCoreEntity setOwner(LivingEntity owner) {
+		this.owner = owner;
+
+		return this;
 	}
 
 	@Override

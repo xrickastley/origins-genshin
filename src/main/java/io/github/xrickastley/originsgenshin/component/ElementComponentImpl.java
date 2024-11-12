@@ -75,6 +75,8 @@ public class ElementComponentImpl implements ElementComponent {
 		// The Element is still in ICD.
 		if (!canApplyElement(element, sourceTag, true)) return null; 
 
+		if (gaugeUnits <= 0) return null;
+
 		// Check if the Element has already been applied.
 		final Stream<ElementalApplication> applications = new ArrayList<>(appliedElements)
 			.stream()
@@ -126,6 +128,8 @@ public class ElementComponentImpl implements ElementComponent {
 		// The Element is still in ICD.
 		if (!canApplyElement(element, sourceTag, true)) return null;
 		
+		if (gaugeUnits <= 0) return null;
+
 		final ElementalApplication application = ElementalApplication.usingDuration(owner, element, gaugeUnits, duration);
 
 		// Check if the Element has already been applied.

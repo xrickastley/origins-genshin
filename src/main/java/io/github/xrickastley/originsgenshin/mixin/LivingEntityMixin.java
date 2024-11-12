@@ -20,6 +20,7 @@ import io.github.xrickastley.originsgenshin.element.reaction.AmplifyingElemental
 import io.github.xrickastley.originsgenshin.element.reaction.ElementalReaction;
 import io.github.xrickastley.originsgenshin.element.reaction.ElementalReactions;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinAttributes;
+import io.github.xrickastley.originsgenshin.interfaces.ILivingEntity;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -30,7 +31,10 @@ import net.minecraft.world.World;
 
 @Mixin(LivingEntity.class)
 @Debug(export = true)
-public abstract class LivingEntityMixin extends Entity {
+public abstract class LivingEntityMixin 
+	extends Entity 
+	implements ILivingEntity
+{
 	public LivingEntityMixin(final EntityType<? extends LivingEntity> entityType, final World world) {
 		super(entityType, world);
 		throw new AssertionError();
@@ -38,6 +42,15 @@ public abstract class LivingEntityMixin extends Entity {
 
 	@Unique
 	protected int electroChargedCD = -1;
+
+	@Override
+	public void resetElectroChargedCD() {
+		this.electroChargedCD = this.age + 20;
+	}
+
+	public boolean isElectroChargedOnCD() {
+		return this.age < this.electroChargedCD;
+	}
 
 	@ModifyVariable(
 		method = "damage",
@@ -64,8 +77,8 @@ public abstract class LivingEntityMixin extends Entity {
 			final Element element = elementalSource.getElementalApplication().getElement();
 
 			// The "Level Multiplier" can't really exist here, so just modify the DMG Bonus by a factor and then multiply directly. 
-			if (element.equals(Element.DENDRO)) addedBaseDMG = (1.25f * OriginsGenshin.getLevelMultiplier(this));
-			else if (element.equals(Element.ELECTRO)) addedBaseDMG = (1.15f * OriginsGenshin.getLevelMultiplier(this));
+			if (element.equals(Element.DENDRO)) addedBaseDMG = (0.25f * OriginsGenshin.getLevelMultiplier(this));
+			else if (element.equals(Element.ELECTRO)) addedBaseDMG = (0.15f * OriginsGenshin.getLevelMultiplier(this));
 		}
 
 		return amount + addedBaseDMG;
@@ -101,10 +114,8 @@ public abstract class LivingEntityMixin extends Entity {
 		method = "tick",
 		at = @At("HEAD")
 	)
-	public void tick(CallbackInfo ci) {
-		if (!(ElementalReactions.ELECTRO_CHARGED.isTriggerable(this) && electroChargedCD <= this.age)) return;
-
-		this.electroChargedCD = this.age + 20;
+	public void electroChargedTick(CallbackInfo ci) {
+		if (!ElementalReactions.ELECTRO_CHARGED.isTriggerable(this) || this.isElectroChargedOnCD()) return;
 
 		ElementalReactions.ELECTRO_CHARGED.trigger(((LivingEntity)(Entity) this));
 	}

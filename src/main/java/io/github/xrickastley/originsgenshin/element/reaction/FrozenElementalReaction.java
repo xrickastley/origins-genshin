@@ -14,7 +14,7 @@ import net.minecraft.entity.effect.StatusEffectInstance;
 public final class FrozenElementalReaction extends ElementalReaction {
 	public FrozenElementalReaction() {
 		super(
-			new ElementalReactionSettings("frozen", OriginsGenshin.identifier("frozen"), OriginsGenshinParticleFactory.Frozen)
+			new ElementalReactionSettings("frozen", OriginsGenshin.identifier("frozen"), OriginsGenshinParticleFactory.FROZEN)
 				// Triggering Frozen should consume the entirety of both Cryo and Hydro aura.
 				.setReactionCoefficient(Double.MAX_VALUE)
 				.setAuraElement(Element.CRYO, 4)

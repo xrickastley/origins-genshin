@@ -7,7 +7,7 @@ import io.github.xrickastley.originsgenshin.factory.OriginsGenshinParticleFactor
 public class PyroSwirlElementalReaction extends AbstractSwirlElementalReaction {
 	public PyroSwirlElementalReaction() {
 		super(
-			new ElementalReactionSettings("Swirl", OriginsGenshin.identifier("swirl_pyro"), OriginsGenshinParticleFactory.Swirl)
+			new ElementalReactionSettings("Swirl", OriginsGenshin.identifier("swirl_pyro"), OriginsGenshinParticleFactory.SWIRL)
 				.setReactionCoefficient(0.5)
 				.setAuraElement(Element.PYRO, 3)
 				.setTriggeringElement(Element.ANEMO, 2)

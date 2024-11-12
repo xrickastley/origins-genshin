@@ -6,6 +6,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 
 import io.github.xrickastley.originsgenshin.util.Color;
 import io.github.xrickastley.originsgenshin.util.Colors;
+import io.github.xrickastley.originsgenshin.util.Ease;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
@@ -76,7 +77,7 @@ public class ReactionParticle extends TextBillboardParticle {
 
 		if (alpha <= 0f || scale <= 0f) return;
 
-		if (age > scaleAge) y += MathHelper.lerp((double) (age - scaleAge) / (maxAge - scaleAge), 0, 0.5);
+		if (age > scaleAge) y += (float) Ease.OUT_SINE.lerpedApply(age, scaleAge, maxAge) * 1.5f;
 
 		double intAlpha = Math.max(0.0f, MathHelper.lerp(Math.max(0, (double) (age - fadeAge) / (maxAge - fadeAge)), 1.0, 0.0));
 
@@ -86,11 +87,12 @@ public class ReactionParticle extends TextBillboardParticle {
 
 		int intColor = fColor.asARGB();
 
-		float scale = (float) MathHelper.lerp(Math.min(1, Math.max((double) age + tickDelta / scaleAge, 0)), 1.5, 0.75);
+		float scale = (float) (1.25 - (Ease.IN_OUT_SINE.lerpedApply((age + tickDelta) / 2.5, 0, 1) * 0.5));
 
+		
 		MatrixStack matrixStack = new MatrixStack();
 		matrixStack.push();
-		matrixStack.translate(x, y, z);
+		matrixStack.translate(x + scale, y, z - scale);
 		matrixStack.multiply(camera.getRotation());
 		matrixStack.scale(-0.04f * scale, -0.04f * scale, -1f);
 
@@ -100,11 +102,12 @@ public class ReactionParticle extends TextBillboardParticle {
 
 		VertexConsumerProvider.Immediate immediate = VertexConsumerProvider.immediate(Tessellator.getInstance().getBuffer());
 
-		renderer.draw(text, x, 0, intColor, false, matrixStack.peek().getPositionMatrix(), immediate, TextLayerType.POLYGON_OFFSET, Colors.BLANK.asARGB(), LightmapTextureManager.MAX_LIGHT_COORDINATE);
+		renderer.draw(text, x, 0, intColor, false, matrixStack.peek().getPositionMatrix(), immediate, TextLayerType.NORMAL, Colors.BLANK.asARGB(), LightmapTextureManager.MAX_LIGHT_COORDINATE);
 		immediate.draw();
 
-		// RenderSystem.enableDepthTest();
-		// RenderSystem.depthFunc(GL11.GL_LEQUAL);
+		RenderSystem.enableCull();
+		RenderSystem.enableDepthTest();
+		RenderSystem.depthFunc(GL11.GL_LEQUAL);
 		
 		matrixStack.pop();
 	}

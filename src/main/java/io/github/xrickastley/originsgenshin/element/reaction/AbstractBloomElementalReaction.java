@@ -7,6 +7,7 @@ import io.github.xrickastley.originsgenshin.entity.DendroCoreEntity;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinEntities;
 
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.World;
 
 public abstract class AbstractBloomElementalReaction extends ElementalReaction {
@@ -18,10 +19,11 @@ public abstract class AbstractBloomElementalReaction extends ElementalReaction {
 	protected void onReaction(LivingEntity entity, ElementalApplication auraElement, ElementalApplication triggeringElement, double reducedGauge, @Nullable LivingEntity origin) {
 		final World world = entity.getWorld();
 
-		if (world.isClient) return;
+		if (!(world instanceof final ServerWorld serverWorld)) return;
 
-		world.spawnEntity(
-			new DendroCoreEntity(OriginsGenshinEntities.DENDRO_CORE, world, origin)
-		);
+		final DendroCoreEntity dendroCore = new DendroCoreEntity(OriginsGenshinEntities.DENDRO_CORE, serverWorld, origin);
+		dendroCore.setPosition(entity.getPos());
+
+		serverWorld.spawnNewEntityAndPassengers(dendroCore);
 	}
 }

@@ -12,7 +12,7 @@ import net.minecraft.entity.LivingEntity;
 public class QuickenElementalReaction extends ElementalReaction {
 	public QuickenElementalReaction() {
 		super(
-			new ElementalReactionSettings("Quicken", OriginsGenshin.identifier("quicken"), OriginsGenshinParticleFactory.Quicken)
+			new ElementalReactionSettings("Quicken", OriginsGenshin.identifier("quicken"), OriginsGenshinParticleFactory.QUICKEN)
 				.setReactionCoefficient(1.0)
 				.setAuraElement(Element.DENDRO, 2)
 				.setTriggeringElement(Element.ELECTRO, 8)

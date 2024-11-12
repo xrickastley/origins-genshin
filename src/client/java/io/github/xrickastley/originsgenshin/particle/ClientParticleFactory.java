@@ -18,22 +18,23 @@ public class ClientParticleFactory {
 				.sublogger(ClientParticleFactory.class)
 				.info("Registering Particles!");
 
-			register(OriginsGenshinParticleFactory.Pyro, ElementParticle.Factory::new);
-			register(OriginsGenshinParticleFactory.Hydro, ElementParticle.Factory::new);
-			register(OriginsGenshinParticleFactory.Anemo, ElementParticle.Factory::new);
-			register(OriginsGenshinParticleFactory.Electro, ElementParticle.Factory::new);
-			register(OriginsGenshinParticleFactory.Dendro, ElementParticle.Factory::new);
-			register(OriginsGenshinParticleFactory.Cryo, ElementParticle.Factory::new);
-			register(OriginsGenshinParticleFactory.Geo, ElementParticle.Factory::new);
-	
-			register(OriginsGenshinParticleFactory.Overloaded, OverloadedParticleFactory::new);
-			register(OriginsGenshinParticleFactory.ElectroCharged, ElectroChargedParticleFactory::new);
-			register(OriginsGenshinParticleFactory.Superconduct, SuperconductParticleFactory::new);
-			register(OriginsGenshinParticleFactory.Frozen, FrozenParticleFactory::new);
-			register(OriginsGenshinParticleFactory.Bloom, BloomParticleFactory::new);
-			register(OriginsGenshinParticleFactory.Melt, MeltParticleFactory::new);
-			register(OriginsGenshinParticleFactory.Vaporize, VaporizeParticleFactory::new);
-			register(OriginsGenshinParticleFactory.Swirl, SwirlParticleFactory::new);
+			register(OriginsGenshinParticleFactory.PYRO, ElementParticle.Factory::new);
+			register(OriginsGenshinParticleFactory.HYDRO, ElementParticle.Factory::new);
+			register(OriginsGenshinParticleFactory.ANEMO, ElementParticle.Factory::new);
+			register(OriginsGenshinParticleFactory.ELECTRO, ElementParticle.Factory::new);
+			register(OriginsGenshinParticleFactory.DENDRO, ElementParticle.Factory::new);
+			register(OriginsGenshinParticleFactory.CRYO, ElementParticle.Factory::new);
+			register(OriginsGenshinParticleFactory.GEO, ElementParticle.Factory::new);
+
+			register(OriginsGenshinParticleFactory.OVERLOADED, OverloadedParticleFactory::new);
+			register(OriginsGenshinParticleFactory.ELECTRO_CHARGED, ElectroChargedParticleFactory::new);
+			register(OriginsGenshinParticleFactory.SUPERCONDUCT, SuperconductParticleFactory::new);
+			register(OriginsGenshinParticleFactory.FROZEN, FrozenParticleFactory::new);
+			register(OriginsGenshinParticleFactory.QUICKEN, QuickenParticleFactory::new);
+			register(OriginsGenshinParticleFactory.BLOOM, BloomParticleFactory::new);
+			register(OriginsGenshinParticleFactory.MELT, MeltParticleFactory::new);
+			register(OriginsGenshinParticleFactory.VAPORIZE, VaporizeParticleFactory::new);
+			register(OriginsGenshinParticleFactory.SWIRL, SwirlParticleFactory::new);
 			
 			register(OriginsGenshinParticleFactory.DAMAGE_TEXT, DamageTextParticle.Factory::new);
 		} catch (Exception e) {

@@ -1,7 +1,5 @@
 package io.github.xrickastley.originsgenshin.renderer.entity.model;
 
-import org.joml.Vector3f;
-
 import com.google.common.collect.ImmutableList;
 
 import io.github.xrickastley.originsgenshin.OriginsGenshin;

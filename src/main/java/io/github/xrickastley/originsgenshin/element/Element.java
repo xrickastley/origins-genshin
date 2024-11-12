@@ -219,8 +219,16 @@ public enum Element {
 		}
 		
 		/**
-		 * Sets the priority of this element.
-		 * @param priority The priority of this element.
+		 * Sets the rendering priority of this element. Most useful for co-existing auras. <br> <br>
+		 * 
+		 * This settings controls how multiple elements are rendered. If all currently applied
+		 * Elements are of the same priority, they are all rendered. However, if an Element of
+		 * higher priority exists, then only that Element and Elements with a similar priority
+		 * will be rendered. <br> <br>
+		 * 
+		 * <strong>Lower<strong> numbers have higher priorities than numbers higher than them.
+		 * 
+		 * @param priority The rendering priority of this element.
 		 */
 		public ElementSettings setPriority(int priority) {
 			this.priority = priority;

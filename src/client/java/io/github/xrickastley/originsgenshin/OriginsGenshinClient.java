@@ -8,6 +8,7 @@ import io.github.apace100.origins.registry.ModComponents;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinEntities;
 import io.github.xrickastley.originsgenshin.interfaces.IOrigin;
 import io.github.xrickastley.originsgenshin.networking.OriginsGenshinPacketsS2C;
+import io.github.xrickastley.originsgenshin.particle.ClientParticleFactory;
 import io.github.xrickastley.originsgenshin.renderer.entity.DendroCoreEntityRenderer;
 import io.github.xrickastley.originsgenshin.renderer.entity.model.DendroCoreEntityModel;
 import io.github.xrickastley.originsgenshin.renderer.genshin.ElementalBurstRenderer;
@@ -36,10 +37,11 @@ public class OriginsGenshinClient implements ClientModInitializer {
 
 	@Override
 	public void onInitializeClient() {
-		OriginsGenshinClient.LOGGER.info("Origins-Genshin (Client) Initialized!");
+		OriginsGenshinClient.LOGGER.info("Origins: Genshin (Client) Initialized!");
 
 		HudRenderCallback.EVENT.register(this::renderSkills);
 
+		ClientParticleFactory.register();
 		EntityRendererRegistry.register(OriginsGenshinEntities.DENDRO_CORE, DendroCoreEntityRenderer::new);
 		EntityModelLayerRegistry.registerModelLayer(DendroCoreEntityModel.MODEL_LAYER, DendroCoreEntityModel::getTexturedModelData);
 		OriginsGenshinPacketsS2C.register();
