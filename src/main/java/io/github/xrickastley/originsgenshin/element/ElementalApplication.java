@@ -147,7 +147,7 @@ public final class ElementalApplication {
 	}
 
 	public int getRemainingTicks() {
-		if (type == Type.DURATION) return entity.age - ((int) appliedAt + (int) (duration * 20));
+		if (type == Type.DURATION) return (int) (entity.age - (appliedAt + duration));
 
 		// Currently in s/GU
 		double decayRate = 35 / (4 * this.gaugeUnits) + (25 / 8.0);
@@ -194,11 +194,14 @@ public final class ElementalApplication {
 	/**
 	 * Whether or not this Elemental Application should be removed. <br> <br>
 	 * 
-	 * This is {@code true} when {@code duration} reaches {@code appliedAt} for {@link Type#DURATION}
-	 * or when {@code currentGauge} reaches {@code 0} for {@link Type#GAUGE_UNITS}.
+	 * This is {@code true}, 
+	 * <ul>
+	 * 	<li>For {@link Type#DURATION} when {@code duration + entity.age} reaches {@code appliedAt} or {@code gaugeUnits} reaches {@code 0} 
+	 * 	<li>For {@link Type#GAUGE_UNITS} when {@code currentGauge} reaches {@code 0}.
+	 * </ul>
 	 */
 	public boolean shouldBeRemoved() {
-		return (isUsingDuration() && duration <= appliedAt) || (isUsingGaugeUnits() && gaugeUnits <= 0);
+		return (isUsingDuration() && (entity.age >= (appliedAt + duration) || gaugeUnits <= 0)) || (isUsingGaugeUnits() && currentGauge <= 0);
 	}
 
 	/**
@@ -254,14 +257,14 @@ public final class ElementalApplication {
 
 		if (application.type != this.type) throw new ElementalApplicationOperationException(Operation.REAPPLICATION_INVALID_TYPES, this, application);
 
-		// The decay rate, handled by gaugeUnits, is always the lesser of both applications.
-		this.gaugeUnits = Math.min(this.gaugeUnits, application.gaugeUnits);
-
 		if (this.isUsingGaugeUnits()) {
 			// However, the current gauge, handled by currentGauge, is always the most of both applications.
 			this.currentGauge = Math.max(this.gaugeUnits, application.gaugeUnits);
+			// The decay rate, handled by gaugeUnits, is always the lesser of both applications.
+			this.gaugeUnits = Math.min(this.gaugeUnits, application.gaugeUnits);
 		} else {
 			this.duration = Math.max(this.duration, application.duration);
+			this.gaugeUnits = Math.max(this.gaugeUnits, application.gaugeUnits);
 		}
 
 		if (this.aura) this.currentGauge *= 0.8;
@@ -324,5 +327,26 @@ public final class ElementalApplication {
 		GAUGE_UNITS,
 		// Has a specified amount of Gauge Units that are removed after DURATION.
 		DURATION;
+	}
+
+	@Override
+	public String toString() {
+		return this.type == Type.GAUGE_UNITS
+			? String.format(
+				"%s@%s[type=GAUGE_UNITS, element=%s, gaugeUnits=%2f, currentGauge=%.2f]",
+				this.getClass().getSimpleName(),
+				Integer.toHexString(this.hashCode()),
+				this.getElement().toString(),
+				this.getGaugeUnits(),
+				this.getCurrentGauge()
+			)
+			: String.format(
+				"%s@%s[type=DURATION, element=%s, gaugeUnits=%s, duration=%.2f]",
+				this.getClass().getSimpleName(),
+				Integer.toHexString(this.hashCode()),
+				this.getElement().toString(),
+				this.getGaugeUnits(),
+				this.getDuration()
+			);
 	}
 }

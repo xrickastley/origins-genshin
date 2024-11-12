@@ -127,7 +127,7 @@ public class ElementComponentImpl implements ElementComponent {
 	public @Nullable ElementalReaction addElementalApplication(final Element element, String sourceTag, double gaugeUnits, double duration, @Nullable LivingEntity origin) {
 		// The Element is still in ICD.
 		if (!canApplyElement(element, sourceTag, true)) return null;
-		
+
 		if (gaugeUnits <= 0) return null;
 
 		final ElementalApplication application = ElementalApplication.usingDuration(owner, element, gaugeUnits, duration);
@@ -228,18 +228,9 @@ public class ElementComponentImpl implements ElementComponent {
 		// Client side: clear all applied elements and use the values provided by tag.
 		appliedElements.clear();
 
-		list.forEach(element -> {
-			final ElementalApplication application = ElementalApplication.fromNbt(owner, element, sentAtAge);
-			final boolean uuidInList = appliedElements.stream().anyMatch(application2 -> application2.matchesUUID(application));
-
-			if (application.shouldBeRemoved()) {
-				appliedElements.removeIf(application2 -> application2.matchesUUID(application));
-			} else if (uuidInList) {
-				application.updateFromNbt(element, sentAtAge);
-			} else {
-				appliedElements.add(application);
-			}			
-		});
+		list.stream()
+			.map(element -> ElementalApplication.fromNbt(owner, element, sentAtAge))
+			.forEach(appliedElements::add);
  	}
 
 	@Override
@@ -255,7 +246,7 @@ public class ElementComponentImpl implements ElementComponent {
 		// Copy to prevent ConcurrentModificationException.
 		new ArrayList<>(appliedElements)
 			.stream()
-			.filter(application -> application.getCurrentGauge() <= 0)
+			.filter(ElementalApplication::shouldBeRemoved)
 			.forEach(application -> appliedElements.remove(application));
 		
 		ElementComponent.sync(owner);
