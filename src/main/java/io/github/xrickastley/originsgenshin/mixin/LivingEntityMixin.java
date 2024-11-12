@@ -3,6 +3,8 @@ package io.github.xrickastley.originsgenshin.mixin;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
 
+import java.util.ArrayList;
+
 import org.spongepowered.asm.mixin.Debug;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
@@ -96,16 +98,17 @@ public abstract class LivingEntityMixin
 		if (!(source instanceof final ElementalDamageSource elementalSource)) return amount;
 
 		final ElementComponent component = ElementComponent.KEY.get(this);
+		final ArrayList<ElementalReaction> reactions = component.applyFromDamageSource(elementalSource);
 
-		float multiplier = 1.0f;
+		double multiplier = reactions.size() > 0
+			? reactions
+				.stream()
+				.filter(reaction -> reaction instanceof AmplifyingElementalReaction)
+				.map(reaction -> ((AmplifyingElementalReaction) reaction))
+				.reduce(1.0, (acc, reaction) -> acc + reaction.getAmplifier(), Double::sum)
+			: 1.0;
 
-		final ElementalReaction reaction = component.applyFromDamageSource(elementalSource);
-
-		if (reaction != null && reaction instanceof final AmplifyingElementalReaction amplifyingReaction) {
-			multiplier = (float) amplifyingReaction.getAmplifier();
-		}
-
-		return amount * multiplier;
+		return amount * (float) multiplier;
 	}
 
 	@Inject(

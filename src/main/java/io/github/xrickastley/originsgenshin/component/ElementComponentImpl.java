@@ -63,111 +63,65 @@ public class ElementComponentImpl implements ElementComponent {
 	}
 
 	@Override
-	public @Nullable ElementalReaction addElementalApplication(ElementalApplication application, String sourceTag, @Nullable LivingEntity origin) {
+	public ArrayList<ElementalReaction> addElementalApplication(ElementalApplication application, String sourceTag, @Nullable LivingEntity origin) {
 		return application.isUsingGaugeUnits()
 			? this.addElementalApplication(application.getElement(), sourceTag, application.getGaugeUnits(), origin)
 			: this.addElementalApplication(application.getElement(), sourceTag, application.getGaugeUnits(), application.getDuration(), origin);
 	}
 
 	@Override
-	public @Nullable ElementalReaction addElementalApplication(final Element element, String sourceTag, double gaugeUnits, @Nullable LivingEntity origin) {
+	public ArrayList<ElementalReaction> addElementalApplication(final Element element, String sourceTag, double gaugeUnits, @Nullable LivingEntity origin) {
 		if (gaugeUnits <= 0) return null;
 		
 		// The Element is still in ICD.
-		if (!canApplyElement(element, sourceTag, true)) return null;
-
-		// Check if the Element has already been applied.
-		final Stream<ElementalApplication> applications = new ArrayList<>(appliedElements)
-			.stream()
-			.filter(application -> application.isOfElement(element))
-			.map(application -> {
-				application.reapply(element, gaugeUnits);
-
-				return application;
-			});
-
-		if (applications.count() > 0) return null;
-
+		if (!this.canApplyElement(element, sourceTag, true)) return null;
+		
 		// Check if a reaction can be triggered first.
 		final ElementalApplication application = ElementalApplication.usingGaugeUnits(owner, element, gaugeUnits, false);
+		
+		// Check if the Element has already been applied.
+		if (this.attemptToReapply(application)) return null;
 
-		// Apply the initial ElementalApplication first, as this allows Reactions to include it.
-		appliedElements.add(application);
+		final ArrayList<ElementalReaction> triggeredReactions = this.triggerPossibleReactions(application, origin);
 
-		final Optional<Reference<ElementalReaction>> reaction = OriginsGenshinRegistries.ELEMENTAL_REACTION
-			.streamEntries()
-			.filter(ref -> ref.value().isTriggerable(owner))
-			.sorted(Comparator.comparing(ref -> ref.value().getPriority(owner)))
-			.findFirst();
+		// Our applied element is now an Aura Element
+		// Remove the application.
+		appliedElements.remove(application);
 
-		// If an Elemental Reaction can be triggered
-		if (reaction.isPresent()) {
-			// Trigger said reaction.
-			reaction.get().value().trigger(owner, origin);
-		} else {
-			// Otherwise, our applied element is considered an Aura Element
-			// Remove the application.
-			appliedElements.remove(application);
-			
-			// Only create Aura Elements out of Elements that allow it.
-			if (element.canBeAura()) appliedElements.add(
-				ElementalApplication.usingGaugeUnits(owner, element, gaugeUnits, true)
-			);
-		}
-
+		boolean applyResultAsAura = triggeredReactions
+			.stream()
+			.allMatch(ElementalReaction::shouldApplyResultAsAura);
+		
+		// Only create Aura Elements out of Elements that allow it.
+		if (element.canBeAura() && applyResultAsAura) appliedElements.add(
+			ElementalApplication.usingGaugeUnits(owner, element, gaugeUnits, true)
+		);
+		
 		ElementComponent.sync(owner);
 
-		return reaction
-			.map(ref -> ref.value())
-			.orElse(null);
+		return triggeredReactions;
 	}	
 
 	@Override
-	public @Nullable ElementalReaction addElementalApplication(final Element element, String sourceTag, double gaugeUnits, double duration, @Nullable LivingEntity origin) {
+	public ArrayList<ElementalReaction> addElementalApplication(final Element element, String sourceTag, double gaugeUnits, double duration, @Nullable LivingEntity origin) {
 		if (gaugeUnits <= 0) return null;
 		
 		// The Element is still in ICD.
-		if (!canApplyElement(element, sourceTag, true)) return null;
-
-		// TODO: Priority system.
+		if (!this.canApplyElement(element, sourceTag, true)) return null;
 
 		final ElementalApplication application = ElementalApplication.usingDuration(owner, element, gaugeUnits, duration);
 
-		// Check if the Element has already been applied.
-		final Stream<ElementalApplication> applications = new ArrayList<>(appliedElements)
-			.stream()
-			.filter(application2 -> application2.isOfElement(element))
-			.map(application2 -> {
-				application2.reapply(application);
-
-				return application2;
-			});
-
-		if (applications.count() > 0) return null;
+		if (this.attemptToReapply(application)) return null;
 
 		// Check if a reaction can be triggered first.
 		// Apply the initial ElementalApplication first, as this allows Reactions to include it.
 		appliedElements.add(application);
 
-		final Optional<Reference<ElementalReaction>> reaction = OriginsGenshinRegistries.ELEMENTAL_REACTION
-			.streamEntries()
-			.filter(ref -> ref.value().isTriggerable(owner))
-			.sorted(Comparator.comparing(ref -> ref.value().getPriority(owner)))
-			.findFirst();
-
-		// If an Elemental Reaction can be triggered
-		if (reaction.isPresent()) {
-			// Trigger said reaction.
-			reaction.get().value().trigger(owner, origin);
-		}
-
-		appliedElements.stream().forEach(System.out::println);
+		final ArrayList<ElementalReaction> triggeredReactions = this.triggerPossibleReactions(application, origin);
 
 		ElementComponent.sync(owner);
 
-		return reaction
-			.map(ref -> ref.value())
-			.orElse(null);
+		return triggeredReactions;
 	}
 
 	@Override
@@ -197,11 +151,11 @@ public class ElementComponentImpl implements ElementComponent {
 	public Stream<ElementalApplication> getAppliedElements() {
 		return new ArrayList<>(appliedElements)
 			.stream()
-			.filter(application -> application.getCurrentGauge() > 0);
+			.filter(application -> !application.shouldBeRemoved());
 	}
 
 	@Override
-	public @Nullable ElementalReaction applyFromDamageSource(ElementalDamageSource source) {
+	public ArrayList<ElementalReaction> applyFromDamageSource(ElementalDamageSource source) {
 		return addElementalApplication(
 			source.getElementalApplication(), 
 			source.getSourceTag(), 
@@ -256,5 +210,87 @@ public class ElementComponentImpl implements ElementComponent {
 			.anyMatch(b -> b);
 		
 		if (hasRemovedElements) ElementComponent.sync(owner);
+	}
+
+	@Override
+	public Optional<Integer> getCurrentElementPriority() {
+		return this
+			.getAppliedElements()
+			.sorted(Comparator.comparingDouble(application -> application.getElement().getPriority()))
+			.findFirst()
+			.map(application -> application.getElement().getPriority());
+	}
+
+	public Stream<ElementalApplication> getPrioritizedElements() {
+		final Optional<Integer> priority = this.getCurrentElementPriority();
+		
+		return priority.isPresent()
+			? this
+				.getAppliedElements()
+				.filter(application -> application.getElement().getPriority() == priority.get())
+			: Stream.of();
+	}
+
+	private Stream<ElementalReaction> getTriggerableReactions() {
+		final Stream<Element> validElements = this
+			.getPrioritizedElements()
+			.map(ElementalApplication::getElement);
+
+		return OriginsGenshinRegistries.ELEMENTAL_REACTION
+			.streamEntries()
+			.map(Reference::value)
+			.filter(reaction -> reaction.isTriggerable(owner) && reaction.hasAnyElement(validElements))
+			.sorted(Comparator.comparing(reaction -> reaction.getPriority(owner)));
+	}
+
+	/**
+	 * Attempts to reapply an {@link ElementalApplication}.
+	 * @param application The {@code ElementalApplication} to reapply.
+	 * @return {@code true} if the Elemental Application was reapplied, {@code false} otherwise.
+	 */
+	private boolean attemptToReapply(ElementalApplication application) {
+		// Check if the Element has already been applied.
+		final Optional<ElementalApplication> currentApplication = this
+			.getPrioritizedElements()
+			.filter(application2 -> application2.isOfElement(application.getElement()))
+			.findFirst();
+
+		if (currentApplication.isPresent()) {
+			currentApplication
+				.get()
+				.reapply(application);
+
+			return true;
+		} else return false;
+	}
+
+	/**
+	 * Triggers all possible Elemental Reactions.
+	 * @param application The {@link ElementalApplication} to apply to this entity.
+	 * @param origin The origin of the {@link ElementalApplication}.
+	 */
+	private ArrayList<ElementalReaction> triggerPossibleReactions(ElementalApplication application, @Nullable LivingEntity origin) {
+		// Apply the initial ElementalApplication first, as this allows Reactions to check for it.
+		appliedElements.add(application);
+
+		Optional<ElementalReaction> reaction = this
+			.getTriggerableReactions()
+			.findFirst();
+
+		final ArrayList<ElementalReaction> triggeredReactions = new ArrayList<>();
+
+		while (application.getCurrentGauge() > 0 && reaction.isPresent()) {
+			reaction
+				.get()
+				.trigger(owner, origin);
+			
+			triggeredReactions.add(reaction.get());
+
+			reaction = this
+				.getTriggerableReactions()
+				.findFirst();
+		}
+
+		return triggeredReactions;
 	}
 }

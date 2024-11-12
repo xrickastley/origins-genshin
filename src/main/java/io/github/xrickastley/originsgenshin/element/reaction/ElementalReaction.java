@@ -2,6 +2,8 @@ package io.github.xrickastley.originsgenshin.element.reaction;
 
 import java.text.DecimalFormat;
 import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
 
@@ -31,6 +33,7 @@ public abstract class ElementalReaction {
 	protected final Pair<Element, Integer> triggeringElement;
 	protected final boolean reversable;
 	protected final boolean allowChildElements;
+	protected final boolean applyResultAsAura;
 	
 	protected ElementalReaction(ElementalReactionSettings settings) {
 		this.name = settings.name;
@@ -42,6 +45,19 @@ public abstract class ElementalReaction {
 		this.triggeringElement = settings.triggeringElement;
 		this.reversable = settings.reversable;
 		this.allowChildElements = settings.allowChildElements;
+		this.applyResultAsAura = settings.applyResultAsAura;
+	}
+
+	public boolean hasElement(Element element) {
+		return element == this.auraElement.getLeft() || element == this.triggeringElement.getLeft();
+	}
+
+	public boolean hasAnyElement(List<Element> elements) {
+		return this.hasAnyElement(elements.stream());
+	}
+
+	public boolean hasAnyElement(Stream<Element> elements) {
+		return elements.anyMatch(this::hasElement);
 	}
 
 	private @Nullable ElementalApplication getPossibleChildElement(Element element, ElementComponent component) {
@@ -79,6 +95,10 @@ public abstract class ElementalReaction {
 			: element == triggeringElement.getLeft()
 				? triggeringElement
 				: null;
+	}
+
+	public boolean shouldApplyResultAsAura() {
+		return this.shouldApplyResultAsAura();
 	}
 
 	/**

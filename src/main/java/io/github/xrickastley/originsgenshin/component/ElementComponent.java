@@ -1,5 +1,7 @@
 package io.github.xrickastley.originsgenshin.component;
 
+import java.util.ArrayList;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
@@ -35,11 +37,11 @@ public interface ElementComponent extends AutoSyncedComponent, CommonTickingComp
 	 */
 	public boolean canApplyElement(Element element, String sourceTag, boolean handleICD);
 
-	public @Nullable ElementalReaction addElementalApplication(ElementalApplication application, String sourceTag, @Nullable LivingEntity origin);
+	public ArrayList<ElementalReaction> addElementalApplication(ElementalApplication application, String sourceTag, @Nullable LivingEntity origin);
 
-	public @Nullable ElementalReaction addElementalApplication(Element element, String sourceTag, double gaugeUnits, @Nullable LivingEntity origin);
+	public ArrayList<ElementalReaction> addElementalApplication(Element element, String sourceTag, double gaugeUnits, @Nullable LivingEntity origin);
 	
-	public @Nullable ElementalReaction addElementalApplication(Element element, String sourceTag, double gaugeUnits, double duration, @Nullable LivingEntity origin);
+	public ArrayList<ElementalReaction> addElementalApplication(Element element, String sourceTag, double gaugeUnits, double duration, @Nullable LivingEntity origin);
 	
 	/**
 	 * Checks if this entity has a specified Elemental Application with the provided {@code element}.
@@ -77,7 +79,28 @@ public interface ElementComponent extends AutoSyncedComponent, CommonTickingComp
 	 * @param source The {@code ElementalDamageSource} to apply to this entity.
 	 * @return A triggered {@link ElementalReaction}, or {@code null} if no reaction was triggered.
 	 */
-	public @Nullable ElementalReaction applyFromDamageSource(final ElementalDamageSource source);
+	public ArrayList<ElementalReaction> applyFromDamageSource(final ElementalDamageSource source);
+
+	/**
+	 * Gets the lowest {@code priority} value from the currently applied Elements
+	 * as an {@link Optional}. <br> <br>
+	 * 
+	 * If the {@code Optional} has no value, this means that there are no Elements
+	 * currently applied.
+	 */
+	public Optional<Integer> getCurrentElementPriority();
+
+	/**
+	 * Gets all currently prioritized applied elements as a {@link Stream}. <br> <br>
+	 * 
+	 * If there are applied Elements with multiple priority values, the most
+	 * prioritized one has to be consumed first before the others can be consumed. <br> <br>
+	 * 
+	 * Say that Element A has a priority of {@code 1}, while Element B has a priority
+	 * of {@code 2}. Element A's application must be consumed entirely before Element B
+	 * could be reacted with or reapplied.
+	 */
+	public Stream<ElementalApplication> getPrioritizedElements();
 
 	public static void sync(Entity entity) {
 		KEY.sync(entity);
