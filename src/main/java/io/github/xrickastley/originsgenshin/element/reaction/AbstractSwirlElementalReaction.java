@@ -38,6 +38,8 @@ public abstract class AbstractSwirlElementalReaction extends ElementalReaction {
 		final World world = entity.getWorld();
 
 		for (final LivingEntity target : world.getNonSpectatingEntities(LivingEntity.class, Box.of(entity.getLerpedPos(1F), radius * 2, radius * 2, radius * 2))) {
+			if (target == origin) continue;
+
 			final ElementalDamageSource source = new ElementalDamageSource(
 				world
 					.getDamageSources()

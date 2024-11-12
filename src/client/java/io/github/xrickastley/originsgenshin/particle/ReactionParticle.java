@@ -31,8 +31,6 @@ public class ReactionParticle extends TextBillboardParticle {
 	protected ReactionParticle(ClientWorld clientWorld, double x, double y, double z, double color) {
 		super(clientWorld, x, y, z, color);
 
-		System.out.println("HELLO");
-
 		this.collidesWithWorld = false;
 		this.gravityStrength = 0f;
 		this.velocityY = 0d;
@@ -61,19 +59,13 @@ public class ReactionParticle extends TextBillboardParticle {
 
 	@Override
 	public void buildGeometry(VertexConsumer vertexConsumer, Camera camera, float tickDelta) {
-		// System.out.println("HELLO");
-
 		MinecraftClient client = MinecraftClient.getInstance();
 		TextRenderer renderer = client.textRenderer;
 		
 		Vec3d vec3d = camera.getPos();
-		float x = (float)(MathHelper.lerp((double)tickDelta, this.prevPosX, this.x) - vec3d.getX());
-		float y = (float)(MathHelper.lerp((double)tickDelta, this.prevPosY, this.y) - vec3d.getY());
-		float z = (float)(MathHelper.lerp((double)tickDelta, this.prevPosZ, this.z) - vec3d.getZ());
-
-		// System.out.println(alpha);
-		// System.out.println(scale);
-		// System.out.println(text);
+		float x = (float) (MathHelper.lerp((double)tickDelta, this.prevPosX, this.x) - vec3d.getX());
+		float y = (float) (MathHelper.lerp((double)tickDelta, this.prevPosY, this.y) - vec3d.getY());
+		float z = (float) (MathHelper.lerp((double)tickDelta, this.prevPosZ, this.z) - vec3d.getZ());
 
 		if (alpha <= 0f || scale <= 0f) return;
 

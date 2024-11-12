@@ -8,6 +8,7 @@ import io.github.xrickastley.originsgenshin.error.ElementalApplicationOperationE
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
+import net.minecraft.util.math.MathHelper;
 
 /**
  * A class representing an Elemental Application for an entity.
@@ -105,9 +106,9 @@ public final class ElementalApplication {
 
 			application = new ElementalApplication(entity, element, uuid, gaugeUnits, isAura);
 			
-			final double syncedGaugeDeduction = (entity.age - sentAtAge) * application.getDecayPerTick();
+			final double syncedGaugeDeduction = Math.max(entity.age - sentAtAge, 0) * application.getDecayPerTick();
 
-			application.currentGauge = Math.max(currentGauge - syncedGaugeDeduction, 0);
+			application.currentGauge = MathHelper.clamp(currentGauge - syncedGaugeDeduction, 0, application.gaugeUnits);
 		} else {
 			final double duration = compound.getDouble("duration");
 			final int appliedAt = compound.getInt("appliedAt");

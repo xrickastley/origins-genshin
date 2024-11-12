@@ -105,8 +105,6 @@ public abstract class LivingEntityMixin
 			multiplier = (float) amplifyingReaction.getAmplifier();
 		}
 
-		System.out.printf("amount: %.2f; multiplier: %.2f; result: %.2f\n", amount, multiplier, amount * multiplier);
-
 		return amount * multiplier;
 	}
 

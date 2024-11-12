@@ -187,8 +187,6 @@ public abstract class ElementalReaction {
 
 	protected void displayReaction(LivingEntity target) {
 		if (target.getWorld().isClient()) return;
-
-		System.out.println("Sending packet!");
 		
 		ShowElementalReactionS2CPacket packet = new ShowElementalReactionS2CPacket(target.getId(), this.getId());
 

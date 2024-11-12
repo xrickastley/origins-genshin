@@ -29,8 +29,6 @@ public class OriginsGenshinPacketsS2C {
  
 		if (reaction == null || reaction.getParticle() == null) return;
 
-		System.out.println("Spawning particle: onElementalReactionShow");
-
 		MinecraftClient
 			.getInstance()
 			.player
@@ -47,8 +45,6 @@ public class OriginsGenshinPacketsS2C {
 		final Color color = packet.element() != null && packet.element().hasDamageColor()
 			? packet.element().getDamageColor()
 			: Colors.PHYSICAL;
-
-		System.out.println("Spawning particle: onElementalDamageShow");
 
 		MinecraftClient
 			.getInstance()

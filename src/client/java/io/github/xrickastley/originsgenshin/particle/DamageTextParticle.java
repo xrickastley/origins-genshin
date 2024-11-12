@@ -33,8 +33,6 @@ public class DamageTextParticle extends TextBillboardParticle {
 	protected DamageTextParticle(ClientWorld clientWorld, double x, double y, double z, double amount, double color) {
 		super(clientWorld, x, y, z, color);
 
-		System.out.println("HELLO");
-
 		this.collidesWithWorld = false;
 		this.gravityStrength = 0f;
 		this.velocityY = 0d;

@@ -256,14 +256,17 @@ public abstract class EntityRendererMixin {
 		matrixStack.multiply(dispatcher.getRotation());
 		matrixStack.scale(-scale, scale, scale);
 
+		float finalWidth = application.isUsingGaugeUnits()
+			? (float) (2.5 * application.getGaugeUnits())
+			: 5f;
 		float xOffset = (float) (livingEntity.getBoundingBox().getLengthX() * 0.85f) / scale;
 
 		Matrix4f positionMatrix = matrixStack.peek().getPositionMatrix();
 
 		buffer.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
         buffer.vertex(positionMatrix, 0 + xOffset, 0 - yOffset, 0).color(Colors.PHYSICAL.asARGB()).next();
-        buffer.vertex(positionMatrix, 5 + xOffset, 0 - yOffset, 0).color(Colors.PHYSICAL.asARGB()).next();
-        buffer.vertex(positionMatrix, 5 + xOffset, 1 - yOffset, 0).color(Colors.PHYSICAL.asARGB()).next();
+        buffer.vertex(positionMatrix, finalWidth + xOffset, 0 - yOffset, 0).color(Colors.PHYSICAL.asARGB()).next();
+        buffer.vertex(positionMatrix, finalWidth + xOffset, 1 - yOffset, 0).color(Colors.PHYSICAL.asARGB()).next();
         buffer.vertex(positionMatrix, 0 + xOffset, 1 - yOffset, 0).color(Colors.PHYSICAL.asARGB()).next();
 
 		RenderSystem.setShader(GameRenderer::getPositionColorProgram);
@@ -277,8 +280,8 @@ public abstract class EntityRendererMixin {
 		
 		buffer.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
         buffer.vertex(positionMatrix, xOffset, 0 - yOffset, -0.0001f).color(color).next();
-        buffer.vertex(positionMatrix, (5 * progress) + xOffset, 0 - yOffset, -0.0001f).color(color).next();
-        buffer.vertex(positionMatrix, (5 * progress) + xOffset, 1 - yOffset, -0.0001f).color(color).next();
+        buffer.vertex(positionMatrix, (finalWidth * progress) + xOffset, 0 - yOffset, -0.0001f).color(color).next();
+        buffer.vertex(positionMatrix, (finalWidth * progress) + xOffset, 1 - yOffset, -0.0001f).color(color).next();
         buffer.vertex(positionMatrix, xOffset, 1 - yOffset, -0.0001f).color(color).next(); 
 		
 		tessellator.draw();
