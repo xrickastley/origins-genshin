@@ -79,6 +79,8 @@ public enum Element {
 	FROZEN(
 		OriginsGenshin.identifier("frozen"),
 		ElementSettings.create()
+			.setTexture(OriginsGenshin.identifier("textures/particle/frozen.png"))
+			.setDamageColor(Color.fromRGBAHex("#b4ffff"))
 			.setParentElement(Element.CRYO)
 			.setAsBypassesCooldown(true)
 			.setPriority(1)
@@ -86,6 +88,8 @@ public enum Element {
 	QUICKEN(
 		OriginsGenshin.identifier("quicken"),
 		ElementSettings.create()
+			.setTexture(OriginsGenshin.identifier("textures/particle/quicken.png"))
+			.setDamageColor(Color.fromRGBAHex("#01e858"))
 			.setParentElement(Element.DENDRO)
 			.setAsBypassesCooldown(true)
 			.setPriority(1)
@@ -93,6 +97,7 @@ public enum Element {
 	BURNING(
 		OriginsGenshin.identifier("burning"),
 		ElementSettings.create()
+			.setTexture(OriginsGenshin.identifier("textures/particle/burning.png"))
 			.setParentElement(Element.PYRO)
 			.setAsBypassesCooldown(true)
 			.setPriority(1)

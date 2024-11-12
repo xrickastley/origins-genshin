@@ -4,8 +4,8 @@ import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Iterator;
-import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Stream;
 
 import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Debug;
@@ -22,6 +22,10 @@ import com.mojang.blaze3d.systems.RenderSystem;
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.component.ElementComponent;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
+import io.github.xrickastley.originsgenshin.element.ElementalApplication.Type;
+import io.github.xrickastley.originsgenshin.util.ClientConfig;
+import io.github.xrickastley.originsgenshin.util.Colors;
+import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.GameRenderer;
@@ -63,52 +67,90 @@ public abstract class EntityRendererMixin {
 	protected void addElementRenderer(final Entity entity, final float yaw, final float tickDelta, final MatrixStack matrixStack, final VertexConsumerProvider vertexConsumers, final int light, CallbackInfo ci) {
 		// TODO: Reaction rendering: if MULTIPLE reactions are triggered, the FIRST reaction triggered will be shown, for 0.5s.
 		
-		if (!(entity instanceof LivingEntity livingEntity)) return;
+		if (!(entity instanceof final LivingEntity livingEntity)) return;
 
-		// if (!renderReaction(livingEntity, matrixStack)) 
-		this.renderElementsIfPresent(livingEntity, matrixStack);
+		this.renderElementsIfPresent(livingEntity, matrixStack, tickDelta);
+		this.renderElementalGauges(livingEntity, matrixStack, tickDelta);
 	}
 
-	/*
-	protected boolean renderReaction(final LivingEntity livingEntity, final MatrixStack matrixStack) {
-		if (!(livingEntity.getWorld() instanceof ClientWorld)) return false;
+	protected void renderElementsIfPresent(final LivingEntity livingEntity, final MatrixStack matrixStack, final float tickDelta) {
+		if (!(livingEntity.getWorld() instanceof ClientWorld)) return;
 
-		if (!livingEntity.isAlive()) return false;
+		if (!livingEntity.isAlive()) return;
 
-		ILivingEntity livingEntityMixin = ((ILivingEntity) livingEntity);
+		final ElementComponent component = ElementComponent.KEY.get(livingEntity);
+
+		if (component.getAppliedElements().count() == 0) return;
+
+		final int priority = component
+			.getAppliedElements()
+			.filter(application -> application.getElement().hasTexture())
+			.sorted(Comparator.comparingDouble(application -> application.getElement().getPriority()))
+			.findFirst()
+			.map(application -> application.getElement().getPriority())
+			.orElse(-1);
 		
-		if (!livingEntityMixin.hasLastTriggeredReaction()) return false;
-
-		if (livingEntity.age > livingEntityMixin.getTriggeredReactionAt() + 10) return false;
-
-		final Iterator<Vec3d> coords = generateTexturesUsingCenter(new Vec3d(0, 0, 0), 0.75, 2).iterator();
+		if (priority == -1) return;
 		
-		renderElement(
-			matrixStack,
-			(float) coords.next().getZ(),
-			livingEntityMixin.getLastTriggeredReaction().getTriggeringElement().getTexture()
-		);
+		final ArrayList<ElementalApplication> elementArray = new ArrayList<>();
+		
+		component
+			.getAppliedElements()
+			.filter(application -> application.getElement().getPriority() == priority)
+			.forEach(elementArray::add);
 
-		renderElement(
-			matrixStack,
-			(float) coords.next().getZ(),
-			livingEntityMixin.getLastTriggeredReaction().getAuraElement().getTexture()
-		);
+		final int elementCount = elementArray.size();
 
-		return true;
+		final Iterator<Vec3d> coords = this.generateTexturesUsingCenter(new Vec3d(0, 0, 0), 1, elementCount).iterator();
+
+		/*
+		if (logCooldowns.getOrDefault(livingEntity.getUuidAsString(), -1L) < Util.getMeasuringTimeMs()) {
+			component
+				.getAppliedElements()
+				.forEach(application ->
+					OriginsGenshin
+						.sublogger(this)
+						.info("Application: {} GU {}", df.format(application.getCurrentGauge()), application.getElement())
+				);
+		
+			logCooldowns.put(livingEntity.getUuidAsString(), Util.getMeasuringTimeMs() + 10_000);
+		}
+		
+		// System.out.println(elementsToRender.count());
+		*/
+		
+		elementArray
+			.forEach(application -> {	
+				try {
+					this.renderElement(
+						livingEntity,
+						matrixStack, 
+						(float) coords.next().getZ(), 
+						application.getElement().getTexture(), 
+						(application.getRemainingTicks() - tickDelta) / 20.0f
+					);
+				} catch (Exception e) {
+					if (logCooldowns.getOrDefault("c12dd02b-7f89-4dc6-a1f0-ad56007bb56e", -1L) > Util.getMeasuringTimeMs()) return;
+				
+					OriginsGenshin
+						.sublogger(this)
+						.error("An error occured while trying to render elements: ", e);
+
+					logCooldowns.put("c12dd02b-7f89-4dc6-a1f0-ad56007bb56e", Util.getMeasuringTimeMs() + 25_000);
+				}
+			});
 	}
-	*/
 
-	protected void renderElement(final MatrixStack matrixStack, float xOffset, Identifier texture) {
-		this.renderElement(matrixStack, xOffset, texture, Integer.MAX_VALUE);
+	protected void renderElement(final LivingEntity livingEntity, final MatrixStack matrixStack, float xOffset, Identifier texture) {
+		this.renderElement(livingEntity, matrixStack, xOffset, texture, Integer.MAX_VALUE);
 	}
 
-	protected void renderElement(final MatrixStack matrixStack, float xOffset, Identifier texture, double secondsLeft) {
+	protected void renderElement(final LivingEntity livingEntity, final MatrixStack matrixStack, float xOffset, Identifier texture, double secondsLeft) {
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder buffer = tessellator.getBuffer();
 
 		matrixStack.push();
-		matrixStack.translate(0f, 2f, 0f);
+		matrixStack.translate(0, livingEntity.getBoundingBox().getLengthY(), 0);
 		matrixStack.multiply(dispatcher.getRotation());
 		matrixStack.scale(-0.50F, 0.50F, 0.50F);
 
@@ -133,7 +175,7 @@ public abstract class EntityRendererMixin {
 				? (float) MathHelper.lerp((secondsLeft % blinkInterval) / intervalSplit, 0f, 1f)
 				: (float) MathHelper.lerp(((secondsLeft % blinkInterval) - 0.25) / intervalSplit, 1f, 0f)
 			: 1f;
-		
+
 		RenderSystem.setShader(GameRenderer::getPositionTexProgram);
 		RenderSystem.setShaderTexture(0, texture);
 		RenderSystem.setShaderColor(1f, 1f, 1f, alpha);
@@ -142,68 +184,11 @@ public abstract class EntityRendererMixin {
 		RenderSystem.defaultBlendFunc();
 		RenderSystem.enableCull();
 
-        tessellator.draw();
+		tessellator.draw();
 
 		RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
 
 		matrixStack.pop();
-	}
-
-	protected void renderElementsIfPresent(final LivingEntity livingEntity, final MatrixStack matrixStack) {
-		try {
-			if (!(livingEntity.getWorld() instanceof ClientWorld)) return;
-
-			if (!livingEntity.isAlive()) return;
-	
-			final ElementComponent component = ElementComponent.KEY.get(livingEntity);
-			final Iterator<Vec3d> coords = generateTexturesUsingCenter(new Vec3d(0, 0, 0), 1, (int) component.getAppliedElements().count()).iterator();
-
-			if (logCooldowns.getOrDefault(livingEntity.getUuidAsString(), -1L) < Util.getMeasuringTimeMs()) {
-				component
-					.getAppliedElements()
-					.forEach(application ->
-						OriginsGenshin
-							.sublogger(this)
-							.info("Application: {} GU {}", df.format(application.getCurrentGauge()), application.getElement())
-					);
-
-				logCooldowns.put(livingEntity.getUuidAsString(), Util.getMeasuringTimeMs() + 2500);
-			}
-
-			// System.out.println("Getting first element!");
-
-			Optional<ElementalApplication> first = component
-				.getAppliedElements()
-				.filter(application -> {
-					System.out.printf("Element: %s, hasTexture: %b", application.getElement().toString(), application.getElement().hasTexture());
-
-					return application.getElement().hasTexture();
-				})
-				.sorted(Comparator.comparingDouble(application -> application.getElement().getPriority()))
-				.peek(System.out::println)
-				.findFirst();
-
-			if (!first.isPresent()) return;
-
-			int priority = first.get().getElement().getPriority();
-
-			// System.out.println(priority);
-
-			component
-				.getAppliedElements()
-				.filter(application -> application.getElement().getPriority() == priority)
-				.forEach(application -> 
-					renderElement(matrixStack, (float) coords.next().getZ(), application.getElement().getTexture(), application.getRemainingTicks() / 20.0f)
-				);
-		} catch (Exception e) {
-			if (logCooldowns.getOrDefault("c12dd02b-7f89-4dc6-a1f0-ad56007bb56e", -1L) > Util.getMeasuringTimeMs()) return;
-
-			OriginsGenshin
-				.sublogger(this)
-				.error("An error occured while trying to render elements: ", e);
-
-			logCooldowns.put("c12dd02b-7f89-4dc6-a1f0-ad56007bb56e", Util.getMeasuringTimeMs() + 2500);
-		}
 	}
 
 	private ArrayList<Vec3d> generateTexturesUsingCenter(Vec3d center, double length, int amount) {
@@ -221,129 +206,96 @@ public abstract class EntityRendererMixin {
 		return result;
 	}
 
-	/*
-	private void drawCircleOutline(Vec3d center, Tessellator tessellator, Matrix4f posMatrix) {
-		BufferBuilder bufferBuilder = tessellator.getBuffer();
+	protected void renderElementalGauges(final LivingEntity livingEntity, final MatrixStack matrixStack, final float tickDelta) {
+		final ClientConfig config = AutoConfig
+			.getConfigHolder(ClientConfig.class)
+			.getConfig();
 
-		float innerRadius = 20f;
-		float totalRadius = 20f;
+		if (!config.developer.displayElementalGauges) return;
 
-		bufferBuilder.begin(VertexFormat.DrawMode.TRIANGLE_STRIP, VertexFormats.POSITION_COLOR);
+		if (!(livingEntity.getWorld() instanceof ClientWorld)) return;
 
-		double subdivisions = 360;
+		if (!livingEntity.isAlive()) return;
 
-		float x = (float) (center.getX() + (Math.cos((0 * (Math.PI / 180)) + (Math.PI / 2)) * innerRadius));
-		float y = (float) (center.getY() - (Math.sin((0 * (Math.PI / 180)) + (Math.PI / 2)) * innerRadius));
+		final ElementComponent component = ElementComponent.KEY.get(livingEntity);
+		final ArrayList<ElementalApplication> appliedElements = new ArrayList<>();
 		
-		bufferBuilder
-			.vertex(posMatrix, x, y, (float) center.getZ())
-			.color(0xffffffff)
-			.next();
+		component
+			.getAppliedElements()
+			.sorted(Comparator.comparingDouble(application -> application.getElement().getPriority()))
+			.forEachOrdered(appliedElements::add);
 
-		for (int i = 0; i <= subdivisions; i++) {
-			float outerX = (float) (center.getX() + (Math.cos((i * (Math.PI / 180)) + (Math.PI / 2)) * totalRadius));
-			float outerY = (float) (center.getY() - (Math.sin((i * (Math.PI / 180)) + (Math.PI / 2)) * totalRadius));
-			bufferBuilder
-				.vertex(posMatrix, outerX, outerY, (float) center.getZ())
-				.color(0xffffffff)
-				.next();
-			
-			// Add vertices for the inner circle
-			float innerX = (float) (center.getX() + (Math.cos((i * (Math.PI / 180)) + (Math.PI / 2)) * innerRadius));
-			float innerY = (float) (center.getY() - (Math.sin((i * (Math.PI / 180)) + (Math.PI / 2)) * innerRadius));
-			bufferBuilder
-				.vertex(posMatrix, innerX, innerY, (float) center.getZ())
-				.color(0xffffffff)
-				.next();
-		}
-
-		RenderSystem.setShader(GameRenderer::getPositionColorProgram);
-		RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
-		RenderSystem.enableBlend();
-		RenderSystem.defaultBlendFunc();
-		RenderSystem.disableCull();
-
-        tessellator.draw();
-
-		RenderSystem.enableCull();
+		final int elementCount = appliedElements.size();
+		final Iterator<ElementalApplication> aeIterator = appliedElements.iterator();
+		
+		Stream
+			.iterate(0.0f, n -> (n / 1.5f) < elementCount, n -> n + 1.5f)
+			.forEachOrdered(yOffset -> {		
+				try {
+					renderElementalGauge(livingEntity, aeIterator.next(), yOffset, matrixStack, tickDelta);
+				} catch (Exception e) {
+					System.out.println(e);
+				}
+			});
 	}
 
-	private void drawCircle(Vec3d center, Tessellator tessellator, Matrix4f posMatrix) {
-		/*
-		BufferBuilder bufferBuilder = tessellator.getBuffer();
+	protected void renderElementalGauge(final LivingEntity livingEntity, final ElementalApplication application, final float yOffset, final MatrixStack matrixStack, final float tickDelta) {
+		if (application.shouldBeRemoved()) return;
 
-		bufferBuilder.begin(VertexFormat.DrawMode.TRIANGLE_FAN, VertexFormats.POSITION_COLOR);
-		bufferBuilder
-			.vertex(posMatrix, (float) center.getX(), (float) center.getY(), (float) center.getZ())
-			.color(0xffffffff)
-			.next();
+		Tessellator tessellator = Tessellator.getInstance();
+		BufferBuilder buffer = tessellator.getBuffer();
 
-		double radius = 10;
-		double subdivisions = 360;
-			
-		for (int i = 0; i <= subdivisions; i++) {
-			float x = (float) (center.getX() + (Math.cos((i * (Math.PI / 180)) + (Math.PI / 2)) * radius));
-			float y = (float) (center.getY() - (Math.sin((i * (Math.PI / 180)) + (Math.PI / 2)) * radius));
-		
-			bufferBuilder
-				.vertex(posMatrix, x, y, (float) center.getZ())
-				.color(0xffffffff)
-				.next();
-		}
+		float scale = 0.35f;
 
-		RenderSystem.setShader(GameRenderer::getPositionColorProgram);
-		RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
-		RenderSystem.enableBlend();
-		RenderSystem.defaultBlendFunc();
-		RenderSystem.disableCull();
+		matrixStack.push();
+		matrixStack.translate(
+			0f, 
+			livingEntity.getBoundingBox().getLengthY() * 1.15,
+			0f
+		);
+		matrixStack.multiply(dispatcher.getRotation());
+		matrixStack.scale(-scale, scale, scale);
 
-        tessellator.draw();
+		float xOffset = (float) (livingEntity.getBoundingBox().getLengthX() * 0.85f) / scale;
 
-		RenderSystem.enableCull();
-		// *./
-		BufferBuilder bufferBuilder = tessellator.getBuffer();
+		Matrix4f positionMatrix = matrixStack.peek().getPositionMatrix();
 
-		float innerRadius = 0.45f;
-		float totalRadius = 0.50f;
-
-		bufferBuilder.begin(VertexFormat.DrawMode.TRIANGLE_STRIP, VertexFormats.POSITION_COLOR);
-
-		double subdivisions = 360;
-
-		float x = (float) (center.getX() + (Math.cos((0 * (Math.PI / 180)) + (Math.PI / 2)) * innerRadius));
-		float y = (float) (center.getY() - (Math.sin((0 * (Math.PI / 180)) + (Math.PI / 2)) * innerRadius));
-		
-		bufferBuilder
-			.vertex(posMatrix, x, y, (float) center.getZ())
-			.color(0xffffffff)
-			.next();
-
-		for (int i = 0; i <= subdivisions; i++) {
-			float outerX = (float) (center.getX() + (Math.cos((i * (Math.PI / 180)) + (Math.PI / 2)) * totalRadius));
-			float outerY = (float) (center.getY() - (Math.sin((i * (Math.PI / 180)) + (Math.PI / 2)) * totalRadius));
-			bufferBuilder
-				.vertex(posMatrix, outerX, outerY, (float) center.getZ())
-				.color(0xffffffff)
-				.next();
-			
-			// Add vertices for the inner circle
-			float innerX = (float) (center.getX() + (Math.cos((i * (Math.PI / 180)) + (Math.PI / 2)) * innerRadius));
-			float innerY = (float) (center.getY() - (Math.sin((i * (Math.PI / 180)) + (Math.PI / 2)) * innerRadius));
-			bufferBuilder
-				.vertex(posMatrix, innerX, innerY, (float) center.getZ())
-				.color(0xffffffff)
-				.next();
-		}
+		buffer.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
+        buffer.vertex(positionMatrix, 0 + xOffset, 0 - yOffset, 0).color(Colors.PHYSICAL.asARGB()).next();
+        buffer.vertex(positionMatrix, 5 + xOffset, 0 - yOffset, 0).color(Colors.PHYSICAL.asARGB()).next();
+        buffer.vertex(positionMatrix, 5 + xOffset, 1 - yOffset, 0).color(Colors.PHYSICAL.asARGB()).next();
+        buffer.vertex(positionMatrix, 0 + xOffset, 1 - yOffset, 0).color(Colors.PHYSICAL.asARGB()).next();
 
 		RenderSystem.setShader(GameRenderer::getPositionColorProgram);
-		RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
-		RenderSystem.enableBlend();
-		RenderSystem.defaultBlendFunc();
-		RenderSystem.disableCull();
 
-        tessellator.draw();
+		tessellator.draw();
 
-		RenderSystem.enableCull();
+		final float progress = this.getProgress(application, tickDelta);
+		final int color = application.getElement().getDamageColor().asARGB();
+		
+		buffer = tessellator.getBuffer();
+		
+		buffer.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
+        buffer.vertex(positionMatrix, xOffset, 0 - yOffset, -0.0001f).color(color).next();
+        buffer.vertex(positionMatrix, (5 * progress) + xOffset, 0 - yOffset, -0.0001f).color(color).next();
+        buffer.vertex(positionMatrix, (5 * progress) + xOffset, 1 - yOffset, -0.0001f).color(color).next();
+        buffer.vertex(positionMatrix, xOffset, 1 - yOffset, -0.0001f).color(color).next(); 
+		
+		tessellator.draw();
+
+		matrixStack.pop();
 	}
-	*/
+
+	@Unique
+	protected float getProgress(ElementalApplication application, float tickDelta) {
+		if (application.getType() == Type.GAUGE_UNITS) {
+			// System.out.printf("Current gauge: %.2f, Gauge units: %.2f\n", application.getCurrentGauge(), application.getGaugeUnits());
+
+			return (float) (application.getCurrentGauge() / application.getGaugeUnits());
+		} else {
+			// System.out.printf("Remaining ticks: %.2f, Duration: %.2f\n", application.getRemainingTicks() - tickDelta, application.getDuration());
+
+			return (float) ((application.getRemainingTicks() - tickDelta) / application.getDuration());
+		}
+	}
 }

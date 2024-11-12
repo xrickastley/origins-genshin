@@ -28,22 +28,14 @@ public final class FrozenElementalReaction extends ElementalReaction {
 		// Gauge-FreezeAura = 2 * min(Gauge-OriginAura, Gauge-TriggerElement)
 		final double freezeAuraGauge = 2 * Math.min(auraElement.getCurrentGauge() + reducedGauge, triggeringElement.getCurrentGauge() + reducedGauge);
 		// Freeze Duration (Seconds) = 2√(5 * freezeAuraGauge) + 4) - 4
-		final float freezeDuration = 2f * (float) Math.sqrt((5 * freezeAuraGauge) + 4) - 4;
+		final double freezeTickDuration = (2.0 * Math.sqrt((5 * freezeAuraGauge) + 4) - 4) * 20;
 
 		entity.addStatusEffect(
-			new StatusEffectInstance(OriginsGenshinStatusEffects.FROZEN, (int) Math.floor(freezeDuration * 20))
+			new StatusEffectInstance(OriginsGenshinStatusEffects.FROZEN, (int) Math.floor(freezeTickDuration))
 		);
 
-		entity
-			.getServer()
-			.execute(() -> {
-				ElementComponent.KEY
-					.get(entity)
-					.addElementalApplication(
-						ElementalApplication.usingDuration(entity, Element.FROZEN, freezeAuraGauge, freezeDuration),
-						"reactions:frozen",
-						null
-					);
-			});
+		ElementComponent.KEY
+			.get(entity)
+			.addElementalApplication(Element.FROZEN, "reactions:frozen", freezeAuraGauge,  freezeTickDuration, origin);
 	}
 }

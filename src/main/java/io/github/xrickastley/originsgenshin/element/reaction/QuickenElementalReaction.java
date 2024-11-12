@@ -23,10 +23,10 @@ public class QuickenElementalReaction extends ElementalReaction {
 	@Override
 	protected void onReaction(LivingEntity entity, ElementalApplication auraElement, ElementalApplication triggeringElement, double reducedGauge, @Nullable LivingEntity origin) {
 		final double quickenAuraGauge = Math.min(auraElement.getCurrentGauge() + reducedGauge, triggeringElement.getCurrentGauge() + reducedGauge);
-		final double duration = quickenAuraGauge * 5 + 6;
+		final double tickDuration = (quickenAuraGauge * 5 + 6) * 20;
 
-		final ElementComponent component = ElementComponent.KEY.get(entity);
-
-		component.addElementalApplication(Element.QUICKEN, "reactions:quicken", quickenAuraGauge, duration, origin);
+		ElementComponent.KEY
+			.get(entity)
+			.addElementalApplication(Element.QUICKEN, "reactions:quicken", quickenAuraGauge, tickDuration, origin);
 	}
 }

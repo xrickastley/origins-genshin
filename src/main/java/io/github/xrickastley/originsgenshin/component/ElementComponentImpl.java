@@ -48,6 +48,7 @@ public class ElementComponentImpl implements ElementComponent {
 		final Logger LOGGER = OriginsGenshin.sublogger(ElementComponent.class);
 		
 		LOGGER.info("({}) Element#bypassesInternalCooldown(): {}", element.toString(), element.bypassesInternalCooldown());
+
 		if (element.bypassesInternalCooldown()) return true;
 
 		final ConcurrentHashMap<String, InternalCooldownData> elementICD = internalCooldowns.getOrDefault(element, new ConcurrentHashMap<>());
@@ -116,7 +117,7 @@ public class ElementComponentImpl implements ElementComponent {
 			);
 		}
 
-		if (!owner.getWorld().isClient()) ElementComponent.sync(owner);
+		ElementComponent.sync(owner);
 
 		return reaction
 			.map(ref -> ref.value())
@@ -129,6 +130,8 @@ public class ElementComponentImpl implements ElementComponent {
 		if (!canApplyElement(element, sourceTag, true)) return null;
 
 		if (gaugeUnits <= 0) return null;
+
+		// TODO: Priority system.
 
 		final ElementalApplication application = ElementalApplication.usingDuration(owner, element, gaugeUnits, duration);
 
@@ -145,7 +148,6 @@ public class ElementComponentImpl implements ElementComponent {
 		if (applications.count() > 0) return null;
 
 		// Check if a reaction can be triggered first.
-
 		// Apply the initial ElementalApplication first, as this allows Reactions to include it.
 		appliedElements.add(application);
 
@@ -161,7 +163,9 @@ public class ElementComponentImpl implements ElementComponent {
 			reaction.get().value().trigger(owner);
 		}
 
-		if (!owner.getWorld().isClient()) ElementComponent.sync(owner);
+		appliedElements.stream().forEach(System.out::println);
+
+		ElementComponent.sync(owner);
 
 		return reaction
 			.map(ref -> ref.value())
