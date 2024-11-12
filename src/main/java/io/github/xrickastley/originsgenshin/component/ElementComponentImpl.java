@@ -23,6 +23,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.registry.entry.RegistryEntry.Reference;
+import net.minecraft.server.world.ServerWorld;
 
 public class ElementComponentImpl implements ElementComponent {
 	private final LivingEntity owner;
@@ -33,6 +34,7 @@ public class ElementComponentImpl implements ElementComponent {
 	 * 					-> Pair<Integer, Integer> (lastApplied, 3-hit rule)
 	 */
 	private final ConcurrentHashMap<Element, ConcurrentHashMap<String, InternalCooldownData>> internalCooldowns = new ConcurrentHashMap<>();
+	private final Logger LOGGER = OriginsGenshin.sublogger(ElementComponent.class);
 
 	public ElementComponentImpl(LivingEntity owner) {
 		this.owner = owner;
@@ -45,10 +47,6 @@ public class ElementComponentImpl implements ElementComponent {
 	
 	@Override
 	public boolean canApplyElement(Element element, String sourceTag, boolean handleICD) {
-		final Logger LOGGER = OriginsGenshin.sublogger(ElementComponent.class);
-		
-		LOGGER.info("({}) Element#bypassesInternalCooldown(): {}", element.toString(), element.bypassesInternalCooldown());
-
 		if (element.bypassesInternalCooldown()) return true;
 
 		final ConcurrentHashMap<String, InternalCooldownData> elementICD = internalCooldowns.getOrDefault(element, new ConcurrentHashMap<>());
@@ -73,10 +71,10 @@ public class ElementComponentImpl implements ElementComponent {
 
 	@Override
 	public @Nullable ElementalReaction addElementalApplication(final Element element, String sourceTag, double gaugeUnits, @Nullable LivingEntity origin) {
-		// The Element is still in ICD.
-		if (!canApplyElement(element, sourceTag, true)) return null; 
-
 		if (gaugeUnits <= 0) return null;
+		
+		// The Element is still in ICD.
+		if (!canApplyElement(element, sourceTag, true)) return null;
 
 		// Check if the Element has already been applied.
 		final Stream<ElementalApplication> applications = new ArrayList<>(appliedElements)
@@ -105,7 +103,7 @@ public class ElementComponentImpl implements ElementComponent {
 		// If an Elemental Reaction can be triggered
 		if (reaction.isPresent()) {
 			// Trigger said reaction.
-			reaction.get().value().trigger(owner);
+			reaction.get().value().trigger(owner, origin);
 		} else {
 			// Otherwise, our applied element is considered an Aura Element
 			// Remove the application.
@@ -126,10 +124,10 @@ public class ElementComponentImpl implements ElementComponent {
 
 	@Override
 	public @Nullable ElementalReaction addElementalApplication(final Element element, String sourceTag, double gaugeUnits, double duration, @Nullable LivingEntity origin) {
+		if (gaugeUnits <= 0) return null;
+		
 		// The Element is still in ICD.
 		if (!canApplyElement(element, sourceTag, true)) return null;
-
-		if (gaugeUnits <= 0) return null;
 
 		// TODO: Priority system.
 
@@ -160,7 +158,7 @@ public class ElementComponentImpl implements ElementComponent {
 		// If an Elemental Reaction can be triggered
 		if (reaction.isPresent()) {
 			// Trigger said reaction.
-			reaction.get().value().trigger(owner);
+			reaction.get().value().trigger(owner, origin);
 		}
 
 		appliedElements.stream().forEach(System.out::println);
@@ -234,6 +232,9 @@ public class ElementComponentImpl implements ElementComponent {
 
 		list.stream()
 			.map(element -> ElementalApplication.fromNbt(owner, element, sentAtAge))
+			.peek(application -> {
+				if (owner.getWorld() instanceof ServerWorld) LOGGER.info("[{}] Adding ElementalApplication: {}", owner.getWorld().getClass().getSimpleName(), application);
+			})
 			.forEach(appliedElements::add);
  	}
 
@@ -248,11 +249,12 @@ public class ElementComponentImpl implements ElementComponent {
 
 	private void removeConsumedElements() {
 		// Copy to prevent ConcurrentModificationException.
-		new ArrayList<>(appliedElements)
+		boolean hasRemovedElements = new ArrayList<>(appliedElements)
 			.stream()
 			.filter(ElementalApplication::shouldBeRemoved)
-			.forEach(application -> appliedElements.remove(application));
+			.map(application -> appliedElements.remove(application))
+			.anyMatch(b -> b);
 		
-		ElementComponent.sync(owner);
+		if (hasRemovedElements) ElementComponent.sync(owner);
 	}
 }
