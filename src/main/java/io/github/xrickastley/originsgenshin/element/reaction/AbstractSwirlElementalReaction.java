@@ -20,12 +20,13 @@ public abstract class AbstractSwirlElementalReaction extends ElementalReaction {
 	 * 
 	 * The specified <b>aura element</b> will serve as the "swirlable" element. <br> <br> 
 	 * 
-	 * For example, if the Aura Element is {@code PYRO}, then the Pyro element is swirled
+	 * For example, if the Aura Element is {@link Element#PYRO}, then the Pyro element is swirled
 	 * and spread to nearby targets (r=3m). <br> <br>
 	 * 
-	 * Due to a lack of documentation in the wiki, the applied element will have a gauge unit
-	 * value equal to the minimum of either the Anemo or Swirled element.
-	 * @param settings
+	 * For the Gauge Units applied by the Swirl reaction, as well as it's duration, you may refer
+	 * here: <a href=https://genshin-impact.fandom.com/wiki/Elemental_Gauge_Theory/Advanced_Mechanics#Swirl_Elemental_Application">
+	 * Swirl Elemental Application</a> 
+	 * @param settings The {@code ElementalReactionSettings} for this {@code ElementalReaction}.
 	 */
 	protected AbstractSwirlElementalReaction(ElementalReactionSettings settings) {
 		super(settings);
@@ -37,6 +38,15 @@ public abstract class AbstractSwirlElementalReaction extends ElementalReaction {
 	protected void onReaction(LivingEntity entity, ElementalApplication auraElement, ElementalApplication triggeringElement, double reducedGauge, @Nullable LivingEntity origin) {
 		final World world = entity.getWorld();
 
+		final double gaugeOriginAura = auraElement.getCurrentGauge() + reducedGauge;
+		final double gaugeAnemo = triggeringElement.getCurrentGauge() + reducedGauge;
+
+		final double gaugeReaction = gaugeOriginAura >= (0.5 * gaugeAnemo)
+			? gaugeAnemo
+			: gaugeOriginAura;
+
+		final double gaugeSwirlAttack = ((gaugeReaction - 0.04) * 1.25) + 1;
+
 		for (final LivingEntity target : world.getNonSpectatingEntities(LivingEntity.class, Box.of(entity.getLerpedPos(1F), radius * 2, radius * 2, radius * 2))) {
 			if (target == origin) continue;
 
@@ -44,7 +54,7 @@ public abstract class AbstractSwirlElementalReaction extends ElementalReaction {
 				world
 					.getDamageSources()
 					.create(DamageTypes.PLAYER_ATTACK, origin),
-				ElementalApplication.usingGaugeUnits(target, swirlElement, Math.min(auraElement.getGaugeUnits(), triggeringElement.getGaugeUnits())),
+				ElementalApplication.usingGaugeUnits(target, swirlElement, gaugeSwirlAttack),
 				String.format("swirl-%s", swirlElement.toString().toLowerCase())
 			);
 			final float damage = 2 * OriginsGenshin.getLevelMultiplier(world);
