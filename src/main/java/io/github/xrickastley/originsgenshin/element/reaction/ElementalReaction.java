@@ -8,7 +8,7 @@ import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
 
-import io.github.xrickastley.javascript.array.Array;
+import io.github.xrickastley.originsgenshin.util.Array;
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.component.ElementComponent;
 import io.github.xrickastley.originsgenshin.element.Element;
@@ -25,6 +25,8 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
 
 public abstract class ElementalReaction {
+	private static final Logger LOGGER = OriginsGenshin.sublogger(ElementalReaction.class);
+
 	protected final String name;
 	protected final Identifier id;
 	protected final DefaultParticleType particle;
@@ -67,7 +69,11 @@ public abstract class ElementalReaction {
 	private @Nullable ElementalApplication getPossibleChildElement(Element element, ElementComponent component) {
 		return component
 			.getAppliedElements()
-			.filter(application -> auraElement.getLeft().isChild(application.getElement()))
+			.filter(application -> {
+				LOGGER.info("Element: {} | isChild ({}): {}", element, application.getElement(), element.isChild(application.getElement()));
+
+				return element.isChild(application.getElement());
+			})
 			.sortElements((a, b) -> a.getElement().getPriority() - b.getElement().getPriority())
 			.findFirst()
 			.orElseGet(() -> null);
@@ -161,9 +167,9 @@ public abstract class ElementalReaction {
 
 		return reversable
 			// Any of the elements can be an Aura element.
-			? applicationAE != null && applicationTE != null
+			? applicationAE != null && applicationTE != null && applicationAE.getCurrentGauge() > 0 && applicationTE.getCurrentGauge() > 0
 			// The aura element must STRICTLY be an Aura element.
-			: applicationAE != null && applicationTE != null && applicationAE.isAuraElement();
+			: applicationAE != null && applicationTE != null && applicationAE.isAuraElement() && applicationAE.getCurrentGauge() > 0 && applicationTE.getCurrentGauge() > 0;
 	}
 
 	public boolean trigger(LivingEntity entity) {
@@ -184,11 +190,13 @@ public abstract class ElementalReaction {
 		}
 
 		final DecimalFormat df = new DecimalFormat("0.0");
-		final Logger LOGGER = OriginsGenshin.sublogger(ElementalReaction.class);
 		
 		LOGGER.info("Phase: BEFORE - Aura element: {} GU {}; Triggering elements: {} GU {}; Reaction coefficient: {}", df.format(applicationAE.getCurrentGauge()), applicationAE.getElement(), df.format(applicationTE.getCurrentGauge()), applicationTE.getElement(), reactionCoefficient);
 		
 		final double reducedGauge = applicationAE.reduceGauge(reactionCoefficient * applicationTE.getCurrentGauge());
+
+		LOGGER.info("Phase: CALCULATE - Reaction coefficient: {} | Reduced Gauge (AE): {}", reactionCoefficient, reducedGauge);
+
 		/**
 		 * TODO: Multi-elemental aura triggers
 		 * 
@@ -199,7 +207,7 @@ public abstract class ElementalReaction {
 		 */
 		// component.reduceElementalApplication(triggeringElement.getLeft(), reducedGauge * reactionCoefficient);
 
-		applicationTE.reduceGauge(applicationTE.getCurrentGauge());
+		applicationTE.reduceGauge(reducedGauge);
 		
 		LOGGER.info("Phase: AFTER - Aura element: {} GU {}; Triggering elements: {} GU {}; Reaction coefficient: {}", df.format(applicationAE.getCurrentGauge()), applicationAE.getElement(), df.format(applicationTE.getCurrentGauge()), applicationTE.getElement(), reactionCoefficient);
 

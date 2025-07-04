@@ -154,6 +154,13 @@ public enum Element {
 		return settings.isAura;
 	}
 	
+	/**
+	 * Controls reapplication of elements <br> <br>
+	 * 
+	 * For an element to be reapplied, this element's priority must *match* the <i>current highest priority<i>.
+	 * Note that it *also* doesn't have to be greater than, as
+	 * 	- The greater than element should've already been applied (sees that priority, match.)
+	 */
 	public int getPriority() {
 		return this.settings.priority;
 	}

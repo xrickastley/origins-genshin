@@ -32,7 +32,7 @@ public class OriginMixin implements IOrigin {
 	@Mutable
 	@Final
 	@Shadow(remap = false)	
-	public static final SerializableData DATA = new SerializableData();
+	public static final SerializableData DATA = Origin.DATA;
 
 	protected Identifier elementalBurstPower = null;
 	protected Identifier elementalSkillPower = null;

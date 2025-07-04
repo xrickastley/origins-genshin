@@ -11,7 +11,7 @@ public class PyroSwirlElementalReaction extends AbstractSwirlElementalReaction {
 				.setReactionCoefficient(0.5)
 				.setAuraElement(Element.PYRO, 3)
 				.setTriggeringElement(Element.ANEMO, 2)
-				.setAsReversable(true)
+				.reversable(true)
 		);
 	}
 }

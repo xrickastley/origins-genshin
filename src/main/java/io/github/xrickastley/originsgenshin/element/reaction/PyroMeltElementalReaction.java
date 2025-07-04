@@ -10,7 +10,8 @@ public final class PyroMeltElementalReaction extends AmplifyingElementalReaction
 			new ElementalReactionSettings("Melt (Pyro)", OriginsGenshin.identifier("melt_pyro"), OriginsGenshinParticleFactory.MELT)
 				.setReactionCoefficient(2.0)
 				.setAuraElement(Element.CRYO, 5)
-				.setTriggeringElement(Element.PYRO),
+				.setTriggeringElement(Element.PYRO)
+				.allowChildElements(true),
 			2
 		);
 	}

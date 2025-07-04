@@ -1,4 +1,4 @@
-package io.github.xrickastley.javascript.array;
+package io.github.xrickastley.originsgenshin.util;
 
 import org.jetbrains.annotations.NotNull;
 

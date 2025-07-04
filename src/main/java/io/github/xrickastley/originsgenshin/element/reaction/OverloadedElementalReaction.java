@@ -26,8 +26,8 @@ public class OverloadedElementalReaction extends ElementalReaction {
 				.setReactionCoefficient(1.0)
 				.setAuraElement(Element.PYRO, 2)
 				.setTriggeringElement(Element.ELECTRO, 3)
-				.setAsReversable(true)
-				.setAsAllowingChildElements(true)
+				.reversable(true)
+				.allowChildElements(true)
 		);
 	}
 

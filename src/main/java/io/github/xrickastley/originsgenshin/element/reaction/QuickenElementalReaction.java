@@ -16,7 +16,7 @@ public class QuickenElementalReaction extends ElementalReaction {
 				.setReactionCoefficient(1.0)
 				.setAuraElement(Element.DENDRO, 2)
 				.setTriggeringElement(Element.ELECTRO, 8)
-				.setAsReversable(true)
+				.reversable(true)
 		);
 	}
 
@@ -28,5 +28,9 @@ public class QuickenElementalReaction extends ElementalReaction {
 		ElementComponent.KEY
 			.get(entity)
 			.addElementalApplication(Element.QUICKEN, "reactions:quicken", quickenAuraGauge, tickDuration, origin);
+
+		OriginsGenshin
+			.sublogger(this)
+			.info("Quicken: {}", ElementComponent.KEY.get(entity).getElementalApplication(Element.QUICKEN));
 	}
 }

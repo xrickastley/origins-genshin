@@ -124,9 +124,14 @@ public abstract class LivingEntityMixin
 		at = @At("HEAD")
 	)
 	public void electroChargedTick(CallbackInfo ci) {
-		if (!ElementalReactions.ELECTRO_CHARGED.isTriggerable(this) || this.isElectroChargedOnCD()) return;
+		if (!ElementalReactions.ELECTRO_CHARGED.isTriggerable(this) || this.getWorld().isClient) return;
+
+		OriginsGenshin
+			.sublogger("LivingEntityMixin")
+			.info("Electro-Charged - isTriggerable: {} | Hydro: {} | Electro: {}", ElementalReactions.ELECTRO_CHARGED.isTriggerable(this), ElementComponent.KEY.get(this).getElementalApplication(Element.HYDRO), ElementComponent.KEY.get(this).getElementalApplication(Element.ELECTRO));
 
 		ElementalReactions.ELECTRO_CHARGED.trigger(((LivingEntity)(Entity) this));
+		ElementComponent.sync(this);
 	}
 
 	@ModifyReturnValue(

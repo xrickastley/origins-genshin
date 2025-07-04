@@ -19,7 +19,7 @@ public final class FrozenElementalReaction extends ElementalReaction {
 				.setReactionCoefficient(Double.MAX_VALUE)
 				.setAuraElement(Element.CRYO, 4)
 				.setTriggeringElement(Element.HYDRO, 3)
-				.setAsReversable(true)
+				.reversable(true)
 		);
 	}
 
@@ -33,9 +33,11 @@ public final class FrozenElementalReaction extends ElementalReaction {
 		entity.addStatusEffect(
 			new StatusEffectInstance(OriginsGenshinStatusEffects.FROZEN, (int) Math.floor(freezeTickDuration))
 		);
+
+		System.out.println("Freeze duration (ticks): " + freezeTickDuration);
 		
 		ElementComponent.KEY
 			.get(entity)
-			.addElementalApplication(Element.FROZEN, "reactions:frozen", freezeAuraGauge,  freezeTickDuration, origin);
+			.addElementalApplication(Element.FROZEN, "reactions:frozen", freezeAuraGauge, freezeTickDuration, origin);
 	}
 }

@@ -93,16 +93,16 @@ public final class ElementalApplication {
 	public static ElementalApplication fromNbt(LivingEntity entity, NbtElement nbt, int sentAtAge) {
 		if (!(nbt instanceof final NbtCompound compound)) throw new ElementalApplicationOperationException(Operation.INVALID_NBT_DATA, null, null);
 
-		final Type type = Type.valueOf(compound.getString("type"));
-		final Element element = Element.valueOf(compound.getString("element"));
-		final UUID uuid = compound.getUuid("uuid");
-		final double gaugeUnits = compound.getDouble("gaugeUnits");
-		final double currentGauge = compound.getDouble("currentGauge");
+		final Type type = Type.valueOf(compound.getString("Type"));
+		final Element element = Element.valueOf(compound.getString("Element"));
+		final UUID uuid = compound.getUuid("UUID");
+		final double gaugeUnits = compound.getDouble("GaugeUnits");
+		final double currentGauge = compound.getDouble("CurrentGauge");
 
 		ElementalApplication application;
 
 		if (type == Type.GAUGE_UNITS) {
-			final boolean isAura = compound.getBoolean("isAura");
+			final boolean isAura = compound.getBoolean("IsAura");
 
 			application = new ElementalApplication(entity, element, uuid, gaugeUnits, isAura);
 			
@@ -110,8 +110,8 @@ public final class ElementalApplication {
 
 			application.currentGauge = MathHelper.clamp(currentGauge - syncedGaugeDeduction, 0, application.gaugeUnits);
 		} else {
-			final double duration = compound.getDouble("duration");
-			final int appliedAt = compound.getInt("appliedAt");
+			final double duration = compound.getDouble("Duration");
+			final int appliedAt = compound.getInt("AppliedAt");
 
 			application = new ElementalApplication(entity, element, uuid, gaugeUnits, duration);
 			application.currentGauge = currentGauge;
@@ -230,14 +230,28 @@ public final class ElementalApplication {
 	
 			difference = previousValue - this.gaugeUnits;
 		}
-	
-		ElementComponent.sync(entity);
 
 		return difference;
 	}
 
 	public boolean matchesUUID(ElementalApplication other) {
 		return this.uuid.equals(other.uuid);
+	}
+
+	public ElementalApplication asAura() {
+		final ElementalApplication application = new ElementalApplication(entity, element, UUID.randomUUID(), gaugeUnits, true);
+
+		application.currentGauge = Math.min(gaugeUnits, application.gaugeUnits * 0.8);
+
+		return application;
+	}
+
+	public ElementalApplication asNonAura() {
+		final ElementalApplication application = new ElementalApplication(entity, element, UUID.randomUUID(), gaugeUnits, false);
+
+		application.currentGauge = gaugeUnits;
+
+		return application;
 	}
 
 	public void tick() {
@@ -274,7 +288,7 @@ public final class ElementalApplication {
 
 		if (this.isAura) this.currentGauge *= 0.8;
 	
-		ElementComponent.sync((LivingEntity) entity);
+		ElementComponent.sync(entity);
 	}
 	
 	protected void decayApplication() {
@@ -298,14 +312,14 @@ public final class ElementalApplication {
 	public NbtCompound asNbt() {
 		final NbtCompound nbt = new NbtCompound();
 
-		nbt.putString("type", this.type.toString());
-		nbt.putString("element", this.element.toString());
-		nbt.putUuid("uuid", uuid);
-		nbt.putBoolean("isAura", this.isAura);
-		nbt.putDouble("gaugeUnits", this.gaugeUnits);
-		nbt.putDouble("currentGauge", this.currentGauge);
-		nbt.putDouble("duration", this.duration);
-		nbt.putInt("appliedAt", this.appliedAt);
+		nbt.putString("Type", this.type.toString());
+		nbt.putString("Element", this.element.toString());
+		nbt.putUuid("UUID", uuid);
+		nbt.putBoolean("IsAura", this.isAura);
+		nbt.putDouble("GaugeUnits", this.gaugeUnits);
+		nbt.putDouble("CurrentGauge", this.currentGauge);
+		nbt.putDouble("Duration", this.duration);
+		nbt.putInt("AppliedAt", this.appliedAt);
 
 		return nbt;
 	}

@@ -11,7 +11,7 @@ public class ElectroSwirlElementalReaction extends AbstractSwirlElementalReactio
 				.setReactionCoefficient(0.5)
 				.setAuraElement(Element.ELECTRO, 4)
 				.setTriggeringElement(Element.ANEMO, 1)
-				.setAsReversable(true)
+				.reversable(true)
 		);
 	}
 }

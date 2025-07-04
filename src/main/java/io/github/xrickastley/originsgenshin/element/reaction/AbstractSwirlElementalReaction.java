@@ -54,7 +54,7 @@ public abstract class AbstractSwirlElementalReaction extends ElementalReaction {
 				world
 					.getDamageSources()
 					.create(DamageTypes.PLAYER_ATTACK, origin),
-				ElementalApplication.gaugeUnits(target, swirlElement, gaugeSwirlAttack),
+				ElementalApplication.gaugeUnits(target, swirlElement, gaugeSwirlAttack, true),
 				String.format("swirl-%s", swirlElement.toString().toLowerCase())
 			);
 			final float damage = 2 * OriginsGenshin.getLevelMultiplier(world);

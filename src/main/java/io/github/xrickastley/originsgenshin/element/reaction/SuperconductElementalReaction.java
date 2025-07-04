@@ -11,7 +11,7 @@ public class SuperconductElementalReaction extends AbstractSuperconductElemental
 				.setReactionCoefficient(1.0)
 				.setAuraElement(Element.CRYO, 1)
 				.setTriggeringElement(Element.ELECTRO, 6)
-				.setAsReversable(true)
+				.reversable(true)
 		);
 	}
 }

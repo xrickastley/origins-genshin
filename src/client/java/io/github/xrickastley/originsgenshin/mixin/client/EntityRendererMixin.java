@@ -82,7 +82,7 @@ public abstract class EntityRendererMixin {
 
 		if (component.getAppliedElements().length() == 0) return;
 
-		final Optional<Integer> priority = component.getCurrentElementPriority();
+		final Optional<Integer> priority = component.getHighestElementPriority();
 		
 		if (!priority.isPresent()) return;
 		
@@ -221,10 +221,13 @@ public abstract class EntityRendererMixin {
 
 		final int elementCount = appliedElements.size();
 		final Iterator<ElementalApplication> aeIterator = appliedElements.iterator();
-		
+
+		// if (livingEntity.age % 20 == 0 && tickDelta % 1 == 0 && livingEntity.getUuidAsString().equals("37e6eda1-4824-4342-97bf-751abdaee3e1")) 
+		// 	OriginsGenshin.LOGGER.info("appliedElements: {}", appliedElements);
+
 		Stream
 			.iterate(0.0f, n -> (n / 1.5f) < elementCount, n -> n + 1.5f)
-			.forEachOrdered(yOffset -> {		
+			.forEachOrdered(yOffset -> {
 				try {
 					renderElementalGauge(livingEntity, aeIterator.next(), yOffset, matrixStack, tickDelta);
 				} catch (Exception e) {

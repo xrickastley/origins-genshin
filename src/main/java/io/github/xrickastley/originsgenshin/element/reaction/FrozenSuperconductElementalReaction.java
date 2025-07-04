@@ -11,7 +11,7 @@ public class FrozenSuperconductElementalReaction extends AbstractSuperconductEle
 				.setReactionCoefficient(1.0)
 				.setAuraElement(Element.FROZEN, 2)
 				.setTriggeringElement(Element.ELECTRO, 7)
-				.setAsReversable(true)
+				.reversable(true)
 		);
 	}
 }

@@ -1,13 +1,9 @@
 package io.github.xrickastley.originsgenshin.particle;
 
 import org.joml.Matrix4f;
-import org.joml.Quaternionfc;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL30;
-
 import com.mojang.blaze3d.systems.RenderSystem;
 
-import io.github.xrickastley.originsgenshin.mixin.client.WorldRendererAccessor;
 import io.github.xrickastley.originsgenshin.util.Color;
 import io.github.xrickastley.originsgenshin.util.Colors;
 import io.github.xrickastley.originsgenshin.util.Ease;
@@ -15,23 +11,14 @@ import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.Font;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.font.TextRenderer.TextLayerType;
-import net.minecraft.client.gl.ShaderProgram;
-import net.minecraft.client.gui.Drawable;
-import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.Camera;
-import net.minecraft.client.render.GameRenderer;
 import net.minecraft.client.render.LightmapTextureManager;
-import net.minecraft.client.render.RenderLayer;
-import net.minecraft.client.render.RenderLayers;
 import net.minecraft.client.render.Tessellator;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.render.debug.DebugRenderer;
-import net.minecraft.client.render.entity.VillagerEntityRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.text.MutableText;

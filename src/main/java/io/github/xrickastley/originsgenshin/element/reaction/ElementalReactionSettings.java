@@ -73,7 +73,7 @@ public final class ElementalReactionSettings {
 	 * element.
 	 * @param reversable Whether or not the Elemental Reaction is reversable.
 	 */
-	public ElementalReactionSettings setAsReversable(boolean reversable) {
+	public ElementalReactionSettings reversable(boolean reversable) {
 		this.reversable = reversable;
 
 		return this;
@@ -87,7 +87,7 @@ public final class ElementalReactionSettings {
 	 * 
 	 * @param allowChildElements Whether or not the Elemental Reaction allows child elements. 
 	 */
-	public ElementalReactionSettings setAsAllowingChildElements(boolean allowChildElements) {
+	public ElementalReactionSettings allowChildElements(boolean allowChildElements) {
 		this.allowChildElements = allowChildElements;
 
 		return this;
@@ -109,7 +109,7 @@ public final class ElementalReactionSettings {
 	 * 
 	 * @param applyResultAsAura Whether or not the remaining Gauge Units from the triggering element are applied as an Elemental Aura.
 	 */
-	public ElementalReactionSettings setApplyResultAsAura(boolean applyResultAsAura) {
+	public ElementalReactionSettings applyResultAsAura(boolean applyResultAsAura) {
 		this.applyResultAsAura = applyResultAsAura;
 
 		return this;

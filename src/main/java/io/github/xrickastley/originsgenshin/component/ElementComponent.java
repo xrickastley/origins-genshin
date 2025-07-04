@@ -10,9 +10,10 @@ import dev.onyxstudios.cca.api.v3.component.ComponentKey;
 import dev.onyxstudios.cca.api.v3.component.ComponentRegistry;
 import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
 import dev.onyxstudios.cca.api.v3.component.tick.CommonTickingComponent;
-
+import io.github.xrickastley.originsgenshin.util.Array;
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.element.Element;
+import io.github.xrickastley.originsgenshin.element.ElementHolder;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
 import io.github.xrickastley.originsgenshin.element.ElementalDamageSource;
 import io.github.xrickastley.originsgenshin.element.reaction.ElementalReaction;
@@ -21,6 +22,8 @@ import net.minecraft.entity.LivingEntity;
 
 public interface ElementComponent extends AutoSyncedComponent, CommonTickingComponent {
 	public static final ComponentKey<ElementComponent> KEY = ComponentRegistry.getOrCreate(OriginsGenshin.identifier("elements"), ElementComponent.class);
+
+	public ElementHolder getElementContext(Element element);
 
 	/**
 	 * Checks if the element can be applied.
@@ -72,7 +75,7 @@ public interface ElementComponent extends AutoSyncedComponent, CommonTickingComp
 	/**
 	 * Gets all currently applied elements as a {@link Stream}.
 	 */
-	public Stream<ElementalApplication> getAppliedElements();
+	public Array<ElementalApplication> getAppliedElements();
 
 	/**
 	 * Applies an {@link ElementalDamageSource} to this entity, <i>possibly</i> triggering an {@link ElementalReaction}. If no reaction is triggered, {@code null} is returned instead.
@@ -88,7 +91,7 @@ public interface ElementComponent extends AutoSyncedComponent, CommonTickingComp
 	 * If the {@code Optional} has no value, this means that there are no Elements
 	 * currently applied.
 	 */
-	public Optional<Integer> getCurrentElementPriority();
+	public Optional<Integer> getHighestElementPriority();
 
 	/**
 	 * Gets all currently prioritized applied elements as a {@link Stream}. <br> <br>
@@ -100,7 +103,7 @@ public interface ElementComponent extends AutoSyncedComponent, CommonTickingComp
 	 * of {@code 2}. Element A's application must be consumed entirely before Element B
 	 * could be reacted with or reapplied.
 	 */
-	public Stream<ElementalApplication> getPrioritizedElements();
+	public Array<ElementalApplication> getPrioritizedElements();
 
 	public static void sync(Entity entity) {
 		KEY.sync(entity);

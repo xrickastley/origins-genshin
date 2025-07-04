@@ -11,7 +11,7 @@ public class CryoSwirlElementalReaction extends AbstractSwirlElementalReaction {
 				.setReactionCoefficient(0.5)
 				.setAuraElement(Element.CRYO, 4)
 				.setTriggeringElement(Element.ANEMO, 3)
-				.setAsReversable(true)
+				.reversable(true)
 		);
 	}
 }

@@ -11,7 +11,7 @@ public class HydroSwirlElementalReaction extends AbstractSwirlElementalReaction 
 				.setReactionCoefficient(0.5)
 				.setAuraElement(Element.HYDRO, 2)
 				.setTriggeringElement(Element.ANEMO, 3)
-				.setAsReversable(true)
+				.reversable(true)
 		);
 	}
 }

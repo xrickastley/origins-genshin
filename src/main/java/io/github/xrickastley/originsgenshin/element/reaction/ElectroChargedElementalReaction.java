@@ -20,8 +20,8 @@ public class ElectroChargedElementalReaction extends ElementalReaction {
 				.setReactionCoefficient(0)
 				.setAuraElement(Element.HYDRO, 6)
 				.setTriggeringElement(Element.ELECTRO, 5)
-				.setApplyResultAsAura(true)
-				.setAsReversable(true)
+				.applyResultAsAura(true)
+				.reversable(true)
 		);
 	}
 
@@ -29,9 +29,12 @@ public class ElectroChargedElementalReaction extends ElementalReaction {
 	public boolean isTriggerable(LivingEntity entity) {
 		final ElementComponent component = ElementComponent.KEY.get(entity);
 
+		final ElementalApplication applicationAE = component.getElementalApplication(auraElement.getLeft());
+		final ElementalApplication applicationTE = component.getElementalApplication(triggeringElement.getLeft());
+
 		// We need both Elements to exist for Electro-Charged.
-		return component.hasElementalApplication(auraElement.getLeft()) 
-			&& component.hasElementalApplication(triggeringElement.getLeft())
+		return applicationAE != null && !applicationAE.isEmpty()
+			&& applicationTE != null && !applicationTE.isEmpty()
 			&& !((ILivingEntity) entity).isElectroChargedOnCD();
 	}
 
