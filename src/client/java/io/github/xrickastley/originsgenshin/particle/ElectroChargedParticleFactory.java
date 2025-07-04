@@ -12,7 +12,8 @@ public class ElectroChargedParticleFactory implements ParticleFactory<DefaultPar
 	public ElectroChargedParticleFactory(SpriteProvider sp) {}
 
 	public Particle createParticle(DefaultParticleType defaultParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
+		System.out.printf("d: %.2f, e: %.2f, f: %.2f, g: %.2f, h: %.2f, i: %.2f\n", d, e, f, g, h, i);
 		return new ReactionParticle(clientWorld, d, e, f, Color.fromRGBAHex("#d691fc").asARGB())
-			.setText(TextHelper.changeTextFont("Electro-Charged", TextBillboardParticle.GENSHIN_FONT));
+			.setText(TextHelper.withFont("Electro-Charged", TextBillboardParticle.GENSHIN_FONT));
 	}
 }

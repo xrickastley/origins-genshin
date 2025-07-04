@@ -25,6 +25,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
+import xaero.minimap.XaeroMinimapFabric;
 
 public class OriginsGenshinClient implements ClientModInitializer {
 	public static final String MOD_ID = "origins-genshin";

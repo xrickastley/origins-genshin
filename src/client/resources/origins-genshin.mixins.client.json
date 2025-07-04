@@ -1,11 +1,12 @@
 {
-	"required": true,
-	"package": "io.github.xrickastley.originsgenshin.mixin.client",
-	"compatibilityLevel": "JAVA_17",
-	"mixins": [
-		"EntityRendererMixin"
-	],
-	"injectors": {
-		"defaultRequire": 1
-	}
+  "required": true,
+  "package": "io.github.xrickastley.originsgenshin.mixin.client",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "EntityRendererMixin",
+    "WorldRendererAccessor"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
 }

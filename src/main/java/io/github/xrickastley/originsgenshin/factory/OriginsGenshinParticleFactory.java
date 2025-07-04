@@ -26,6 +26,7 @@ public class OriginsGenshinParticleFactory {
 	public static final DefaultParticleType SWIRL = register("swirl");
 
 	public static final DefaultParticleType DAMAGE_TEXT = register("damage_text");
+	public static final DefaultParticleType TEST = register("test");
 
 	private static DefaultParticleType register(String name) {
         return Registry.register(Registries.PARTICLE_TYPE, OriginsGenshin.identifier(name), FabricParticleTypes.simple());

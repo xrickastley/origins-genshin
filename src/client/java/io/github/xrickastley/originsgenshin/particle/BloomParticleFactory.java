@@ -13,6 +13,6 @@ public class BloomParticleFactory implements ParticleFactory<DefaultParticleType
 
 	public Particle createParticle(DefaultParticleType defaultParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
 		return new ReactionParticle(clientWorld, d, e, f, Color.fromRGBAHex("#01e858").asARGB())
-			.setText(TextHelper.changeTextFont("Bloom", TextBillboardParticle.GENSHIN_FONT));
+			.setText(TextHelper.withFont("Bloom", TextBillboardParticle.GENSHIN_FONT));
 	}
 }

@@ -49,7 +49,7 @@ public class ElementalDamageAction {
 			DamageSource source = MiscUtil.createDamageSource(actor.getDamageSources(), data.get("source"), data.get("damage_type"), actor);
 			
 			if (data.isPresent("element") && target instanceof LivingEntity) {
-				final ElementalApplication application = ElementalApplication.usingGaugeUnits((LivingEntity) target, data.get("element"), data.getDouble("gauge_units"));
+				final ElementalApplication application = ElementalApplication.gaugeUnits((LivingEntity) target, data.get("element"), data.getDouble("gauge_units"));
 
 				source = new ElementalDamageSource(source, application, data.getString("source_tag"));
 			}

@@ -7,7 +7,7 @@ import io.github.xrickastley.originsgenshin.factory.OriginsGenshinParticleFactor
 public class FrozenSuperconductElementalReaction extends AbstractSuperconductElementalReaction {
 	public FrozenSuperconductElementalReaction() {
 		super(
-			new ElementalReactionSettings("Superconduct", OriginsGenshin.identifier("superconduct_frozen"), OriginsGenshinParticleFactory.SUPERCONDUCT)
+			new ElementalReactionSettings("Superconduct (Frozen)", OriginsGenshin.identifier("superconduct_frozen"), OriginsGenshinParticleFactory.SUPERCONDUCT)
 				.setReactionCoefficient(1.0)
 				.setAuraElement(Element.FROZEN, 2)
 				.setTriggeringElement(Element.ELECTRO, 7)

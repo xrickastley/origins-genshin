@@ -32,7 +32,7 @@ public class ElementalBurstRenderer extends PowerRenderer {
 	/**
 	 * Compares the currently existing {@code power} and the given {@code newElementalBurst}. If {@code newElementalBurst} isn't null and {@code newElementalBurst.hasElementalBurst()} is true, replaces the current elemental burst power with the new one.
 	 * @param newPower The elemental burst power to replace the currently existing {@code power}, if it exists.
-	 * @return Whether or not the elemental burst power was replaced.
+	 * @return Whether the elemental burst power was replaced.
 	 */
 	public boolean setOrPersist(ActiveCooldownPower newPower) {
 		newPower.toJson().has("elemental_burst");

@@ -37,6 +37,7 @@ public class ClientParticleFactory {
 			register(OriginsGenshinParticleFactory.SWIRL, SwirlParticleFactory::new);
 			
 			register(OriginsGenshinParticleFactory.DAMAGE_TEXT, DamageTextParticle.Factory::new);
+			register(OriginsGenshinParticleFactory.TEST, TestParticleFactory::new);
 		} catch (Exception e) {
 			OriginsGenshin
 				.sublogger(ClientParticleFactory.class)

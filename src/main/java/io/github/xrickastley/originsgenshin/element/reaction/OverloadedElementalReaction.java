@@ -94,7 +94,7 @@ public class OverloadedElementalReaction extends ElementalReaction {
 		for (LivingEntity target : world.getNonSpectatingEntities(LivingEntity.class, Box.of(origin.getLerpedPos(1f), radius * 2, radius * 2, radius * 2))) {
 			if (!origin.canTarget(target)) continue;
 
-			final ElementalApplication application = ElementalApplication.usingGaugeUnits(target, Element.PYRO, 0);
+			final ElementalApplication application = ElementalApplication.gaugeUnits(target, Element.PYRO, 0);
 			final ElementalDamageSource source = new ElementalDamageSource(world.getDamageSources().generic(), application, "reactions:overloaded");
 			
 			final boolean inCircleRadius = origin.squaredDistanceTo(target) <= (radius * radius);

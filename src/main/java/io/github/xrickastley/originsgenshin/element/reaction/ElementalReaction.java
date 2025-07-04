@@ -1,7 +1,6 @@
 package io.github.xrickastley.originsgenshin.element.reaction;
 
 import java.text.DecimalFormat;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Stream;
 
@@ -9,6 +8,7 @@ import javax.annotation.Nullable;
 
 import org.slf4j.Logger;
 
+import io.github.xrickastley.javascript.array.Array;
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.component.ElementComponent;
 import io.github.xrickastley.originsgenshin.element.Element;
@@ -52,6 +52,10 @@ public abstract class ElementalReaction {
 		return element == this.auraElement.getLeft() || element == this.triggeringElement.getLeft();
 	}
 
+	public boolean hasAnyElement(Array<Element> elements) {
+		return this.hasAnyElement(elements.stream());
+	}
+
 	public boolean hasAnyElement(List<Element> elements) {
 		return this.hasAnyElement(elements.stream());
 	}
@@ -64,7 +68,7 @@ public abstract class ElementalReaction {
 		return component
 			.getAppliedElements()
 			.filter(application -> auraElement.getLeft().isChild(application.getElement()))
-			.sorted(Comparator.comparingDouble(application -> application.getElement().getPriority()))
+			.sortElements((a, b) -> a.getElement().getPriority() - b.getElement().getPriority())
 			.findFirst()
 			.orElseGet(() -> null);
 	}
@@ -98,7 +102,7 @@ public abstract class ElementalReaction {
 	}
 
 	public boolean shouldApplyResultAsAura() {
-		return this.shouldApplyResultAsAura();
+		return this.applyResultAsAura;
 	}
 
 	/**
@@ -109,7 +113,7 @@ public abstract class ElementalReaction {
 	public int getPriority(LivingEntity entity) {
 		return ElementComponent.KEY.get(entity)
 			.getAppliedElements()
-			.sorted(Comparator.comparing(application -> application.getElement().getPriority()))
+			.filter(application -> auraElement.getLeft().isChild(application.getElement()))
 			.findFirst()
 			.map(application -> getPriority(application.getElement()))
 			.orElse(-1);
@@ -203,6 +207,10 @@ public abstract class ElementalReaction {
 		this.displayReaction(entity);
 
 		return true;
+	}
+
+	public boolean idEquals(ElementalReaction reaction) {
+		return this.getId().equals(reaction.getId());
 	}
 
 	protected void displayReaction(LivingEntity target) {

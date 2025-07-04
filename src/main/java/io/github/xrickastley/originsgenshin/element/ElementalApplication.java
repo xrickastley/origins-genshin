@@ -18,7 +18,7 @@ public final class ElementalApplication {
 	// Used in uniquely identifying Elemental Applications.
 	protected final UUID uuid;
 	protected final Element element;
-	protected final boolean aura;
+	protected final boolean isAura;
 	protected final Type type;
 	protected double gaugeUnits;
 	protected double currentGauge;
@@ -29,21 +29,21 @@ public final class ElementalApplication {
 		this.entity = entity;
 		this.element = element;
 		this.uuid = uuid;
-		this.aura = aura;
+		this.isAura = aura;
 		this.type = Type.GAUGE_UNITS;
 
 		this.gaugeUnits = gaugeUnits;
 		this.currentGauge = gaugeUnits;
 
 		// Aura tax.
-		if (this.aura) this.currentGauge *= 0.8;
+		if (this.isAura) this.currentGauge *= 0.8;
 	}
 
 	private ElementalApplication(LivingEntity entity, Element element, UUID uuid, double gaugeUnits, double duration) {
 		this.entity = entity;
 		this.element = element;
 		this.uuid = uuid;
-		this.aura = true;
+		this.isAura = true;
 		this.type = Type.DURATION;
 
 		this.duration = duration;
@@ -59,8 +59,8 @@ public final class ElementalApplication {
 	 * @param element The Element of this Elemental Application.
 	 * @param gaugeUnits The amount of Elemental Gauge Units this Elemental Application has.
 	 */
-	public static ElementalApplication usingGaugeUnits(LivingEntity entity, Element element, double gaugeUnits) {
-		return ElementalApplication.usingGaugeUnits(entity, element, gaugeUnits, true);
+	public static ElementalApplication gaugeUnits(LivingEntity entity, Element element, double gaugeUnits) {
+		return ElementalApplication.gaugeUnits(entity, element, gaugeUnits, true);
 	}
 
 	/**
@@ -70,7 +70,7 @@ public final class ElementalApplication {
 	 * @param gaugeUnits The amount of Elemental Gauge Units this Elemental Application has.
 	 * @param aura Whether or not this Elemental Application is an Aura Element. This means that the <a href="https://genshin-impact.fandom.com/wiki/Elemental_Gauge_Theory#Aura_Tax">Aura Tax</a> applies to the current gauge units of this Element.
 	 */
-	public static ElementalApplication usingGaugeUnits(LivingEntity entity, Element element, double gaugeUnits, boolean aura) {
+	public static ElementalApplication gaugeUnits(LivingEntity entity, Element element, double gaugeUnits, boolean aura) {
 		return new ElementalApplication(entity, element, UUID.randomUUID(), gaugeUnits, aura);
 	}
 
@@ -81,7 +81,7 @@ public final class ElementalApplication {
 	 * @param gaugeUnits The amount of Gauge Units this Elemental Application has.
 	 * @param duration The duration of the Elemental Application, in ticks.
 	 */
-	public static ElementalApplication usingDuration(LivingEntity entity, Element element, double gaugeUnits, double duration) {
+	public static ElementalApplication duration(LivingEntity entity, Element element, double gaugeUnits, double duration) {
 		return new ElementalApplication(entity, element, UUID.randomUUID(), gaugeUnits, duration);
 	}
 
@@ -170,14 +170,14 @@ public final class ElementalApplication {
 	/**
 	 * Whether or not this Elemental Application is using Gauge Units.
 	 */
-	public boolean isUsingGaugeUnits() {
+	public boolean isGaugeUnits() {
 		return this.type == Type.GAUGE_UNITS;
 	}
 
 	/**
 	 * Whether or not this Elemental Application is using a specified duration.
 	 */
-	public boolean isUsingDuration() {
+	public boolean isDuration() {
 		return this.type == Type.DURATION;
 	}
 
@@ -193,20 +193,20 @@ public final class ElementalApplication {
 	 * Whether or not this Elemental Application is an aura element.
 	 */
 	public boolean isAuraElement() {
-		return this.aura;
+		return this.isAura;
 	}
 
 	/**
-	 * Whether or not this Elemental Application should be removed. <br> <br>
+	 * Whether or not this Elemental Application is empty. <br> <br>
 	 * 
 	 * This is {@code true}, 
 	 * <ul>
-	 * 	<li>For {@link Type#DURATION} when {@code duration + entity.age} reaches {@code appliedAt} or {@code gaugeUnits} reaches {@code 0} 
+	 * 	<li>For {@link Type#DURATION} when {@code duration + entity.age} reaches {@code appliedAt} or when {@code gaugeUnits} reaches {@code 0} 
 	 * 	<li>For {@link Type#GAUGE_UNITS} when {@code currentGauge} reaches {@code 0}.
 	 * </ul>
 	 */
-	public boolean shouldBeRemoved() {
-		return (isUsingDuration() && (entity.age >= (appliedAt + duration) || gaugeUnits <= 0)) || (isUsingGaugeUnits() && currentGauge <= 0);
+	public boolean isEmpty() {
+		return (isDuration() && (entity.age >= (appliedAt + duration) || gaugeUnits <= 0)) || (isGaugeUnits() && currentGauge <= 0);
 	}
 
 	/**
@@ -250,7 +250,7 @@ public final class ElementalApplication {
 	 * @param gaugeUnits The amount of Elemental Gauge Units to reapply.
 	 */
 	public void reapply(Element element, double gaugeUnits) {
-		reapply(ElementalApplication.usingGaugeUnits(this.entity, element, gaugeUnits));
+		reapply(ElementalApplication.gaugeUnits(this.entity, element, gaugeUnits));
 	}
 
 	/**
@@ -262,7 +262,7 @@ public final class ElementalApplication {
 
 		if (application.type != this.type) throw new ElementalApplicationOperationException(Operation.REAPPLICATION_INVALID_TYPES, this, application);
 
-		if (this.isUsingGaugeUnits()) {
+		if (this.isGaugeUnits()) {
 			// However, the current gauge, handled by currentGauge, is always the most of both applications.
 			this.currentGauge = Math.max(this.gaugeUnits, application.gaugeUnits);
 			// The decay rate, handled by gaugeUnits, is always the lesser of both applications.
@@ -272,7 +272,7 @@ public final class ElementalApplication {
 			this.gaugeUnits = Math.max(this.gaugeUnits, application.gaugeUnits);
 		}
 
-		if (this.aura) this.currentGauge *= 0.8;
+		if (this.isAura) this.currentGauge *= 0.8;
 	
 		ElementComponent.sync((LivingEntity) entity);
 	}
@@ -301,7 +301,7 @@ public final class ElementalApplication {
 		nbt.putString("type", this.type.toString());
 		nbt.putString("element", this.element.toString());
 		nbt.putUuid("uuid", uuid);
-		nbt.putBoolean("isAura", this.aura);
+		nbt.putBoolean("isAura", this.isAura);
 		nbt.putDouble("gaugeUnits", this.gaugeUnits);
 		nbt.putDouble("currentGauge", this.currentGauge);
 		nbt.putDouble("duration", this.duration);

@@ -43,15 +43,15 @@ public abstract class LivingEntityMixin
 	}
 
 	@Unique
-	protected int electroChargedCD = -1;
+	protected int originsgenshin$electroChargedCD = -1;
 
 	@Override
 	public void resetElectroChargedCD() {
-		this.electroChargedCD = this.age + 20;
+		this.originsgenshin$electroChargedCD = this.age + 20;
 	}
 
 	public boolean isElectroChargedOnCD() {
-		return this.age < this.electroChargedCD;
+		return this.age < this.originsgenshin$electroChargedCD;
 	}
 
 	@ModifyVariable(
@@ -62,7 +62,7 @@ public abstract class LivingEntityMixin
 	private float applyDMGModifiers(float amount, @Local(argsOnly = true) DamageSource source) {
 		return source instanceof final ElementalDamageSource eds
 			? OriginsGenshinAttributes.modifyDamage((LivingEntity)(Entity) this, eds, amount)
-			: OriginsGenshinAttributes.modifyDamage((LivingEntity)(Entity) this, new ElementalDamageSource(source, ElementalApplication.usingGaugeUnits((LivingEntity)(Entity) this, Element.PHYSICAL, 0), "dmg"), amount);
+			: OriginsGenshinAttributes.modifyDamage((LivingEntity)(Entity) this, new ElementalDamageSource(source, ElementalApplication.gaugeUnits((LivingEntity)(Entity) this, Element.PHYSICAL, 0), "dmg"), amount);
 	}
 
 	@ModifyVariable(
@@ -100,15 +100,23 @@ public abstract class LivingEntityMixin
 		final ElementComponent component = ElementComponent.KEY.get(this);
 		final ArrayList<ElementalReaction> reactions = component.applyFromDamageSource(elementalSource);
 
-		double multiplier = reactions.size() > 0
-			? reactions
-				.stream()
-				.filter(reaction -> reaction instanceof AmplifyingElementalReaction)
-				.map(reaction -> ((AmplifyingElementalReaction) reaction))
-				.reduce(1.0, (acc, reaction) -> acc + reaction.getAmplifier(), Double::sum)
+		double amplifier = reactions.size() > 0
+			? Math.max(
+				reactions
+					.stream()
+					.filter(reaction -> reaction instanceof AmplifyingElementalReaction)
+					.map(reaction -> ((AmplifyingElementalReaction) reaction))
+					.reduce(0.0, (acc, reaction) -> acc + reaction.getAmplifier(), Double::sum),
+				1.0
+			)
 			: 1.0;
 
-		return amount * (float) multiplier;
+
+		OriginsGenshin
+			.sublogger("LivingEntityMixin")
+			.info("Phase: AMPLIFY - Damage: {}, Multiplier: {}, Final DMG: {}", amount, amplifier, amount * amplifier);
+
+		return amount * (float) amplifier;
 	}
 
 	@Inject(

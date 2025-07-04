@@ -41,7 +41,7 @@ public class OriginsGenshin implements ModInitializer {
 	@Override
 	public void onInitialize() {
 		LOGGER.info("Origins: Genshin Initialized!");
-		
+
 		OriginsGenshinRegistryKeys.load();
 		OriginsGenshinRegistries.load();
 
@@ -49,6 +49,7 @@ public class OriginsGenshin implements ModInitializer {
 		OriginsGenshinEntities.register();
 		OriginsGenshinBiEntityActions.register();
 		OriginsGenshinStatusEffects.register();
+
 		ElementalReactions.register();
 	}
 

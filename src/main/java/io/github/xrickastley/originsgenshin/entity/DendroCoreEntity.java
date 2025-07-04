@@ -95,7 +95,7 @@ public class DendroCoreEntity extends LivingEntity {
 					.getWorld()
 					.getDamageSources()
 					.create(DamageTypes.ARROW, this, owner),
-				ElementalApplication.usingGaugeUnits(target, Element.DENDRO, 0.0),
+				ElementalApplication.gaugeUnits(target, Element.DENDRO, 0.0),
 				"dendro_core_expiration_explosion"
 			);
 			final float damage = 2 * OriginsGenshin.getLevelMultiplier(this);

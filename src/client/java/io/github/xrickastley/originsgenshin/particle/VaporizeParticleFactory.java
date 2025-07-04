@@ -13,6 +13,6 @@ public class VaporizeParticleFactory implements ParticleFactory<DefaultParticleT
 
 	public Particle createParticle(DefaultParticleType defaultParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
 		return new ReactionParticle(clientWorld, d, e, f, Color.fromRGBAHex("#f2be87").asARGB())
-			.setText(TextHelper.changeTextFont("Vaporize", TextBillboardParticle.GENSHIN_FONT));
+			.setText(TextHelper.withFont("Vaporize", TextBillboardParticle.GENSHIN_FONT));
 	}
 }

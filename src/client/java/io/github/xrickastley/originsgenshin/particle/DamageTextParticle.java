@@ -37,10 +37,10 @@ public class DamageTextParticle extends TextBillboardParticle {
 		this.gravityStrength = 0f;
 		this.velocityY = 0d;
 		this.velocityX = -0.001d;
-		this.maxAge = 75;
-		this.fadeAge = maxAge - 25;
+		this.maxAge = 40;
+		this.fadeAge = maxAge - 15;
 		this.color = MathHelper.floor(color);
-		this.setText(TextHelper.changeTextFont(String.format("%d", (int) Math.floor(amount)), TextBillboardParticle.GENSHIN_FONT));
+		this.setText(TextHelper.withFont(String.format("%d", (int) Math.floor(amount)), TextBillboardParticle.GENSHIN_FONT));
 		
 		// System.out.println(this.text.toString());
 	}
@@ -51,9 +51,9 @@ public class DamageTextParticle extends TextBillboardParticle {
 		TextRenderer renderer = client.textRenderer;
 		
 		Vec3d vec3d = camera.getPos();
-		float x = (float)(MathHelper.lerp((double)tickDelta, this.prevPosX, this.x) - vec3d.getX());
-		float y = (float)(MathHelper.lerp((double)tickDelta, this.prevPosY, this.y) - vec3d.getY());
-		float z = (float)(MathHelper.lerp((double)tickDelta, this.prevPosZ, this.z) - vec3d.getZ());
+		float x = (float) (MathHelper.lerp(tickDelta, this.prevPosX, this.x) - vec3d.getX());
+		float y = (float) (MathHelper.lerp(tickDelta, this.prevPosY, this.y) - vec3d.getY());
+		float z = (float) (MathHelper.lerp(tickDelta, this.prevPosZ, this.z) - vec3d.getZ());
 
 		if (alpha <= 0f || scale <= 0f) return;
 
@@ -67,9 +67,11 @@ public class DamageTextParticle extends TextBillboardParticle {
 
 		int intColor = fColor.asARGB();
 
+		float textShift = (renderer.getWidth(text) * 0.04f * 0.75f) / 2;
+
 		MatrixStack matrixStack = new MatrixStack();
 		matrixStack.push();
-		matrixStack.translate(x, y, z);
+		matrixStack.translate(x + textShift, y, z);
 		matrixStack.multiply(camera.getRotation());
 		matrixStack.scale(-0.04f * 0.75f, -0.04f * 0.75f, -1f);
 
@@ -79,7 +81,7 @@ public class DamageTextParticle extends TextBillboardParticle {
 
 		VertexConsumerProvider.Immediate immediate = VertexConsumerProvider.immediate(Tessellator.getInstance().getBuffer());
 
-		renderer.draw(text, x, 0, intColor, false, matrixStack.peek().getPositionMatrix(), immediate, TextLayerType.POLYGON_OFFSET, Colors.BLANK.asARGB(), LightmapTextureManager.MAX_LIGHT_COORDINATE);
+		renderer.draw(text, x, 0, intColor, false, matrixStack.peek().getPositionMatrix(), immediate, TextLayerType.NORMAL, Colors.BLANK.asARGB(), LightmapTextureManager.MAX_LIGHT_COORDINATE);
 		immediate.draw();
 
 		RenderSystem.enableCull();

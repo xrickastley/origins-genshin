@@ -21,7 +21,7 @@ public final class InternalCooldownData {
 	 * 
 	 * If you want to register a hit, then check the Internal Cooldown, use {@link InternalCooldownData#handleInternalCooldown} instead.
 	 */
-	public boolean inInternalCooldown() {
+	public boolean isInInternalCooldown() {
 		return owner.age >= cooldown || totalHits > 3;
 	}
 

@@ -20,6 +20,7 @@ public class ElectroChargedElementalReaction extends ElementalReaction {
 				.setReactionCoefficient(0)
 				.setAuraElement(Element.HYDRO, 6)
 				.setTriggeringElement(Element.ELECTRO, 5)
+				.setApplyResultAsAura(true)
 				.setAsReversable(true)
 		);
 	}
@@ -30,7 +31,8 @@ public class ElectroChargedElementalReaction extends ElementalReaction {
 
 		// We need both Elements to exist for Electro-Charged.
 		return component.hasElementalApplication(auraElement.getLeft()) 
-			&& component.hasElementalApplication(triggeringElement.getLeft());
+			&& component.hasElementalApplication(triggeringElement.getLeft())
+			&& !((ILivingEntity) entity).isElectroChargedOnCD();
 	}
 
 	@Override
@@ -58,7 +60,7 @@ public class ElectroChargedElementalReaction extends ElementalReaction {
 		final float ElectroChargedDMG = OriginsGenshin.getLevelMultiplier(world) * 1.2f;
 		
 		for (LivingEntity target : world.getNonSpectatingEntities(LivingEntity.class, Box.of(entity.getLerpedPos(1f), radius * 2, radius * 2, radius * 2))) {
-			final ElementalApplication application = ElementalApplication.usingGaugeUnits(target, Element.PYRO, 0);
+			final ElementalApplication application = ElementalApplication.gaugeUnits(target, Element.PYRO, 0);
 			final ElementalDamageSource source = new ElementalDamageSource(world.getDamageSources().generic(), application, "reactions:overloaded");
 			
 			final boolean inCircleRadius = entity.squaredDistanceTo(target) <= (radius * radius);

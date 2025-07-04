@@ -2,8 +2,8 @@ package io.github.xrickastley.originsgenshin.mixin.client;
 
 import java.text.DecimalFormat;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.Iterator;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
@@ -80,23 +80,17 @@ public abstract class EntityRendererMixin {
 
 		final ElementComponent component = ElementComponent.KEY.get(livingEntity);
 
-		if (component.getAppliedElements().count() == 0) return;
+		if (component.getAppliedElements().length() == 0) return;
 
-		final int priority = component
-			.getAppliedElements()
-			.filter(application -> application.getElement().hasTexture())
-			.sorted(Comparator.comparingDouble(application -> application.getElement().getPriority()))
-			.findFirst()
-			.map(application -> application.getElement().getPriority())
-			.orElse(-1);
+		final Optional<Integer> priority = component.getCurrentElementPriority();
 		
-		if (priority == -1) return;
+		if (!priority.isPresent()) return;
 		
 		final ArrayList<ElementalApplication> elementArray = new ArrayList<>();
 		
 		component
 			.getAppliedElements()
-			.filter(application -> application.getElement().getPriority() == priority)
+			.filter(application -> application.getElement().getPriority() == priority.get())
 			.forEach(elementArray::add);
 
 		final int elementCount = elementArray.size();
@@ -222,8 +216,8 @@ public abstract class EntityRendererMixin {
 		
 		component
 			.getAppliedElements()
-			.sorted(Comparator.comparingDouble(application -> application.getElement().getPriority()))
-			.forEachOrdered(appliedElements::add);
+			.sortElements((a, b) -> a.getElement().getPriority() - b.getElement().getPriority())
+			.forEach(appliedElements::add);
 
 		final int elementCount = appliedElements.size();
 		final Iterator<ElementalApplication> aeIterator = appliedElements.iterator();
@@ -240,7 +234,7 @@ public abstract class EntityRendererMixin {
 	}
 
 	protected void renderElementalGauge(final LivingEntity livingEntity, final ElementalApplication application, final float yOffset, final MatrixStack matrixStack, final float tickDelta) {
-		if (application.shouldBeRemoved()) return;
+		if (application.isEmpty()) return;
 
 		Tessellator tessellator = Tessellator.getInstance();
 		BufferBuilder buffer = tessellator.getBuffer();
@@ -256,8 +250,8 @@ public abstract class EntityRendererMixin {
 		matrixStack.multiply(dispatcher.getRotation());
 		matrixStack.scale(-scale, scale, scale);
 
-		float finalWidth = application.isUsingGaugeUnits()
-			? (float) (2.5 * application.getGaugeUnits())
+		float finalWidth = application.isGaugeUnits()
+			? (float) Math.max(2.5 * application.getGaugeUnits(), 5.0)
 			: 5f;
 		float xOffset = (float) (livingEntity.getBoundingBox().getLengthX() * 0.85f) / scale;
 
@@ -285,6 +279,45 @@ public abstract class EntityRendererMixin {
         buffer.vertex(positionMatrix, xOffset, 1 - yOffset, -0.0001f).color(color).next(); 
 		
 		tessellator.draw();
+
+		for (float i = 0.1f * 2.5f; i <= finalWidth; i += 0.1f * 2.5f) {
+			// System.out.println("hello!");
+
+			buffer = tessellator.getBuffer();
+
+			final float addedY = i % 1f == 0
+				? 1f
+				: i % 0.5f == 0
+					? 0.5f
+					: 0.25f;
+
+			final float lineWidth = i % 1f == 0
+				? 3f
+				: 2f;
+
+			buffer.begin(VertexFormat.DrawMode.LINES, VertexFormats.LINES);
+			buffer
+				.vertex(positionMatrix, 0, 0 - yOffset, -0.0002f)
+				.color(0x00000000)
+				.normal(xOffset + i, 0, 0)
+				.next();
+			buffer
+				.vertex(positionMatrix, 0, addedY - yOffset, -0.0002f)
+				.color(0x00000000)
+				.normal(xOffset + i, 0, 0)
+				.next();
+
+			RenderSystem.setShader(GameRenderer::getRenderTypeLinesProgram);
+			RenderSystem.setShaderColor(1, 1, 1, 1);
+			RenderSystem.disableCull();
+			float prev = RenderSystem.getShaderLineWidth();
+			RenderSystem.lineWidth(lineWidth);
+
+			tessellator.draw();
+
+			RenderSystem.lineWidth(prev);
+			RenderSystem.enableCull();
+		}
 
 		matrixStack.pop();
 	}
