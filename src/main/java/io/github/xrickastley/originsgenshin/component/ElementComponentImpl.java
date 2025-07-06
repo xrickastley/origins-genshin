@@ -117,7 +117,7 @@ public class ElementComponentImpl implements ElementComponent {
 		return elementHolder
 			.values().stream()
 			.map(ElementHolder::getElementalApplication)
-			.anyMatch(application -> application != null && application.isOfElement(element));
+			.anyMatch(application -> application != null && application.isOfElement(element) && !application.isEmpty());
 	}
 
 	@Override
@@ -175,10 +175,17 @@ public class ElementComponentImpl implements ElementComponent {
 			.values().stream()
 			.forEach(holder -> holder.setElementalApplication(null));
 
+		LOGGER.info("Current NbtList: {}", list);
+
 		for (final NbtElement nbt : list) {
 			if (!(nbt instanceof final NbtCompound compound)) return;
 
 			final ElementalApplication application = ElementalApplication.fromNbt(owner, compound, sentAtAge);
+
+			if (application.isDuration()) {
+				// TODO: sync by current entity age, ages are different in Render thread and Server thread.
+				LOGGER.info("Application: {} | appliedAt: {} | age: {}", application, application.appliedAt, owner.age);
+			}
 
 			this.getElementContext(application.getElement())
 				.setElementalApplication(application);
@@ -255,6 +262,8 @@ public class ElementComponentImpl implements ElementComponent {
 			.map(Reference::value)
 			.filter(reaction -> {
 				// LOGGER.info("\t -Reaction: {}, isTriggerable: {}, hasAnyElement: {}", reaction.getId(), reaction.isTriggerable(owner), reaction.hasAnyElement(validElements));
+
+				// LOGGER.info("Reaction: {} | isTriggerable: {} | hasAnyElement ({}): {}", reaction.getId(), reaction.isTriggerable(owner), validElements, reaction.hasAnyElement(validElements));
 
 				return reaction.isTriggerable(owner) && reaction.hasAnyElement(validElements);
 			})

@@ -16,7 +16,6 @@ public final class ElementalReactionSettings {
 	protected Pair<Element, Integer> auraElement;
 	protected Pair<Element, Integer> triggeringElement;
 	protected boolean reversable = false;
-	protected boolean allowChildElements = false;
 	protected boolean applyResultAsAura = false;
 
 	public ElementalReactionSettings(String name, Identifier id, @Nullable DefaultParticleType particle) {
@@ -75,20 +74,6 @@ public final class ElementalReactionSettings {
 	 */
 	public ElementalReactionSettings reversable(boolean reversable) {
 		this.reversable = reversable;
-
-		return this;
-	}
-
-	/**
-	 * Whether or not the Elemental Reaction allows child elements. <br> <br>
-	 * 
-	 * When an Element is applied and possible elemental reactions are being searched for, 
-	 * a child element will share the same priority set for it's parent element.
-	 * 
-	 * @param allowChildElements Whether or not the Elemental Reaction allows child elements. 
-	 */
-	public ElementalReactionSettings allowChildElements(boolean allowChildElements) {
-		this.allowChildElements = allowChildElements;
 
 		return this;
 	}

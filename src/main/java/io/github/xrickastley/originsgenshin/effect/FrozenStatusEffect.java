@@ -5,6 +5,7 @@ import com.google.common.collect.HashMultimap;
 import io.github.apace100.apoli.component.PowerHolderComponent;
 import io.github.apace100.apoli.power.CooldownPower;
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
+import io.github.xrickastley.originsgenshin.component.FrozenEffectComponent;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.AttributeContainer;
 import net.minecraft.entity.attribute.EntityAttribute;
@@ -12,6 +13,7 @@ import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectCategory;
+import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 
@@ -29,7 +31,7 @@ public class FrozenStatusEffect extends StatusEffect {
 
 	@Override
 	public void onApplied(LivingEntity entity, int amplifier) {
-		final AttributeContainer attributes = entity.getAttributes();
+		final AttributeContainer attributes = entity.getAttributes();		
 
 		entity
 			.getWorld()
@@ -43,17 +45,33 @@ public class FrozenStatusEffect extends StatusEffect {
 			);
 
 		attributes.addTemporaryModifiers(attributeMultimap);
+
+		FrozenEffectComponent.KEY.get(entity).freeze();
+		
 	}
 
 	@Override
 	public void onRemoved(AttributeContainer attributes) {
+		super.onRemoved(attributes);
+
 		attributes.removeModifiers(attributeMultimap);
+	}
+
+	@Override
+	public void onRemoved(LivingEntity entity, int amplifier) {
+		super.onRemoved(entity, amplifier);
+
+		FrozenEffectComponent.KEY.get(entity).unfreeze();
 	}
 
 	@Override
 	public void applyUpdateEffect(LivingEntity entity, int amplifier) {
 		PowerHolderComponent.getPowers(entity, CooldownPower.class)
 			.forEach(power -> power.modify(1));
+
+		if (entity.getStatusEffect(this).getDuration() == 1 && entity instanceof final MobEntity mob) {
+			mob.setAiDisabled(false);
+		}
 
 		// if (entity.getStatusEffect(this).getDuration() == 1) entity.getWorld().playSound(null, entity.getBlockPos(), SoundEvent.of(Aery.identifier("frozen")), SoundCategory.PLAYERS, 1.0F, 1.0F);
 	}

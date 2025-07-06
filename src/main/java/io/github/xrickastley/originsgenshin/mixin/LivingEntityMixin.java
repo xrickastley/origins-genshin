@@ -5,8 +5,11 @@ import com.llamalad7.mixinextras.sugar.Local;
 
 import java.util.ArrayList;
 
+import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.item.ItemStack;
 import org.spongepowered.asm.mixin.Debug;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -37,6 +40,8 @@ public abstract class LivingEntityMixin
 	extends Entity 
 	implements ILivingEntity
 {
+	@Shadow public abstract ItemStack eatFood(World world, ItemStack stack);
+
 	public LivingEntityMixin(final EntityType<? extends LivingEntity> entityType, final World world) {
 		super(entityType, world);
 		throw new AssertionError();
@@ -141,6 +146,18 @@ public abstract class LivingEntityMixin
 	private static DefaultAttributeContainer.Builder addToLivingAttributes(DefaultAttributeContainer.Builder builder) {
         return OriginsGenshinAttributes.apply(builder);
     }
+
+	@Inject(
+		method = "onStatusEffectRemoved",
+		at = @At(
+			value = "INVOKE",
+			target = "Lnet/minecraft/entity/effect/StatusEffect;onRemoved(Lnet/minecraft/entity/attribute/AttributeContainer;)V",
+			shift = At.Shift.AFTER
+		)
+	)
+	private void triggerEntityOnRemoved(StatusEffectInstance effect, CallbackInfo ci) {
+		effect.getEffectType().onRemoved((LivingEntity)(Entity) this, effect.getAmplifier());
+	}
 
 	/*
 	@Inject(

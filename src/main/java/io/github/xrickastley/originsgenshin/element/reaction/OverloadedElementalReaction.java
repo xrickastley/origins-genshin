@@ -27,7 +27,6 @@ public class OverloadedElementalReaction extends ElementalReaction {
 				.setAuraElement(Element.PYRO, 2)
 				.setTriggeringElement(Element.ELECTRO, 3)
 				.reversable(true)
-				.allowChildElements(true)
 		);
 	}
 

@@ -1,4 +1,4 @@
-package io.github.xrickastley.originsgenshin.error;
+package io.github.xrickastley.originsgenshin.exception;
 
 import java.util.function.BiFunction;
 

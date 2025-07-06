@@ -1,5 +1,5 @@
 plugins {
-	id 'fabric-loom' version '1.7-SNAPSHOT'
+	id 'fabric-loom' version '1.10-SNAPSHOT'
 	id 'maven-publish'
 }
 
@@ -84,6 +84,14 @@ loom {
 			sourceSet sourceSets.main
 			sourceSet sourceSets.client
 		}
+	}
+}
+
+fabricApi {
+	configureTests {
+		createSourceSet = true
+		modId = "${project.name}-test"
+		eula = true
 	}
 }
 

@@ -8,8 +8,10 @@ public class ElementalReactions {
 	public static final ElementalReaction CRYO_MELT = new CryoMeltElementalReaction();
 	// Also known as Forward Vaporize, amplifies Hydro DMG by 2x
 	public static final ElementalReaction HYDRO_VAPORIZE = new HydroVaporizeElementalReaction();
-	// Also known as Forward Melt, amplifies Pyro DMG by 2x
-	public static final ElementalReaction PYRO_MELT = new PyroMeltElementalReaction();
+	// Also known as Forward Melt, with the Cryo aura. Amplifies Pyro DMG by 2x
+	public static final ElementalReaction PYRO_CRYO_MELT = new PyroCryoMeltElementalReaction();
+	// Also known as Forward Melt, with the Frozen aura. Amplifies Pyro DMG by 2x
+	public static final ElementalReaction PYRO_FROZEN_MELT = new PyroFrozenMeltElementalReaction();
 	// Also known as Reverse Vaporize, amplifies Pyro DMG by 1.5x
 	public static final ElementalReaction PYRO_VAPORIZE = new PyroVaporizeElementalReaction();
 	// Keeps the entity in place, preventing movement, attacks and actions.
@@ -41,7 +43,8 @@ public class ElementalReactions {
 	public static void register() {
 		register(ElementalReactions.CRYO_MELT);
 		register(ElementalReactions.HYDRO_VAPORIZE);
-		register(ElementalReactions.PYRO_MELT);
+		register(ElementalReactions.PYRO_CRYO_MELT);
+		register(ElementalReactions.PYRO_FROZEN_MELT);
 		register(ElementalReactions.PYRO_VAPORIZE);
 		register(ElementalReactions.FROZEN);
 		register(ElementalReactions.ELECTRO_CHARGED);

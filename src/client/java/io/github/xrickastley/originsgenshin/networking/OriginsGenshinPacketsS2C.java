@@ -33,9 +33,9 @@ public class OriginsGenshinPacketsS2C {
 
 		final Box boundingBox = entity.getBoundingBox();
 
-		final double x = entity.getX();
-		final double y = entity.getY() + 0.5 + (boundingBox.getLengthY() * Math.random()) / 2;
-		final double z = entity.getZ();
+		final double x = entity.getX() + (boundingBox.getLengthX() * 1.25 * Math.random());
+		final double y = entity.getY() + (boundingBox.getLengthY() * 0.75 * Math.random()) + 0.5;
+		final double z = entity.getZ() + (boundingBox.getLengthZ() * 1.25 * Math.random());
 
 		OriginsGenshin
 			.sublogger(OriginsGenshinPacketsS2C.class)

@@ -2,9 +2,12 @@ package io.github.xrickastley.originsgenshin.element;
 
 import java.util.UUID;
 
+import org.slf4j.Logger;
+
+import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.component.ElementComponent;
-import io.github.xrickastley.originsgenshin.error.ElementalApplicationOperationException;
-import io.github.xrickastley.originsgenshin.error.ElementalApplicationOperationException.Operation;
+import io.github.xrickastley.originsgenshin.exception.ElementalApplicationOperationException;
+import io.github.xrickastley.originsgenshin.exception.ElementalApplicationOperationException.Operation;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
@@ -14,6 +17,8 @@ import net.minecraft.util.math.MathHelper;
  * A class representing an Elemental Application for an entity.
  */
 public final class ElementalApplication {
+	private static final Logger LOGGER = OriginsGenshin.sublogger(ElementalApplication.class);
+
 	protected final LivingEntity entity;
 	// Used in uniquely identifying Elemental Applications.
 	protected final UUID uuid;
@@ -23,7 +28,7 @@ public final class ElementalApplication {
 	protected double gaugeUnits;
 	protected double currentGauge;
 	protected double duration;
-	protected int appliedAt;
+	public int appliedAt;
 
 	private ElementalApplication(LivingEntity entity, Element element, UUID uuid, double gaugeUnits, boolean aura) {
 		this.entity = entity;
@@ -100,6 +105,8 @@ public final class ElementalApplication {
 		final double currentGauge = compound.getDouble("CurrentGauge");
 
 		ElementalApplication application;
+
+		if (entity.age < sentAtAge) LOGGER.warn("Current entity age: {} is lesser than Packet send age: {}!", entity.age, sentAtAge);
 
 		if (type == Type.GAUGE_UNITS) {
 			final boolean isAura = compound.getBoolean("IsAura");
@@ -280,9 +287,12 @@ public final class ElementalApplication {
 			// However, the current gauge, handled by currentGauge, is always the most of both applications.
 			this.currentGauge = Math.max(this.gaugeUnits, application.gaugeUnits);
 			// The decay rate, handled by gaugeUnits, is always the lesser of both applications.
-			this.gaugeUnits = Math.min(this.gaugeUnits, application.gaugeUnits);
+			this.gaugeUnits = this.element.hasDecayInheritance()
+				? Math.min(this.gaugeUnits, application.gaugeUnits)
+				: application.gaugeUnits;
 		} else {
-			this.duration = Math.max(this.duration, application.duration);
+			this.appliedAt = application.appliedAt;
+			this.duration = application.duration;
 			this.gaugeUnits = Math.max(this.gaugeUnits, application.gaugeUnits);
 		}
 
@@ -336,6 +346,14 @@ public final class ElementalApplication {
 		if (type == Type.GAUGE_UNITS) {
 			this.currentGauge = application.currentGauge;
 		} else {
+			OriginsGenshin
+				.sublogger(this)
+				.info("Syncing from NBT | NBT: {} | Current: {}", application, this);
+
+			OriginsGenshin
+				.sublogger(this)
+				.info("appliedAt (NBT): {} | appliedAt (cur.): {} | age: {}", application.appliedAt, this.appliedAt, this.entity.age);
+
 			this.duration = application.duration;
 			this.appliedAt = application.appliedAt;
 		}
@@ -367,5 +385,9 @@ public final class ElementalApplication {
 				this.getGaugeUnits(),
 				this.getDuration()
 			);
+	}
+
+	public static class Builder {
+
 	}
 }

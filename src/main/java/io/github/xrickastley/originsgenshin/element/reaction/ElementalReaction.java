@@ -13,6 +13,7 @@ import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.component.ElementComponent;
 import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
+import io.github.xrickastley.originsgenshin.events.ReactionTriggered;
 import io.github.xrickastley.originsgenshin.networking.ShowElementalReactionS2CPacket;
 
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
@@ -34,7 +35,8 @@ public abstract class ElementalReaction {
 	protected final Pair<Element, Integer> auraElement;
 	protected final Pair<Element, Integer> triggeringElement;
 	protected final boolean reversable;
-	protected final boolean allowChildElements;
+	@Deprecated
+	protected final boolean allowChildElements = false;
 	protected final boolean applyResultAsAura;
 	
 	protected ElementalReaction(ElementalReactionSettings settings) {
@@ -46,7 +48,6 @@ public abstract class ElementalReaction {
 		this.auraElement = settings.auraElement;
 		this.triggeringElement = settings.triggeringElement;
 		this.reversable = settings.reversable;
-		this.allowChildElements = settings.allowChildElements;
 		this.applyResultAsAura = settings.applyResultAsAura;
 	}
 
@@ -159,6 +160,7 @@ public abstract class ElementalReaction {
 		ElementalApplication applicationAE = component.getElementalApplication(auraElement.getLeft());
 		ElementalApplication applicationTE = component.getElementalApplication(triggeringElement.getLeft());
 
+		// LOGGER.info("Reaction: {} | allowsChildElements: {}", this.getId(), allowChildElements);
 		if (this.allowChildElements) {
 			// Supply them with their respective child elements if they are null.
 			if (applicationAE == null) applicationAE = getPossibleChildElement(auraElement.getLeft(), component);
@@ -193,6 +195,7 @@ public abstract class ElementalReaction {
 		
 		LOGGER.info("Phase: BEFORE - Aura element: {} GU {}; Triggering elements: {} GU {}; Reaction coefficient: {}", df.format(applicationAE.getCurrentGauge()), applicationAE.getElement(), df.format(applicationTE.getCurrentGauge()), applicationTE.getElement(), reactionCoefficient);
 		
+		// TODO: remove "child element" impl., now requires seperate reactions for "child elements".
 		final double reducedGauge = applicationAE.reduceGauge(reactionCoefficient * applicationTE.getCurrentGauge());
 
 		LOGGER.info("Phase: CALCULATE - Reaction coefficient: {} | Reduced Gauge (AE): {}", reactionCoefficient, reducedGauge);
@@ -213,6 +216,10 @@ public abstract class ElementalReaction {
 
 		this.onReaction(entity, applicationAE, applicationTE, reducedGauge, origin);
 		this.displayReaction(entity);
+
+		ReactionTriggered.EVENT
+			.invoker()
+			.onReactionTriggered(this, entity);
 
 		return true;
 	}

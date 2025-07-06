@@ -130,15 +130,18 @@ public class ReactionParticle extends TextBillboardParticle {
 			.multiply(1, 1, 1, alpha)
 			.asARGB();
 
-		ReactionParticle.drawString(camera, new MatrixStack(), immediate, this.text, x, y, z, color, 0.04f * scale, true, 0f, true);
-
 		RenderSystem.disableCull();
 		RenderSystem.enableDepthTest();
+		RenderSystem.enableBlend();
 		RenderSystem.depthFunc(GL11.GL_ALWAYS);
+		RenderSystem.blendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
+
+		ReactionParticle.drawString(camera, new MatrixStack(), immediate, this.text, x, y, z, color, 0.04f * scale, true, 0f, true);
 
 		immediate.draw();
 
 		RenderSystem.enableCull();
+		RenderSystem.disableBlend();
 		RenderSystem.depthFunc(GL11.GL_LEQUAL);
 	}
 
@@ -163,7 +166,7 @@ public class ReactionParticle extends TextBillboardParticle {
 		float g = center ? (-textRenderer.getWidth(text) / 2.0f) : 0.0f;
 		g -= offset / size;
 
-		textRenderer.draw(text, g, 0.0f, color, false, matrices.peek().getPositionMatrix(), vertexConsumers, TextLayerType.SEE_THROUGH, 0, 15728880);
+		textRenderer.draw(text, g, 0.0f, color, false, matrices.peek().getPositionMatrix(), vertexConsumers, visibleThroughObjects ? TextLayerType.SEE_THROUGH : TextLayerType.NORMAL, 0, 15728880);
 
 		matrices.pop();
     }

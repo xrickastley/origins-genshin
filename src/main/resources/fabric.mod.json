@@ -44,8 +44,14 @@
 		"origins": ">=1.11.3"
 	},
 	"custom": {
+		"loom:injected_interfaces": {
+			"net/minecraft/class_1291": [
+				"io/github/xrickastley/originsgenshin/interfaces/EntityAwareEffect"
+			]
+		},
 		"cardinal-components": [
-			"origins-genshin:elements"
+			"origins-genshin:elements",
+			"origins-genshin:frozen_effect"
 		]
 	}
 }
