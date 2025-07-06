@@ -320,15 +320,11 @@ public class ElementComponentImpl implements ElementComponent {
 			return new ArrayList<>();
 		}
 
-		final int priority = optionalPriority.get();
-
-		final Array<Element> elements = this
-			.getAppliedElements()
-			.map(ElementalApplication::getElement);
+		final int priority = Math.min(optionalPriority.get(), application.getElement().getPriority());
 
 		Optional<ElementalReaction> reaction = this
 			// .getTriggerableReactions(priority)
-			.getTriggerableReactions(elements)
+			.getTriggerableReactions(priority)
 			.findFirst();
 
 		boolean applyElementAsAura = false;
