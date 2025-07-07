@@ -226,10 +226,10 @@ public abstract class EntityRendererMixin {
 		// 	OriginsGenshin.LOGGER.info("appliedElements: {}", appliedElements);
 
 		Stream
-			.iterate(0.0f, n -> (n / 1.5f) < elementCount, n -> n + 1.5f)
+			.iterate(0.0f, n -> (n / 1.25f) < elementCount, n -> n + 1.25f)
 			.forEachOrdered(yOffset -> {
 				try {
-					renderElementalGauge(livingEntity, aeIterator.next(), yOffset, matrixStack, tickDelta);
+					renderElementalGauge(livingEntity, aeIterator.next(), yOffset - 0.5f, matrixStack, tickDelta);
 				} catch (Exception e) {
 					System.out.println(e);
 				}
@@ -251,12 +251,13 @@ public abstract class EntityRendererMixin {
 			0f
 		);
 		matrixStack.multiply(dispatcher.getRotation());
-		matrixStack.scale(-scale, scale, scale);
+		matrixStack.scale(-scale, scale * 0.5f, scale);
 
 		float finalWidth = application.isGaugeUnits()
 			? (float) Math.max(2.5 * application.getGaugeUnits(), 5.0)
 			: 5f;
-		float xOffset = (float) (livingEntity.getBoundingBox().getLengthX() * 0.85f) / scale;
+		// float xOffset = (float) (livingEntity.getBoundingBox().getLengthX() * 0.85f) / scale;
+		float xOffset = (float) (livingEntity.getBoundingBox().getLengthX() * 1.5f) / scale;
 
 		Matrix4f positionMatrix = matrixStack.peek().getPositionMatrix();
 
@@ -284,8 +285,6 @@ public abstract class EntityRendererMixin {
 		tessellator.draw();
 
 		for (float i = 0.1f * 2.5f; i <= finalWidth; i += 0.1f * 2.5f) {
-			// System.out.println("hello!");
-
 			buffer = tessellator.getBuffer();
 
 			final float addedY = i % 1f == 0
