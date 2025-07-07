@@ -21,7 +21,7 @@ public enum Element {
 		OriginsGenshin.identifier("pyro"),
 		ElementSettings
 			.create()
-			.setTexture(OriginsGenshin.identifier("textures/particle/pyro.png"))
+			.setTexture(OriginsGenshin.identifier("textures/element/pyro.png"))
 			.setDamageColor(Colors.PYRO)
 			.setDecayInheritance(false)
 			.setPriority(2)
@@ -30,7 +30,7 @@ public enum Element {
 		OriginsGenshin.identifier("hydro"),
 		ElementSettings
 			.create()
-			.setTexture(OriginsGenshin.identifier("textures/particle/hydro.png"))
+			.setTexture(OriginsGenshin.identifier("textures/element/hydro.png"))
 			.setDamageColor(Colors.HYDRO)
 			.setPriority(2)
 	),
@@ -38,7 +38,7 @@ public enum Element {
 		OriginsGenshin.identifier("anemo"),
 		ElementSettings
 			.create()
-			.setTexture(OriginsGenshin.identifier("textures/particle/anemo.png"))
+			.setTexture(OriginsGenshin.identifier("textures/element/anemo.png"))
 			.setDamageColor(Colors.ANEMO)
 			.setAsAura(false)
 			.setPriority(2)
@@ -47,7 +47,7 @@ public enum Element {
 		OriginsGenshin.identifier("electro"),
 		ElementSettings
 			.create()
-			.setTexture(OriginsGenshin.identifier("textures/particle/electro.png"))
+			.setTexture(OriginsGenshin.identifier("textures/element/electro.png"))
 			.setDamageColor(Colors.ELECTRO)
 			.setPriority(2)
 	),
@@ -55,7 +55,7 @@ public enum Element {
 		OriginsGenshin.identifier("dendro"),
 		ElementSettings
 			.create()
-			.setTexture(OriginsGenshin.identifier("textures/particle/dendro.png"))
+			.setTexture(OriginsGenshin.identifier("textures/element/dendro.png"))
 			.setDamageColor(Colors.DENDRO)
 			.setPriority(2)
 	),
@@ -63,7 +63,7 @@ public enum Element {
 		OriginsGenshin.identifier("cryo"),
 		ElementSettings
 			.create()
-			.setTexture(OriginsGenshin.identifier("textures/particle/cryo.png"))
+			.setTexture(OriginsGenshin.identifier("textures/element/cryo.png"))
 			.setDamageColor(Colors.CRYO)
 			.setPriority(2)
 	),
@@ -71,7 +71,7 @@ public enum Element {
 		OriginsGenshin.identifier("geo"),
 		ElementSettings
 			.create()
-			.setTexture(OriginsGenshin.identifier("textures/particle/geo.png"))
+			.setTexture(OriginsGenshin.identifier("textures/element/geo.png"))
 			.setDamageColor(Colors.GEO)
 			.setAsAura(false)
 			.setPriority(2)
@@ -79,7 +79,7 @@ public enum Element {
 	FROZEN(
 		OriginsGenshin.identifier("frozen"),
 		ElementSettings.create()
-			.setTexture(OriginsGenshin.identifier("textures/particle/frozen.png"))
+			.setTexture(OriginsGenshin.identifier("textures/element/frozen.png"))
 			.setDamageColor(Color.fromRGBAHex("#b4ffff"))
 			.setParentElement(Element.CRYO)
 			.setAsBypassesCooldown(true)
@@ -88,7 +88,7 @@ public enum Element {
 	QUICKEN(
 		OriginsGenshin.identifier("quicken"),
 		ElementSettings.create()
-			.setTexture(OriginsGenshin.identifier("textures/particle/quicken.png"))
+			.setTexture(OriginsGenshin.identifier("textures/element/quicken.png"))
 			.setDamageColor(Color.fromRGBAHex("#01e858"))
 			.setParentElement(Element.DENDRO)
 			.setAsBypassesCooldown(true)
@@ -97,7 +97,7 @@ public enum Element {
 	BURNING(
 		OriginsGenshin.identifier("burning"),
 		ElementSettings.create()
-			.setTexture(OriginsGenshin.identifier("textures/particle/burning.png"))
+			.setTexture(OriginsGenshin.identifier("textures/element/burning.png"))
 			.setParentElement(Element.PYRO)
 			.setAsBypassesCooldown(true)
 			.setPriority(1)
