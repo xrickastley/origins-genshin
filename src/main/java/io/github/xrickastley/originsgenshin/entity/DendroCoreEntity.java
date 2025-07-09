@@ -12,6 +12,7 @@ import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
 import io.github.xrickastley.originsgenshin.element.ElementalDamageSource;
 import io.github.xrickastley.originsgenshin.element.InternalCooldownContext;
+import io.github.xrickastley.originsgenshin.registry.OriginsGenshinDamageTypes;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
@@ -19,7 +20,6 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Arm;
@@ -97,8 +97,7 @@ public class DendroCoreEntity extends LivingEntity {
 				this
 					.getWorld()
 					.getDamageSources()
-					// TODO: change to "dendro core" damage type.
-					.create(DamageTypes.ARROW, this, owner),
+					.create(OriginsGenshinDamageTypes.DENDRO_CORE, this, owner),
 				ElementalApplication.gaugeUnits(target, Element.DENDRO, 0.0),
 				InternalCooldownContext.ofNone(owner)
 			);

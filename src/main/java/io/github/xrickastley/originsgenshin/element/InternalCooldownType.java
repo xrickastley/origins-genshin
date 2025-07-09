@@ -1,9 +1,14 @@
 package io.github.xrickastley.originsgenshin.element;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
+import io.github.xrickastley.originsgenshin.registry.OriginsGenshinRegistries;
+import net.minecraft.registry.Registry;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.dynamic.Codecs;
 
@@ -26,10 +31,29 @@ import net.minecraft.util.dynamic.Codecs;
  * applied again, where the elemental attacks share ICD. When the amount of elemental attacks 
  * exceed that of the gauge sequence, the Internal Cooldown is considered to <b>not</b> be active,
  * <b>however</b>, this does <b>not</b> reset the timer given by the <b>reset interval</b>. 
+ * 
+ * <h2>Hardcoded ICD Types</h2> 
+ * 
+ * An {@code InternalCooldownType} isn't validated or registered against the registry, so a "hardcoded"
+ * {@code InternalCooldownType} instance may exist. However, due to the fact that these instances aren't
+ * registered against the registry, there may be instances where two seperate {@code InternalCooldownType}
+ * instances have the same {@code id}. <br> <br>
+ * 
+ * Though harmless in practice, it may be confusing to have two {@code InternalCooldownType} instances at
+ * the same time. The {@link InternalCooldownType} class provides two methods you may use to create 
+ * hardcoded instances of it.
+ * 
+ * <ul>
+ * 	<li>{@link InternalCooldownType#of()} creates a <i>purely</i> hardcoded instance of {@code InternalCooldownType}.</li>
+ * 	<li>{@link InternalCooldownType#registered()} creates a hardcoded instance of {@code InternalCooldownType} that is 
+ * 	registered to the {@link OriginsGenshinRegistries#INTERNAL_COOLDOWN_TYPE} registry. This hardcoded instance is <i>not</i>
+ * 	overwritable by data-driven means.</li>
+ * </ul>
  */
 public final class InternalCooldownType {
-	public static final InternalCooldownType NONE = new InternalCooldownType(OriginsGenshin.identifier("none"), 0, 0);
-	public static final InternalCooldownType DEFAULT = new InternalCooldownType(OriginsGenshin.identifier("default"), 50, 3);
+	private static final List<InternalCooldownType> PRELOADED_INSTANCES = new ArrayList<>();
+	public static final InternalCooldownType NONE = InternalCooldownType.registered(OriginsGenshin.identifier("none"), 0, 0);
+	public static final InternalCooldownType DEFAULT = InternalCooldownType.registered(OriginsGenshin.identifier("default"), 50, 3);
 
 	private final Identifier id;
 	private final int resetInterval;
@@ -39,6 +63,18 @@ public final class InternalCooldownType {
 		this.id = id;
 		this.resetInterval = resetInterval;
 		this.gaugeSequence = gaugeSequence;
+	}
+
+	public static InternalCooldownType of(Identifier id, int resetInterval, int gaugeSequence) {
+		return new InternalCooldownType(id, resetInterval, gaugeSequence);
+	}
+
+	public static InternalCooldownType registered(Identifier id, int resetInterval, int gaugeSequence) {
+		final InternalCooldownType icdType = new InternalCooldownType(id, resetInterval, gaugeSequence);
+
+		InternalCooldownType.PRELOADED_INSTANCES.add(icdType);
+
+		return icdType;
 	}
 
 	public Identifier getId() {
@@ -60,6 +96,10 @@ public final class InternalCooldownType {
 	@Override
 	public String toString() {
 		return String.format("InternalCooldown[%s/resetInterval=%d,gaugeSequence=%d]", this.id, this.resetInterval, this.gaugeSequence);
+	}
+
+	public static void onBeforeRegistryLoad(Registry<InternalCooldownType> registry) {
+		InternalCooldownType.PRELOADED_INSTANCES.forEach(inst -> Registry.register(registry, inst.getId(), inst));
 	}
 
 	public static final class Builder {
