@@ -15,7 +15,7 @@ public enum Element {
 		ElementSettings
 			.create()
 			.setDamageColor(Color.fromRGBAHex("#ffffff"))
-			.setAsAura(false)
+			.canBeAura(false)
 	),
 	PYRO(
 		OriginsGenshin.identifier("pyro"),
@@ -23,8 +23,8 @@ public enum Element {
 			.create()
 			.setTexture(OriginsGenshin.identifier("textures/element/pyro.png"))
 			.setDamageColor(Colors.PYRO)
-			.setDecayInheritance(false)
 			.setPriority(2)
+			.decayInheritance(false)
 	),
 	HYDRO(
 		OriginsGenshin.identifier("hydro"),
@@ -40,8 +40,8 @@ public enum Element {
 			.create()
 			.setTexture(OriginsGenshin.identifier("textures/element/anemo.png"))
 			.setDamageColor(Colors.ANEMO)
-			.setAsAura(false)
 			.setPriority(2)
+			.canBeAura(false)
 	),
 	ELECTRO(
 		OriginsGenshin.identifier("electro"),
@@ -73,8 +73,8 @@ public enum Element {
 			.create()
 			.setTexture(OriginsGenshin.identifier("textures/element/geo.png"))
 			.setDamageColor(Colors.GEO)
-			.setAsAura(false)
 			.setPriority(2)
+			.canBeAura(false)
 	),
 	FROZEN(
 		OriginsGenshin.identifier("frozen"),
@@ -82,8 +82,8 @@ public enum Element {
 			.setTexture(OriginsGenshin.identifier("textures/element/frozen.png"))
 			.setDamageColor(Color.fromRGBAHex("#b4ffff"))
 			.setParentElement(Element.CRYO)
-			.setAsBypassesCooldown(true)
 			.setPriority(1)
+			.bypassesCooldown(true)
 	),
 	QUICKEN(
 		OriginsGenshin.identifier("quicken"),
@@ -91,16 +91,17 @@ public enum Element {
 			.setTexture(OriginsGenshin.identifier("textures/element/quicken.png"))
 			.setDamageColor(Color.fromRGBAHex("#01e858"))
 			.setParentElement(Element.DENDRO)
-			.setAsBypassesCooldown(true)
 			.setPriority(1)
+			.bypassesCooldown(true)
 	),
 	BURNING(
 		OriginsGenshin.identifier("burning"),
 		ElementSettings.create()
 			.setTexture(OriginsGenshin.identifier("textures/element/burning.png"))
 			.setParentElement(Element.PYRO)
-			.setAsBypassesCooldown(true)
 			.setPriority(1)
+			.bypassesCooldown(true)
+			.hasAuraTax(false)
 	);
 
 	private final Identifier id;
@@ -151,7 +152,7 @@ public enum Element {
     }
 
 	public boolean canBeAura() {
-		return settings.isAura;
+		return settings.canBeAura;
 	}
 	
 	/**
@@ -189,6 +190,10 @@ public enum Element {
 			.anyMatch(childElement -> childElement == element);
 	}
 
+	public boolean hasAuraTax() {
+		return settings.hasAuraTax;
+	}
+
 	/**
 	 * A class used in creating data for Elements, instead of multiple overloaded constructors.
 	 */
@@ -197,9 +202,10 @@ public enum Element {
 
 		protected Identifier texture;
 		protected Color damageColor;
-		protected boolean isAura = true;
+		protected boolean canBeAura = true;
 		protected boolean decayInheritance = true;
 		protected boolean bypassesCooldown = false;
+		protected boolean hasAuraTax = true;
 		protected Element parentElement;
 		protected int priority;
 
@@ -230,6 +236,7 @@ public enum Element {
 			return this;
 		}
 		
+		// TODO: change from just "rendering priority".
 		/**
 		 * Sets the rendering priority of this element. Most useful for co-existing auras. <br> <br>
 		 * 
@@ -247,14 +254,41 @@ public enum Element {
 	
 			return this;
 		}
+		
+		/**
+		 * Sets the element as a child of {@code parentElement}. <br> <br>
+		 * 
+		 * A child element is able to be used in-place of it's parent element in an Elemental
+		 * Reaction if it has {@code allowChildElements} set to {@code true}.
+		 *  
+		 * @param parentElement The parent element of the element.
+		 * @deprecated This setting does nothing.
+		 */
+		@Deprecated
+		public ElementSettings setParentElement(Element parentElement) {
+			this.parentElement = parentElement;
+	
+			return this;
+		}
 
 		/**
 		 * Sets if the element can be an Aura Element.
-		 * @param isAura If the element can be an Aura Element.
+		 * @param aura If the element can be an Aura Element.
 		 */
-		public ElementSettings setAsAura(boolean isAura) {
-			this.isAura = isAura;
+		public ElementSettings canBeAura(boolean aura) {
+			this.canBeAura = aura;
 	
+			return this;
+		}
+
+		/**
+		 * Sets if the element, when applied as an Aura Element, would have its Gauge Units
+		 * deducted by the <a href="https://genshin-impact.fandom.com/wiki/Elemental_Gauge_Theory#Aura_Tax">Aura Tax</a>.
+		 * @param auraTax If the element's Gauge Units should be deducted by the Aura Tax. 
+		 */
+		public ElementSettings hasAuraTax(boolean auraTax) {
+			this.hasAuraTax = auraTax;
+
 			return this;
 		}
 	
@@ -262,7 +296,7 @@ public enum Element {
 		 * Sets if the Elemental Application tied to this element is tied to can bypass <a href="https://genshin-impact.fandom.com/wiki/Internal_Cooldown">Internal Cooldown</a>.
 		 * @param bypassesCooldown If the Elemental Application tied to this element can bypass Internal Cooldown.
 		 */
-		public ElementSettings setAsBypassesCooldown(boolean bypassesCooldown) {
+		public ElementSettings bypassesCooldown(boolean bypassesCooldown) {
 			this.bypassesCooldown = bypassesCooldown;
 
 			return this;
@@ -272,22 +306,8 @@ public enum Element {
 		 * Sets if the element has <a href="https://genshin-impact.fandom.com/wiki/Elemental_Gauge_Theory#Decay_Rate_Inheritance">decay rate inheritance</a>.
 		 * @param decayInheritance If the element has decay rate inheritance.
 		 */
-		public ElementSettings setDecayInheritance(boolean decayInheritance) {
+		public ElementSettings decayInheritance(boolean decayInheritance) {
 			this.decayInheritance = decayInheritance;
-	
-			return this;
-		}
-		
-		/**
-		 * Sets the element as a child of {@code parentElement}. <br> <br>
-		 * 
-		 * A child element is able to be used in-place of it's parent element in an Elemental Reaction if
-		 * it has {@code allowChildElements} set to {@code true}.
-		 *  
-		 * @param parentElement The parent element of the element.
-		 */
-		public ElementSettings setParentElement(Element parentElement) {
-			this.parentElement = parentElement;
 	
 			return this;
 		}

@@ -5,6 +5,7 @@ import java.util.function.Function;
 import net.minecraft.util.math.MathHelper;
 
 public enum Ease {
+	LINEAR				(x -> x),
 	IN_SINE				(x -> 1 - Math.cos((x * Math.PI) / 2)),
 	OUT_SINE			(x -> Math.sin((x * Math.PI) / 2)),
 	IN_OUT_SINE			(x -> -(Math.cos(Math.PI * x) - 1) / 2),
@@ -27,8 +28,14 @@ public enum Ease {
 	public double apply(double range) {
 		return easeFunction.apply(range);
 	}
+	
+	public double applyLerp(double delta, double start, double end) {
+		return easeFunction.apply(
+			MathHelper.clamp(MathHelper.lerp(MathHelper.clamp(delta, 0, 1), start, end), start, end)
+		);
+	}
 
-	public double lerpedApply(double value, double start, double end) {
+	public double applyLerpProgress(double value, double start, double end) {
 		return easeFunction.apply(
 			MathHelper.clamp(MathHelper.getLerpProgress(value, start, end), 0, 1)
 		);

@@ -30,8 +30,6 @@ import net.minecraft.util.math.Vec3d;
 
 @Environment(EnvType.CLIENT)
 public class ReactionParticle extends TextBillboardParticle {
-	private float prevScale = -1;
-
 	protected ReactionParticle(ClientWorld clientWorld, double x, double y, double z, double color) {
 		super(clientWorld, x, y, z, color);
 		
@@ -72,7 +70,7 @@ public class ReactionParticle extends TextBillboardParticle {
 		
 		if (this.alpha <= 0f || this.scale <= 0f) return;
 
-		y += (float) Ease.OUT_SINE.lerpedApply(age, 0, maxAge) * 0.75f;
+		y += (float) Ease.OUT_SINE.applyLerpProgress(age, 0, maxAge) * 0.75f;
 
 		double intAlpha = Math.max(0.0f, MathHelper.lerp(Math.max(0, (double) (age - fadeAge) / (maxAge - fadeAge)), 1.0, 0.0));
 
@@ -82,7 +80,7 @@ public class ReactionParticle extends TextBillboardParticle {
 
 		int intColor = fColor.asARGB();
 
-		float scale = (float) (1.00 - Ease.IN_OUT_QUART.lerpedApply((age + tickDelta) / 2.5, 0, 0.25));
+		float scale = (float) (1.00 - Ease.IN_OUT_QUART.applyLerpProgress((age + tickDelta) / 2.5, 0, 0.25));
 
 		MatrixStack matrixStack = new MatrixStack();
 		matrixStack.push();
@@ -117,12 +115,12 @@ public class ReactionParticle extends TextBillboardParticle {
 		final float deltaTime = age + tickDelta;
 
 		final double alpha = Math.max(0.0f, MathHelper.lerp((deltaTime - fadeAge) / (maxAge - fadeAge), 1.0, 0.0));
-		final float scale = (float) (1.25 - (Ease.IN_OUT_QUART.lerpedApply(((age + tickDelta) / scaleAge), 0, 1) * 0.5));
+		final float scale = (float) (1.25 - (Ease.IN_OUT_QUART.applyLerpProgress(((age + tickDelta) / scaleAge), 0, 1) * 0.5));
 
 		if (alpha <= 0f || scale <= 0f) return;
 
 		final float x = (float) MathHelper.lerp(tickDelta, this.prevPosX, this.x);
-		final float y = (float) MathHelper.lerp(tickDelta, this.prevPosY, this.y) + (float) (Ease.OUT_SINE.lerpedApply(age, 0, maxAge) * 0.75f);
+		final float y = (float) MathHelper.lerp(tickDelta, this.prevPosY, this.y) + (float) (Ease.OUT_SINE.applyLerpProgress(age, 0, maxAge) * 0.75f);
 		final float z = (float) MathHelper.lerp(tickDelta, this.prevPosZ, this.z);
 		
 		final int color = Color

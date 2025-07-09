@@ -3,7 +3,7 @@ package io.github.xrickastley.originsgenshin.mixin;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
 
-import java.util.ArrayList;
+import java.util.List;
 
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.item.ItemStack;
@@ -21,6 +21,7 @@ import io.github.xrickastley.originsgenshin.component.ElementComponent;
 import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
 import io.github.xrickastley.originsgenshin.element.ElementalDamageSource;
+import io.github.xrickastley.originsgenshin.element.InternalCooldownContext;
 import io.github.xrickastley.originsgenshin.element.reaction.AmplifyingElementalReaction;
 import io.github.xrickastley.originsgenshin.element.reaction.ElementalReaction;
 import io.github.xrickastley.originsgenshin.element.reaction.ElementalReactions;
@@ -67,7 +68,7 @@ public abstract class LivingEntityMixin
 	private float applyDMGModifiers(float amount, @Local(argsOnly = true) DamageSource source) {
 		return source instanceof final ElementalDamageSource eds
 			? OriginsGenshinAttributes.modifyDamage((LivingEntity)(Entity) this, eds, amount)
-			: OriginsGenshinAttributes.modifyDamage((LivingEntity)(Entity) this, new ElementalDamageSource(source, ElementalApplication.gaugeUnits((LivingEntity)(Entity) this, Element.PHYSICAL, 0), "dmg"), amount);
+			: OriginsGenshinAttributes.modifyDamage((LivingEntity)(Entity) this, new ElementalDamageSource(source, ElementalApplication.gaugeUnits((LivingEntity)(Entity) this, Element.PHYSICAL, 0), InternalCooldownContext.ofNone(source.getAttacker())), amount);
 	}
 
 	@ModifyVariable(
@@ -103,7 +104,7 @@ public abstract class LivingEntityMixin
 		if (!(source instanceof final ElementalDamageSource elementalSource)) return amount;
 
 		final ElementComponent component = ElementComponent.KEY.get(this);
-		final ArrayList<ElementalReaction> reactions = component.applyFromDamageSource(elementalSource);
+		final List<ElementalReaction> reactions = component.applyFromDamageSource(elementalSource);
 
 		double amplifier = reactions.size() > 0
 			? Math.max(

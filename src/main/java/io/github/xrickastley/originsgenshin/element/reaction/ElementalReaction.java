@@ -13,7 +13,7 @@ import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.component.ElementComponent;
 import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
-import io.github.xrickastley.originsgenshin.events.ReactionTriggered;
+import io.github.xrickastley.originsgenshin.events.ReactionsTriggered;
 import io.github.xrickastley.originsgenshin.networking.ShowElementalReactionS2CPacket;
 
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
@@ -217,9 +217,9 @@ public abstract class ElementalReaction {
 		this.onReaction(entity, applicationAE, applicationTE, reducedGauge, origin);
 		this.displayReaction(entity);
 
-		ReactionTriggered.EVENT
+		ReactionsTriggered.EVENT
 			.invoker()
-			.onReactionTriggered(this, entity);
+			.onReactionsTriggered(this, entity, origin);
 
 		return true;
 	}

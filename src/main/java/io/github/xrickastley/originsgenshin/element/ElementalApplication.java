@@ -41,7 +41,7 @@ public final class ElementalApplication {
 		this.currentGauge = gaugeUnits;
 
 		// Aura tax.
-		if (this.isAura) this.currentGauge *= 0.8;
+		if (this.isAura && element.hasAuraTax()) this.currentGauge *= 0.8;
 	}
 
 	private ElementalApplication(LivingEntity entity, Element element, UUID uuid, double gaugeUnits, double duration) {
@@ -385,9 +385,5 @@ public final class ElementalApplication {
 				this.getGaugeUnits(),
 				this.getDuration()
 			);
-	}
-
-	public static class Builder {
-
 	}
 }

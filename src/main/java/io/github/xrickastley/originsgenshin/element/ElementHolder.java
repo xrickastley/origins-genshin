@@ -1,5 +1,6 @@
 package io.github.xrickastley.originsgenshin.element;
 
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import blue.endless.jankson.annotation.Nullable;
@@ -8,7 +9,7 @@ import net.minecraft.entity.LivingEntity;
 public final class ElementHolder {
 	// The one holding the element.
 	private final LivingEntity owner;
-	private final ConcurrentHashMap<String, InternalCooldownData> internalCooldowns = new ConcurrentHashMap<>();
+	protected final Map<LivingEntity, InternalCooldownHolder> internalCooldowns = new ConcurrentHashMap<>();
 	private final Element element;
 	private @Nullable ElementalApplication application;
 
@@ -55,10 +56,6 @@ public final class ElementHolder {
 
 		return this.application;
 	}
-	
-	public InternalCooldownData getInternalCooldown(String sourceTag) {
-		return internalCooldowns.getOrDefault(sourceTag, InternalCooldownData.blank(owner));
-	}
 
 	public void setElementalApplication(@Nullable ElementalApplication application) {
 		this.application = application;
@@ -69,8 +66,8 @@ public final class ElementHolder {
 	 * @param element The element to test.
 	 * @param sourceTag The source of this element. This is the skill that dealt the damage.
 	 */
-	public boolean canApplyElement(Element element, String sourceTag) {
-		return this.canApplyElement(element, sourceTag, false);
+	public boolean canApplyElement(Element element, InternalCooldownContext icdContext) {
+		return this.canApplyElement(element, icdContext, false);
 	}
 	
 	/**
@@ -79,17 +76,19 @@ public final class ElementHolder {
 	 * @param sourceTag The source of this element. This is the skill that dealt the damage.
 	 * @param handleICD Whether the ICD should be handled.
 	 */
-	public boolean canApplyElement(Element element, String sourceTag, boolean handleICD) {
+	public boolean canApplyElement(Element element, InternalCooldownContext icdContext, boolean handleICD) {
 		if (element.bypassesInternalCooldown()) return true;
 
-		final InternalCooldownData icdData = this.internalCooldowns.getOrDefault(sourceTag, InternalCooldownData.blank(owner));
+		final InternalCooldown icdData = icdContext.getInternalCooldown(this);
 		
 		final boolean inICD = handleICD 
 			? icdData.handleInternalCooldown()
 			: icdData.isInInternalCooldown();
 
-		internalCooldowns.put(sourceTag, icdData);
-
 		return inICD;
+	}
+
+	public LivingEntity getOwner() {
+		return this.owner;
 	}
 }

@@ -17,6 +17,8 @@ import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.data.OriginsGenshinDataTypes;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
 import io.github.xrickastley.originsgenshin.element.ElementalDamageSource;
+import io.github.xrickastley.originsgenshin.element.InternalCooldownContext;
+import io.github.xrickastley.originsgenshin.element.InternalCooldownType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
@@ -36,7 +38,7 @@ public class ElementalDamageAction {
 		data.<Modifier>ifPresent("modifier", modifiers::add);
 		data.<List<Modifier>>ifPresent("modifiers", modifiers::addAll);
 
-		if (!modifiers.isEmpty() && target instanceof LivingEntity livingTarget) {
+		if (!modifiers.isEmpty() && target instanceof final LivingEntity livingTarget) {
 			float targetMaxHealth = livingTarget.getMaxHealth();
 			float newDamageAmount = (float) ModifierUtil.applyModifiers(actor, modifiers, targetMaxHealth);
 
@@ -48,10 +50,10 @@ public class ElementalDamageAction {
 		try {
 			DamageSource source = MiscUtil.createDamageSource(actor.getDamageSources(), data.get("source"), data.get("damage_type"), actor);
 			
-			if (data.isPresent("element") && target instanceof LivingEntity) {
-				final ElementalApplication application = ElementalApplication.gaugeUnits((LivingEntity) target, data.get("element"), data.getDouble("gauge_units"));
+			if (data.isPresent("element") && target instanceof final LivingEntity livingTarget) {
+				final ElementalApplication application = ElementalApplication.gaugeUnits(livingTarget, data.get("element"), data.getDouble("gauge_units"));
 
-				source = new ElementalDamageSource(source, application, data.getString("source_tag"));
+				source = new ElementalDamageSource(source, application, InternalCooldownContext.ofType(actor, data.getString("source_tag"), data.get("source_type")));
 			}
 			
 			target.damage(source, damageAmount);
@@ -71,7 +73,8 @@ public class ElementalDamageAction {
 				.add("modifiers", Modifier.LIST_TYPE, null)
 				.add("element", OriginsGenshinDataTypes.ELEMENT, null)
 				.add("gauge_units", SerializableDataTypes.DOUBLE, 1.0)
-				.add("source_tag", SerializableDataTypes.STRING, null),
+				.add("source_tag", SerializableDataTypes.STRING, null)
+				.add("source_type", OriginsGenshinDataTypes.INTERNAL_COOLDOWN_TYPE, InternalCooldownType.DEFAULT),
 			ElementalDamageAction::action
 		);
 	}

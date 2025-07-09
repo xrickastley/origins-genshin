@@ -9,7 +9,7 @@ import net.minecraft.util.math.Vec3d;
 
 public class ElementalDamageSource extends DamageSource {
 	private final ElementalApplication application;
-	private final String sourceTag;
+	private final InternalCooldownContext icdContext;
 
 	/**
 	 * Creates an {@link ElementalDamageSource} from an already existing {@link DamageSource}.
@@ -17,11 +17,11 @@ public class ElementalDamageSource extends DamageSource {
 	 * @param application The Elemental Application of this {@code ElementalDamageSource}. This is the Elemental Application that will be applied to the target entity, if possible.
 	 * @param sourceTag The source tag of this {@code DamageSource}. A source tag controls the Internal Cooldown of specific attacks, as Internal Cooldowns are different between source tags.
 	 */
-	public ElementalDamageSource(final DamageSource source, final ElementalApplication application, final String sourceTag) {
+	public ElementalDamageSource(final DamageSource source, final ElementalApplication application, final InternalCooldownContext icdContext) {
 		super(source.getTypeRegistryEntry(), source.getSource(), source.getAttacker());
-		
+	
 		this.application = application;
-		this.sourceTag = sourceTag;
+		this.icdContext = icdContext;
 	}
 
 	/**
@@ -32,11 +32,11 @@ public class ElementalDamageSource extends DamageSource {
 	 * @param application The Elemental Application of this {@code ElementalDamageSource}. This is the Elemental Application that will be applied to the target entity, if possible.
 	 * @param sourceTag The source tag of this {@code DamageSource}. A source tag controls the Internal Cooldown of specific attacks, as Internal Cooldowns are different between source tags.
 	 */
-	public ElementalDamageSource(final RegistryEntry<DamageType> type, @Nullable final Entity source, @Nullable final Entity attacker, final ElementalApplication application, final String sourceTag) {
+	public ElementalDamageSource(final RegistryEntry<DamageType> type, @Nullable final Entity source, @Nullable final Entity attacker, final ElementalApplication application, final InternalCooldownContext icdContext) {
 		super(type, source, attacker);
 
 		this.application = application;
-		this.sourceTag = sourceTag;
+		this.icdContext = icdContext;
 	}
 	
 	/**
@@ -46,11 +46,11 @@ public class ElementalDamageSource extends DamageSource {
 	 * @param application The Elemental Application of this {@code ElementalDamageSource}. This is the Elemental Application that will be applied to the target entity, if possible.
 	 * @param sourceTag The source tag of this {@code DamageSource}. A source tag controls the Internal Cooldown of specific attacks, as Internal Cooldowns are different between source tags.
 	 */
-	public ElementalDamageSource(final RegistryEntry<DamageType> type, final Vec3d position, final ElementalApplication application, final String sourceTag) {
+	public ElementalDamageSource(final RegistryEntry<DamageType> type, final Vec3d position, final ElementalApplication application, final InternalCooldownContext icdContext) {
 		super(type, position);
 
 		this.application = application;
-		this.sourceTag = sourceTag;
+		this.icdContext = icdContext;
 	}
 	
 	/**
@@ -60,11 +60,11 @@ public class ElementalDamageSource extends DamageSource {
 	 * @param application The Elemental Application of this {@code ElementalDamageSource}. This is the Elemental Application that will be applied to the target entity, if possible.
 	 * @param sourceTag The source tag of this {@code DamageSource}. A source tag controls the Internal Cooldown of specific attacks, as Internal Cooldowns are different between source tags.
 	 */
-	public ElementalDamageSource(final RegistryEntry<DamageType> type, @Nullable final Entity attacker, final ElementalApplication application, final String sourceTag) {
+	public ElementalDamageSource(final RegistryEntry<DamageType> type, @Nullable final Entity attacker, final ElementalApplication application, final InternalCooldownContext icdContext) {
 		super(type, attacker, attacker);
 
 		this.application = application;
-		this.sourceTag = sourceTag;
+		this.icdContext = icdContext;
 	}
 	
 	/**
@@ -73,18 +73,18 @@ public class ElementalDamageSource extends DamageSource {
 	 * @param application The Elemental Application of this {@code ElementalDamageSource}. This is the Elemental Application that will be applied to the target entity, if possible.
 	 * @param sourceTag The source tag of this {@code DamageSource}. A source tag controls the Internal Cooldown of specific attacks, as Internal Cooldowns are different between source tags.
 	 */
-	public ElementalDamageSource(final RegistryEntry<DamageType> type, final ElementalApplication application, final String sourceTag) {
+	public ElementalDamageSource(final RegistryEntry<DamageType> type, final ElementalApplication application, final InternalCooldownContext icdContext) {
 		super(type);
 
 		this.application = application;
-		this.sourceTag = sourceTag;
+		this.icdContext = icdContext;
 	}
 
 	public ElementalApplication getElementalApplication() {
 		return this.application;
 	}
 
-	public String getSourceTag() {
-		return this.sourceTag;
+	public InternalCooldownContext getIcdContext() {
+		return this.icdContext;
 	}
 }

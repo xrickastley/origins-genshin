@@ -6,6 +6,7 @@ import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
 import io.github.xrickastley.originsgenshin.element.ElementalDamageSource;
+import io.github.xrickastley.originsgenshin.element.InternalCooldownContext;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageTypes;
 import net.minecraft.util.math.Box;
@@ -55,7 +56,7 @@ public abstract class AbstractSwirlElementalReaction extends ElementalReaction {
 					.getDamageSources()
 					.create(DamageTypes.PLAYER_ATTACK, origin),
 				ElementalApplication.gaugeUnits(target, swirlElement, gaugeSwirlAttack, true),
-				String.format("swirl-%s", swirlElement.toString().toLowerCase())
+				InternalCooldownContext.ofNone(origin)
 			);
 			final float damage = 2 * OriginsGenshin.getLevelMultiplier(world);
 

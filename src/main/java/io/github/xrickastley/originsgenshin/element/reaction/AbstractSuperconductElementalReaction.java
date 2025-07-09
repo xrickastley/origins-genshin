@@ -23,6 +23,7 @@ public abstract class AbstractSuperconductElementalReaction extends ElementalRea
 
 		modifiers.put(OriginsGenshinAttributes.PHYSICAL_RES, new EntityAttributeModifier("superconduct", -0.4, Operation.ADDITION));
 
+		// TODO: change to status effect
 		entity
 			.getAttributes()
 			.addTemporaryModifiers(modifiers);

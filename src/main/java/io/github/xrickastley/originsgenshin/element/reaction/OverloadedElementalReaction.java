@@ -7,6 +7,7 @@ import io.github.xrickastley.originsgenshin.component.ElementComponent;
 import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
 import io.github.xrickastley.originsgenshin.element.ElementalDamageSource;
+import io.github.xrickastley.originsgenshin.element.InternalCooldownContext;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinParticleFactory;
 import io.github.xrickastley.originsgenshin.util.NonEntityDamagingExplosion;
 
@@ -94,7 +95,7 @@ public class OverloadedElementalReaction extends ElementalReaction {
 			if (!origin.canTarget(target)) continue;
 
 			final ElementalApplication application = ElementalApplication.gaugeUnits(target, Element.PYRO, 0);
-			final ElementalDamageSource source = new ElementalDamageSource(world.getDamageSources().generic(), application, "reactions:overloaded");
+			final ElementalDamageSource source = new ElementalDamageSource(world.getDamageSources().generic(), application, InternalCooldownContext.ofNone(origin));
 			
 			final boolean inCircleRadius = origin.squaredDistanceTo(target) <= (radius * radius);
 			final ElementComponent component = ElementComponent.KEY.get(target);

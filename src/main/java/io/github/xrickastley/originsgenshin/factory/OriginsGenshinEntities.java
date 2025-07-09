@@ -2,8 +2,6 @@ package io.github.xrickastley.originsgenshin.factory;
 
 import java.util.function.Supplier;
 
-import io.github.apace100.apoli.registry.ApoliRegistries;
-import io.github.apace100.apoli.registry.ApoliRegistryKeys;
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.entity.DendroCoreEntity;
 

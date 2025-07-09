@@ -1,11 +1,17 @@
 package io.github.xrickastley.originsgenshin.entity;
 
+import java.util.Comparator;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+
 import javax.annotation.Nullable;
 
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
 import io.github.xrickastley.originsgenshin.element.ElementalDamageSource;
+import io.github.xrickastley.originsgenshin.element.InternalCooldownContext;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.EquipmentSlot;
@@ -14,6 +20,7 @@ import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.DamageTypes;
+import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Arm;
 import net.minecraft.util.collection.DefaultedList;
@@ -35,6 +42,10 @@ public class DendroCoreEntity extends LivingEntity {
 		super(entityType, world);
 
 		this.owner = owner;
+	}
+
+	public int getAge() {
+		return this.age;
 	}
 
 	public DendroCoreEntity setOwner(LivingEntity owner) {
@@ -64,9 +75,42 @@ public class DendroCoreEntity extends LivingEntity {
 		return ItemStack.EMPTY;
 	}
 
+	@Override
+	public boolean canHaveStatusEffect(StatusEffectInstance effect) {
+		return false;
+	}
+
+	@Override
+	public boolean addStatusEffect(StatusEffectInstance effect, Entity source) {
+		return false;
+	}
+
 	public static DefaultAttributeContainer.Builder getAttributeBuilder() {
 		return LivingEntity.createLivingAttributes()
 			.add(EntityAttributes.GENERIC_MAX_HEALTH, 1);
+	}
+
+	@Override
+	public void kill() {
+		for (final LivingEntity target : this.getWorld().getNonSpectatingEntities(LivingEntity.class, Box.of(this.getLerpedPos(1F), radius * 2, radius * 2, radius * 2))) {
+			final ElementalDamageSource source = new ElementalDamageSource(
+				this
+					.getWorld()
+					.getDamageSources()
+					// TODO: change to "dendro core" damage type.
+					.create(DamageTypes.ARROW, this, owner),
+				ElementalApplication.gaugeUnits(target, Element.DENDRO, 0.0),
+				InternalCooldownContext.ofNone(owner)
+			);
+
+			float damage = 2 * OriginsGenshin.getLevelMultiplier(this);
+
+			if (owner != null && owner.getUuid().equals(target.getUuid())) damage *= 0.05f;
+
+			target.damage(source, damage);
+		}
+
+		super.kill();
 	}
 
 	@Override
@@ -84,25 +128,41 @@ public class DendroCoreEntity extends LivingEntity {
 	}
 
 	@Override
+	public boolean isPushable() {
+		return false;
+	}
+
+	@Override
+	public void pushAwayFrom(Entity entity) {}
+
+	@Override
 	public void tick() {
 		super.tick();
 		
-		if (this.age < 120) return;
-	
-		for (final LivingEntity target : this.getWorld().getNonSpectatingEntities(LivingEntity.class, Box.of(this.getLerpedPos(1F), radius * 2, radius * 2, radius * 2))) {
-			final ElementalDamageSource source = new ElementalDamageSource(
-				this
-					.getWorld()
-					.getDamageSources()
-					.create(DamageTypes.ARROW, this, owner),
-				ElementalApplication.gaugeUnits(target, Element.DENDRO, 0.0),
-				"dendro_core_expiration_explosion"
-			);
-			final float damage = 2 * OriginsGenshin.getLevelMultiplier(this);
+		if (this.age == 1) removeOldDendroCores(); 
 
-			target.damage(source, damage);
-		}
+		if (this.age < 120) return;
 
 		this.kill();
+	}
+
+	private void removeOldDendroCores() {
+		if (this.getWorld().isClient) return;
+
+		final Box box = Box.of(this.getLerpedPos(1f), 24, 24, 24);
+		final List<DendroCoreEntity> dendroCores = this.getWorld().getEntitiesByClass(DendroCoreEntity.class, box, dc -> true);
+
+		System.out.println(box);
+		System.out.println("Dendro Cores (nearby):  " + dendroCores.size());
+
+		if (dendroCores.size() > 5) {
+			dendroCores.sort(Comparator.comparing(DendroCoreEntity::getAge).reversed());
+
+			System.out.println(dendroCores);
+
+			final Queue<DendroCoreEntity> queue = new LinkedList<>(dendroCores);
+
+			while (queue.peek() != null && queue.size() > 5) queue.remove().age = 118;
+		}
 	}
 }

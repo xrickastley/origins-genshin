@@ -6,6 +6,7 @@ import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.component.ElementComponent;
 import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
+import io.github.xrickastley.originsgenshin.element.InternalCooldownContext;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinParticleFactory;
 import net.minecraft.entity.LivingEntity;
 
@@ -27,7 +28,7 @@ public class QuickenElementalReaction extends ElementalReaction {
 
 		ElementComponent.KEY
 			.get(entity)
-			.addElementalApplication(Element.QUICKEN, "reactions:quicken", quickenAuraGauge, tickDuration, origin);
+			.addElementalApplication(Element.QUICKEN, InternalCooldownContext.ofNone(origin), quickenAuraGauge, tickDuration);
 
 		OriginsGenshin
 			.sublogger(this)

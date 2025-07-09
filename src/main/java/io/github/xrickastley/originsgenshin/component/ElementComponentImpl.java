@@ -1,5 +1,6 @@
 package io.github.xrickastley.originsgenshin.component;
 
+import java.util.List;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Optional;
@@ -17,6 +18,7 @@ import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementHolder;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
 import io.github.xrickastley.originsgenshin.element.ElementalDamageSource;
+import io.github.xrickastley.originsgenshin.element.InternalCooldownContext;
 import io.github.xrickastley.originsgenshin.element.reaction.ElementalReaction;
 import io.github.xrickastley.originsgenshin.registry.OriginsGenshinRegistries;
 import net.minecraft.entity.LivingEntity;
@@ -26,18 +28,9 @@ import net.minecraft.nbt.NbtList;
 import net.minecraft.registry.entry.RegistryEntry.Reference;
 import net.minecraft.server.world.ServerWorld;
 
-// TODO: Fix elements not applying properly
-// POSSIBLE CULPRITS: streamToArrayList, triggerPossibleReactions, getCurrentElementPriority, getPrioritizedElements, getTriggerableReactions, attemptToReapply
 public class ElementComponentImpl implements ElementComponent {
 	private final LivingEntity owner;
-	// change to conc. hash map to avoid dupes
 	private final ConcurrentHashMap<Element, ElementHolder> elementHolder = new ConcurrentHashMap<>();
-	/**
-	 * Structure:
-	 * Element -> ConcurrentHashMap (stores sourceTags and their respective ICD data)
-	 * 					-> Pair<Integer, Integer> (lastApplied, 3-hit rule)
-	 */
-	// private final ConcurrentHashMap<Element, ConcurrentHashMap<String, InternalCooldownData>> internalCooldowns = new ConcurrentHashMap<>();
 	private final Logger LOGGER = OriginsGenshin.sublogger(ElementComponent.class);
 	private int triggeredReactionsAtAge = -1;
 
@@ -48,41 +41,24 @@ public class ElementComponentImpl implements ElementComponent {
 	}
 
 	@Override
-	public ElementHolder getElementContext(Element element) {
-		return this.elementHolder.getOrDefault(element, ElementHolder.of(owner, element));
+	public LivingEntity getOwner() {
+		return this.owner;
 	}
 
 	@Override
-	public boolean canApplyElement(Element element, String sourceTag) {
-		return this.canApplyElement(element, sourceTag, false);
+	public ElementHolder getElementHolder(Element element) {
+		return this.elementHolder.getOrDefault(element, ElementHolder.of(owner, element));
 	}
 	
 	@Override
-	public boolean canApplyElement(Element element, String sourceTag, boolean handleICD) {
-		if (element.bypassesInternalCooldown()) return true;
+	public boolean canApplyElement(Element element, InternalCooldownContext icdContext, boolean handleICD) {
+		if (element.bypassesInternalCooldown() || !icdContext.hasOrigin()) return true;
 
-		return this
-			.getElementContext(element)
-			.getInternalCooldown(sourceTag)
-			.handleInternalCooldown();
+		return this.getElementHolder(element).canApplyElement(element, icdContext);
 	}
 
 	@Override
-	public ArrayList<ElementalReaction> addElementalApplication(final Element element, String sourceTag, double gaugeUnits, @Nullable LivingEntity origin) {
-		final boolean isAura = this.getAppliedElements().length() == 0;
-
-		LOGGER.info("(add) Currently applied elements: {} | isAura: {}", this.getAppliedElements(), isAura);
-
-		return this.addElementalApplication(ElementalApplication.gaugeUnits(owner, element, gaugeUnits, isAura), sourceTag, origin);
-	}	
-
-	@Override
-	public ArrayList<ElementalReaction> addElementalApplication(final Element element, String sourceTag, double gaugeUnits, double duration, @Nullable LivingEntity origin) {
-		return this.addElementalApplication(ElementalApplication.duration(owner, element, gaugeUnits, duration), sourceTag, origin);
-	}
-
-	@Override
-	public ArrayList<ElementalReaction> addElementalApplication(ElementalApplication application, String sourceTag, @Nullable LivingEntity origin) {
+	public List<ElementalReaction> addElementalApplication(ElementalApplication application, InternalCooldownContext icdContext) {
 		// LOGGER.info("(add) Currently applied elements: {} | isAura: {}", this.getAppliedElements(), application.isAuraElement());
 		if (application.isAuraElement() && application.isGaugeUnits() && this.getAppliedElements().length() > 0)
 			application = application.asNonAura();
@@ -91,20 +67,20 @@ public class ElementComponentImpl implements ElementComponent {
 		if (application.isEmpty()) return new ArrayList<>();
 
 		// The Element is still in ICD.
-		if (!this.canApplyElement(application.getElement(), sourceTag, true)) return new ArrayList<>();
+		if (!this.canApplyElement(application.getElement(), icdContext, true)) return new ArrayList<>();
 
 		final boolean isReapplied = this.attemptReapply(application);
 
 		// Element has been reapplied, no reactions are triggered.
 		if (isReapplied) return new ArrayList<>();
 
-		final ArrayList<ElementalReaction> triggeredReactions = this.triggerReactions(application, origin);
+		final ArrayList<ElementalReaction> triggeredReactions = this.triggerReactions(application, icdContext.getOrigin());
 
 		// Current priority is higher, reactions have been triggered. Remove element after.
 		if (this.getHighestElementPriority().orElse(-1) < application.getElement().getPriority())
-			this.getElementContext(application.getElement()).setElementalApplication(null);
+			this.getElementHolder(application.getElement()).setElementalApplication(null);
 		
-		LOGGER.info("Current element data: {}", getElementContext(application.getElement()).getElementalApplication());
+		LOGGER.info("Current element data: {}", getElementHolder(application.getElement()).getElementalApplication());
 		LOGGER.info("Currently applied elements: {}", this.getAppliedElements());
 
 		ElementComponent.sync(owner);
@@ -130,7 +106,7 @@ public class ElementComponentImpl implements ElementComponent {
 	@Override
 	public @Nullable ElementalApplication getElementalApplication(Element element) {
 		return this
-			.getElementContext(element)
+			.getElementHolder(element)
 			.getElementalApplication();
 	}
 
@@ -145,14 +121,8 @@ public class ElementComponentImpl implements ElementComponent {
 	}
 
 	@Override
-	public ArrayList<ElementalReaction> applyFromDamageSource(ElementalDamageSource source) {
-		return addElementalApplication(
-			source.getElementalApplication(), 
-			source.getSourceTag(), 
-			source.getAttacker() instanceof LivingEntity origin 
-				? origin
-				: null
-		);
+	public List<ElementalReaction> applyFromDamageSource(ElementalDamageSource source) {
+		return addElementalApplication(source.getElementalApplication(), source.getIcdContext());
 	};
 
 	@Override
@@ -187,7 +157,7 @@ public class ElementComponentImpl implements ElementComponent {
 				LOGGER.info("Application: {} | appliedAt: {} | age: {}", application, application.appliedAt, owner.age);
 			}
 
-			this.getElementContext(application.getElement())
+			this.getElementHolder(application.getElement())
 				.setElementalApplication(application);
 
 			if (owner.getWorld() instanceof ServerWorld) LOGGER.info("[{}] Adding ElementalApplication: {}", owner.getWorld().getClass().getSimpleName(), application);
@@ -304,7 +274,7 @@ public class ElementComponentImpl implements ElementComponent {
 		 * with.
 		 */
 		final Optional<Integer> optionalPriority = this.getHighestElementPriority();
-		final ElementHolder context = this.getElementContext(application.getElement());
+		final ElementHolder context = this.getElementHolder(application.getElement());
 
 		LOGGER.info("Triggered reactions at age: {}, Current age: {}, Current Priority: {}, Applied elements:", triggeredReactionsAtAge, this.owner.age, optionalPriority.orElse(-1));
 		

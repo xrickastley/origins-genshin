@@ -2,12 +2,11 @@ package io.github.xrickastley.originsgenshin.element.reaction;
 
 import javax.annotation.Nullable;
 
-import org.slf4j.Logger;
-
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.component.ElementComponent;
 import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
+import io.github.xrickastley.originsgenshin.element.InternalCooldownContext;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinParticleFactory;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinStatusEffects;
 import net.minecraft.entity.LivingEntity;
@@ -32,11 +31,9 @@ public final class FrozenElementalReaction extends ElementalReaction {
 		// Freeze Duration (Seconds) = 2√(5 * freezeAuraGauge) + 4) - 4
 		final double freezeTickDuration = (2.0 * Math.sqrt((5 * freezeAuraGauge) + 4) - 4) * 20;
 		
-		// Kinda causes issues?
-		// TODO: fix Cryo-Dendro double aura: Frozen being applied triggers another set of reactions, resulting in double Bloom.
 		ElementComponent.KEY
 			.get(entity)
-			.addElementalApplication(Element.FROZEN, "reactions:frozen", freezeAuraGauge, freezeTickDuration, origin);
+			.addElementalApplication(Element.FROZEN, InternalCooldownContext.ofNone(origin), freezeAuraGauge, freezeTickDuration);
 
 		entity.addStatusEffect(
 			new StatusEffectInstance(OriginsGenshinStatusEffects.FROZEN, (int) Math.floor(freezeTickDuration * 1.025))

@@ -7,7 +7,8 @@ import io.github.xrickastley.originsgenshin.component.ElementComponent;
 import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
 import io.github.xrickastley.originsgenshin.element.ElementalDamageSource;
-import io.github.xrickastley.originsgenshin.events.ReactionTriggered;
+import io.github.xrickastley.originsgenshin.element.InternalCooldownContext;
+import io.github.xrickastley.originsgenshin.events.ReactionsTriggered;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinParticleFactory;
 import io.github.xrickastley.originsgenshin.interfaces.ILivingEntity;
 import net.minecraft.entity.LivingEntity;
@@ -53,9 +54,9 @@ public class ElectroChargedElementalReaction extends ElementalReaction {
 		this.onReaction(entity, auraElement, triggeringElement, reducedGauge, origin);
 		this.displayReaction(entity);
 
-		ReactionTriggered.EVENT
+		ReactionsTriggered.EVENT
 			.invoker()
-			.onReactionTriggered(this, entity);
+			.onReactionsTriggered(this, entity, origin);
 
 		return true;
 	}
@@ -69,7 +70,7 @@ public class ElectroChargedElementalReaction extends ElementalReaction {
 		
 		for (LivingEntity target : world.getNonSpectatingEntities(LivingEntity.class, Box.of(entity.getLerpedPos(1f), radius * 2, radius * 2, radius * 2))) {
 			final ElementalApplication application = ElementalApplication.gaugeUnits(target, Element.PYRO, 0);
-			final ElementalDamageSource source = new ElementalDamageSource(world.getDamageSources().generic(), application, "reactions:overloaded");
+			final ElementalDamageSource source = new ElementalDamageSource(world.getDamageSources().generic(), application, InternalCooldownContext.ofNone(origin));
 			
 			final boolean inCircleRadius = entity.squaredDistanceTo(target) <= (radius * radius);
 			final ElementComponent component = ElementComponent.KEY.get(target);

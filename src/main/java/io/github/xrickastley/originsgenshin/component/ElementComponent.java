@@ -1,10 +1,8 @@
 package io.github.xrickastley.originsgenshin.component;
 
-import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
-
-import javax.annotation.Nullable;
 
 import dev.onyxstudios.cca.api.v3.component.ComponentKey;
 import dev.onyxstudios.cca.api.v3.component.ComponentRegistry;
@@ -16,6 +14,7 @@ import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementHolder;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
 import io.github.xrickastley.originsgenshin.element.ElementalDamageSource;
+import io.github.xrickastley.originsgenshin.element.InternalCooldownContext;
 import io.github.xrickastley.originsgenshin.element.reaction.ElementalReaction;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -23,29 +22,45 @@ import net.minecraft.entity.LivingEntity;
 public interface ElementComponent extends AutoSyncedComponent, CommonTickingComponent {
 	public static final ComponentKey<ElementComponent> KEY = ComponentRegistry.getOrCreate(OriginsGenshin.identifier("elements"), ElementComponent.class);
 
-	public ElementHolder getElementContext(Element element);
+	public LivingEntity getOwner();
+
+	public ElementHolder getElementHolder(Element element);
 
 	/**
 	 * Checks if the element can be applied.
 	 * @param element The element to test.
+	 * @param origin The entity that applied this element. If {@code null}, the element is automatically considered to be applicable.
 	 * @param sourceTag The source of this element. This is the skill that dealt the damage.
 	 */
-	public boolean canApplyElement(Element element, String sourceTag);
+	default boolean canApplyElement(Element element, InternalCooldownContext icdContext) {
+		return this.canApplyElement(element, icdContext, false);
+	}
 
 	/**
 	 * Checks if the element can be applied.
 	 * @param element The element to test.
+	 * @param origin The entity that applied this element. If {@code null}, the element is automatically considered to be applicable.
 	 * @param sourceTag The source of this element. This is the skill that dealt the damage.
 	 * @param handleICD Whether or not ICD should be handled. Only set this to {@code true} if {@link ElementComponent#canApplyElement}
 	 */
-	public boolean canApplyElement(Element element, String sourceTag, boolean handleICD);
-
-	public ArrayList<ElementalReaction> addElementalApplication(ElementalApplication application, String sourceTag, @Nullable LivingEntity origin);
-
-	public ArrayList<ElementalReaction> addElementalApplication(Element element, String sourceTag, double gaugeUnits, @Nullable LivingEntity origin);
+	public boolean canApplyElement(Element element, InternalCooldownContext icdContext, boolean handleICD);
 	
-	public ArrayList<ElementalReaction> addElementalApplication(Element element, String sourceTag, double gaugeUnits, double duration, @Nullable LivingEntity origin);
+	default List<ElementalReaction> addElementalApplication(Element element, InternalCooldownContext icdContext, double gaugeUnits) {
+		final boolean isAura = this.getAppliedElements().length() == 0;
+		
+		OriginsGenshin
+		.sublogger(ElementComponent.class)
+		.info("(add) Currently applied elements: {} | isAura: {}", this.getAppliedElements(), isAura);
+		
+		return this.addElementalApplication(ElementalApplication.gaugeUnits(this.getOwner(), element, gaugeUnits, isAura), icdContext);
+	}
 	
+	default List<ElementalReaction> addElementalApplication(Element element, InternalCooldownContext icdContext, double gaugeUnits, double duration) {
+		return this.addElementalApplication(ElementalApplication.duration(this.getOwner(), element, gaugeUnits, duration), icdContext);
+	}
+	
+	public List<ElementalReaction> addElementalApplication(ElementalApplication application, InternalCooldownContext icdContext);
+
 	/**
 	 * Checks if this entity has a specified Elemental Application with the provided {@code element}.
 	 * @param element The element to check.
@@ -82,7 +97,7 @@ public interface ElementComponent extends AutoSyncedComponent, CommonTickingComp
 	 * @param source The {@code ElementalDamageSource} to apply to this entity.
 	 * @return A triggered {@link ElementalReaction}, or {@code null} if no reaction was triggered.
 	 */
-	public ArrayList<ElementalReaction> applyFromDamageSource(final ElementalDamageSource source);
+	public List<ElementalReaction> applyFromDamageSource(final ElementalDamageSource source);
 
 	/**
 	 * Gets the lowest {@code priority} value from the currently applied Elements

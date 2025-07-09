@@ -33,6 +33,8 @@ public class OriginsGenshinPacketsS2C {
 
 		final Box boundingBox = entity.getBoundingBox();
 
+		// TODO: After TextRenderer fix, change Y to *always* be boundingBox-Y / 2
+
 		final double x = entity.getX() + (boundingBox.getLengthX() * 1.25 * Math.random());
 		final double y = entity.getY() + (boundingBox.getLengthY() * 0.75 * Math.random()) + 0.5;
 		final double z = entity.getZ() + (boundingBox.getLengthZ() * 1.25 * Math.random());
