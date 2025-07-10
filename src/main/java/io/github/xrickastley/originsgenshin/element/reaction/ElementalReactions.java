@@ -25,6 +25,9 @@ public class ElementalReactions {
 	public static final ElementalReaction FROZEN_SUPERCONDUCT = new FrozenSuperconductElementalReaction();
 	// Applies the Quicken aura to the target.
 	public static final ElementalReaction QUICKEN = new QuickenElementalReaction();
+	//
+	public static final ElementalReaction BURNING = new BurningElementalReaction();
+	public static final ElementalReaction QUICKEN_BURNING = new QuickenBurningElementalReaction();
 	// Creates a Dendro Core at the source.
 	public static final ElementalReaction DENDRO_BLOOM = new DendroBloomElementalReaction();
 	public static final ElementalReaction HYDRO_BLOOM = new HydroBloomElementalReaction();
@@ -52,6 +55,8 @@ public class ElementalReactions {
 		register(ElementalReactions.SUPERCONDUCT);
 		register(ElementalReactions.FROZEN_SUPERCONDUCT);
 		register(ElementalReactions.QUICKEN);
+		register(ElementalReactions.BURNING);
+		register(ElementalReactions.QUICKEN_BURNING);
 		register(ElementalReactions.DENDRO_BLOOM);
 		register(ElementalReactions.HYDRO_BLOOM);
 		register(ElementalReactions.QUICKEN_BLOOM);

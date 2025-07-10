@@ -36,4 +36,9 @@ public final class InternalCooldownTag {
 	public @Nullable String getTag() {
 		return this.tag;
 	}
+
+	@Override
+	public String toString() {
+		return String.format("InternalCooldownTag@%s[%s]", Integer.toHexString(this.hashCode()), this.tag == null ? "NULL" : this.tag);
+	}
 }

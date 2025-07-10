@@ -111,7 +111,7 @@ public final class InternalCooldownContext {
 
 	public @Nullable InternalCooldown getInternalCooldown(final ElementHolder holder) {
 		return origin != null
-			? this.getInternalCooldown(holder.internalCooldowns.computeIfAbsent(origin, e -> new InternalCooldownHolder(holder.getOwner())))
+			? this.getInternalCooldown(holder.internalCooldowns.computeIfAbsent(origin.getUuid(), e -> new InternalCooldownHolder(holder.getOwner())))
 			: null;
 	}
 
@@ -125,5 +125,10 @@ public final class InternalCooldownContext {
 
 	public LivingEntity getOrigin() {
 		return this.origin;
+	}
+
+	@Override
+	public String toString() {
+		return String.format("InternalCooldownContext@%s[origin=%s,tag=%s,type=%s]", Integer.toHexString(this.hashCode()), origin == null ? "null" : origin, tag, type);
 	}
 }

@@ -1,7 +1,9 @@
 package io.github.xrickastley.originsgenshin.element;
 
 import java.util.UUID;
+import java.util.function.Function;
 
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
@@ -113,7 +115,7 @@ public final class ElementalApplication {
 
 			application = new ElementalApplication(entity, element, uuid, gaugeUnits, isAura);
 			
-			final double syncedGaugeDeduction = Math.max(entity.age - sentAtAge, 0) * application.getDecayPerTick();
+			final double syncedGaugeDeduction = Math.max(entity.age - sentAtAge, 0) * application.getDecayRate();
 
 			application.currentGauge = MathHelper.clamp(currentGauge - syncedGaugeDeduction, 0, application.gaugeUnits);
 		} else {
@@ -172,6 +174,10 @@ public final class ElementalApplication {
 
 	public UUID getUuid() {
 		return uuid;
+	}
+
+	public LivingEntity getEntity() {
+		return this.entity;
 	}
 
 	/**
@@ -304,13 +310,25 @@ public final class ElementalApplication {
 	protected void decayApplication() {
 		if (type == Type.DURATION) return;
 
-		this.currentGauge -= getDecayPerTick();
+		this.currentGauge -= getDecayRate();
 	}
 
 	/**
-	 * Gets the current decay rate per tick, derived from <a href="https://genshin-impact.fandom.com/wiki/Elemental_Gauge_Theory#Aura_Duration_and_Decay_Rate">Elemental Gauge Theory: Aura Duration and Decay Rate</a>.
+	 * Gets the current decay rate per tick.
 	 */
-	protected double getDecayPerTick() {
+	protected double getDecayRate() {
+		final @Nullable Function<ElementalApplication, Number> customDecayRate = this.element.getCustomDecayRate();
+
+		return customDecayRate == null
+			? this.getDefaultDecayRate()
+			: customDecayRate.apply(this).doubleValue();
+	}
+
+	/**
+	 * Gets the default decay rate per tick, derived from <a href="https://genshin-impact.fandom.com/wiki/Elemental_Gauge_Theory#Aura_Duration_and_Decay_Rate">
+	 * Elemental Gauge Theory: Aura Duration and Decay Rate</a>.
+	 */
+	public double getDefaultDecayRate() {
 		// Currently in s/GU
 		double decayRate = (35 / (4 * this.gaugeUnits)) + (25.0 / 8.0);
 		// Now in ticks/GU

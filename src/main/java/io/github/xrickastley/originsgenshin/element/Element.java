@@ -1,8 +1,12 @@
 package io.github.xrickastley.originsgenshin.element;
 
 import java.util.ArrayList;
+import java.util.function.Function;
+
+import org.jetbrains.annotations.Nullable;
 
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
+import io.github.xrickastley.originsgenshin.component.ElementComponent;
 import io.github.xrickastley.originsgenshin.util.Color;
 import io.github.xrickastley.originsgenshin.util.Colors;
 
@@ -58,6 +62,7 @@ public enum Element {
 			.setTexture(OriginsGenshin.identifier("textures/element/dendro.png"))
 			.setDamageColor(Colors.DENDRO)
 			.setPriority(2)
+			.setDecayRate(Element.DENDRO_DECAY_RATE)
 	),
 	CRYO(
 		OriginsGenshin.identifier("cryo"),
@@ -98,11 +103,22 @@ public enum Element {
 		OriginsGenshin.identifier("burning"),
 		ElementSettings.create()
 			.setTexture(OriginsGenshin.identifier("textures/element/burning.png"))
+			.setDamageColor(Colors.PYRO)
 			.setParentElement(Element.PYRO)
 			.setPriority(1)
 			.bypassesCooldown(true)
 			.hasAuraTax(false)
 	);
+
+	private static final Function<ElementalApplication, Number> DENDRO_DECAY_RATE = application -> {
+		final ElementComponent component = ElementComponent.KEY.get(application.getEntity());
+	
+		return component.hasElementalApplication(Element.BURNING)
+			// max(0.4, Natural Decay Rate_Dendro Aura × 2)
+			// 0.04 is in GU/s, convert to GU/tick
+			? Math.max(0.02, application.getDefaultDecayRate() * 2)
+			: application.getDefaultDecayRate();
+	};
 
 	private final Identifier id;
 	private final ElementSettings settings;
@@ -166,6 +182,10 @@ public enum Element {
 		return this.settings.priority;
 	}
 
+	public @Nullable Function<ElementalApplication, Number> getCustomDecayRate() {
+		return settings.decayRate;
+	}
+
 	public boolean bypassesInternalCooldown() {
 		return this.settings.bypassesCooldown;
 	}
@@ -208,6 +228,7 @@ public enum Element {
 		protected boolean hasAuraTax = true;
 		protected Element parentElement;
 		protected int priority;
+		protected @Nullable Function<ElementalApplication, Number> decayRate = null;
 
 		/**
 		 * Creates a new, empty instance of {@code ElementSettings}.
@@ -235,7 +256,7 @@ public enum Element {
 	
 			return this;
 		}
-		
+
 		// TODO: change from just "rendering priority".
 		/**
 		 * Sets the rendering priority of this element. Most useful for co-existing auras. <br> <br>
@@ -267,6 +288,20 @@ public enum Element {
 		@Deprecated
 		public ElementSettings setParentElement(Element parentElement) {
 			this.parentElement = parentElement;
+	
+			return this;
+		}
+	
+		/**
+		 * Sets the function controlling the decay rate of this element. <br> <br>
+		 * 
+		 * This function must output a number {@code x} such that {@code x} is the amount of Gauge
+		 * Units deducted per tick.
+		 * 
+		 * @param texture The damage color of the element.
+		 */
+		public ElementSettings setDecayRate(Function<ElementalApplication, Number> decayRate) {
+			this.decayRate = decayRate;
 	
 			return this;
 		}

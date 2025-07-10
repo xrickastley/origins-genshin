@@ -13,7 +13,7 @@ import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.component.ElementComponent;
 import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
-import io.github.xrickastley.originsgenshin.events.ReactionsTriggered;
+import io.github.xrickastley.originsgenshin.events.ReactionTriggered;
 import io.github.xrickastley.originsgenshin.networking.ShowElementalReactionS2CPacket;
 
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
@@ -65,19 +65,6 @@ public abstract class ElementalReaction {
 
 	public boolean hasAnyElement(Stream<Element> elements) {
 		return elements.anyMatch(this::hasElement);
-	}
-
-	private @Nullable ElementalApplication getPossibleChildElement(Element element, ElementComponent component) {
-		return component
-			.getAppliedElements()
-			.filter(application -> {
-				LOGGER.info("Element: {} | isChild ({}): {}", element, application.getElement(), element.isChild(application.getElement()));
-
-				return element.isChild(application.getElement());
-			})
-			.sortElements((a, b) -> a.getElement().getPriority() - b.getElement().getPriority())
-			.findFirst()
-			.orElseGet(() -> null);
 	}
 
 	public Element getAuraElement() {
@@ -160,13 +147,6 @@ public abstract class ElementalReaction {
 		ElementalApplication applicationAE = component.getElementalApplication(auraElement.getLeft());
 		ElementalApplication applicationTE = component.getElementalApplication(triggeringElement.getLeft());
 
-		// LOGGER.info("Reaction: {} | allowsChildElements: {}", this.getId(), allowChildElements);
-		if (this.allowChildElements) {
-			// Supply them with their respective child elements if they are null.
-			if (applicationAE == null) applicationAE = getPossibleChildElement(auraElement.getLeft(), component);
-			if (applicationTE == null) applicationTE = getPossibleChildElement(triggeringElement.getLeft(), component);
-		}
-
 		return reversable
 			// Any of the elements can be an Aura element.
 			? applicationAE != null && applicationTE != null && applicationAE.getCurrentGauge() > 0 && applicationTE.getCurrentGauge() > 0
@@ -185,7 +165,7 @@ public abstract class ElementalReaction {
 		ElementalApplication applicationAE = component.getElementalApplication(auraElement.getLeft());
 		ElementalApplication applicationTE = component.getElementalApplication(triggeringElement.getLeft());
 
-		if (applicationTE.isAuraElement()) {
+		if (applicationTE.isAuraElement() && !applicationAE.isAuraElement()) {
 			ElementalApplication a = applicationTE;
 			applicationTE = applicationAE;
 			applicationAE = a;
@@ -194,32 +174,22 @@ public abstract class ElementalReaction {
 		final DecimalFormat df = new DecimalFormat("0.0");
 		
 		LOGGER.info("Phase: BEFORE - Aura element: {} GU {}; Triggering elements: {} GU {}; Reaction coefficient: {}", df.format(applicationAE.getCurrentGauge()), applicationAE.getElement(), df.format(applicationTE.getCurrentGauge()), applicationTE.getElement(), reactionCoefficient);
-		
-		// TODO: remove "child element" impl., now requires seperate reactions for "child elements".
+
 		final double reducedGauge = applicationAE.reduceGauge(reactionCoefficient * applicationTE.getCurrentGauge());
 
 		LOGGER.info("Phase: CALCULATE - Reaction coefficient: {} | Reduced Gauge (AE): {}", reactionCoefficient, reducedGauge);
-
-		/**
-		 * TODO: Multi-elemental aura triggers
-		 * 
-		 * Ex: Cryo + Dendro
-		 * When a Hydro attack consumes the Cryo aura entirely and the Hydro aura still 
-		 * exists (currentGauge > 0), reacts with the Dendro aura for bloom, then 
-		 * disappears (even if currentGauge > 0).
-		 */
-		// component.reduceElementalApplication(triggeringElement.getLeft(), reducedGauge * reactionCoefficient);
 
 		applicationTE.reduceGauge(reducedGauge);
 		
 		LOGGER.info("Phase: AFTER - Aura element: {} GU {}; Triggering elements: {} GU {}; Reaction coefficient: {}", df.format(applicationAE.getCurrentGauge()), applicationAE.getElement(), df.format(applicationTE.getCurrentGauge()), applicationTE.getElement(), reactionCoefficient);
 
+		AbstractBurningElementalReaction.reduceBurningGauge(applicationAE, applicationTE, entity, reducedGauge);
 		this.onReaction(entity, applicationAE, applicationTE, reducedGauge, origin);
 		this.displayReaction(entity);
 
-		ReactionsTriggered.EVENT
+		ReactionTriggered.EVENT
 			.invoker()
-			.onReactionsTriggered(this, entity, origin);
+			.onReactionTriggered(this, reducedGauge, entity, origin);
 
 		return true;
 	}

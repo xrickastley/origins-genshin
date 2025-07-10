@@ -1,8 +1,6 @@
 package io.github.xrickastley.originsgenshin.element;
 
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.Pair;
 
 /**
  * An {@code InternalCooldown} is a class used for holding the various {@code InternalCooldown}
@@ -28,12 +26,12 @@ public final class InternalCooldown {
 		this.tag = tag;
 	}
 
-	public static Pair<String, Identifier> getIcdIdentifier(InternalCooldownTag tag, InternalCooldownType type) {
-		return new Pair<>(tag.getTag(), type.getId());
+	public static String getIcdIdentifier(InternalCooldownTag tag, InternalCooldownType type) {
+		return tag.getTag() + type.getId().toString();
 	}
 
-	public static Pair<String, Identifier> getIcdIdentifier(String tag, InternalCooldownType type) {
-		return new Pair<>(tag, type.getId());
+	public static String getIcdIdentifier(String tag, InternalCooldownType type) {
+		return tag + type.getId().toString();
 	}
 	
 	/**
@@ -60,15 +58,15 @@ public final class InternalCooldown {
 		
 		OriginsGenshin
 			.sublogger(this)
-			.info("InternalCooldown@{} => Reset Interval ({} ticks): {} ({} ≥ {}) | Gauge Sequence ({}-hit rule): {} ({} > 3)", Integer.toHexString(this.hashCode()), type.getResetInterval(), holder.getOwner().age >= cooldown, holder.getOwner().age, cooldown, type.getGaugeSequence(), totalHits > type.getGaugeSequence(), totalHits, type.getGaugeSequence());
+			.info("InternalCooldown@{} => Reset Interval ({} ticks): {} ({} ≥ {}) | Gauge Sequence ({}-hit rule): {} ({} ≥ 3)", Integer.toHexString(this.hashCode()), type.getResetInterval(), holder.getOwner().age >= cooldown, holder.getOwner().age, cooldown, type.getGaugeSequence(), totalHits >= type.getGaugeSequence(), totalHits, type.getGaugeSequence());
 		
 		if (holder.getOwner().age >= cooldown) {
 			cooldown = holder.getOwner().age + type.getResetInterval();
-			totalHits = 0;
+			totalHits = 1;
 
 			return true;
-		} else if (totalHits > type.getGaugeSequence()) {
-			totalHits = 0;
+		} else if (totalHits >= type.getGaugeSequence()) {
+			totalHits = 1;
 			
 			return true;
 		} else {

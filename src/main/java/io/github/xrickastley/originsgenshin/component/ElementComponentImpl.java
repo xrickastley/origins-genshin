@@ -4,7 +4,9 @@ import java.util.List;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Optional;
+import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
@@ -47,19 +49,18 @@ public class ElementComponentImpl implements ElementComponent {
 
 	@Override
 	public ElementHolder getElementHolder(Element element) {
-		return this.elementHolder.getOrDefault(element, ElementHolder.of(owner, element));
+		return this.elementHolder.computeIfAbsent(element, e -> ElementHolder.of(owner, e));
 	}
 	
 	@Override
 	public boolean canApplyElement(Element element, InternalCooldownContext icdContext, boolean handleICD) {
 		if (element.bypassesInternalCooldown() || !icdContext.hasOrigin()) return true;
 
-		return this.getElementHolder(element).canApplyElement(element, icdContext);
+		return this.getElementHolder(element).canApplyElement(element, icdContext, true);
 	}
 
 	@Override
 	public List<ElementalReaction> addElementalApplication(ElementalApplication application, InternalCooldownContext icdContext) {
-		// LOGGER.info("(add) Currently applied elements: {} | isAura: {}", this.getAppliedElements(), application.isAuraElement());
 		if (application.isAuraElement() && application.isGaugeUnits() && this.getAppliedElements().length() > 0)
 			application = application.asNonAura();
 
@@ -69,10 +70,8 @@ public class ElementComponentImpl implements ElementComponent {
 		// The Element is still in ICD.
 		if (!this.canApplyElement(application.getElement(), icdContext, true)) return new ArrayList<>();
 
-		final boolean isReapplied = this.attemptReapply(application);
-
 		// Element has been reapplied, no reactions are triggered.
-		if (isReapplied) return new ArrayList<>();
+		if (this.attemptReapply(application)) return new ArrayList<>();
 
 		final ArrayList<ElementalReaction> triggeredReactions = this.triggerReactions(application, icdContext.getOrigin());
 
@@ -241,9 +240,20 @@ public class ElementComponentImpl implements ElementComponent {
 	}
 
 	/**
-	 * Attempts to reapply an {@link ElementalApplication}.
+	 * Attempts to reapply an {@link ElementalApplication Elemental Application}. <br> <br>
+	 * 
+	 * This method returns whether the provided Elemental Application was "reapplied" in some way,
+	 * where {@code true} means that the element has been "reapplied" and cannot be used in an
+	 * Elemental Reaction and {@code false} means that the element has not been "reapplied" and can
+	 * be used in an Elemental Reaction. <br> <br>
+	 * 
+	 * This method also does <b>not</b> guarantee that all Elemental Applications provided are 
+	 * indeed reapplied to their respective Elements, as they can be discarded due to the current
+	 * Element priority.
+	 * 
 	 * @param application The {@code ElementalApplication} to reapply.
-	 * @return {@code true} if the Elemental Application was reapplied, {@code false} otherwise.
+	 * 
+	 * @return {@code true} if the Elemental Application was "reapplied", {@code false} otherwise.
 	 */
 	private boolean attemptReapply(ElementalApplication application) {
 		final ElementalApplication currentApplication = this.getElementalApplication(application.getElement());
@@ -253,11 +263,40 @@ public class ElementComponentImpl implements ElementComponent {
 		if (currentApplication != null && application.getElement().canBeAura()) {
 			Optional<Integer> priority = this.getHighestElementPriority();
 
-			if (!priority.isPresent() || priority.get() == currentApplication.getElement().getPriority())
+			if (!priority.isPresent() || priority.get() == currentApplication.getElement().getPriority()) {
 				currentApplication.reapply(application);
+			} else {
+				forceReapplyDendroWhenBurning(application);
+			}
 
 			return true;
 		} else return false;
+	}
+
+	/**
+	 * Reapplies the Dendro element when the only "highest priority" element is Burning. <br> <br>
+	 * 
+	 * This method will <b>overwrite</b> the current Dendro aura with the provided Elemental 
+	 * Application, as specified by the "Burning Refresh" mechanic by <a href="https://genshin-impact.fandom.com/wiki/Elemental_Gauge_Theory/Advanced_Mechanics#Burning">
+	 * Elemental Gauge Theory > Advanced Mechanics > Burning</a>.
+	 * 
+	 * If the provided application is <i>not</i> the Dendro element, it is ignored.
+	 * 
+	 * @param application The {@code ElementalApplication} to reapply.
+	 */
+	private void forceReapplyDendroWhenBurning(ElementalApplication application) {
+		if (application.getElement() != Element.DENDRO) return;
+
+		final Set<Element> appliedElements = this
+			.getAppliedElements()
+			.stream()
+			.map(ElementalApplication::getElement)
+			.collect(Collectors.toSet());
+
+		if (!appliedElements.contains(Element.BURNING)) return;
+
+		this.getElementHolder(Element.DENDRO)
+			.setElementalApplication(application.asAura());
 	}
 
 	/**

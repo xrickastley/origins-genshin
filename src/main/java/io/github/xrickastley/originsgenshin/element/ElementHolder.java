@@ -1,15 +1,19 @@
 package io.github.xrickastley.originsgenshin.element;
 
 import java.util.Map;
+import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
 import blue.endless.jankson.annotation.Nullable;
+import io.github.xrickastley.originsgenshin.events.ElementApplied;
+import io.github.xrickastley.originsgenshin.events.ElementRefreshed;
+import io.github.xrickastley.originsgenshin.events.ElementRemoved;
 import net.minecraft.entity.LivingEntity;
 
 public final class ElementHolder {
 	// The one holding the element.
 	private final LivingEntity owner;
-	protected final Map<LivingEntity, InternalCooldownHolder> internalCooldowns = new ConcurrentHashMap<>();
+	protected final Map<UUID, InternalCooldownHolder> internalCooldowns = new ConcurrentHashMap<>();
 	private final Element element;
 	private @Nullable ElementalApplication application;
 
@@ -58,7 +62,17 @@ public final class ElementHolder {
 	}
 
 	public void setElementalApplication(@Nullable ElementalApplication application) {
+		final ElementalApplication prev = this.application;
+
 		this.application = application;
+
+		if (application == null) {
+			ElementRemoved.EVENT.invoker().onElementRemoved(prev);
+		} else if (this.application != null) {
+			ElementApplied.EVENT.invoker().onElementApplied(application);
+		} else {
+			ElementRefreshed.EVENT.invoker().onElementRefreshed(application, prev);
+		}
 	}
 
 	/**

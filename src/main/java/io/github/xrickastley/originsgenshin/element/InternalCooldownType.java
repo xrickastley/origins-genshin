@@ -95,7 +95,7 @@ public final class InternalCooldownType {
 
 	@Override
 	public String toString() {
-		return String.format("InternalCooldown[%s/resetInterval=%d,gaugeSequence=%d]", this.id, this.resetInterval, this.gaugeSequence);
+		return String.format("InternalCooldownType[%s/resetInterval=%d,gaugeSequence=%d]", this.id, this.resetInterval, this.gaugeSequence);
 	}
 
 	public static void onBeforeRegistryLoad(Registry<InternalCooldownType> registry) {

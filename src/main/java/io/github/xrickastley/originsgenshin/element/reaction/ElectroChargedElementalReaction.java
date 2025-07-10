@@ -8,7 +8,7 @@ import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
 import io.github.xrickastley.originsgenshin.element.ElementalDamageSource;
 import io.github.xrickastley.originsgenshin.element.InternalCooldownContext;
-import io.github.xrickastley.originsgenshin.events.ReactionsTriggered;
+import io.github.xrickastley.originsgenshin.events.ReactionTriggered;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinParticleFactory;
 import io.github.xrickastley.originsgenshin.interfaces.ILivingEntity;
 import net.minecraft.entity.LivingEntity;
@@ -54,9 +54,9 @@ public class ElectroChargedElementalReaction extends ElementalReaction {
 		this.onReaction(entity, auraElement, triggeringElement, reducedGauge, origin);
 		this.displayReaction(entity);
 
-		ReactionsTriggered.EVENT
+		ReactionTriggered.EVENT
 			.invoker()
-			.onReactionsTriggered(this, entity, origin);
+			.onReactionTriggered(this, reducedGauge, entity, origin);
 
 		return true;
 	}

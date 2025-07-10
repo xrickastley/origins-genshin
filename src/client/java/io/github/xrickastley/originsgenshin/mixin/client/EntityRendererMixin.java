@@ -219,6 +219,8 @@ public abstract class EntityRendererMixin {
 			.sortElements((a, b) -> a.getElement().getPriority() - b.getElement().getPriority())
 			.forEach(appliedElements::add);
 
+		if (livingEntity.age % 5 == 0 && tickDelta == 1) System.out.println("Applied elements: " + appliedElements.toString());
+
 		final int elementCount = appliedElements.size();
 		final Iterator<ElementalApplication> aeIterator = appliedElements.iterator();
 
