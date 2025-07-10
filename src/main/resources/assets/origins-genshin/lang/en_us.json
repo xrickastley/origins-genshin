@@ -6,5 +6,8 @@
 	"text.autoconfig.origins-genshin.option.developer": "Developer Options",
 	"text.autoconfig.origins-genshin.option.developer.displayElementalGauges": "Display Elemental Gauges",
 
-	"entity.origins-genshin.dendro_core": "Dendro Core"
+	"entity.origins-genshin.dendro_core": "Dendro Core",
+
+	"effect.origins-genshin.frozen": "Frozen",
+	"effect.origins-genshin.superconduct": "Superconduct"
 }

@@ -1,14 +1,11 @@
 package io.github.xrickastley.originsgenshin.effect;
 
-import com.google.common.collect.HashMultimap;
-
 import io.github.apace100.apoli.component.PowerHolderComponent;
 import io.github.apace100.apoli.power.CooldownPower;
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.component.FrozenEffectComponent;
+
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.attribute.AttributeContainer;
-import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.effect.StatusEffect;
@@ -20,18 +17,14 @@ import net.minecraft.sound.SoundEvent;
 public class FrozenStatusEffect extends StatusEffect {
 	public FrozenStatusEffect() {
 		super(StatusEffectCategory.HARMFUL, 0x84e8f9);
-
-		attributeMultimap.put(EntityAttributes.GENERIC_MOVEMENT_SPEED, slowEffect);
-		attributeMultimap.put(EntityAttributes.GENERIC_ATTACK_DAMAGE, weakEffect);
+		
+		this.addAttributeModifier(EntityAttributes.GENERIC_MOVEMENT_SPEED, "34683f1b-1465-4aba-92c3-780f4c96cac6", -1, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
+		this.addAttributeModifier(EntityAttributes.GENERIC_ATTACK_DAMAGE, "51374b89-5cd5-4869-97e0-5da041957f52", -1, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
 	}
-	
-	private final HashMultimap<EntityAttribute, EntityAttributeModifier> attributeMultimap = HashMultimap.create();
-	private EntityAttributeModifier slowEffect = new EntityAttributeModifier("Frozen: Slowness", -1, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
-	private EntityAttributeModifier weakEffect = new EntityAttributeModifier("Frozen: Weakness", -1, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
 
 	@Override
 	public void onApplied(LivingEntity entity, int amplifier) {
-		final AttributeContainer attributes = entity.getAttributes();		
+		super.onApplied(entity, amplifier);
 
 		entity
 			.getWorld()
@@ -44,17 +37,7 @@ public class FrozenStatusEffect extends StatusEffect {
 				1.0F
 			);
 
-		attributes.addTemporaryModifiers(attributeMultimap);
-
 		FrozenEffectComponent.KEY.get(entity).freeze();
-		
-	}
-
-	@Override
-	public void onRemoved(AttributeContainer attributes) {
-		super.onRemoved(attributes);
-
-		attributes.removeModifiers(attributeMultimap);
 	}
 
 	@Override
@@ -69,16 +52,15 @@ public class FrozenStatusEffect extends StatusEffect {
 		PowerHolderComponent.getPowers(entity, CooldownPower.class)
 			.forEach(power -> power.modify(1));
 
-		if (entity.getStatusEffect(this).getDuration() == 1 && entity instanceof final MobEntity mob) {
+		if (entity.getStatusEffect(this).getDuration() == 1 && entity instanceof final MobEntity mob) 
 			mob.setAiDisabled(false);
-		}
 
 		// if (entity.getStatusEffect(this).getDuration() == 1) entity.getWorld().playSound(null, entity.getBlockPos(), SoundEvent.of(Aery.identifier("frozen")), SoundCategory.PLAYERS, 1.0F, 1.0F);
 	}
 
 	@Override
 	public boolean canApplyUpdateEffect(int duration, int amplifier) {
-		return false;
+		return true;
 	}
 }
 

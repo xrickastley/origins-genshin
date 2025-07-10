@@ -4,13 +4,14 @@ import javax.annotation.Nullable;
 
 import com.google.common.collect.HashMultimap;
 
-import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinAttributes;
+import io.github.xrickastley.originsgenshin.factory.OriginsGenshinStatusEffects;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttribute;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributeModifier.Operation;
+import net.minecraft.entity.effect.StatusEffectInstance;
 
 public abstract class AbstractSuperconductElementalReaction extends ElementalReaction {
 	protected AbstractSuperconductElementalReaction(ElementalReactionSettings settings) {
@@ -23,15 +24,6 @@ public abstract class AbstractSuperconductElementalReaction extends ElementalRea
 
 		modifiers.put(OriginsGenshinAttributes.PHYSICAL_RES, new EntityAttributeModifier("superconduct", -0.4, Operation.ADDITION));
 
-		// TODO: change to status effect
-		entity
-			.getAttributes()
-			.addTemporaryModifiers(modifiers);
-
-		OriginsGenshin.SCHEDULER.queue((server -> {
-			entity
-				.getAttributes()
-				.removeModifiers(modifiers);
-		}), 12 * 20);
+		entity.addStatusEffect(new StatusEffectInstance(OriginsGenshinStatusEffects.SUPERCONDUCT, 240, 1), origin);
 	}
 }

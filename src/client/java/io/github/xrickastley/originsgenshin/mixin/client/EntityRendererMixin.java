@@ -113,6 +113,8 @@ public abstract class EntityRendererMixin {
 		// System.out.println(elementsToRender.count());
 		*/
 		
+		RenderSystem.enableCull();
+
 		elementArray
 			.forEach(application -> {	
 				try {
@@ -133,6 +135,8 @@ public abstract class EntityRendererMixin {
 					logCooldowns.put("c12dd02b-7f89-4dc6-a1f0-ad56007bb56e", Util.getMeasuringTimeMs() + 25_000);
 				}
 			});
+
+		RenderSystem.disableCull();
 	}
 
 	protected void renderElement(final LivingEntity livingEntity, final MatrixStack matrixStack, float xOffset, Identifier texture) {

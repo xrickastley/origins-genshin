@@ -122,6 +122,11 @@ public final class ElementComponentImpl implements ElementComponent {
 
 		final Set<ElementalReaction> triggeredReactions = this.triggerReactions(application, icdContext.getOrigin());
 		
+		if (AbstractBurningElementalReaction.mixin$allowDendroPassthrough(this.getHighestElementPriority().orElse(Integer.MIN_VALUE) < application.getElement().getPriority(), this, application)) {
+			this.getElementHolder(application.getElement())
+				.setElementalApplication(null);
+		}	
+
 		LOGGER.info("Current element data: {}", getElementHolder(application.getElement()).getElementalApplication());
 		LOGGER.info("Currently applied elements: {}", this.getAppliedElements());
 

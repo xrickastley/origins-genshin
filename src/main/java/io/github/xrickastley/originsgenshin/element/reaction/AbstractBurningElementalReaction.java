@@ -154,6 +154,11 @@ public abstract class AbstractBurningElementalReaction extends ElementalReaction
 		return original && !REACTIONS.get().contains(reaction);
 	}
 
+	public static boolean mixin$allowDendroPassthrough(final boolean original, final ElementComponent component, ElementalApplication application) {
+		return original 
+			&& !(component.hasElementalApplication(Element.BURNING) && (application.getElement() == Element.DENDRO || application.getElement() == Element.PYRO));
+	}
+
 	public static Optional<ElementalReaction> mixin$changeReaction(Optional<ElementalReaction> original, final ElementComponent component) {
 		if (!component.hasElementalApplication(Element.BURNING)) return original;
 		

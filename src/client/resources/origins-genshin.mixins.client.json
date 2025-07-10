@@ -3,6 +3,7 @@
   "package": "io.github.xrickastley.originsgenshin.mixin.client",
   "compatibilityLevel": "JAVA_17",
   "mixins": [
+    "AbstractInventoryScreenMixin",
     "EntityRendererMixin",
     "LivingEntityRendererMixin",
     "WorldRendererAccessor"
