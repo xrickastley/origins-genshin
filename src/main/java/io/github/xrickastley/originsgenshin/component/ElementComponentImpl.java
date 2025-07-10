@@ -122,11 +122,6 @@ public final class ElementComponentImpl implements ElementComponent {
 
 		final Set<ElementalReaction> triggeredReactions = this.triggerReactions(application, icdContext.getOrigin());
 		
-		if (AbstractBurningElementalReaction.mixin$allowDendroPassthrough(this.getHighestElementPriority().orElse(Integer.MIN_VALUE) < application.getElement().getPriority(), this, application)) {
-			this.getElementHolder(application.getElement())
-				.setElementalApplication(null);
-		}	
-
 		LOGGER.info("Current element data: {}", getElementHolder(application.getElement()).getElementalApplication());
 		LOGGER.info("Currently applied elements: {}", this.getAppliedElements());
 
@@ -414,7 +409,7 @@ public final class ElementComponentImpl implements ElementComponent {
 
 		LOGGER.info("Element: {} | CanBeAura: {} | Triggered reactions: {} | Apply Element as Aura: {}", context.getElement(), context.getElement().canBeAura(), triggeredReactions.size(), applyElementAsAura);
 
-		if (!context.getElement().canBeAura() || (triggeredReactions.size() > 0 && !applyElementAsAura)) {
+		if (!context.getElement().canBeAura() || (triggeredReactions.size() > 0 && !applyElementAsAura) || AbstractBurningElementalReaction.mixin$allowDendroPassthrough(this.getHighestElementPriority().orElse(Integer.MIN_VALUE) < application.getElement().getPriority(), this, application)) {
 			LOGGER.info("Removing application: {}", application);
 
 			context.setElementalApplication(null);

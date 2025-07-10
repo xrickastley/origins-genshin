@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.component.ElementComponent;
+import io.github.xrickastley.originsgenshin.element.reaction.AbstractBurningElementalReaction;
 import io.github.xrickastley.originsgenshin.exception.ElementalApplicationOperationException;
 import io.github.xrickastley.originsgenshin.exception.ElementalApplicationOperationException.Operation;
 import net.minecraft.entity.LivingEntity;
@@ -269,6 +270,7 @@ public final class ElementalApplication {
 
 	public void tick() {
 		decayApplication();
+		AbstractBurningElementalReaction.mixin$reduceQuickenGauge(this);
 	}
 
 	/**

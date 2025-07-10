@@ -100,7 +100,7 @@ public abstract class AbstractBurningElementalReaction extends ElementalReaction
 
 	static {
 		ElementRemoved.EVENT.register(application -> {
-			if (application == null || application.getElement() != Element.DENDRO) return;
+			if (application == null || (application.getElement() != Element.DENDRO && application.getElement() != Element.QUICKEN)) return;
 
 			final ElementComponent component = ElementComponent.KEY.get(application.getEntity());
 
@@ -134,7 +134,8 @@ public abstract class AbstractBurningElementalReaction extends ElementalReaction
 			ElementComponent.sync(target);
 		});
 	}
-	
+
+	// These "mixins" are injected pieces of code (likening @Inject) that allow Burning to work properly.
 	public static void mixin$reduceBurningGauge(ElementalApplication auraElement, ElementalApplication triggeringElement, LivingEntity entity, double reducedGauge) {
 		if (auraElement.getElement() != Element.PYRO || triggeringElement.getElement() != Element.PYRO) return;
 
@@ -157,6 +158,14 @@ public abstract class AbstractBurningElementalReaction extends ElementalReaction
 	public static boolean mixin$allowDendroPassthrough(final boolean original, final ElementComponent component, ElementalApplication application) {
 		return original 
 			&& !(component.hasElementalApplication(Element.BURNING) && (application.getElement() == Element.DENDRO || application.getElement() == Element.PYRO));
+	}
+
+	public static void mixin$reduceQuickenGauge(final ElementalApplication application) {
+		final ElementComponent component = ElementComponent.KEY.get(application.getEntity());
+
+		if (!component.hasElementalApplication(Element.BURNING) || application.getElement() != Element.QUICKEN) return;
+
+		application.reduceGauge(Element.DENDRO.getCustomDecayRate().apply(application).doubleValue());
 	}
 
 	public static Optional<ElementalReaction> mixin$changeReaction(Optional<ElementalReaction> original, final ElementComponent component) {
