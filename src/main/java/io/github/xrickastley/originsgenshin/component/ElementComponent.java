@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
 
+import org.jetbrains.annotations.Nullable;
+
 import dev.onyxstudios.cca.api.v3.component.ComponentKey;
 import dev.onyxstudios.cca.api.v3.component.ComponentRegistry;
 import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
@@ -25,6 +27,22 @@ public interface ElementComponent extends AutoSyncedComponent, CommonTickingComp
 	public LivingEntity getOwner();
 
 	public ElementHolder getElementHolder(Element element);
+	
+	public boolean isElectroChargedOnCD();
+
+	public boolean isBurningOnCD();
+	
+	public void resetElectroChargedCD();
+	
+	public void resetBurningCD();
+
+	public void setElectroChargedOrigin(@Nullable LivingEntity origin);
+
+	public void setBurningOrigin(@Nullable LivingEntity origin);
+
+	public @Nullable LivingEntity getElectroChargedOrigin();
+	
+	public @Nullable LivingEntity getBurningOrigin();
 
 	/**
 	 * Checks if the element can be applied.

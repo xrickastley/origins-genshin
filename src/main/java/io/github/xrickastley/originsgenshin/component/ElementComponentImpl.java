@@ -2,7 +2,9 @@ package io.github.xrickastley.originsgenshin.component;
 
 import java.util.List;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -10,8 +12,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
-import javax.annotation.Nullable;
 
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 import io.github.xrickastley.originsgenshin.util.Array;
@@ -21,6 +23,8 @@ import io.github.xrickastley.originsgenshin.element.ElementHolder;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
 import io.github.xrickastley.originsgenshin.element.ElementalDamageSource;
 import io.github.xrickastley.originsgenshin.element.InternalCooldownContext;
+import io.github.xrickastley.originsgenshin.element.reaction.AbstractBurningElementalReaction;
+import io.github.xrickastley.originsgenshin.element.reaction.ElectroChargedElementalReaction;
 import io.github.xrickastley.originsgenshin.element.reaction.ElementalReaction;
 import io.github.xrickastley.originsgenshin.registry.OriginsGenshinRegistries;
 import net.minecraft.entity.LivingEntity;
@@ -30,16 +34,59 @@ import net.minecraft.nbt.NbtList;
 import net.minecraft.registry.entry.RegistryEntry.Reference;
 import net.minecraft.server.world.ServerWorld;
 
-public class ElementComponentImpl implements ElementComponent {
+public final class ElementComponentImpl implements ElementComponent {
 	private final LivingEntity owner;
 	private final ConcurrentHashMap<Element, ElementHolder> elementHolder = new ConcurrentHashMap<>();
 	private final Logger LOGGER = OriginsGenshin.sublogger(ElementComponent.class);
 	private int triggeredReactionsAtAge = -1;
+	private int electroChargedCooldown = -1;
+	private @Nullable LivingEntity electroChargedOrigin = null;
+	private int burningCooldown = -1;
+	private @Nullable LivingEntity burningOrigin = null;
 
 	public ElementComponentImpl(LivingEntity owner) {
 		this.owner = owner;
 
 		for (final Element element : Element.values()) elementHolder.put(element, ElementHolder.of(owner, element));
+	}
+
+	@Override
+	public boolean isElectroChargedOnCD() {
+		return this.owner.age < this.electroChargedCooldown;
+	}
+	
+	@Override
+	public boolean isBurningOnCD() {
+		return this.owner.age < this.burningCooldown;
+	}
+
+	@Override
+	public void resetElectroChargedCD() {
+		this.electroChargedCooldown = this.owner.age + 20;
+	}
+
+	@Override
+	public void resetBurningCD() {
+		this.burningCooldown = this.owner.age + 5;
+	}
+	
+	@Override
+	public void setElectroChargedOrigin(@Nullable LivingEntity origin) {
+		this.electroChargedOrigin = origin;
+	}
+
+	@Override
+	public void setBurningOrigin(@Nullable LivingEntity origin) {
+		this.burningOrigin = origin;
+	}
+
+	@Override
+	public @Nullable LivingEntity getElectroChargedOrigin() {
+		return this.electroChargedOrigin;
+	}
+
+	public @Nullable LivingEntity getBurningOrigin() {
+		return this.burningOrigin;
 	}
 
 	@Override
@@ -73,18 +120,14 @@ public class ElementComponentImpl implements ElementComponent {
 		// Element has been reapplied, no reactions are triggered.
 		if (this.attemptReapply(application)) return new ArrayList<>();
 
-		final ArrayList<ElementalReaction> triggeredReactions = this.triggerReactions(application, icdContext.getOrigin());
-
-		// Current priority is higher, reactions have been triggered. Remove element after.
-		if (this.getHighestElementPriority().orElse(-1) < application.getElement().getPriority())
-			this.getElementHolder(application.getElement()).setElementalApplication(null);
+		final Set<ElementalReaction> triggeredReactions = this.triggerReactions(application, icdContext.getOrigin());
 		
 		LOGGER.info("Current element data: {}", getElementHolder(application.getElement()).getElementalApplication());
 		LOGGER.info("Currently applied elements: {}", this.getAppliedElements());
 
 		ElementComponent.sync(owner);
 
-		return triggeredReactions;
+		return new ArrayList<>(triggeredReactions);
 	}
 
 	@Override
@@ -133,10 +176,15 @@ public class ElementComponentImpl implements ElementComponent {
 
 		tag.put("AppliedElements", list);
 		tag.putInt("SentAtAge", owner.age);
+		tag.putInt("ElectroChargedCooldown", electroChargedCooldown);
+		tag.putInt("BurningCooldown", burningCooldown);
 	}
 
 	@Override
 	public void readFromNbt(@Nonnull NbtCompound tag) {
+		this.electroChargedCooldown = tag.getInt("ElectroChargedCooldown");
+		this.burningCooldown = tag.getInt("BurningCooldown");
+
 		final NbtList list = tag.getList("AppliedElements", NbtElement.COMPOUND_TYPE);
 		final int sentAtAge = tag.getInt("SentAtAge");
 
@@ -165,6 +213,9 @@ public class ElementComponentImpl implements ElementComponent {
 
 	@Override
 	public void tick() {
+		ElectroChargedElementalReaction.tick(this.owner);
+		AbstractBurningElementalReaction.tick(this.owner);
+
 		final int tickedElements = this
 			.getAppliedElements()
 			.peek(application -> application.tick())
@@ -220,22 +271,10 @@ public class ElementComponentImpl implements ElementComponent {
 	}
 
 	private Stream<ElementalReaction> getTriggerableReactions(Array<Element> validElements) {
-		// LOGGER.info("Valid elements:");
-		// for (Element element : validElements) {
-		// 	LOGGER.info("\t- {}", element);
-		// };
-
-		// LOGGER.info("Possible reactions:");
 		return OriginsGenshinRegistries.ELEMENTAL_REACTION
 			.streamEntries()
 			.map(Reference::value)
-			.filter(reaction -> {
-				// LOGGER.info("\t -Reaction: {}, isTriggerable: {}, hasAnyElement: {}", reaction.getId(), reaction.isTriggerable(owner), reaction.hasAnyElement(validElements));
-
-				// LOGGER.info("Reaction: {} | isTriggerable: {} | hasAnyElement ({}): {}", reaction.getId(), reaction.isTriggerable(owner), validElements, reaction.hasAnyElement(validElements));
-
-				return reaction.isTriggerable(owner) && reaction.hasAnyElement(validElements);
-			})
+			.filter(reaction -> reaction.isTriggerable(owner) && reaction.hasAnyElement(validElements))
 			.sorted(Comparator.comparing(reaction -> reaction.getPriority(owner)));
 	}
 
@@ -285,6 +324,8 @@ public class ElementComponentImpl implements ElementComponent {
 	 * @param application The {@code ElementalApplication} to reapply.
 	 */
 	private void forceReapplyDendroWhenBurning(ElementalApplication application) {
+		LOGGER.info("forceReapplyDendroWhenBurning | Application: {}", application);
+
 		if (application.getElement() != Element.DENDRO) return;
 
 		final Set<Element> appliedElements = this
@@ -292,11 +333,19 @@ public class ElementComponentImpl implements ElementComponent {
 			.stream()
 			.map(ElementalApplication::getElement)
 			.collect(Collectors.toSet());
+			
+		LOGGER.info("forceReapplyDendroWhenBurning | Applied elements: {}", appliedElements);
 
 		if (!appliedElements.contains(Element.BURNING)) return;
 
+		LOGGER.info("forceReapplyDendroWhenBurning | Setting application: {}", application.asAura());
+
 		this.getElementHolder(Element.DENDRO)
 			.setElementalApplication(application.asAura());
+
+		LOGGER.info("forceReapplyDendroWhenBurning | Current Dendro application: {}", this.getElementalApplication(Element.DENDRO));
+
+		ElementComponent.sync(owner);
 	}
 
 	/**
@@ -304,7 +353,7 @@ public class ElementComponentImpl implements ElementComponent {
 	 * @param application The {@link ElementalApplication} to apply to this entity.
 	 * @param origin The origin of the {@link ElementalApplication}.
 	 */
-	private ArrayList<ElementalReaction> triggerReactions(ElementalApplication application, @Nullable LivingEntity origin) {
+	private Set<ElementalReaction> triggerReactions(ElementalApplication application, @Nullable LivingEntity origin) {
 		/**
 		 * Get the current element priority to keep track. 
 		 * 
@@ -326,7 +375,7 @@ public class ElementComponentImpl implements ElementComponent {
 		if (!optionalPriority.isPresent()) {
 			if (!context.getElement().canBeAura()) context.setElementalApplication(null);
 
-			return new ArrayList<>();
+			return Collections.emptySet();
 		}
 
 		final int priority = Math.min(optionalPriority.get(), application.getElement().getPriority());
@@ -335,21 +384,17 @@ public class ElementComponentImpl implements ElementComponent {
 			// .getTriggerableReactions(priority)
 			.getTriggerableReactions(priority)
 			.findFirst();
+		reaction = AbstractBurningElementalReaction.mixin$changeReaction(reaction, this);
 
 		boolean applyElementAsAura = false;
-		final ArrayList<ElementalReaction> triggeredReactions = new ArrayList<>();
+		final Set<ElementalReaction> triggeredReactions = new HashSet<>();
 
 		LOGGER.info("Target elemental priority: {}", priority);
 		while (application.getCurrentGauge() > 0 && reaction.isPresent()) {
 			System.out.println("Set triggered reactions at age to: " + this.owner.age);
 			triggeredReactionsAtAge = this.owner.age;
 
-			try {
-				LOGGER.info("Triggering reaction: {}, Current Gauge ({}): {}", reaction.get().getId(), application.getElement(), application.getCurrentGauge());
-			} catch (Throwable e) {
-				System.out.println("catched");
-				System.out.println(e);
-			}
+			LOGGER.info("Triggering reaction: {}, Current Gauge ({}): {}", reaction.get().getId(), application.getElement(), application.getCurrentGauge());
 
 			reaction.get().trigger(owner, origin);
 			applyElementAsAura = reaction.get().shouldApplyResultAsAura();
@@ -358,19 +403,17 @@ public class ElementComponentImpl implements ElementComponent {
 
 			reaction = this
 				.getTriggerableReactions(priority)
-				.filter(reaction1 -> !triggeredReactions.stream().anyMatch(reaction2 -> reaction2.idEquals(reaction1)))
+				.filter(r -> AbstractBurningElementalReaction.mixin$onlyAllowPyroReactions(!triggeredReactions.stream().anyMatch(r2 -> r2.idEquals(r)), this, r))
 				.findFirst();
 		}
 
-		LOGGER.info("Element: {} | CanBeAura: {}", context.getElement(), context.getElement().canBeAura());
+		LOGGER.info("Element: {} | CanBeAura: {} | Triggered reactions: {} | Apply Element as Aura: {}", context.getElement(), context.getElement().canBeAura(), triggeredReactions.size(), applyElementAsAura);
 
-		if (triggeredReactions.size() > 0 && (!applyElementAsAura || !context.getElement().canBeAura())) {
+		if (!context.getElement().canBeAura() || (triggeredReactions.size() > 0 && !applyElementAsAura)) {
 			LOGGER.info("Removing application: {}", application);
 
 			context.setElementalApplication(null);
-		}
-		
-		if ((applyElementAsAura || triggeredReactions.size() == 0) && application.isGaugeUnits()) {
+		} else if (application.isGaugeUnits()) {
 			LOGGER.info("Setting as aura: {}", application);
 
 			context.setElementalApplication(application.asAura());

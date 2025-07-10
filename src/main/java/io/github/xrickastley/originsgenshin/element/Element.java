@@ -3,6 +3,7 @@ package io.github.xrickastley.originsgenshin.element;
 import java.util.ArrayList;
 import java.util.function.Function;
 
+import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
@@ -62,7 +63,7 @@ public enum Element {
 			.setTexture(OriginsGenshin.identifier("textures/element/dendro.png"))
 			.setDamageColor(Colors.DENDRO)
 			.setPriority(2)
-			.setDecayRate(Element.DENDRO_DECAY_RATE)
+			.setDecayRate(Decays.DENDRO_DECAY_RATE)
 	),
 	CRYO(
 		OriginsGenshin.identifier("cryo"),
@@ -106,19 +107,11 @@ public enum Element {
 			.setDamageColor(Colors.PYRO)
 			.setParentElement(Element.PYRO)
 			.setPriority(1)
+			.setDecayRate(Decays.NO_DECAY_RATE)
 			.bypassesCooldown(true)
 			.hasAuraTax(false)
+			.excludesPriorityCheck(true)
 	);
-
-	private static final Function<ElementalApplication, Number> DENDRO_DECAY_RATE = application -> {
-		final ElementComponent component = ElementComponent.KEY.get(application.getEntity());
-	
-		return component.hasElementalApplication(Element.BURNING)
-			// max(0.4, Natural Decay Rate_Dendro Aura × 2)
-			// 0.04 is in GU/s, convert to GU/tick
-			? Math.max(0.02, application.getDefaultDecayRate() * 2)
-			: application.getDefaultDecayRate();
-	};
 
 	private final Identifier id;
 	private final ElementSettings settings;
@@ -214,6 +207,10 @@ public enum Element {
 		return settings.hasAuraTax;
 	}
 
+	public boolean excludesPriorityCheck() {
+		return settings.excludesPriorityCheck;
+	}
+
 	/**
 	 * A class used in creating data for Elements, instead of multiple overloaded constructors.
 	 */
@@ -222,13 +219,14 @@ public enum Element {
 
 		protected Identifier texture;
 		protected Color damageColor;
+		protected int priority;
+		protected @Nullable Element parentElement;
+		protected @Nullable Function<ElementalApplication, Number> decayRate = null;
 		protected boolean canBeAura = true;
 		protected boolean decayInheritance = true;
 		protected boolean bypassesCooldown = false;
 		protected boolean hasAuraTax = true;
-		protected Element parentElement;
-		protected int priority;
-		protected @Nullable Function<ElementalApplication, Number> decayRate = null;
+		protected boolean excludesPriorityCheck = false;
 
 		/**
 		 * Creates a new, empty instance of {@code ElementSettings}.
@@ -266,7 +264,7 @@ public enum Element {
 		 * higher priority exists, then only that Element and Elements with a similar priority
 		 * will be rendered. <br> <br>
 		 * 
-		 * <strong>Lower<strong> numbers have higher priorities than numbers higher than them.
+		 * <b>Lower</b> numbers have higher priorities than numbers higher than them.
 		 * 
 		 * @param priority The rendering priority of this element.
 		 */
@@ -300,7 +298,7 @@ public enum Element {
 		 * 
 		 * @param texture The damage color of the element.
 		 */
-		public ElementSettings setDecayRate(Function<ElementalApplication, Number> decayRate) {
+		public ElementSettings setDecayRate(@NotNull Function<ElementalApplication, Number> decayRate) {
 			this.decayRate = decayRate;
 	
 			return this;
@@ -346,5 +344,41 @@ public enum Element {
 	
 			return this;
 		}
+
+		/**
+		 * Sets if the element excludes itself from the priority check. <br> <br>
+		 * 
+		 * When elements are applied and no reactions are triggered, an attempt is made to make
+		 * the element an Aura element, allowing for "double auras" to exist. <br> <br>
+		 * 
+		 * If an element with a <b>higher</b> priority exists as an Aura Element, elements with
+		 * lower priorities may <b>not</b> be applied while that element is currently applied as
+		 * an Aura Element. <br> <br>
+		 * 
+		 * This setting changes whether or not the element is included as a "higher priority" 
+		 * element upon checking. If <b>all</b> currently applied Aura elements with the "higher
+		 * priority" are excluded, the next highest priority elements will be considered.
+		 */
+		public ElementSettings excludesPriorityCheck(boolean priorityCheck) {
+			this.excludesPriorityCheck = priorityCheck;
+
+			return this;
+		}
+	}
+
+	private static class Decays {
+		private static final Function<ElementalApplication, Number> NO_DECAY_RATE = a -> {			
+			return 0;
+		};
+
+		private static final Function<ElementalApplication, Number> DENDRO_DECAY_RATE = application -> {
+			final ElementComponent component = ElementComponent.KEY.get(application.getEntity());
+				
+			return component.hasElementalApplication(Element.valueOf("BURNING"))
+				// max(0.4, Natural Decay Rate_Dendro Aura × 2)
+				// 0.04 is in GU/s, convert to GU/tick
+				? Math.max(0.02, application.getDefaultDecayRate() * 2)
+				: application.getDefaultDecayRate();
+		};
 	}
 }

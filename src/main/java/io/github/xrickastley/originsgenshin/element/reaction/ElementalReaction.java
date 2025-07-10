@@ -183,7 +183,7 @@ public abstract class ElementalReaction {
 		
 		LOGGER.info("Phase: AFTER - Aura element: {} GU {}; Triggering elements: {} GU {}; Reaction coefficient: {}", df.format(applicationAE.getCurrentGauge()), applicationAE.getElement(), df.format(applicationTE.getCurrentGauge()), applicationTE.getElement(), reactionCoefficient);
 
-		AbstractBurningElementalReaction.reduceBurningGauge(applicationAE, applicationTE, entity, reducedGauge);
+		AbstractBurningElementalReaction.mixin$reduceBurningGauge(applicationAE, applicationTE, entity, reducedGauge);
 		this.onReaction(entity, applicationAE, applicationTE, reducedGauge, origin);
 		this.displayReaction(entity);
 

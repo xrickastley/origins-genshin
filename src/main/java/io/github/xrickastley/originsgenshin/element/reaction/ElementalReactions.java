@@ -37,7 +37,6 @@ public class ElementalReactions {
 	public static final ElementalReaction HYDRO_SWIRL = new HydroSwirlElementalReaction();
 	public static final ElementalReaction ELECTRO_SWIRL = new ElectroSwirlElementalReaction();
 	public static final ElementalReaction CRYO_SWIRL = new CryoSwirlElementalReaction();
-	// TODO: Reaction: Burning
 	// TODO: Reaction: Crystallize (+ Crystallize Shards)
 	// TODO: Reaction: Spread + Aggravate (indicators, reactions already handled by LivingEntityMixin)
 	// TODO: Reaction: Hyperbloom + Burgeon

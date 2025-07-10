@@ -10,7 +10,6 @@ import net.minecraft.item.ItemStack;
 import org.spongepowered.asm.mixin.Debug;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
@@ -24,9 +23,7 @@ import io.github.xrickastley.originsgenshin.element.ElementalDamageSource;
 import io.github.xrickastley.originsgenshin.element.InternalCooldownContext;
 import io.github.xrickastley.originsgenshin.element.reaction.AmplifyingElementalReaction;
 import io.github.xrickastley.originsgenshin.element.reaction.ElementalReaction;
-import io.github.xrickastley.originsgenshin.element.reaction.ElementalReactions;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinAttributes;
-import io.github.xrickastley.originsgenshin.interfaces.ILivingEntity;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -37,27 +34,12 @@ import net.minecraft.world.World;
 
 @Mixin(LivingEntity.class)
 @Debug(export = true)
-public abstract class LivingEntityMixin 
-	extends Entity 
-	implements ILivingEntity
-{
+public abstract class LivingEntityMixin extends Entity {
 	@Shadow public abstract ItemStack eatFood(World world, ItemStack stack);
 
 	public LivingEntityMixin(final EntityType<? extends LivingEntity> entityType, final World world) {
 		super(entityType, world);
 		throw new AssertionError();
-	}
-
-	@Unique
-	protected int originsgenshin$electroChargedCD = -1;
-
-	@Override
-	public void resetElectroChargedCD() {
-		this.originsgenshin$electroChargedCD = this.age + 20;
-	}
-
-	public boolean isElectroChargedOnCD() {
-		return this.age < this.originsgenshin$electroChargedCD;
 	}
 
 	@ModifyVariable(
@@ -123,21 +105,6 @@ public abstract class LivingEntityMixin
 			.info("Phase: AMPLIFY - Damage: {}, Multiplier: {}, Final DMG: {}", amount, amplifier, amount * amplifier);
 
 		return amount * (float) amplifier;
-	}
-
-	@Inject(
-		method = "tick",
-		at = @At("HEAD")
-	)
-	public void electroChargedTick(CallbackInfo ci) {
-		if (!ElementalReactions.ELECTRO_CHARGED.isTriggerable(this) || this.getWorld().isClient) return;
-
-		OriginsGenshin
-			.sublogger("LivingEntityMixin")
-			.info("Electro-Charged - isTriggerable: {} | Hydro: {} | Electro: {}", ElementalReactions.ELECTRO_CHARGED.isTriggerable(this), ElementComponent.KEY.get(this).getElementalApplication(Element.HYDRO), ElementComponent.KEY.get(this).getElementalApplication(Element.ELECTRO));
-
-		ElementalReactions.ELECTRO_CHARGED.trigger(((LivingEntity)(Entity) this));
-		ElementComponent.sync(this);
 	}
 
 	@ModifyReturnValue(

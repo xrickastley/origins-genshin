@@ -10,7 +10,7 @@ import io.github.xrickastley.originsgenshin.element.ElementalDamageSource;
 import io.github.xrickastley.originsgenshin.element.InternalCooldownContext;
 import io.github.xrickastley.originsgenshin.events.ReactionTriggered;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinParticleFactory;
-import io.github.xrickastley.originsgenshin.interfaces.ILivingEntity;
+import io.github.xrickastley.originsgenshin.registry.OriginsGenshinDamageTypes;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.math.Box;
 import net.minecraft.world.World;
@@ -27,6 +27,18 @@ public class ElectroChargedElementalReaction extends ElementalReaction {
 		);
 	}
 
+	public static void tick(LivingEntity entity) {
+		if (!ElementalReactions.ELECTRO_CHARGED.isTriggerable(entity) || entity.getWorld().isClient) return;
+
+		OriginsGenshin
+			.sublogger("LivingEntityMixin")
+			.info("Electro-Charged - isTriggerable: {} | Hydro: {} | Electro: {}", ElementalReactions.ELECTRO_CHARGED.isTriggerable(entity), ElementComponent.KEY.get(entity).getElementalApplication(Element.HYDRO), ElementComponent.KEY.get(entity).getElementalApplication(Element.ELECTRO));
+
+		ElementalReactions.ELECTRO_CHARGED.trigger(entity);
+		
+		ElementComponent.sync(entity);
+	}
+
 	@Override
 	public boolean isTriggerable(LivingEntity entity) {
 		final ElementComponent component = ElementComponent.KEY.get(entity);
@@ -37,7 +49,7 @@ public class ElectroChargedElementalReaction extends ElementalReaction {
 		// We need both Elements to exist for Electro-Charged.
 		return applicationAE != null && !applicationAE.isEmpty()
 			&& applicationTE != null && !applicationTE.isEmpty()
-			&& !((ILivingEntity) entity).isElectroChargedOnCD();
+			&& !component.isElectroChargedOnCD();
 	}
 
 	@Override
@@ -66,18 +78,31 @@ public class ElectroChargedElementalReaction extends ElementalReaction {
 		final double radius = 2.5;
 		final World world = entity.getWorld();
 
+		final ElementComponent entityComponent = ElementComponent.KEY.get(entity);
 		final float ElectroChargedDMG = OriginsGenshin.getLevelMultiplier(world) * 1.2f;
+
+		if (origin == null) entityComponent.setElectroChargedOrigin(origin);
 		
 		for (LivingEntity target : world.getNonSpectatingEntities(LivingEntity.class, Box.of(entity.getLerpedPos(1f), radius * 2, radius * 2, radius * 2))) {
-			final ElementalApplication application = ElementalApplication.gaugeUnits(target, Element.PYRO, 0);
-			final ElementalDamageSource source = new ElementalDamageSource(world.getDamageSources().generic(), application, InternalCooldownContext.ofNone(origin));
-			
 			final boolean inCircleRadius = entity.squaredDistanceTo(target) <= (radius * radius);
-			final ElementComponent component = ElementComponent.KEY.get(target);
+			final ElementComponent targetComponent = ElementComponent.KEY.get(target);
 
-			if (inCircleRadius && component.hasElementalApplication(Element.HYDRO)) target.damage(source, ElectroChargedDMG);
+			if (inCircleRadius && targetComponent.hasElementalApplication(Element.HYDRO) && !targetComponent.isElectroChargedOnCD()) {
+				final ElementalApplication application = ElementalApplication.gaugeUnits(target, Element.ELECTRO, 0);
+				final ElementalDamageSource source = new ElementalDamageSource(
+					world
+						.getDamageSources()
+						.create(OriginsGenshinDamageTypes.ELECTRO_CHARGED, entity, origin), 
+					application, 
+					InternalCooldownContext.ofNone(origin)
+				);
+
+				target.damage(source, ElectroChargedDMG);
+				
+				targetComponent.resetElectroChargedCD();
+			}
 		}
 		
-		((ILivingEntity) entity).resetElectroChargedCD();
+		entityComponent.resetElectroChargedCD();
 	}
 }
