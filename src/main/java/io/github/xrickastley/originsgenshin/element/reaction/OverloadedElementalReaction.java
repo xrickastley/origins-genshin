@@ -44,7 +44,7 @@ public class OverloadedElementalReaction extends ElementalReaction {
 	
 		final NonEntityDamagingExplosion explosion = new NonEntityDamagingExplosion(
 			world,
-			entity,
+			null,
 			world.getDamageSources().explosion(null),
 			new ExplosionBehavior(),
 			x,

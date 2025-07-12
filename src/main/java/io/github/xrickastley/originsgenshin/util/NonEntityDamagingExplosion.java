@@ -1,6 +1,5 @@
 package io.github.xrickastley.originsgenshin.util;
 
-import java.util.Collection;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -25,7 +24,6 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
-import net.minecraft.world.BlockView;
 import net.minecraft.world.World;
 import net.minecraft.world.event.GameEvent;
 import net.minecraft.world.explosion.Explosion;
@@ -102,11 +100,11 @@ public class NonEntityDamagingExplosion extends Explosion {
                             
 							if (!this.world.isInBuildLimit(blockPos)) break;
                             
-                            final Optional<Float> optional = this.behavior.getBlastResistance(this, (BlockView) this.world, blockPos, blockState, fluidState);
+                            final Optional<Float> optional = this.behavior.getBlastResistance(this, this.world, blockPos, blockState, fluidState);
                             
 							if (optional.isPresent()) h -= (optional.get() + 0.3f) * 0.3f;
 
-                            if (h > 0.0f && this.behavior.canDestroyBlock(this, (BlockView) this.world, blockPos, blockState, h)) {
+                            if (h > 0.0f && this.behavior.canDestroyBlock(this, this.world, blockPos, blockState, h)) {
                                 set.add(blockPos);
                             }
                             m += d * 0.30000001192092896;
@@ -119,7 +117,7 @@ public class NonEntityDamagingExplosion extends Explosion {
             }
         }
        
-		this.affectedBlocks.addAll((Collection<BlockPos>) set);
+		this.affectedBlocks.addAll(set);
 
         final float q = this.power * 2.0f;
         int k = MathHelper.floor(this.x - q - 1.0);
@@ -129,7 +127,7 @@ public class NonEntityDamagingExplosion extends Explosion {
         final int t = MathHelper.floor(this.z - q - 1.0);
         final int u = MathHelper.floor(this.z + q + 1.0);
 
-        final List<Entity> list = this.world.getOtherEntities(this.entity, new Box((double)k, (double)r, (double)t, (double)l, (double)s, (double)u));
+        final List<Entity> list = this.world.getOtherEntities(this.entity, new Box(k, r, t, l, s, u));
         final Vec3d vec3d = new Vec3d(this.x, this.y, this.z);
         
 		for (final Entity entity : list) {

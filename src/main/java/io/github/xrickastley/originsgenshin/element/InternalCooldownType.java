@@ -54,6 +54,7 @@ public final class InternalCooldownType {
 	private static final List<InternalCooldownType> PRELOADED_INSTANCES = new ArrayList<>();
 	public static final InternalCooldownType NONE = InternalCooldownType.registered(OriginsGenshin.identifier("none"), 0, 0);
 	public static final InternalCooldownType DEFAULT = InternalCooldownType.registered(OriginsGenshin.identifier("default"), 50, 3);
+	public static final InternalCooldownType INTERVAL_ONLY = InternalCooldownType.registered(OriginsGenshin.identifier("interval_only"), 50, Integer.MAX_VALUE);
 
 	private final Identifier id;
 	private final int resetInterval;

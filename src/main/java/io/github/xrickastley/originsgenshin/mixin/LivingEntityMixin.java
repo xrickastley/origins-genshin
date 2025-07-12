@@ -21,6 +21,7 @@ import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
 import io.github.xrickastley.originsgenshin.element.ElementalDamageSource;
 import io.github.xrickastley.originsgenshin.element.InternalCooldownContext;
+import io.github.xrickastley.originsgenshin.element.InternalCooldownType;
 import io.github.xrickastley.originsgenshin.element.reaction.AmplifyingElementalReaction;
 import io.github.xrickastley.originsgenshin.element.reaction.ElementalReaction;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinAttributes;
@@ -125,6 +126,30 @@ public abstract class LivingEntityMixin extends Entity {
 	)
 	private void triggerEntityOnRemoved(StatusEffectInstance effect, CallbackInfo ci) {
 		effect.getEffectType().onRemoved((LivingEntity)(Entity) this, effect.getAmplifier());
+	}
+
+	@Inject(
+		method = "tick",
+		at = @At("HEAD")
+	)
+	private void applyNaturalElements(CallbackInfo ci) {
+		if (this.isWet()) {
+			final ElementComponent component = ElementComponent.KEY.get(this);
+
+			component.addElementalApplication(
+				Element.HYDRO,
+				InternalCooldownContext.ofType(this, "origins-genshin:natural_environment", InternalCooldownType.INTERVAL_ONLY),
+				1.0
+			);
+		} else if (this.isOnFire()) {
+			final ElementComponent component = ElementComponent.KEY.get(this);
+
+			component.addElementalApplication(
+				Element.PYRO,
+				InternalCooldownContext.ofType(this, "origins-genshin:natural_environment", InternalCooldownType.INTERVAL_ONLY),
+				1.0
+			);
+		}
 	}
 
 	/*

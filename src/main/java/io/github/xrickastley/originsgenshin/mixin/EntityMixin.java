@@ -3,13 +3,20 @@ package io.github.xrickastley.originsgenshin.mixin;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.MovementType;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.util.math.Vec3d;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import io.github.xrickastley.originsgenshin.element.Element;
+import io.github.xrickastley.originsgenshin.element.ElementalApplication;
+import io.github.xrickastley.originsgenshin.element.ElementalDamageSource;
+import io.github.xrickastley.originsgenshin.element.InternalCooldownContext;
+import io.github.xrickastley.originsgenshin.element.InternalCooldownType;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinStatusEffects;
 
 /**
@@ -30,5 +37,19 @@ public abstract class EntityMixin {
 
 			info.cancel();
 		}
+	}
+
+	@ModifyArg(
+		method = "onStruckByLightning",
+		at = @At(
+			value = "INVOKE",
+			target = "Lnet/minecraft/entity/Entity;damage(Lnet/minecraft/entity/damage/DamageSource;F)Z",
+			ordinal = 0
+		)
+	)
+	private DamageSource applyElectroOnLightning(DamageSource source) {
+		return (Entity)(Object) this instanceof final LivingEntity entity
+			? new ElementalDamageSource(source, ElementalApplication.gaugeUnits(entity, Element.ELECTRO, 2.0), InternalCooldownContext.ofType(entity, "origins-genshin:natural_environment", InternalCooldownType.INTERVAL_ONLY))
+			: source;
 	}
 }
