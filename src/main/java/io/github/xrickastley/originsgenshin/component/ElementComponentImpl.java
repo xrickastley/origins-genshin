@@ -177,7 +177,7 @@ public final class ElementComponentImpl implements ElementComponent {
 			.forEach(application -> list.add(application.asNbt()));
 
 		tag.put("AppliedElements", list);
-		tag.putInt("SentAtAge", owner.age);
+		tag.putLong("SyncedAt", owner.getWorld().getTime());
 		tag.putInt("ElectroChargedCooldown", electroChargedCooldown);
 		tag.putInt("BurningCooldown", burningCooldown);
 	}
@@ -188,7 +188,7 @@ public final class ElementComponentImpl implements ElementComponent {
 		this.burningCooldown = tag.getInt("BurningCooldown");
 
 		final NbtList list = tag.getList("AppliedElements", NbtElement.COMPOUND_TYPE);
-		final int sentAtAge = tag.getInt("SentAtAge");
+		final long syncedAt = tag.getLong("SyncedAt");
 
 		this.elementHolder
 			.values().stream()
@@ -199,12 +199,7 @@ public final class ElementComponentImpl implements ElementComponent {
 		for (final NbtElement nbt : list) {
 			if (!(nbt instanceof final NbtCompound compound)) return;
 
-			final ElementalApplication application = ElementalApplication.fromNbt(owner, compound, sentAtAge);
-
-			if (application.isDuration()) {
-				// TODO: sync by current entity age, ages are different in Render thread and Server thread.
-				LOGGER.info("Application: {} | appliedAt: {} | age: {}", application, application.appliedAt, owner.age);
-			}
+			final ElementalApplication application = ElementalApplication.fromNbt(owner, compound, syncedAt);
 
 			this.getElementHolder(application.getElement())
 				.setElementalApplication(application);

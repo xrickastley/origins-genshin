@@ -31,7 +31,7 @@ public final class ElementalApplication {
 	protected double gaugeUnits;
 	protected double currentGauge;
 	protected double duration;
-	public int appliedAt;
+	public long appliedAt;
 
 	private ElementalApplication(LivingEntity entity, Element element, UUID uuid, double gaugeUnits, boolean aura) {
 		this.entity = entity;
@@ -39,6 +39,8 @@ public final class ElementalApplication {
 		this.uuid = uuid;
 		this.isAura = aura;
 		this.type = Type.GAUGE_UNITS;
+
+		this.appliedAt = entity.getWorld().getTime();
 
 		this.gaugeUnits = gaugeUnits;
 		this.currentGauge = gaugeUnits;
@@ -55,7 +57,7 @@ public final class ElementalApplication {
 		this.type = Type.DURATION;
 
 		this.duration = duration;
-		this.appliedAt = entity.age;
+		this.appliedAt = entity.getWorld().getTime();
 
 		this.gaugeUnits = gaugeUnits;
 		this.currentGauge = gaugeUnits;
@@ -98,7 +100,7 @@ public final class ElementalApplication {
 	 * @param entity The entity to create an Elemental Application for.
 	 * @param nbt The NBT to create the Elemental Application from.
 	 */
-	public static ElementalApplication fromNbt(LivingEntity entity, NbtElement nbt, int sentAtAge) {
+	public static ElementalApplication fromNbt(LivingEntity entity, NbtElement nbt, long syncedAt) {
 		if (!(nbt instanceof final NbtCompound compound)) throw new ElementalApplicationOperationException(Operation.INVALID_NBT_DATA, null, null);
 
 		final Type type = Type.valueOf(compound.getString("Type"));
@@ -109,19 +111,19 @@ public final class ElementalApplication {
 
 		ElementalApplication application;
 
-		if (entity.age < sentAtAge) LOGGER.warn("Current entity age: {} is lesser than Packet send age: {}!", entity.age, sentAtAge);
+		if (entity.getWorld().getTime() < syncedAt) LOGGER.warn("Current world time: {} is lesser than Packet send time: {}!", entity.getWorld().getTime(), syncedAt);
 
 		if (type == Type.GAUGE_UNITS) {
 			final boolean isAura = compound.getBoolean("IsAura");
 
 			application = new ElementalApplication(entity, element, uuid, gaugeUnits, isAura);
 			
-			final double syncedGaugeDeduction = Math.max(entity.age - sentAtAge, 0) * application.getDecayRate();
+			final double syncedGaugeDeduction = Math.max(entity.getWorld().getTime() - syncedAt, 0) * application.getDecayRate();
 
 			application.currentGauge = MathHelper.clamp(currentGauge - syncedGaugeDeduction, 0, application.gaugeUnits);
 		} else {
 			final double duration = compound.getDouble("Duration");
-			final int appliedAt = compound.getInt("AppliedAt");
+			final long appliedAt = compound.getLong("AppliedAt");
 
 			application = new ElementalApplication(entity, element, uuid, gaugeUnits, duration);
 			application.currentGauge = currentGauge;
@@ -161,7 +163,7 @@ public final class ElementalApplication {
 		if (type == Type.DURATION) {
 			// System.out.printf("(%d + %.2f) - %d => %.2f\n", appliedAt, duration, entity.age, (appliedAt + duration) - entity.age);
 
-			return (int) (appliedAt + duration) - entity.age;
+			return (int) (appliedAt + duration - entity.getWorld().getTime());
 		}
 
 		// Currently in s/GU
@@ -220,7 +222,7 @@ public final class ElementalApplication {
 	 * </ul>
 	 */
 	public boolean isEmpty() {
-		return (isDuration() && (entity.age >= (appliedAt + duration) || gaugeUnits <= 0)) || (isGaugeUnits() && currentGauge <= 0);
+		return (isDuration() && (entity.getWorld().getTime() >= (appliedAt + duration) || gaugeUnits <= 0)) || (isGaugeUnits() && currentGauge <= 0);
 	}
 
 	/**
@@ -349,7 +351,7 @@ public final class ElementalApplication {
 		nbt.putDouble("GaugeUnits", this.gaugeUnits);
 		nbt.putDouble("CurrentGauge", this.currentGauge);
 		nbt.putDouble("Duration", this.duration);
-		nbt.putInt("AppliedAt", this.appliedAt);
+		nbt.putLong("AppliedAt", this.appliedAt);
 
 		return nbt;
 	}
