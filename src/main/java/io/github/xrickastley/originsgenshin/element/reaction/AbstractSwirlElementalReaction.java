@@ -8,11 +8,8 @@ import io.github.xrickastley.originsgenshin.element.ElementalDamageSource;
 import io.github.xrickastley.originsgenshin.element.InternalCooldownContext;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageTypes;
-import net.minecraft.util.math.Box;
-import net.minecraft.world.World;
 
 public abstract class AbstractSwirlElementalReaction extends ElementalReaction {
-	private static final double radius = 3;
 	private final Element swirlElement;
 
 	/**
@@ -36,8 +33,6 @@ public abstract class AbstractSwirlElementalReaction extends ElementalReaction {
 
 	@Override
 	protected void onReaction(LivingEntity entity, ElementalApplication auraElement, ElementalApplication triggeringElement, double reducedGauge, @Nullable LivingEntity origin) {
-		final World world = entity.getWorld();
-
 		final double gaugeOriginAura = auraElement.getCurrentGauge() + reducedGauge;
 		final double gaugeAnemo = triggeringElement.getCurrentGauge() + reducedGauge;
 
@@ -47,12 +42,10 @@ public abstract class AbstractSwirlElementalReaction extends ElementalReaction {
 
 		final double gaugeSwirlAttack = ((gaugeReaction - 0.04) * 1.25) + 1;
 
-		for (final LivingEntity target : world.getNonSpectatingEntities(LivingEntity.class, Box.of(entity.getLerpedPos(1F), radius * 2, radius * 2, radius * 2))) {
-			if (target == origin) continue;
-
+		for (final LivingEntity target  : ElementalReaction.getEntitiesInAoE(entity, 3, t -> t != origin)) {
 			final float damage = ElementalReaction.getReactionDamage(entity, 0.6);
 			final ElementalDamageSource source = new ElementalDamageSource(
-				world
+				entity
 					.getDamageSources()
 					.create(DamageTypes.PLAYER_ATTACK, origin),
 				ElementalApplication.gaugeUnits(target, swirlElement, gaugeSwirlAttack, true),

@@ -29,8 +29,7 @@ import net.minecraft.util.math.Box;
 import net.minecraft.world.World;
 
 // Should technically extend Entity, but extends LivingEntity instead to NOT deal with more Networking and Spawn Packets.
-public class DendroCoreEntity extends LivingEntity {
-	private static final double radius = 2.5;
+public final class DendroCoreEntity extends LivingEntity {
 	private @Nullable LivingEntity owner;
 
 	public DendroCoreEntity(EntityType<? extends LivingEntity> entityType, World world) {
@@ -93,19 +92,17 @@ public class DendroCoreEntity extends LivingEntity {
 
 	@Override
 	public void kill() {
-		for (final LivingEntity target : this.getWorld().getNonSpectatingEntities(LivingEntity.class, Box.of(this.getLerpedPos(1F), radius * 2, radius * 2, radius * 2))) {
+		for (final LivingEntity target : ElementalReaction.getEntitiesInAoE(this, 5.0)) {
+			float damage = ElementalReaction.getReactionDamage(this, 2.0);
 			final ElementalDamageSource source = new ElementalDamageSource(
-				this
-					.getWorld()
+				this.getWorld()
 					.getDamageSources()
 					.create(OriginsGenshinDamageTypes.DENDRO_CORE, this, owner),
 				ElementalApplication.gaugeUnits(target, Element.DENDRO, 0.0),
 				InternalCooldownContext.ofNone(owner)
 			);
 
-			float damage = ElementalReaction.getReactionDamage(this, 2.0);
-
-			if (owner != null && owner.getUuid().equals(target.getUuid())) damage *= 0.05f;
+			if (owner != null && owner == target) damage *= 0.05f;
 
 			target.damage(source, damage);
 		}

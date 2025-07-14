@@ -1,5 +1,7 @@
 package io.github.xrickastley.originsgenshin.element.reaction;
 
+import java.util.function.Predicate;
+
 import javax.annotation.Nullable;
 
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
@@ -12,8 +14,6 @@ import io.github.xrickastley.originsgenshin.events.ReactionTriggered;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinParticleFactory;
 import io.github.xrickastley.originsgenshin.registry.OriginsGenshinDamageTypes;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.util.math.Box;
-import net.minecraft.world.World;
 
 public class ElectroChargedElementalReaction extends ElementalReaction {
 	public ElectroChargedElementalReaction() {
@@ -63,35 +63,32 @@ public class ElectroChargedElementalReaction extends ElementalReaction {
 
 	@Override
 	protected void onReaction(LivingEntity entity, ElementalApplication auraElement, ElementalApplication triggeringElement, double reducedGauge, @Nullable LivingEntity origin) {
-		final double radius = 2.5;
-		final World world = entity.getWorld();
-
 		final ElementComponent entityComponent = ElementComponent.KEY.get(entity);
-		final float ElectroChargedDMG = ElementalReaction.getReactionDamage(world, 1.2f);
 
-		if (origin == null) entityComponent.setElectroChargedOrigin(origin);
-		
-		for (LivingEntity target : world.getNonSpectatingEntities(LivingEntity.class, Box.of(entity.getLerpedPos(1f), radius * 2, radius * 2, radius * 2))) {
-			final boolean inCircleRadius = entity.squaredDistanceTo(target) <= (radius * radius);
-			final ElementComponent targetComponent = ElementComponent.KEY.get(target);
+		entityComponent.setOrRetainElectroChargedOrigin(origin);
 
-			if (inCircleRadius && targetComponent.hasElementalApplication(Element.HYDRO) && !targetComponent.isElectroChargedOnCD()) {
-				final ElementalApplication application = ElementalApplication.gaugeUnits(target, Element.ELECTRO, 0);
-				final ElementalDamageSource source = new ElementalDamageSource(
-					world
-						.getDamageSources()
-						.create(OriginsGenshinDamageTypes.ELECTRO_CHARGED, entity, origin), 
-					application, 
-					InternalCooldownContext.ofNone(origin)
-				);
+		final Predicate<LivingEntity> predicate = e -> {
+			final ElementComponent c = ElementComponent.KEY.get(e);
 
-				target.damage(source, ElectroChargedDMG);
+			return c.hasElementalApplication(Element.HYDRO) && !c.isElectroChargedOnCD();
+		};
+
+		for (LivingEntity target : ElementalReaction.getEntitiesInAoE(entity, 2.5, predicate)) {
+			final float damage = ElementalReaction.getReactionDamage(entity, 1.2f);
+			final ElementalDamageSource source = new ElementalDamageSource(
+				entity
+					.getDamageSources()
+					.create(OriginsGenshinDamageTypes.ELECTRO_CHARGED, entity, origin), 
+				ElementalApplication.gaugeUnits(target, Element.ELECTRO, 0), 
+				InternalCooldownContext.ofNone(origin)
+			);
+
+			target.damage(source, damage);
 				
-				targetComponent.resetElectroChargedCD();
-			}
+			ElementComponent.KEY
+				.get(target)
+				.resetElectroChargedCD();
 		}
-		
-		entityComponent.resetElectroChargedCD();
 	}
 
 	// These "mixins" are injected pieces of code (likening @Inject) that allow Burning to work properly, and allow others to easily see the way it was hardcoded.

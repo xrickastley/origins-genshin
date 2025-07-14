@@ -23,8 +23,6 @@ import io.github.xrickastley.originsgenshin.registry.OriginsGenshinDamageTypes;
 import io.github.xrickastley.originsgenshin.registry.OriginsGenshinRegistries;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.registry.entry.RegistryEntry.Reference;
-import net.minecraft.util.math.Box;
-import net.minecraft.world.World;
 
 public abstract class AbstractBurningElementalReaction extends ElementalReaction {
 	private static final InternalCooldownType BURNING_PYRO_ICD = InternalCooldownType.registered(OriginsGenshin.identifier("reactions/burning/pyro_icd"), 40, 3);
@@ -58,7 +56,7 @@ public abstract class AbstractBurningElementalReaction extends ElementalReaction
 			);
 
 		component.resetBurningCD();
-		component.setBurningOrigin(origin);
+		component.setOrRetainBurningOrigin(origin);
 
 		ElementComponent.sync(entity);
 	}
@@ -105,35 +103,30 @@ public abstract class AbstractBurningElementalReaction extends ElementalReaction
 		final ElementComponent component = ElementComponent.KEY.get(entity);
 
 		if (!component.hasElementalApplication(Element.BURNING) || component.isBurningOnCD() || entity.getWorld().isClient) return;
+		
+		OriginsGenshin
+			.sublogger(AbstractBurningElementalReaction.class)
+			.info("Entities in AoE: {} | Filter: {}", ElementalReaction.getEntitiesInAoE(entity, 1), ElementalReaction.getEntitiesInAoE(entity, 1, t -> !ElementComponent.KEY.get(t).isBurningOnCD()));
 
-		final World world = entity.getWorld();
-		final ElementComponent entityComponent = ElementComponent.KEY.get(entity);
-		// TODO: Burning DMG from this point (of reapplication) will be calculated based on the stats of the character responsible for the latest instance of Dendro or Pyro application.
-		final float burningDMG = ElementalReaction.getReactionDamage(entity, 0.25);
-
-		for (LivingEntity target : world.getNonSpectatingEntities(LivingEntity.class, Box.of(entity.getLerpedPos(1f), 2, 2, 2))) {
-			final boolean inCircleRadius = entity.squaredDistanceTo(target) <= 1;
-			final ElementComponent targetComponent = ElementComponent.KEY.get(target);
-
-			if (!inCircleRadius || targetComponent.isBurningOnCD()) continue;
-			
-			final ElementalApplication application = ElementalApplication.gaugeUnits(target, Element.PYRO,1);
+		for (final LivingEntity target : ElementalReaction.getEntitiesInAoE(entity, 1, t -> !ElementComponent.KEY.get(t).isBurningOnCD())) {
+			// TODO: Burning DMG from this point (of reapplication) will be calculated based on the stats of the character responsible for the latest instance of Dendro or Pyro application.
+			final float damage = ElementalReaction.getReactionDamage(entity, 0.25);
 			final ElementalDamageSource source = new ElementalDamageSource(
-				world
+				entity
 					.getDamageSources()
-					.create(OriginsGenshinDamageTypes.BURNING, entity, entityComponent.getBurningOrigin()), 
-				application, 
+					.create(OriginsGenshinDamageTypes.BURNING, entity, component.getBurningOrigin()), 
+				ElementalApplication.gaugeUnits(target, Element.PYRO, 1), 
 				InternalCooldownContext.ofType(entity, "origins-genshin:reactions/burning", BURNING_PYRO_ICD)
 			);
 
-			target.damage(source, burningDMG);
+			target.damage(source, damage);
 			target.setOnFire(true);
 			target.setFireTicks(5);
 
-			targetComponent.resetBurningCD();
+			ElementComponent.KEY
+				.get(target)
+				.resetBurningCD();
 		}
-
-		entityComponent.resetBurningCD();
 	}
 
 	/**

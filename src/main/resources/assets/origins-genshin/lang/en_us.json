@@ -9,5 +9,24 @@
 	"entity.origins-genshin.dendro_core": "Dendro Core",
 
 	"effect.origins-genshin.frozen": "Frozen",
-	"effect.origins-genshin.superconduct": "Superconduct"
+	"effect.origins-genshin.superconduct": "Superconduct",
+
+	"death.attack.burning": "%1$s burned to death",
+	"death.attack.burning.item": "%1$s was burned to death by %2$s while wielding %3$s",
+	"death.attack.burning.player": "%1$s was burned to death by %2$s",
+
+	"death.attack.dendro_core": "%1$s experienced the power of nature",
+	"death.attack.dendro_core.player": "%1$s experienced the power of nature thanks to %2$s",
+
+	"death.attack.electro-charged": "%1$s was shocked to death",
+	"death.attack.electro-charged.item": "%1$s was shocked to death by %2$s while wielding %3$s",
+	"death.attack.electro-charged.player": "%1$s was shocked to death by %2$s",
+
+	"death.attack.overloaded": "%1$s was blown up",
+	"death.attack.overloaded.item": "%1$s was blown up by %2$s while wielding %3$s",
+	"death.attack.overloaded.player": "%1$s was blown up by %2$s",
+
+	"death.attack.superconduct": "%1$s experienced freezing cold conduction",
+	"death.attack.superconduct.item": "%1$s experienced freezing cold conduction due to %2$s while wielding %3$s",
+	"death.attack.superconduct.player": "%1$s experienced freezing cold conduction due to %2$s"
 }

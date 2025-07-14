@@ -57,6 +57,14 @@ public interface ElementComponent extends AutoSyncedComponent, CommonTickingComp
 	
 	public @Nullable LivingEntity getBurningOrigin();
 
+	default void setOrRetainElectroChargedOrigin(@Nullable LivingEntity origin) {
+		this.setElectroChargedOrigin(origin != null ? origin : this.getElectroChargedOrigin());
+	}
+
+	default void setOrRetainBurningOrigin(@Nullable LivingEntity origin) {
+		this.setBurningOrigin(origin != null ? origin : this.getBurningOrigin());
+	}
+
 	/**
 	 * Checks if the element can be applied.
 	 * @param element The element to test.

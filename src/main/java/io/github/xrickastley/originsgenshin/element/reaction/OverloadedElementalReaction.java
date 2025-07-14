@@ -60,7 +60,7 @@ public class OverloadedElementalReaction extends ElementalReaction {
         explosion.affectWorld(world.isClient);
 		explosion
 			.getAffectedEntities()
-			.forEach(this::damage);
+			.forEach(e -> damage(e, origin));
 
         //  Sync the explosion effect to the client if the explosion is created on the server
         if (!(world instanceof ServerWorld serverWorld)) return;
@@ -85,7 +85,7 @@ public class OverloadedElementalReaction extends ElementalReaction {
         }
 	}
 
-	private void damage(Entity entity) {
+	private void damage(Entity entity, Entity origin) {
 		if (!(entity instanceof final LivingEntity living)) return;
 
 		final float amount = ElementalReaction.getReactionDamage(entity, 2.75);
@@ -93,7 +93,7 @@ public class OverloadedElementalReaction extends ElementalReaction {
 		final ElementalDamageSource source = new ElementalDamageSource(
 			entity
 				.getDamageSources()
-				.create(OriginsGenshinDamageTypes.OVERLOADED, entity), 
+				.create(OriginsGenshinDamageTypes.OVERLOADED, origin), 
 			application, 
 			InternalCooldownContext.ofNone(entity)
 		);
