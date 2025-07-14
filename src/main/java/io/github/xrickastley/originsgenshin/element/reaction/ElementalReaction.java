@@ -73,7 +73,7 @@ public abstract class ElementalReaction {
 	}
 
 	public static List<LivingEntity> getEntitiesInAoE(LivingEntity target, double radius) {
-		return getEntitiesInAoE(target, radius, e -> false);
+		return getEntitiesInAoE(target, radius, e -> true);
 	}
 
 	public static List<LivingEntity> getEntitiesInAoE(LivingEntity target, double radius, Predicate<LivingEntity> filter) {
@@ -81,7 +81,7 @@ public abstract class ElementalReaction {
 			.getWorld()
 			.getNonSpectatingEntities(LivingEntity.class, Box.of(target.getLerpedPos(1f), radius * 2, radius * 2, radius * 2));
 
-		targets.removeIf(entity -> entity.squaredDistanceTo(target) <= 1 || filter.negate().test(entity));
+		targets.removeIf(entity -> entity.squaredDistanceTo(target) >= radius * radius || filter.negate().test(entity));
 
 		return targets;
 	}
