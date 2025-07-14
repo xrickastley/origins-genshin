@@ -25,6 +25,8 @@ public class OriginsGenshinParticleFactory {
 	public static final DefaultParticleType VAPORIZE = register("vaporize");
 	public static final DefaultParticleType SWIRL = register("swirl");
 	public static final DefaultParticleType BURNING = register("burning");
+	public static final DefaultParticleType SPREAD = register("spread");
+	public static final DefaultParticleType AGGRAVATE = register("aggravate");
 
 	public static final DefaultParticleType DAMAGE_TEXT = register("damage_text");
 	public static final DefaultParticleType TEST = register("test");

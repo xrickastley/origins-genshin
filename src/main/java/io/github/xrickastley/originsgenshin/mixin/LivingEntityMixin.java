@@ -3,13 +3,14 @@ package io.github.xrickastley.originsgenshin.mixin;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.item.ItemStack;
 import org.spongepowered.asm.mixin.Debug;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
@@ -22,6 +23,7 @@ import io.github.xrickastley.originsgenshin.element.ElementalApplication;
 import io.github.xrickastley.originsgenshin.element.ElementalDamageSource;
 import io.github.xrickastley.originsgenshin.element.InternalCooldownContext;
 import io.github.xrickastley.originsgenshin.element.InternalCooldownType;
+import io.github.xrickastley.originsgenshin.element.reaction.AdditiveElementalReaction;
 import io.github.xrickastley.originsgenshin.element.reaction.AmplifyingElementalReaction;
 import io.github.xrickastley.originsgenshin.element.reaction.ElementalReaction;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinAttributes;
@@ -36,7 +38,8 @@ import net.minecraft.world.World;
 @Mixin(LivingEntity.class)
 @Debug(export = true)
 public abstract class LivingEntityMixin extends Entity {
-	@Shadow public abstract ItemStack eatFood(World world, ItemStack stack);
+	@Unique
+	private List<ElementalReaction> originsgenshin$reactions = new ArrayList<>();
 
 	public LivingEntityMixin(final EntityType<? extends LivingEntity> entityType, final World world) {
 		super(entityType, world);
@@ -48,31 +51,29 @@ public abstract class LivingEntityMixin extends Entity {
 		at = @At("HEAD"),
 		argsOnly = true
 	)
+	@Final
 	private float applyDMGModifiers(float amount, @Local(argsOnly = true) DamageSource source) {
-		return source instanceof final ElementalDamageSource eds
-			? OriginsGenshinAttributes.modifyDamage((LivingEntity)(Entity) this, eds, amount)
-			: OriginsGenshinAttributes.modifyDamage((LivingEntity)(Entity) this, new ElementalDamageSource(source, ElementalApplication.gaugeUnits((LivingEntity)(Entity) this, Element.PHYSICAL, 0), InternalCooldownContext.ofNone(source.getAttacker())), amount);
-	}
+		if (!(source instanceof final ElementalDamageSource eds)) return OriginsGenshinAttributes.modifyDamage((LivingEntity)(Entity) this, new ElementalDamageSource(source, ElementalApplication.gaugeUnits((LivingEntity)(Entity) this, Element.PHYSICAL, 0), InternalCooldownContext.ofNone(source.getAttacker())), amount);
 
-	@ModifyVariable(
-		method = "damage",
-		at = @At("HEAD"),
-		argsOnly = true
-	)
-	private float includeBaseDMGReactionMultipliers(float amount, @Local(argsOnly = true) DamageSource source) {
-		if (!(source instanceof final ElementalDamageSource elementalSource)) return amount;
+		final ElementComponent component = ElementComponent.KEY.get(this);
+		this.originsgenshin$reactions = component.applyFromDamageSource(eds);
 
-		float addedBaseDMG = 0f;
+		float additive = this.originsgenshin$reactions != null && !this.originsgenshin$reactions.isEmpty()
+			? Math.max(
+				this.originsgenshin$reactions
+					.stream()
+					.filter(reaction -> reaction instanceof AdditiveElementalReaction)
+					.map(reaction -> ((AdditiveElementalReaction) reaction))
+					.reduce(0.0f, (acc, reaction) -> acc + reaction.applyAmplifier(this.getWorld(), amount), Float::sum),
+				0.0f
+			)
+			: 0.0f;
 
-		if (ElementComponent.KEY.get(this).hasElementalApplication(Element.QUICKEN)) {
-			final Element element = elementalSource.getElementalApplication().getElement();
+		OriginsGenshin
+			.sublogger("LivingEntityMixin")
+			.info("Phase: ADDITIVE - Damage: {}, Additive: {}, Final Base DMG: {}", amount, additive, amount + additive);
 
-			// The "Level Multiplier" can't really exist here, so just modify the DMG Bonus by a factor and then multiply directly. 
-			if (element.equals(Element.DENDRO)) addedBaseDMG = (0.25f * OriginsGenshin.getLevelMultiplier(this));
-			else if (element.equals(Element.ELECTRO)) addedBaseDMG = (0.15f * OriginsGenshin.getLevelMultiplier(this));
-		}
-
-		return amount + addedBaseDMG;
+		return OriginsGenshinAttributes.modifyDamage((LivingEntity)(Entity) this, eds, amount + additive);
 	}
 	
 	@ModifyVariable(
@@ -83,15 +84,10 @@ public abstract class LivingEntityMixin extends Entity {
 		),	
 		argsOnly = true
 	)
-	private float includeAmplifyingReactionDMGMultipliers(float amount, @Local(argsOnly = true) DamageSource source) {
-		if (!(source instanceof final ElementalDamageSource elementalSource)) return amount;
-
-		final ElementComponent component = ElementComponent.KEY.get(this);
-		final List<ElementalReaction> reactions = component.applyFromDamageSource(elementalSource);
-
-		double amplifier = reactions.size() > 0
+	private float applyReactionAmplifiers(float amount, @Local(argsOnly = true) DamageSource source) {
+		double amplifier = this.originsgenshin$reactions != null && !this.originsgenshin$reactions.isEmpty()
 			? Math.max(
-				reactions
+				this.originsgenshin$reactions
 					.stream()
 					.filter(reaction -> reaction instanceof AmplifyingElementalReaction)
 					.map(reaction -> ((AmplifyingElementalReaction) reaction))
@@ -99,7 +95,6 @@ public abstract class LivingEntityMixin extends Entity {
 				1.0
 			)
 			: 1.0;
-
 
 		OriginsGenshin
 			.sublogger("LivingEntityMixin")

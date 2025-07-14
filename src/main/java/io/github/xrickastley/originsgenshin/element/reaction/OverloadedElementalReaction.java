@@ -3,19 +3,19 @@ package io.github.xrickastley.originsgenshin.element.reaction;
 import javax.annotation.Nullable;
 
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
-import io.github.xrickastley.originsgenshin.component.ElementComponent;
 import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
 import io.github.xrickastley.originsgenshin.element.ElementalDamageSource;
 import io.github.xrickastley.originsgenshin.element.InternalCooldownContext;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinParticleFactory;
+import io.github.xrickastley.originsgenshin.registry.OriginsGenshinDamageTypes;
 import io.github.xrickastley.originsgenshin.util.NonEntityDamagingExplosion;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.network.packet.s2c.play.ExplosionS2CPacket;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.math.Box;
 import net.minecraft.world.World;
 import net.minecraft.world.explosion.Explosion.DestructionType;
 import net.minecraft.world.explosion.ExplosionBehavior;
@@ -45,7 +45,6 @@ public class OverloadedElementalReaction extends ElementalReaction {
 		final NonEntityDamagingExplosion explosion = new NonEntityDamagingExplosion(
 			world,
 			null,
-			world.getDamageSources().explosion(null),
 			new ExplosionBehavior(),
 			x,
 			y,
@@ -59,13 +58,14 @@ public class OverloadedElementalReaction extends ElementalReaction {
 		
         explosion.collectBlocksAndPushEntities();
         explosion.affectWorld(world.isClient);
+		explosion
+			.getAffectedEntities()
+			.forEach(this::damage);
 
         //  Sync the explosion effect to the client if the explosion is created on the server
         if (!(world instanceof ServerWorld serverWorld)) return;
 
         if (!explosion.shouldDestroy()) explosion.clearAffectedBlocks();
-
-		dealOverloadedDamage(entity);
 
         for (ServerPlayerEntity serverPlayerEntity : serverWorld.getPlayers()) {
             if (serverPlayerEntity.squaredDistanceTo(x, y, z) >= 4096.0) continue;
@@ -85,22 +85,19 @@ public class OverloadedElementalReaction extends ElementalReaction {
         }
 	}
 
-	private void dealOverloadedDamage(LivingEntity origin) {
-		final double radius = 2.5;
-		final World world = origin.getWorld();
+	private void damage(Entity entity) {
+		if (!(entity instanceof final LivingEntity living)) return;
 
-		final float OverloadedDMG = OriginsGenshin.getLevelMultiplier(world) * 1.2f;
-		
-		for (LivingEntity target : world.getNonSpectatingEntities(LivingEntity.class, Box.of(origin.getLerpedPos(1f), radius * 2, radius * 2, radius * 2))) {
-			if (!origin.canTarget(target)) continue;
+		final float amount = ElementalReaction.getReactionDamage(entity, 2.75);
+		final ElementalApplication application = ElementalApplication.gaugeUnits(living, Element.PYRO, 0);
+		final ElementalDamageSource source = new ElementalDamageSource(
+			entity
+				.getDamageSources()
+				.create(OriginsGenshinDamageTypes.OVERLOADED, entity), 
+			application, 
+			InternalCooldownContext.ofNone(entity)
+		);
 
-			final ElementalApplication application = ElementalApplication.gaugeUnits(target, Element.PYRO, 0);
-			final ElementalDamageSource source = new ElementalDamageSource(world.getDamageSources().generic(), application, InternalCooldownContext.ofNone(origin));
-			
-			final boolean inCircleRadius = origin.squaredDistanceTo(target) <= (radius * radius);
-			final ElementComponent component = ElementComponent.KEY.get(target);
-
-			if (inCircleRadius && component.hasElementalApplication(Element.HYDRO)) target.damage(source, OverloadedDMG);
-		}
+		entity.damage(source, amount);
 	}
 }

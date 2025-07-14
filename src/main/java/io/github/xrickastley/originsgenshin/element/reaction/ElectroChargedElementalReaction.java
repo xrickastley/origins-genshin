@@ -67,7 +67,7 @@ public class ElectroChargedElementalReaction extends ElementalReaction {
 		final World world = entity.getWorld();
 
 		final ElementComponent entityComponent = ElementComponent.KEY.get(entity);
-		final float ElectroChargedDMG = OriginsGenshin.getLevelMultiplier(world) * 1.2f;
+		final float ElectroChargedDMG = ElementalReaction.getReactionDamage(world, 1.2f);
 
 		if (origin == null) entityComponent.setElectroChargedOrigin(origin);
 		

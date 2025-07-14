@@ -17,6 +17,7 @@ public final class ElementalReactionSettings {
 	protected Pair<Element, Integer> triggeringElement;
 	protected boolean reversable = false;
 	protected boolean applyResultAsAura = false;
+	protected boolean endsReactionTrigger = false;
 
 	public ElementalReactionSettings(String name, Identifier id, @Nullable DefaultParticleType particle) {
 		this.name = name;
@@ -79,7 +80,7 @@ public final class ElementalReactionSettings {
 	}
 
 	/**
-	 * Whether or not the Trigger Element is applied as an aura. <br> <br>
+	 * Whether or not the triggering Element is applied as an aura. <br> <br>
 	 * 
 	 * Once all possible Elemental Reactions have been triggered, the triggering element
 	 * may have some Gauge Units left. This setting allows for the remaining Gauge Units
@@ -96,6 +97,20 @@ public final class ElementalReactionSettings {
 	 */
 	public ElementalReactionSettings applyResultAsAura(boolean applyResultAsAura) {
 		this.applyResultAsAura = applyResultAsAura;
+
+		return this;
+	}
+
+	/**
+	 * Whether or not this reaction ends all future reactions from triggering.
+	 * 
+	 * Once a reaction is triggered, an attempt to trigger another is made. This setting denies
+	 * other reactions to be triggered after triggering this reaction.
+	 * 
+	 * @param applyResultAsAura Whether or not reactions can be triggered after this reaction.
+	 */
+	public ElementalReactionSettings endsReactionTrigger(boolean endsReactionTrigger) {
+		this.endsReactionTrigger = endsReactionTrigger;
 
 		return this;
 	}

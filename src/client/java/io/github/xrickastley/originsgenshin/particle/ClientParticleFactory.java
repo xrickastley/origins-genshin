@@ -34,8 +34,10 @@ public class ClientParticleFactory {
 			register(OriginsGenshinParticleFactory.BLOOM, BloomParticleFactory::new);
 			register(OriginsGenshinParticleFactory.MELT, MeltParticleFactory::new);
 			register(OriginsGenshinParticleFactory.VAPORIZE, VaporizeParticleFactory::new);
-			register(OriginsGenshinParticleFactory.BURNING, BurningParticleFactory::new);
 			register(OriginsGenshinParticleFactory.SWIRL, SwirlParticleFactory::new);
+			register(OriginsGenshinParticleFactory.BURNING, BurningParticleFactory::new);
+			register(OriginsGenshinParticleFactory.SPREAD, SpreadParticleFactory::new);
+			register(OriginsGenshinParticleFactory.AGGRAVATE, AggravateParticleFactory::new);
 			
 			register(OriginsGenshinParticleFactory.DAMAGE_TEXT, DamageTextParticle.Factory::new);
 			register(OriginsGenshinParticleFactory.TEST, TestParticleFactory::new);

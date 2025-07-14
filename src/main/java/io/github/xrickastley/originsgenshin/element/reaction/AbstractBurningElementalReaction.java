@@ -109,7 +109,7 @@ public abstract class AbstractBurningElementalReaction extends ElementalReaction
 		final World world = entity.getWorld();
 		final ElementComponent entityComponent = ElementComponent.KEY.get(entity);
 		// TODO: Burning DMG from this point (of reapplication) will be calculated based on the stats of the character responsible for the latest instance of Dendro or Pyro application.
-		final float burningDMG = OriginsGenshin.getLevelMultiplier(world) * 0.25f;
+		final float burningDMG = ElementalReaction.getReactionDamage(entity, 0.25);
 
 		for (LivingEntity target : world.getNonSpectatingEntities(LivingEntity.class, Box.of(entity.getLerpedPos(1f), 2, 2, 2))) {
 			final boolean inCircleRadius = entity.squaredDistanceTo(target) <= 1;

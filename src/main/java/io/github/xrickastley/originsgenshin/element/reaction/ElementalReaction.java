@@ -2,6 +2,7 @@ package io.github.xrickastley.originsgenshin.element.reaction;
 
 import java.text.DecimalFormat;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import javax.annotation.Nullable;
@@ -24,6 +25,8 @@ import net.minecraft.particle.DefaultParticleType;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
+import net.minecraft.util.math.Box;
+import net.minecraft.world.World;
 
 public abstract class ElementalReaction {
 	private static final Logger LOGGER = OriginsGenshin.sublogger(ElementalReaction.class);
@@ -38,6 +41,7 @@ public abstract class ElementalReaction {
 	@Deprecated
 	protected final boolean allowChildElements = false;
 	protected final boolean applyResultAsAura;
+	protected final boolean endsReactionTrigger;
 	
 	protected ElementalReaction(ElementalReactionSettings settings) {
 		this.name = settings.name;
@@ -49,6 +53,37 @@ public abstract class ElementalReaction {
 		this.triggeringElement = settings.triggeringElement;
 		this.reversable = settings.reversable;
 		this.applyResultAsAura = settings.applyResultAsAura;
+		this.endsReactionTrigger = settings.endsReactionTrigger;
+	}
+
+	public static float getReactionDamage(Entity entity, double reactionMultiplier) {
+		return ElementalReaction.getReactionDamage(entity, (float) reactionMultiplier);
+	}
+
+	public static float getReactionDamage(Entity entity, float reactionMultiplier) {
+		return OriginsGenshin.getLevelMultiplier(entity) * reactionMultiplier;
+	}
+
+	public static float getReactionDamage(World world, double reactionMultiplier) {
+		return ElementalReaction.getReactionDamage(world, (float) reactionMultiplier);
+	}
+
+	public static float getReactionDamage(World world, float reactionMultiplier) {
+		return OriginsGenshin.getLevelMultiplier(world) * reactionMultiplier;
+	}
+
+	public static List<LivingEntity> getEntitiesInAoE(LivingEntity target, double radius) {
+		return getEntitiesInAoE(target, radius, e -> false);
+	}
+
+	public static List<LivingEntity> getEntitiesInAoE(LivingEntity target, double radius, Predicate<LivingEntity> filter) {
+		final List<LivingEntity> targets = target
+			.getWorld()
+			.getNonSpectatingEntities(LivingEntity.class, Box.of(target.getLerpedPos(1f), radius * 2, radius * 2, radius * 2));
+
+		targets.removeIf(entity -> entity.squaredDistanceTo(target) <= 1 || filter.negate().test(entity));
+
+		return targets;
 	}
 
 	public boolean hasElement(Element element) {
@@ -97,6 +132,10 @@ public abstract class ElementalReaction {
 
 	public boolean shouldApplyResultAsAura() {
 		return this.applyResultAsAura;
+	}
+
+	public boolean shouldEndReactionTrigger() {
+		return this.endsReactionTrigger;
 	}
 
 	/**

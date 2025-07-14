@@ -25,7 +25,10 @@ public class ElementalReactions {
 	public static final ElementalReaction FROZEN_SUPERCONDUCT = new FrozenSuperconductElementalReaction();
 	// Applies the Quicken aura to the target.
 	public static final ElementalReaction QUICKEN = new QuickenElementalReaction();
-	//
+	// TODO: Reaction: Spread + Aggravate (indicators, reactions already handled by LivingEntityMixin)
+	public static final ElementalReaction SPREAD = new SpreadElementalReaction();
+	public static final ElementalReaction AGGRAVATE = new AggravateElementalReaction();
+	// Applies the Burning aura to the target, dealing Pyro DMG every 5 ticks (0.25s)
 	public static final ElementalReaction BURNING = new BurningElementalReaction();
 	public static final ElementalReaction QUICKEN_BURNING = new QuickenBurningElementalReaction();
 	// Creates a Dendro Core at the source.
@@ -38,7 +41,6 @@ public class ElementalReactions {
 	public static final ElementalReaction ELECTRO_SWIRL = new ElectroSwirlElementalReaction();
 	public static final ElementalReaction CRYO_SWIRL = new CryoSwirlElementalReaction();
 	// TODO: Reaction: Crystallize (+ Crystallize Shards)
-	// TODO: Reaction: Spread + Aggravate (indicators, reactions already handled by LivingEntityMixin)
 	// TODO: Reaction: Hyperbloom + Burgeon
 	// TODO: Reaction display.
 
@@ -54,6 +56,8 @@ public class ElementalReactions {
 		register(ElementalReactions.SUPERCONDUCT);
 		register(ElementalReactions.FROZEN_SUPERCONDUCT);
 		register(ElementalReactions.QUICKEN);
+		register(ElementalReactions.SPREAD);
+		register(ElementalReactions.AGGRAVATE);
 		register(ElementalReactions.BURNING);
 		register(ElementalReactions.QUICKEN_BURNING);
 		register(ElementalReactions.DENDRO_BLOOM);

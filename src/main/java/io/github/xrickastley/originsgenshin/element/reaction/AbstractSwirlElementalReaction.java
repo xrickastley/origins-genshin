@@ -2,7 +2,6 @@ package io.github.xrickastley.originsgenshin.element.reaction;
 
 import javax.annotation.Nullable;
 
-import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
 import io.github.xrickastley.originsgenshin.element.ElementalDamageSource;
@@ -51,6 +50,7 @@ public abstract class AbstractSwirlElementalReaction extends ElementalReaction {
 		for (final LivingEntity target : world.getNonSpectatingEntities(LivingEntity.class, Box.of(entity.getLerpedPos(1F), radius * 2, radius * 2, radius * 2))) {
 			if (target == origin) continue;
 
+			final float damage = ElementalReaction.getReactionDamage(entity, 0.6);
 			final ElementalDamageSource source = new ElementalDamageSource(
 				world
 					.getDamageSources()
@@ -58,7 +58,6 @@ public abstract class AbstractSwirlElementalReaction extends ElementalReaction {
 				ElementalApplication.gaugeUnits(target, swirlElement, gaugeSwirlAttack, true),
 				InternalCooldownContext.ofNone(origin)
 			);
-			final float damage = 2 * OriginsGenshin.getLevelMultiplier(world);
 
 			target.damage(source, damage);
 		}

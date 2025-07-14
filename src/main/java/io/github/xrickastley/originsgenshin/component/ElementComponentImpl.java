@@ -34,6 +34,7 @@ import net.minecraft.registry.entry.RegistryEntry.Reference;
 import net.minecraft.server.world.ServerWorld;
 
 public final class ElementComponentImpl implements ElementComponent {
+	protected static final Set<Class<LivingEntity>> DENIED_ENTITIES = new HashSet<>();
 	private final LivingEntity owner;
 	private final ConcurrentHashMap<Element, ElementHolder> elementHolder = new ConcurrentHashMap<>();
 	private final Logger LOGGER = OriginsGenshin.sublogger(ElementComponent.class);
@@ -102,7 +103,8 @@ public final class ElementComponentImpl implements ElementComponent {
 	public boolean canApplyElement(Element element, InternalCooldownContext icdContext, boolean handleICD) {
 		if (element.bypassesInternalCooldown() || !icdContext.hasOrigin()) return true;
 
-		return this.getElementHolder(element).canApplyElement(element, icdContext, true);
+		return this.getElementHolder(element).canApplyElement(element, icdContext, true)
+			&& !ElementComponentImpl.DENIED_ENTITIES.stream().anyMatch(c -> c.isInstance(owner));
 	}
 
 	@Override
@@ -304,7 +306,6 @@ public final class ElementComponentImpl implements ElementComponent {
 			} else {
 				AbstractBurningElementalReaction.mixin$forceReapplyDendroWhenBurning(this, application);
 			}
-			
 
 			return true;
 		} else return false;
@@ -342,36 +343,39 @@ public final class ElementComponentImpl implements ElementComponent {
 
 		final int priority = Math.min(optionalPriority.get(), application.getElement().getPriority());
 
-		Optional<ElementalReaction> reaction = this
-			// .getTriggerableReactions(priority)
+		Optional<ElementalReaction> optional = this
 			.getTriggerableReactions(priority)
 			.findFirst();
-		reaction = AbstractBurningElementalReaction.mixin$changeReaction(reaction, this);
 
-		boolean applyElementAsAura = false;
+		optional = AbstractBurningElementalReaction.mixin$changeReaction(optional, this);
+
+		boolean applyElementAsAura = true;
 		final Set<ElementalReaction> triggeredReactions = new HashSet<>();
 
 		LOGGER.info("Target elemental priority: {}", priority);
-		while (application.getCurrentGauge() > 0 && reaction.isPresent()) {
+		while (application.getCurrentGauge() > 0 && optional.isPresent()) {
 			System.out.println("Set triggered reactions at age to: " + this.owner.age);
 			triggeredReactionsAtAge = this.owner.age;
+			final ElementalReaction reaction = optional.get();
 
-			LOGGER.info("Triggering reaction: {}, Current Gauge ({}): {}", reaction.get().getId(), application.getElement(), application.getCurrentGauge());
+			LOGGER.info("Triggering reaction: {}, Current Gauge ({}): {}", reaction.getId(), application.getElement(), application.getCurrentGauge());
 
-			reaction.get().trigger(owner, origin);
-			applyElementAsAura = reaction.get().shouldApplyResultAsAura();
+			reaction.trigger(owner, origin);
+			applyElementAsAura = applyElementAsAura && reaction.shouldApplyResultAsAura();
 
-			triggeredReactions.add(reaction.get());
+			triggeredReactions.add(reaction);
 
-			reaction = this
-				.getTriggerableReactions(priority)
-				.filter(r -> AbstractBurningElementalReaction.mixin$onlyAllowPyroReactions(!triggeredReactions.stream().anyMatch(r2 -> r2.idEquals(r)), this, r))
-				.findFirst();
+			optional = !reaction.shouldEndReactionTrigger()
+				? this
+					.getTriggerableReactions(priority)
+					.filter(r -> AbstractBurningElementalReaction.mixin$onlyAllowPyroReactions(!triggeredReactions.stream().anyMatch(r2 -> r2.idEquals(r)), this, r))
+					.findFirst()
+				: Optional.empty();
 		}
 
-		LOGGER.info("Element: {} | CanBeAura: {} | Triggered reactions: {} | Apply Element as Aura: {}", context.getElement(), context.getElement().canBeAura(), triggeredReactions.size(), applyElementAsAura);
+		LOGGER.info("Element: {} | CanBeAura: {} | Triggered reactions: {} | Apply Element as Aura: {} | Is Gauge Units: {}", context.getElement(), context.getElement().canBeAura(), triggeredReactions.size(), applyElementAsAura, application.isGaugeUnits());
 
-		if (!context.getElement().canBeAura() || (triggeredReactions.size() > 0 && !applyElementAsAura) || AbstractBurningElementalReaction.mixin$allowDendroPassthrough(this.getHighestElementPriority().orElse(Integer.MIN_VALUE) < application.getElement().getPriority(), this, application)) {
+		if (!context.getElement().canBeAura() || (triggeredReactions.size() > 0 && !applyElementAsAura && application.isGaugeUnits()) || AbstractBurningElementalReaction.mixin$allowDendroPassthrough(this.getHighestElementPriority().orElse(Integer.MIN_VALUE) < application.getElement().getPriority(), this, application)) {
 			LOGGER.info("Removing application: {}", application);
 
 			context.setElementalApplication(null);

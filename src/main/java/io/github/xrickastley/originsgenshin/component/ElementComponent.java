@@ -11,6 +11,7 @@ import dev.onyxstudios.cca.api.v3.component.ComponentRegistry;
 import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
 import dev.onyxstudios.cca.api.v3.component.tick.CommonTickingComponent;
 import io.github.xrickastley.originsgenshin.util.Array;
+import io.github.xrickastley.originsgenshin.util.ClassInstanceUtil;
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementHolder;
@@ -23,6 +24,18 @@ import net.minecraft.entity.LivingEntity;
 
 public interface ElementComponent extends AutoSyncedComponent, CommonTickingComponent {
 	public static final ComponentKey<ElementComponent> KEY = ComponentRegistry.getOrCreate(OriginsGenshin.identifier("elements"), ElementComponent.class);
+	
+	/**
+	 * Denies Elemental Applications for the specific entity class. <br> <br>
+	 * 
+	 * The provided entity class, and all it's subclasses, cannot have elements applied to them, 
+	 * either by force or naturally.
+	 * 
+	 * @param entityClass The entity to deny Elemental Applications for.
+	 */
+	public static <T extends LivingEntity> void denyElementsFor(Class<T> entityClass) {
+		ElementComponentImpl.DENIED_ENTITIES.add(ClassInstanceUtil.castInstance(entityClass));
+	}
 
 	public LivingEntity getOwner();
 

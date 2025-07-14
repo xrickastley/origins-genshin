@@ -8,14 +8,14 @@ import net.minecraft.entity.LivingEntity;
 public abstract class AmplifyingElementalReaction extends ElementalReaction {
 	final double amplifier;
 
-	public AmplifyingElementalReaction(ElementalReactionSettings settings, double amplifier) {
+	protected AmplifyingElementalReaction(ElementalReactionSettings settings, double amplifier) {
 		super(settings);
 
 		this.amplifier = amplifier;
 	}
 
 	public float applyAmplifier(float damage) {
-		return (float) applyAmplifier((double) damage);
+		return (float) applyAmplifier(damage);
 	}
 
 	public double applyAmplifier(double damage) {

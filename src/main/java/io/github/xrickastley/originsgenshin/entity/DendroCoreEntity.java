@@ -7,11 +7,12 @@ import java.util.Queue;
 
 import javax.annotation.Nullable;
 
-import io.github.xrickastley.originsgenshin.OriginsGenshin;
+import io.github.xrickastley.originsgenshin.component.ElementComponent;
 import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
 import io.github.xrickastley.originsgenshin.element.ElementalDamageSource;
 import io.github.xrickastley.originsgenshin.element.InternalCooldownContext;
+import io.github.xrickastley.originsgenshin.element.reaction.ElementalReaction;
 import io.github.xrickastley.originsgenshin.registry.OriginsGenshinDamageTypes;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -102,7 +103,7 @@ public class DendroCoreEntity extends LivingEntity {
 				InternalCooldownContext.ofNone(owner)
 			);
 
-			float damage = 2 * OriginsGenshin.getLevelMultiplier(this);
+			float damage = ElementalReaction.getReactionDamage(this, 2.0);
 
 			if (owner != null && owner.getUuid().equals(target.getUuid())) damage *= 0.05f;
 
@@ -163,5 +164,9 @@ public class DendroCoreEntity extends LivingEntity {
 
 			while (queue.peek() != null && queue.size() > 5) queue.remove().age = 118;
 		}
+	}
+
+	static {
+		ElementComponent.denyElementsFor(DendroCoreEntity.class);
 	}
 }
