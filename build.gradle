@@ -122,10 +122,6 @@ dependencies {
 	// Replace modImplementation with modApi if you expose components in your own API
     include modApi ("dev.onyxstudios.cardinal-components-api:cardinal-components-base:${project.cca_version}")
     include modApi ("dev.onyxstudios.cardinal-components-api:cardinal-components-entity:${project.cca_version}")
-	
-	modImplementation "maven.modrinth:xaeros-world-map:1.39.9_Fabric_1.20.2"
-
-	modImplementation "maven.modrinth:xaeros-minimap:25.2.6_Fabric_1.20.2"
 }
 
 processResources {
