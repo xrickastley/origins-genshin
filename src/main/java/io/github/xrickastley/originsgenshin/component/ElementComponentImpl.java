@@ -8,7 +8,6 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.annotation.Nonnull;
@@ -108,17 +107,20 @@ public final class ElementComponentImpl implements ElementComponent {
 
 	@Override
 	public List<ElementalReaction> addElementalApplication(ElementalApplication application, InternalCooldownContext icdContext) {
+		// Only do this on the server.
+		if (application.getEntity().getWorld().isClient) return Collections.emptyList();
+
 		if (application.isAuraElement() && application.isGaugeUnits() && this.getAppliedElements().length() > 0)
 			application = application.asNonAura();
 
 		// The elemental application is empty.
-		if (application.isEmpty()) return new ArrayList<>();
+		if (application.isEmpty()) return Collections.emptyList();
 
 		// The Element is still in ICD.
 		if (!this.canApplyElement(application.getElement(), icdContext, true)) return new ArrayList<>();
 
 		// Element has been reapplied, no reactions are triggered.
-		if (this.attemptReapply(application)) return new ArrayList<>();
+		if (this.attemptReapply(application)) return Collections.emptyList();
 
 		final Set<ElementalReaction> triggeredReactions = this.triggerReactions(application, icdContext.getOrigin());
 		
@@ -213,8 +215,8 @@ public final class ElementComponentImpl implements ElementComponent {
 
 	@Override
 	public void tick() {
-		ElectroChargedElementalReaction.tick(this.owner);
-		AbstractBurningElementalReaction.tick(this.owner);
+		ElectroChargedElementalReaction.mixin$tick(this.owner);
+		AbstractBurningElementalReaction.mixin$tick(this.owner);
 
 		final int tickedElements = this
 			.getAppliedElements()
@@ -299,53 +301,18 @@ public final class ElementComponentImpl implements ElementComponent {
 
 		LOGGER.info("Current application: {} | Application: {} | CanBeAura: {}", currentApplication, application, application.getElement().canBeAura());
 
-		if (currentApplication != null && application.getElement().canBeAura()) {
+		if (currentApplication != null && !currentApplication.isEmpty() && application.getElement().canBeAura()) {
 			Optional<Integer> priority = this.getHighestElementPriority();
 
 			if (!priority.isPresent() || priority.get() == currentApplication.getElement().getPriority()) {
 				currentApplication.reapply(application);
 			} else {
-				forceReapplyDendroWhenBurning(application);
+				AbstractBurningElementalReaction.mixin$forceReapplyDendroWhenBurning(this, application);
 			}
+			
 
 			return true;
 		} else return false;
-	}
-
-	/**
-	 * Reapplies the Dendro element when the only "highest priority" element is Burning. <br> <br>
-	 * 
-	 * This method will <b>overwrite</b> the current Dendro aura with the provided Elemental 
-	 * Application, as specified by the "Burning Refresh" mechanic by <a href="https://genshin-impact.fandom.com/wiki/Elemental_Gauge_Theory/Advanced_Mechanics#Burning">
-	 * Elemental Gauge Theory > Advanced Mechanics > Burning</a>.
-	 * 
-	 * If the provided application is <i>not</i> the Dendro element, it is ignored.
-	 * 
-	 * @param application The {@code ElementalApplication} to reapply.
-	 */
-	private void forceReapplyDendroWhenBurning(ElementalApplication application) {
-		LOGGER.info("forceReapplyDendroWhenBurning | Application: {}", application);
-
-		if (application.getElement() != Element.DENDRO) return;
-
-		final Set<Element> appliedElements = this
-			.getAppliedElements()
-			.stream()
-			.map(ElementalApplication::getElement)
-			.collect(Collectors.toSet());
-			
-		LOGGER.info("forceReapplyDendroWhenBurning | Applied elements: {}", appliedElements);
-
-		if (!appliedElements.contains(Element.BURNING)) return;
-
-		LOGGER.info("forceReapplyDendroWhenBurning | Setting application: {}", application.asAura());
-
-		this.getElementHolder(Element.DENDRO)
-			.setElementalApplication(application.asAura());
-
-		LOGGER.info("forceReapplyDendroWhenBurning | Current Dendro application: {}", this.getElementalApplication(Element.DENDRO));
-
-		ElementComponent.sync(owner);
 	}
 
 	/**

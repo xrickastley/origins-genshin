@@ -25,7 +25,7 @@ import io.github.xrickastley.originsgenshin.element.InternalCooldownType;
 import io.github.xrickastley.originsgenshin.element.reaction.AmplifyingElementalReaction;
 import io.github.xrickastley.originsgenshin.element.reaction.ElementalReaction;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinAttributes;
-
+import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -141,9 +141,9 @@ public abstract class LivingEntityMixin extends Entity {
 				InternalCooldownContext.ofType(this, "origins-genshin:natural_environment", InternalCooldownType.INTERVAL_ONLY),
 				1.0
 			);
-		} else if (this.isOnFire()) {
+		} else if (this.isOnFire() || this.getBlockStateAtPos().getBlock() == Blocks.FIRE) {
 			final ElementComponent component = ElementComponent.KEY.get(this);
-
+			
 			component.addElementalApplication(
 				Element.PYRO,
 				InternalCooldownContext.ofType(this, "origins-genshin:natural_environment", InternalCooldownType.INTERVAL_ONLY),

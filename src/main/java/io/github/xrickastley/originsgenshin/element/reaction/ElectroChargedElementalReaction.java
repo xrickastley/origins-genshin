@@ -27,18 +27,6 @@ public class ElectroChargedElementalReaction extends ElementalReaction {
 		);
 	}
 
-	public static void tick(LivingEntity entity) {
-		if (!ElementalReactions.ELECTRO_CHARGED.isTriggerable(entity) || entity.getWorld().isClient) return;
-
-		OriginsGenshin
-			.sublogger("LivingEntityMixin")
-			.info("Electro-Charged - isTriggerable: {} | Hydro: {} | Electro: {}", ElementalReactions.ELECTRO_CHARGED.isTriggerable(entity), ElementComponent.KEY.get(entity).getElementalApplication(Element.HYDRO), ElementComponent.KEY.get(entity).getElementalApplication(Element.ELECTRO));
-
-		ElementalReactions.ELECTRO_CHARGED.trigger(entity);
-		
-		ElementComponent.sync(entity);
-	}
-
 	@Override
 	public boolean isTriggerable(LivingEntity entity) {
 		final ElementComponent component = ElementComponent.KEY.get(entity);
@@ -105,4 +93,18 @@ public class ElectroChargedElementalReaction extends ElementalReaction {
 		
 		entityComponent.resetElectroChargedCD();
 	}
+
+	// These "mixins" are injected pieces of code (likening @Inject) that allow Burning to work properly, and allow others to easily see the way it was hardcoded.
+	public static void mixin$tick(LivingEntity entity) {
+		if (!ElementalReactions.ELECTRO_CHARGED.isTriggerable(entity) || entity.getWorld().isClient) return;
+
+		OriginsGenshin
+			.sublogger("LivingEntityMixin")
+			.info("Electro-Charged - isTriggerable: {} | Hydro: {} | Electro: {}", ElementalReactions.ELECTRO_CHARGED.isTriggerable(entity), ElementComponent.KEY.get(entity).getElementalApplication(Element.HYDRO), ElementComponent.KEY.get(entity).getElementalApplication(Element.ELECTRO));
+
+		ElementalReactions.ELECTRO_CHARGED.trigger(entity);
+		
+		ElementComponent.sync(entity);
+	}
+
 }

@@ -42,41 +42,6 @@ public abstract class AbstractBurningElementalReaction extends ElementalReaction
 		// Reactions against the Burning aura consume both Burning and Pyro *equally*
 	}
 
-	public static void tick(LivingEntity entity) {
-		final ElementComponent component = ElementComponent.KEY.get(entity);
-
-		if (!component.hasElementalApplication(Element.BURNING) || component.isBurningOnCD() || entity.getWorld().isClient) return;
-
-		final World world = entity.getWorld();
-		final ElementComponent entityComponent = ElementComponent.KEY.get(entity);
-		// TODO: Burning DMG from this point (of reapplication) will be calculated based on the stats of the character responsible for the latest instance of Dendro or Pyro application.
-		final float burningDMG = OriginsGenshin.getLevelMultiplier(world) * 0.25f;
-
-		for (LivingEntity target : world.getNonSpectatingEntities(LivingEntity.class, Box.of(entity.getLerpedPos(1f), 2, 2, 2))) {
-			final boolean inCircleRadius = entity.squaredDistanceTo(target) <= 1;
-			final ElementComponent targetComponent = ElementComponent.KEY.get(target);
-
-			if (!inCircleRadius || targetComponent.isBurningOnCD()) continue;
-			
-			final ElementalApplication application = ElementalApplication.gaugeUnits(target, Element.PYRO,1);
-			final ElementalDamageSource source = new ElementalDamageSource(
-				world
-					.getDamageSources()
-					.create(OriginsGenshinDamageTypes.BURNING, entity, entityComponent.getBurningOrigin()), 
-				application, 
-				InternalCooldownContext.ofType(entity, "origins-genshin:reactions/burning", BURNING_PYRO_ICD)
-			);
-
-			target.damage(source, burningDMG);
-			target.setOnFire(true);
-			target.setFireTicks(5);
-
-			targetComponent.resetBurningCD();
-		}
-
-		entityComponent.resetBurningCD();
-	}
-
 	@Override
 	public boolean isTriggerable(LivingEntity entity) {
 		return super.isTriggerable(entity) && !ElementComponent.KEY.get(entity).hasElementalApplication(Element.BURNING);
@@ -135,7 +100,71 @@ public abstract class AbstractBurningElementalReaction extends ElementalReaction
 		});
 	}
 
-	// These "mixins" are injected pieces of code (likening @Inject) that allow Burning to work properly.
+	// These "mixins" are injected pieces of code (likening @Inject) that allow Burning to work properly, and allow others to easily see the way it was hardcoded.
+	public static void mixin$tick(LivingEntity entity) {
+		final ElementComponent component = ElementComponent.KEY.get(entity);
+
+		if (!component.hasElementalApplication(Element.BURNING) || component.isBurningOnCD() || entity.getWorld().isClient) return;
+
+		final World world = entity.getWorld();
+		final ElementComponent entityComponent = ElementComponent.KEY.get(entity);
+		// TODO: Burning DMG from this point (of reapplication) will be calculated based on the stats of the character responsible for the latest instance of Dendro or Pyro application.
+		final float burningDMG = OriginsGenshin.getLevelMultiplier(world) * 0.25f;
+
+		for (LivingEntity target : world.getNonSpectatingEntities(LivingEntity.class, Box.of(entity.getLerpedPos(1f), 2, 2, 2))) {
+			final boolean inCircleRadius = entity.squaredDistanceTo(target) <= 1;
+			final ElementComponent targetComponent = ElementComponent.KEY.get(target);
+
+			if (!inCircleRadius || targetComponent.isBurningOnCD()) continue;
+			
+			final ElementalApplication application = ElementalApplication.gaugeUnits(target, Element.PYRO,1);
+			final ElementalDamageSource source = new ElementalDamageSource(
+				world
+					.getDamageSources()
+					.create(OriginsGenshinDamageTypes.BURNING, entity, entityComponent.getBurningOrigin()), 
+				application, 
+				InternalCooldownContext.ofType(entity, "origins-genshin:reactions/burning", BURNING_PYRO_ICD)
+			);
+
+			target.damage(source, burningDMG);
+			target.setOnFire(true);
+			target.setFireTicks(5);
+
+			targetComponent.resetBurningCD();
+		}
+
+		entityComponent.resetBurningCD();
+	}
+
+	/**
+	 * Reapplies the Dendro element when the only "highest priority" element is Burning. <br> <br>
+	 * 
+	 * This method will <b>overwrite</b> the current Dendro aura with the provided Elemental 
+	 * Application, as specified by the "Burning Refresh" mechanic by <a href="https://genshin-impact.fandom.com/wiki/Elemental_Gauge_Theory/Advanced_Mechanics#Burning">
+	 * Elemental Gauge Theory > Advanced Mechanics > Burning</a>.
+	 * 
+	 * If the provided application is <i>not</i> the Dendro element, it is ignored.
+	 * 
+	 * @param application The {@code ElementalApplication} to reapply.
+	 */
+	public static void mixin$forceReapplyDendroWhenBurning(ElementComponent component, ElementalApplication application) {
+		if (application.getElement() != Element.DENDRO) return;
+
+		final Set<Element> appliedElements = component
+			.getAppliedElements()
+			.stream()
+			.map(ElementalApplication::getElement)
+			.collect(Collectors.toSet());
+
+		if (!appliedElements.contains(Element.BURNING)) return;
+
+		component
+			.getElementHolder(Element.DENDRO)
+			.setElementalApplication(application.asAura());
+
+		ElementComponent.sync(component.getOwner());
+	}
+
 	public static void mixin$reduceBurningGauge(ElementalApplication auraElement, ElementalApplication triggeringElement, LivingEntity entity, double reducedGauge) {
 		if (auraElement.getElement() != Element.PYRO || triggeringElement.getElement() != Element.PYRO) return;
 
