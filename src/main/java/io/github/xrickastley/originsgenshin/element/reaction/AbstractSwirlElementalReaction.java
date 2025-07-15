@@ -6,8 +6,8 @@ import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
 import io.github.xrickastley.originsgenshin.element.ElementalDamageSource;
 import io.github.xrickastley.originsgenshin.element.InternalCooldownContext;
+import io.github.xrickastley.originsgenshin.registry.OriginsGenshinDamageTypes;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.damage.DamageTypes;
 
 public abstract sealed class AbstractSwirlElementalReaction 
 	extends ElementalReaction 
@@ -100,7 +100,7 @@ public abstract sealed class AbstractSwirlElementalReaction
 			final ElementalDamageSource source = new ElementalDamageSource(
 				entity
 					.getDamageSources()
-					.create(DamageTypes.PLAYER_ATTACK, origin),
+					.create(OriginsGenshinDamageTypes.SWIRL, origin),
 				ElementalApplication.gaugeUnits(target, swirlElement, target == entity ? 0f : gaugeSwirlAttack, true),
 				InternalCooldownContext.ofNone(origin)
 			);

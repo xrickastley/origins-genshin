@@ -12,4 +12,5 @@ public class OriginsGenshinDamageTypes {
 	public static final RegistryKey<DamageType> OVERLOADED = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, OriginsGenshin.identifier("overloaded"));
 	public static final RegistryKey<DamageType> SHATTER = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, OriginsGenshin.identifier("shatter"));
 	public static final RegistryKey<DamageType> SUPERCONDUCT = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, OriginsGenshin.identifier("superconduct"));
+	public static final RegistryKey<DamageType> SWIRL = RegistryKey.of(RegistryKeys.DAMAGE_TYPE, OriginsGenshin.identifier("swirl"));
 }
