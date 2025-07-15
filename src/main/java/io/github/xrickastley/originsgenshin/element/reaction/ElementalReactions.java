@@ -25,8 +25,9 @@ public class ElementalReactions {
 	public static final ElementalReaction FROZEN_SUPERCONDUCT = new FrozenSuperconductElementalReaction();
 	// Applies the Quicken aura to the target.
 	public static final ElementalReaction QUICKEN = new QuickenElementalReaction();
-	// TODO: Reaction: Spread + Aggravate (indicators, reactions already handled by LivingEntityMixin)
+	// Applies a 125% Level Multipler Additive Base DMG Bonus to the damage dealt.
 	public static final ElementalReaction SPREAD = new SpreadElementalReaction();
+	// Applies a 115% Level Multipler Additive Base DMG Bonus to the damage dealt.
 	public static final ElementalReaction AGGRAVATE = new AggravateElementalReaction();
 	// Applies the Burning aura to the target, dealing Pyro DMG every 5 ticks (0.25s)
 	public static final ElementalReaction BURNING = new BurningElementalReaction();

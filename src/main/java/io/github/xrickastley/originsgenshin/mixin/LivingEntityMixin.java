@@ -46,12 +46,12 @@ public abstract class LivingEntityMixin extends Entity {
 		throw new AssertionError();
 	}
 
+	@Final
 	@ModifyVariable(
 		method = "damage",
 		at = @At("HEAD"),
 		argsOnly = true
 	)
-	@Final
 	private float applyDMGModifiers(float amount, @Local(argsOnly = true) DamageSource source) {
 		if (!(source instanceof final ElementalDamageSource eds)) return OriginsGenshinAttributes.modifyDamage((LivingEntity)(Entity) this, new ElementalDamageSource(source, ElementalApplication.gaugeUnits((LivingEntity)(Entity) this, Element.PHYSICAL, 0), InternalCooldownContext.ofNone(source.getAttacker())), amount);
 
