@@ -33,7 +33,7 @@ public abstract class ElementalReaction {
 
 	protected final String name;
 	protected final Identifier id;
-	protected final DefaultParticleType particle;
+	protected final @Nullable DefaultParticleType particle;
 	protected final double reactionCoefficient;
 	protected final Pair<Element, Integer> auraElement;
 	protected final Pair<Element, Integer> triggeringElement;
@@ -118,7 +118,7 @@ public abstract class ElementalReaction {
 		return triggeringElement.getRight();
 	}
 
-	public DefaultParticleType getParticle() {
+	public @Nullable DefaultParticleType getParticle() {
 		return this.particle;
 	}
 
