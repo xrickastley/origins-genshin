@@ -4,7 +4,8 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ConcurrentHashMap;
 
-import blue.endless.jankson.annotation.Nullable;
+import org.jetbrains.annotations.Nullable;
+
 import io.github.xrickastley.originsgenshin.events.ElementApplied;
 import io.github.xrickastley.originsgenshin.events.ElementRefreshed;
 import io.github.xrickastley.originsgenshin.events.ElementRemoved;
@@ -62,11 +63,11 @@ public final class ElementHolder {
 	}
 
 	public void setElementalApplication(@Nullable ElementalApplication application) {
-		final ElementalApplication prev = this.application;
+		final @Nullable ElementalApplication prev = this.application;
 
 		this.application = application;
 
-		if (application == null) {
+		if (prev != null && application == null) {
 			ElementRemoved.EVENT.invoker().onElementRemoved(prev);
 		} else if (this.application != null) {
 			ElementApplied.EVENT.invoker().onElementApplied(application);
