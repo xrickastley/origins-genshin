@@ -9,7 +9,7 @@ import io.github.xrickastley.originsgenshin.element.ElementalApplication;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinParticleFactory;
 import net.minecraft.entity.LivingEntity;
 
-public class QuickenElementalReaction extends ElementalReaction {
+public final class QuickenElementalReaction extends ElementalReaction {
 	public QuickenElementalReaction() {
 		super(
 			new ElementalReactionSettings("Quicken", OriginsGenshin.identifier("quicken"), OriginsGenshinParticleFactory.QUICKEN)

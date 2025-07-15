@@ -85,7 +85,7 @@ public class OverloadedElementalReaction extends ElementalReaction {
         }
 	}
 
-	private void damage(Entity entity, Entity origin) {
+	private void damage(Entity entity, @Nullable Entity origin) {
 		if (!(entity instanceof final LivingEntity living)) return;
 
 		final float amount = ElementalReaction.getReactionDamage(entity, 2.75);

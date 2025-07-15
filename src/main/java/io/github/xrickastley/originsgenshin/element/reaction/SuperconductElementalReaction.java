@@ -4,7 +4,7 @@ import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinParticleFactory;
 
-public class SuperconductElementalReaction extends AbstractSuperconductElementalReaction {
+public final class SuperconductElementalReaction extends AbstractSuperconductElementalReaction {
 	public SuperconductElementalReaction() {
 		super(
 			new ElementalReactionSettings("Superconduct", OriginsGenshin.identifier("superconduct"), OriginsGenshinParticleFactory.SUPERCONDUCT)

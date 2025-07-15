@@ -4,7 +4,7 @@ import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinParticleFactory;
 
-public class BurningElementalReaction extends AbstractBurningElementalReaction {
+public final class BurningElementalReaction extends AbstractBurningElementalReaction {
 	public BurningElementalReaction() {
 		super(
 			new ElementalReactionSettings("Burning", OriginsGenshin.identifier("burning"), OriginsGenshinParticleFactory.BURNING)

@@ -74,7 +74,7 @@ public class ElectroChargedElementalReaction extends ElementalReaction {
 		};
 
 		for (LivingEntity target : ElementalReaction.getEntitiesInAoE(entity, 2.5, predicate)) {
-			final float damage = ElementalReaction.getReactionDamage(entity, 1.2f);
+			final float damage = ElementalReaction.getReactionDamage(entity, 2.0);
 			final ElementalDamageSource source = new ElementalDamageSource(
 				entity
 					.getDamageSources()

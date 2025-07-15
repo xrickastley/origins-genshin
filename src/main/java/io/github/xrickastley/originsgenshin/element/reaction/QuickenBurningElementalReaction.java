@@ -4,7 +4,7 @@ import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinParticleFactory;
 
-public class QuickenBurningElementalReaction extends AbstractBurningElementalReaction {
+public final class QuickenBurningElementalReaction extends AbstractBurningElementalReaction {
 	public QuickenBurningElementalReaction() {
 		super(
 			new ElementalReactionSettings("Burning (Quicken)", OriginsGenshin.identifier("burning_quicken"), OriginsGenshinParticleFactory.BURNING)

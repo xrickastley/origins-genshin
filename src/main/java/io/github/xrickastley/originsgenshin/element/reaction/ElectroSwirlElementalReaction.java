@@ -4,7 +4,7 @@ import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinParticleFactory;
 
-public class ElectroSwirlElementalReaction extends AbstractSwirlElementalReaction {
+public final class ElectroSwirlElementalReaction extends AbstractSwirlElementalReaction {
 	public ElectroSwirlElementalReaction() {
 		super(
 			new ElementalReactionSettings("Swirl (Electro)", OriginsGenshin.identifier("swirl_electro"), OriginsGenshinParticleFactory.SWIRL)

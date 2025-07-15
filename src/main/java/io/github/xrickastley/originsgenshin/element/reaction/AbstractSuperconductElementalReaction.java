@@ -11,7 +11,10 @@ import io.github.xrickastley.originsgenshin.registry.OriginsGenshinDamageTypes;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 
-public abstract class AbstractSuperconductElementalReaction extends ElementalReaction {
+public abstract sealed class AbstractSuperconductElementalReaction 
+	extends ElementalReaction
+	permits SuperconductElementalReaction, FrozenSuperconductElementalReaction
+{
 	protected AbstractSuperconductElementalReaction(ElementalReactionSettings settings) {
 		super(settings);
 	}
@@ -19,7 +22,7 @@ public abstract class AbstractSuperconductElementalReaction extends ElementalRea
 	@Override
 	protected void onReaction(LivingEntity entity, ElementalApplication auraElement, ElementalApplication triggeringElement, double reducedGauge, @Nullable LivingEntity origin) {
 		for (final LivingEntity target  : ElementalReaction.getEntitiesInAoE(entity, 3, t -> t != origin)) {
-			final float damage = ElementalReaction.getReactionDamage(entity, 0.6);
+			final float damage = ElementalReaction.getReactionDamage(entity, 1.5);
 			final ElementalDamageSource source = new ElementalDamageSource(
 				entity
 					.getDamageSources()

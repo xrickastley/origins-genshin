@@ -10,7 +10,10 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.World;
 
-public abstract class AbstractBloomElementalReaction extends ElementalReaction {
+public abstract sealed class AbstractBloomElementalReaction 
+	extends ElementalReaction 
+	permits DendroBloomElementalReaction, HydroBloomElementalReaction, QuickenBloomElementalReaction
+{
 	protected AbstractBloomElementalReaction(ElementalReactionSettings settings) {
 		super(settings);
 	}

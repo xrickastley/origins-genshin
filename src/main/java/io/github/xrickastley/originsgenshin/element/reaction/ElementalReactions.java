@@ -41,6 +41,7 @@ public class ElementalReactions {
 	public static final ElementalReaction HYDRO_SWIRL = new HydroSwirlElementalReaction();
 	public static final ElementalReaction ELECTRO_SWIRL = new ElectroSwirlElementalReaction();
 	public static final ElementalReaction CRYO_SWIRL = new CryoSwirlElementalReaction();
+	public static final ElementalReaction FROZEN_SWIRL = new FrozenSwirlElementalReaction();
 	// TODO: Reaction: Crystallize (+ Crystallize Shards)
 	// TODO: Reaction: Hyperbloom + Burgeon
 	// TODO: Reaction display.

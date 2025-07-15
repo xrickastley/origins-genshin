@@ -24,7 +24,10 @@ import io.github.xrickastley.originsgenshin.registry.OriginsGenshinRegistries;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.registry.entry.RegistryEntry.Reference;
 
-public abstract class AbstractBurningElementalReaction extends ElementalReaction {
+public abstract sealed class AbstractBurningElementalReaction 
+	extends ElementalReaction 
+	permits BurningElementalReaction, QuickenBurningElementalReaction
+{
 	private static final InternalCooldownType BURNING_PYRO_ICD = InternalCooldownType.registered(OriginsGenshin.identifier("reactions/burning/pyro_icd"), 40, 3);
 	private static final Supplier<Set<ElementalReaction>> REACTIONS = Suppliers.memoize(
 		() -> OriginsGenshinRegistries.ELEMENTAL_REACTION

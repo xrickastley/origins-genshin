@@ -4,7 +4,7 @@ import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinParticleFactory;
 
-public class DendroBloomElementalReaction extends AbstractBloomElementalReaction {
+public final class DendroBloomElementalReaction extends AbstractBloomElementalReaction {
 	public DendroBloomElementalReaction() {
 		super(
 			new ElementalReactionSettings("Bloom (Dendro)", OriginsGenshin.identifier("bloom_dendro"), OriginsGenshinParticleFactory.BLOOM)

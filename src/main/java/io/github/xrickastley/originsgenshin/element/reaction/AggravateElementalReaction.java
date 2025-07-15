@@ -4,7 +4,7 @@ import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinParticleFactory;
 
-public class AggravateElementalReaction extends AdditiveElementalReaction {
+public final class AggravateElementalReaction extends AdditiveElementalReaction {
 	public AggravateElementalReaction() {
 		super(
 			new ElementalReactionSettings("Aggravate", OriginsGenshin.identifier("aggravate"), OriginsGenshinParticleFactory.AGGRAVATE)

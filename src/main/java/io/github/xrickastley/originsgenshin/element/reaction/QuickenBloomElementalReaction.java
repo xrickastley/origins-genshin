@@ -4,7 +4,7 @@ import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinParticleFactory;
 
-public class QuickenBloomElementalReaction extends AbstractBloomElementalReaction {
+public final class QuickenBloomElementalReaction extends AbstractBloomElementalReaction {
 	public QuickenBloomElementalReaction() {
 		super(
 			new ElementalReactionSettings("Bloom (Quicken)", OriginsGenshin.identifier("bloom_quicken"), OriginsGenshinParticleFactory.BLOOM)

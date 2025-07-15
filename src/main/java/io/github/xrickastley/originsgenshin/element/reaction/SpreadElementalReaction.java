@@ -4,7 +4,7 @@ import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinParticleFactory;
 
-public class SpreadElementalReaction extends AdditiveElementalReaction {
+public final class SpreadElementalReaction extends AdditiveElementalReaction {
 	public SpreadElementalReaction() {
 		super(
 			new ElementalReactionSettings("Spread", OriginsGenshin.identifier("spread"), OriginsGenshinParticleFactory.SPREAD)
