@@ -66,7 +66,7 @@ public abstract sealed class AbstractBurningElementalReaction
 
 	static {
 		ElementRemoved.EVENT.register(application -> {
-			if (application == null || (application.getElement() != Element.DENDRO && application.getElement() != Element.QUICKEN)) return;
+			if (application.getElement() != Element.DENDRO && application.getElement() != Element.QUICKEN) return;
 
 			final ElementComponent component = ElementComponent.KEY.get(application.getEntity());
 
