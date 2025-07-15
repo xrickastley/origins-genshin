@@ -27,6 +27,7 @@ import io.github.xrickastley.originsgenshin.element.reaction.AdditiveElementalRe
 import io.github.xrickastley.originsgenshin.element.reaction.AmplifyingElementalReaction;
 import io.github.xrickastley.originsgenshin.element.reaction.ElementalReaction;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinAttributes;
+import io.github.xrickastley.originsgenshin.factory.OriginsGenshinGameRules;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -128,7 +129,7 @@ public abstract class LivingEntityMixin extends Entity {
 		at = @At("HEAD")
 	)
 	private void applyNaturalElements(CallbackInfo ci) {
-		if (this.isWet()) {
+		if (this.isWet() && this.getWorld().getGameRules().getBoolean(OriginsGenshinGameRules.HYDRO_FROM_WATER)) {
 			final ElementComponent component = ElementComponent.KEY.get(this);
 
 			component.addElementalApplication(
@@ -136,7 +137,7 @@ public abstract class LivingEntityMixin extends Entity {
 				InternalCooldownContext.ofType(this, "origins-genshin:natural_environment", InternalCooldownType.INTERVAL_ONLY),
 				1.0
 			);
-		} else if (this.isOnFire() || this.getBlockStateAtPos().getBlock() == Blocks.FIRE) {
+		} else if ((this.isOnFire() || this.getBlockStateAtPos().getBlock() == Blocks.FIRE) && this.getWorld().getGameRules().getBoolean(OriginsGenshinGameRules.PYRO_FROM_FIRE)) {
 			final ElementComponent component = ElementComponent.KEY.get(this);
 			
 			component.addElementalApplication(

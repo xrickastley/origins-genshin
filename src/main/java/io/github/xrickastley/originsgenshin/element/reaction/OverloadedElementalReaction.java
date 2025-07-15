@@ -7,6 +7,7 @@ import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
 import io.github.xrickastley.originsgenshin.element.ElementalDamageSource;
 import io.github.xrickastley.originsgenshin.element.InternalCooldownContext;
+import io.github.xrickastley.originsgenshin.factory.OriginsGenshinGameRules;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinParticleFactory;
 import io.github.xrickastley.originsgenshin.registry.OriginsGenshinDamageTypes;
 import io.github.xrickastley.originsgenshin.util.NonEntityDamagingExplosion;
@@ -51,7 +52,7 @@ public class OverloadedElementalReaction extends ElementalReaction {
 			z,
 			power,
 			true,
-			world.getGameRules().getBoolean(OriginsGenshin.OVERLOADED_EXPLOSIONS_DAMAGE_BLOCKS)
+			world.getGameRules().getBoolean(OriginsGenshinGameRules.OVERLOADED_EXPLOSIONS_DAMAGE_BLOCKS)
 				? DestructionType.DESTROY
 				: DestructionType.KEEP
 		);

@@ -9,6 +9,7 @@ import org.jetbrains.annotations.Nullable;
 import io.github.xrickastley.originsgenshin.events.ElementApplied;
 import io.github.xrickastley.originsgenshin.events.ElementRefreshed;
 import io.github.xrickastley.originsgenshin.events.ElementRemoved;
+import io.github.xrickastley.originsgenshin.factory.OriginsGenshinGameRules;
 import net.minecraft.entity.LivingEntity;
 
 public final class ElementHolder {
@@ -35,7 +36,7 @@ public final class ElementHolder {
 	private ElementHolder(final LivingEntity owner, final Element element, ElementalApplication application) {
 		this.owner = owner;
 		this.element = element;
-		this.application = application;
+		this.application = this.shouldDoElements() ? application : null;
 	}
 
 	public boolean hasElementalApplication() {
@@ -50,19 +51,29 @@ public final class ElementHolder {
 		return this.application;
 	}
 
+	public boolean shouldDoElements() {
+		return owner.getWorld().getGameRules().getBoolean(OriginsGenshinGameRules.DO_ELEMENTS);
+	}
+
 	public ElementalApplication getOrCreateElementalApplication(double gaugeUnits, boolean aura) {
+		if (!this.shouldDoElements()) throw new IllegalStateException("The Game Rule \"doElements\" is false! Check if you can apply elements through ElementHolder#shouldDoElements before calling this method!");
+
 		this.application = ElementalApplication.gaugeUnits(owner, element, gaugeUnits, aura);
 
 		return this.application;
 	}
 	
 	public ElementalApplication getOrCreateElementalApplication(double duration, double gaugeUnits) {
+		if (!this.shouldDoElements()) throw new IllegalStateException("The Game Rule \"doElements\" is false! Check if you can apply elements through ElementHolder#shouldDoElements before calling this method!");
+		
 		this.application = ElementalApplication.duration(owner, element, gaugeUnits, duration);
 
 		return this.application;
 	}
 
 	public void setElementalApplication(@Nullable ElementalApplication application) {
+		if (!this.shouldDoElements()) return;
+
 		final @Nullable ElementalApplication prev = this.application;
 
 		this.application = application;
