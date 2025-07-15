@@ -69,6 +69,7 @@ public class ElementalReactions {
 		register(ElementalReactions.HYDRO_SWIRL);
 		register(ElementalReactions.ELECTRO_SWIRL);
 		register(ElementalReactions.CRYO_SWIRL);
+		register(ElementalReactions.FROZEN_SWIRL);
 	}
 
 	private static ElementalReaction register(ElementalReaction reaction) {
