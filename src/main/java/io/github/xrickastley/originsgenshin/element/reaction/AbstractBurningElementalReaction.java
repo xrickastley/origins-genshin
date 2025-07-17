@@ -13,6 +13,7 @@ import com.google.common.base.Suppliers;
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.component.ElementComponent;
 import io.github.xrickastley.originsgenshin.element.Element;
+import io.github.xrickastley.originsgenshin.element.ElementHolder;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
 import io.github.xrickastley.originsgenshin.element.ElementalDamageSource;
 import io.github.xrickastley.originsgenshin.element.InternalCooldownContext;
@@ -51,11 +52,23 @@ public abstract sealed class AbstractBurningElementalReaction
 	@Override
 	protected void onReaction(LivingEntity entity, ElementalApplication auraElement, ElementalApplication triggeringElement, double reducedGauge, @Nullable LivingEntity origin) {
 		final ElementComponent component = ElementComponent.KEY.get(entity);
+		final InternalCooldownContext context = InternalCooldownContext.ofType(origin, "origins-genshin:reactions/burning", BURNING_PYRO_ICD);
+		final ElementHolder holder = component.getElementHolder(Element.PYRO);
+
+		if (context.getInternalCooldown(holder).handleInternalCooldown()) {
+			final ElementalApplication application = ElementalApplication.gaugeUnits(entity, Element.PYRO, 1.0f, true);	
+
+			if (!holder.hasElementalApplication() || holder.getElementalApplication().isEmpty()) {
+				holder.setElementalApplication(application);
+			} else {
+				holder.getElementalApplication().reapply(application);
+			}
+		}
 
 		component
 			.getElementHolder(Element.BURNING)
 			.setElementalApplication(
-				ElementalApplication.gaugeUnits(entity, Element.BURNING, 2.0f, false)
+				ElementalApplication.gaugeUnits(entity, Element.BURNING, 2.0f, true)
 			);
 
 		component.resetBurningCD();
