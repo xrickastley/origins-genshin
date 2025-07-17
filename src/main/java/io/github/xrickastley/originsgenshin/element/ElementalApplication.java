@@ -222,7 +222,7 @@ public final class ElementalApplication {
 	 * </ul>
 	 */
 	public boolean isEmpty() {
-		return (isDuration() && (entity.getWorld().getTime() >= (appliedAt + duration) || gaugeUnits <= 0)) || (isGaugeUnits() && currentGauge <= 0);
+		return (isDuration() && (entity.getWorld().getTime() >= (appliedAt + duration) || currentGauge <= 0)) || (isGaugeUnits() && currentGauge <= 0);
 	}
 
 	/**
@@ -233,19 +233,11 @@ public final class ElementalApplication {
 	public double reduceGauge(double gaugeUnits) {
 		double difference;
 
-		if (type == Type.GAUGE_UNITS) {
-			final double previousValue = this.currentGauge;
+		final double previousValue = this.currentGauge;
 		
-			this.currentGauge = Math.max(this.currentGauge - gaugeUnits, 0);
+		this.currentGauge = Math.max(this.currentGauge - gaugeUnits, 0);
 	
-			difference = previousValue - this.currentGauge;
-		} else {
-			final double previousValue = this.gaugeUnits;
-		
-			this.gaugeUnits = Math.max(this.gaugeUnits - gaugeUnits, 0);
-	
-			difference = previousValue - this.gaugeUnits;
-		}
+		difference = previousValue - this.currentGauge;
 
 		return difference;
 	}
@@ -304,6 +296,7 @@ public final class ElementalApplication {
 			this.appliedAt = application.appliedAt;
 			this.duration = application.duration;
 			this.gaugeUnits = Math.max(this.gaugeUnits, application.gaugeUnits);
+			this.currentGauge = gaugeUnits;
 		}
 
 		if (this.isAura) this.currentGauge *= 0.8;
@@ -363,11 +356,10 @@ public final class ElementalApplication {
 
 		if (!uuid.equals(this.uuid)) throw new ElementalApplicationOperationException(Operation.INVALID_UUID_VALUES, this, application);
 
+		this.currentGauge = application.currentGauge;
 		this.gaugeUnits = application.gaugeUnits;
 		
-		if (type == Type.GAUGE_UNITS) {
-			this.currentGauge = application.currentGauge;
-		} else {
+		if (type == Type.DURATION) {
 			OriginsGenshin
 				.sublogger(this)
 				.info("Syncing from NBT | NBT: {} | Current: {}", application, this);
