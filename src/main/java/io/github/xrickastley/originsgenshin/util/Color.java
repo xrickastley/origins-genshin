@@ -4,11 +4,11 @@ import java.util.ArrayList;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Color {
-	protected int red;
-	protected int green;
-	protected int blue;
-	protected float alpha;
+public final class Color {
+	private final int red;
+	private final int green;
+	private final int blue;
+	private final float alpha;
 
 	public Color(int red, int green, int blue) {
 		this(red, green, blue, 1F);
@@ -19,6 +19,10 @@ public class Color {
 		this.red = Math.min(255, Math.max(red, 0));
 		this.green = Math.min(255, Math.max(green, 0));
 		this.blue = Math.min(255, Math.max(blue, 0));
+	}
+
+	private Color(double red, double green, double blue, double alpha) {
+		this((int) red, (int) green, (int) blue, (float) alpha);
 	}
 
 	public int getRed() {
@@ -125,60 +129,41 @@ public class Color {
 	 * @return This {@code Color} object.
 	 */
 	public Color add(double r, double g, double b, double a) {
-		this.red += r;
-		this.green += g;
-		this.blue += b;
-		this.alpha += a;
-
-		normalizeColors();
-
-		return this;
+		return new Color(this.red + r, this.green + g, this.blue + b, this.alpha + a);
 	}
 
 	/**
-	 * Multiplies this {@code Color} by {@code factor}.
+	 * Creates a new color based on this {@code Color} multiplied by {@code factor}.
 	 * @param factor The factor to multiply this color with.
-	 * @return This {@code Color} object.
+	 * @return The resulting {@code Color} object.
 	 */
 	public Color multiply(double factor) {
 		return multiply(factor, factor, factor, factor);
 	}
 	
 	/**
-	 * Multiplies all the values of this {@code Color} by their respective factors.
+	 * Creates a new color based on this {@code Color} multiplied by their respective factors.
 	 * @param r The factor to multiply the red value with.
 	 * @param g The factor to multiply the green value with.
 	 * @param b The factor to multiply the blue value with.
-	 * @return This {@code Color} object.
+	 * @return The resulting {@code Color} object.
 	 */
 	public Color multiply(double r, double g, double b) {
 		return multiply(r, g, b, 1);
 	}
 	
 	/**
-	 * Multiplies all the values of this {@code Color} by their respective factors.
+	 * Creates a new color based on this {@code Color} multiplied by their respective factors.
 	 * @param r The factor to multiply the red value with.
 	 * @param g The factor to multiply the green value with.
 	 * @param b The factor to multiply the blue value with.
 	 * @param a The factor to multiply the alpha value with.
-	 * @return This {@code Color} object.
+	 * @return The resulting {@code Color} object.
 	 */
 	public Color multiply(double r, double g, double b, double a) {
-		this.red *= r;
-		this.green *= g;
-		this.blue *= b;
-		this.alpha *= a;
+		// System.out.println(String.format("alpha: %f | a: %f | result: %f", this.alpha, a, this.alpha * a));
 
-		normalizeColors();
-
-		return this;
-	}
-
-	private void normalizeColors() {
-		this.alpha = Math.min(1, Math.max(this.alpha, 0));
-		this.red = Math.min(255, Math.max(this.red, 0));
-		this.green = Math.min(255, Math.max(this.green, 0));
-		this.blue = Math.min(255, Math.max(this.blue, 0));
+		return new Color(this.red * r, this.green * g, this.blue * b, this.alpha * a);
 	}
 
 	@Override

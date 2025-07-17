@@ -24,7 +24,7 @@ import io.github.xrickastley.originsgenshin.component.ElementComponent;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication.Type;
 import io.github.xrickastley.originsgenshin.util.ClientConfig;
-import io.github.xrickastley.originsgenshin.util.Colors;
+import io.github.xrickastley.originsgenshin.util.Color;
 import me.shedaniel.autoconfig.AutoConfig;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.render.BufferBuilder;
@@ -127,7 +127,7 @@ public abstract class EntityRendererMixin {
 					);
 				} catch (Exception e) {
 					if (logCooldowns.getOrDefault("c12dd02b-7f89-4dc6-a1f0-ad56007bb56e", -1L) > Util.getMeasuringTimeMs()) return;
-				
+
 					OriginsGenshin
 						.sublogger(this)
 						.error("An error occured while trying to render elements: ", e);
@@ -149,7 +149,7 @@ public abstract class EntityRendererMixin {
 
 		matrixStack.push();
 		matrixStack.translate(0, livingEntity.getBoundingBox().getLengthY(), 0);
-		matrixStack.multiply(dispatcher.getRotation());
+		matrixStack.multiplyPositionMatrix(new Matrix4f().rotation(dispatcher.camera.getRotation()));
 		matrixStack.scale(-0.50F, 0.50F, 0.50F);
 
         float finalXOffset = -0.5f + xOffset;
@@ -245,10 +245,14 @@ public abstract class EntityRendererMixin {
 	protected void renderElementalGauge(final LivingEntity livingEntity, final ElementalApplication application, final float yOffset, final MatrixStack matrixStack, final float tickDelta) {
 		if (application.isEmpty()) return;
 
-		Tessellator tessellator = Tessellator.getInstance();
-		BufferBuilder buffer = tessellator.getBuffer();
+		final float GAUGE_SCALE = 0.35f;
+		final float SCALE_PER_GU = 2.5f;
 
-		float scale = 0.35f;
+		final Tessellator tessellator = Tessellator.getInstance();
+		final BufferBuilder buffer = tessellator.getBuffer();
+		final ClientConfig config = AutoConfig
+			.getConfigHolder(ClientConfig.class)
+			.getConfig();
 
 		matrixStack.push();
 		matrixStack.translate(
@@ -256,76 +260,116 @@ public abstract class EntityRendererMixin {
 			livingEntity.getBoundingBox().getLengthY() * 1.15,
 			0f
 		);
-		matrixStack.multiply(dispatcher.getRotation());
-		matrixStack.scale(-scale, scale * 0.5f, scale);
+		matrixStack.multiplyPositionMatrix(new Matrix4f().rotation(dispatcher.camera.getRotation()));
+		// matrixStack.multiply(dispatcher.getRotation());
+		matrixStack.scale(-GAUGE_SCALE, GAUGE_SCALE * 0.5f, GAUGE_SCALE);
 
-		float finalWidth = application.isGaugeUnits()
-			? (float) Math.max(2.5 * application.getGaugeUnits(), 5.0)
-			: 5f;
-		// float xOffset = (float) (livingEntity.getBoundingBox().getLengthX() * 0.85f) / scale;
-		float xOffset = (float) (livingEntity.getBoundingBox().getLengthX() * 1.5f) / scale;
+		final float xOffset = (float) (livingEntity.getBoundingBox().getLengthX() * 1.5f) / GAUGE_SCALE;
+		final float gaugeWidth = application.isGaugeUnits()
+			? (float) Math.min(SCALE_PER_GU * application.getGaugeUnits(), SCALE_PER_GU * 4)
+			: 2 * SCALE_PER_GU;
 
-		Matrix4f positionMatrix = matrixStack.peek().getPositionMatrix();
+		final Matrix4f positionMatrix = matrixStack.peek().getPositionMatrix();
 
 		buffer.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
-        buffer.vertex(positionMatrix, 0 + xOffset, 0 - yOffset, 0).color(Colors.PHYSICAL.asARGB()).next();
-        buffer.vertex(positionMatrix, finalWidth + xOffset, 0 - yOffset, 0).color(Colors.PHYSICAL.asARGB()).next();
-        buffer.vertex(positionMatrix, finalWidth + xOffset, 1 - yOffset, 0).color(Colors.PHYSICAL.asARGB()).next();
-        buffer.vertex(positionMatrix, 0 + xOffset, 1 - yOffset, 0).color(Colors.PHYSICAL.asARGB()).next();
+        buffer.vertex(positionMatrix, 0 + xOffset, 0 - yOffset, 0).color(0xffffffff).next();
+        buffer.vertex(positionMatrix, gaugeWidth + xOffset, 0 - yOffset, 0).color(0xffffffff).next();
+        buffer.vertex(positionMatrix, gaugeWidth + xOffset, 1 - yOffset, 0).color(0xffffffff).next();
+        buffer.vertex(positionMatrix, 0 + xOffset, 1 - yOffset, 0).color(0xffffffff).next();
 
 		RenderSystem.setShader(GameRenderer::getPositionColorProgram);
 
 		tessellator.draw();
 
 		final float progress = this.getProgress(application, tickDelta);
-		final int color = application.getElement().getDamageColor().asARGB();
-		
-		buffer = tessellator.getBuffer();
-		
+		final Color elementColor = application.getElement().getDamageColor();
+		final int color = application.isGaugeUnits()
+			? elementColor.asARGB()
+			: elementColor.multiply(1, 1, 1, 0.5).asARGB();
+
 		buffer.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
         buffer.vertex(positionMatrix, xOffset, 0 - yOffset, -0.0001f).color(color).next();
-        buffer.vertex(positionMatrix, (finalWidth * progress) + xOffset, 0 - yOffset, -0.0001f).color(color).next();
-        buffer.vertex(positionMatrix, (finalWidth * progress) + xOffset, 1 - yOffset, -0.0001f).color(color).next();
+        buffer.vertex(positionMatrix, (gaugeWidth * progress) + xOffset, 0 - yOffset, -0.0001f).color(color).next();
+        buffer.vertex(positionMatrix, (gaugeWidth * progress) + xOffset, 1 - yOffset, -0.0001f).color(color).next();
         buffer.vertex(positionMatrix, xOffset, 1 - yOffset, -0.0001f).color(color).next(); 
 		
 		tessellator.draw();
 
-		for (float i = 0.1f * 2.5f; i <= finalWidth; i += 0.1f * 2.5f) {
-			buffer = tessellator.getBuffer();
+		if (application.isDuration()) {
+			final float gaugeProgress = (float) (application.getCurrentGauge() / application.getGaugeUnits());
 
-			final float addedY = i % 1f == 0
+			buffer.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
+    	    buffer.vertex(positionMatrix, xOffset, 0 - yOffset, -0.0001f).color(color).next();
+	        buffer.vertex(positionMatrix, (gaugeWidth * gaugeProgress) + xOffset, 0 - yOffset, -0.0001f).color(color).next();
+	        buffer.vertex(positionMatrix, (gaugeWidth * gaugeProgress) + xOffset, 1 - yOffset, -0.0001f).color(color).next();
+	        buffer.vertex(positionMatrix, xOffset, 1 - yOffset, -0.0001f).color(color).next(); 
+		
+			tessellator.draw();
+		}
+
+		RenderSystem.setShader(GameRenderer::getRenderTypeLinesProgram);
+		RenderSystem.disableCull();
+
+		final float scaledGauge = (float) (0.1 * gaugeWidth / application.getGaugeUnits());
+		final int splits = (int) Math.floor(gaugeWidth / (0.1 * gaugeWidth / application.getGaugeUnits()));
+
+		if (logCooldowns.getOrDefault("ba48c836-56c1-4d41-9189-c16c4cee0686", -1L) <= Util.getMeasuringTimeMs()) {
+			OriginsGenshin
+				.sublogger("EntityRendererMixin")
+				.info(
+					"Gauge Units: {} | Gauge Width: {} | Splits: {} | Loss: {}", 
+					application.getGaugeUnits(), 
+					gaugeWidth, 
+					(int) Math.floor(gaugeWidth / (0.1 * gaugeWidth / application.getGaugeUnits())),
+					gaugeWidth / application.getGaugeUnits() - (gaugeWidth / application.getGaugeUnits() * 0.1 * 10)
+				);
+
+			logCooldowns.put("ba48c836-56c1-4d41-9189-c16c4cee0686", Util.getMeasuringTimeMs() + 10_000);
+		}
+
+		for (int c = 1; c < splits && config.developer.displayGaugeRuler; c += 1) {
+			float i = c * scaledGauge;
+
+			if (logCooldowns.getOrDefault("d7a0d29e-9d7d-4faa-a988-a14bc3218af8", -1L) <= Util.getMeasuringTimeMs()) {
+				OriginsGenshin
+					.sublogger("EntityRendererMixin")
+					.info("i: {} | scaledGauge: {} - {} (x10) | modulo: {}", i, scaledGauge, scaledGauge * 10, i % (scaledGauge * 10));
+			}
+
+			final float addedY = c % 10 == 0
 				? 1f
-				: i % 0.5f == 0
+				: c % 5 == 0
 					? 0.5f
 					: 0.25f;
 
-			final float lineWidth = i % 1f == 0
-				? 3f
-				: 2f;
+			final float lineWidth = c % 10 == 0
+				? 5f
+				: 2.5f;
 
 			buffer.begin(VertexFormat.DrawMode.LINES, VertexFormats.LINES);
 			buffer
-				.vertex(positionMatrix, 0, 0 - yOffset, -0.0002f)
-				.color(0x00000000)
-				.normal(xOffset + i, 0, 0)
+				.vertex(positionMatrix, xOffset + i, 0 - yOffset, -0.0005f)
+				.color(0xff000000)
+				.normal(0, lineWidth, 0)
 				.next();
 			buffer
-				.vertex(positionMatrix, 0, addedY - yOffset, -0.0002f)
-				.color(0x00000000)
-				.normal(xOffset + i, 0, 0)
+				.vertex(positionMatrix, xOffset + i, addedY - yOffset, -0.0005f)
+				.color(0xff000000)
+				.normal(xOffset + i, lineWidth, 0)
 				.next();
 
-			RenderSystem.setShader(GameRenderer::getRenderTypeLinesProgram);
-			RenderSystem.setShaderColor(1, 1, 1, 1);
-			RenderSystem.disableCull();
 			float prev = RenderSystem.getShaderLineWidth();
 			RenderSystem.lineWidth(lineWidth);
 
 			tessellator.draw();
 
 			RenderSystem.lineWidth(prev);
-			RenderSystem.enableCull();
 		}
+
+		// if (logCooldowns.getOrDefault("d7a0d29e-9d7d-4faa-a988-a14bc3218af8", -1L) <= Util.getMeasuringTimeMs()) 
+			logCooldowns.put("d7a0d29e-9d7d-4faa-a988-a14bc3218af8", Util.getMeasuringTimeMs() + 10_000);
+
+		RenderSystem.enableCull();
 
 		matrixStack.pop();
 	}

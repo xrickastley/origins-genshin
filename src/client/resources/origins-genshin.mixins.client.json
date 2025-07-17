@@ -5,6 +5,7 @@
   "mixins": [
     "AbstractInventoryScreenMixin",
     "EntityRendererMixin",
+    "GameRendererMixin",
     "LivingEntityRendererMixin",
     "WorldRendererAccessor"
   ],

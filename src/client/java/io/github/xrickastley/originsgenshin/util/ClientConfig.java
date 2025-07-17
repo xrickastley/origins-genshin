@@ -19,5 +19,6 @@ public class ClientConfig implements ConfigData {
 
 	public static class Developer {
 		public boolean displayElementalGauges = false;
+		public boolean displayGaugeRuler = false;
 	}
 }

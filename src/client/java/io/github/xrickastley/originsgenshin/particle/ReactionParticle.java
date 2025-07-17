@@ -6,6 +6,7 @@ import com.mojang.blaze3d.systems.RenderSystem;
 
 import io.github.xrickastley.originsgenshin.util.Color;
 import io.github.xrickastley.originsgenshin.util.Colors;
+import io.github.xrickastley.originsgenshin.util.DelayedRenderer;
 import io.github.xrickastley.originsgenshin.util.Ease;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
@@ -13,7 +14,6 @@ import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.font.TextRenderer.TextLayerType;
-import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.LightmapTextureManager;
 import net.minecraft.client.render.Tessellator;
@@ -107,10 +107,9 @@ public class ReactionParticle extends TextBillboardParticle {
 		matrixStack.pop();
 	}
 
-	public void buildGeometry_v2(VertexConsumer vertexConsumer, Camera camera, float tickDelta) {
-		final BufferBuilder buffer = Tessellator.getInstance().getBuffer();
-		final VertexConsumerProvider.Immediate immediate = VertexConsumerProvider.immediate(buffer);
-		// final VertexConsumerProvider.Immediate immediate = ((WorldRendererAccessor)(Object) client.worldRenderer).getBufferBuilders().getEntityVertexConsumers();
+	public void render(Camera camera, float tickDelta, MatrixStack matrices) {
+		final MinecraftClient client = MinecraftClient.getInstance();
+		final VertexConsumerProvider.Immediate immediate = client.getBufferBuilders().getEntityVertexConsumers();
 
 		final float deltaTime = age + tickDelta;
 
@@ -129,28 +128,23 @@ public class ReactionParticle extends TextBillboardParticle {
 			.asARGB();
 
 		RenderSystem.disableCull();
-		RenderSystem.enableDepthTest();
-		RenderSystem.enableBlend();
-		RenderSystem.depthFunc(GL11.GL_ALWAYS);
-		RenderSystem.blendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ZERO);
+		RenderSystem.disableDepthTest();
 
-		ReactionParticle.drawString(camera, new MatrixStack(), immediate, this.text, x, y, z, color, 0.04f * scale, true, 0f, true);
+		ReactionParticle.drawString(camera, matrices, immediate, this.text, x, y, z, color, 0.04f * scale, true, 0f, true);
 
 		immediate.draw();
 
 		RenderSystem.enableCull();
-		RenderSystem.disableBlend();
-		RenderSystem.depthFunc(GL11.GL_LEQUAL);
+		RenderSystem.enableDepthTest();
 	}
 
-	public void buildGeometry(VertexConsumer consumer, Camera camera, float tickDelta) {
-		buildGeometry_v2(consumer, camera, tickDelta);
+	public void buildGeometry(VertexConsumer consumer, final Camera camera, float f) {
+		DelayedRenderer.add((tickDelta, matrices) -> render(camera, tickDelta, matrices));
 	}
-
 	
 	public static void drawString(final Camera camera, final MatrixStack matrices, final VertexConsumerProvider vertexConsumers, final OrderedText text, final double x, final double y, final double z, final int color, final float size, final boolean center, final float offset, final boolean visibleThroughObjects) {
-        final MinecraftClient minecraftClient = MinecraftClient.getInstance();
-		final TextRenderer textRenderer = minecraftClient.textRenderer;
+        final MinecraftClient client = MinecraftClient.getInstance();
+		final TextRenderer textRenderer = client.textRenderer;
     
 		final double d = camera.getPos().x;
         final double e = camera.getPos().y;
@@ -165,7 +159,7 @@ public class ReactionParticle extends TextBillboardParticle {
 		g -= offset / size;
 
 		textRenderer.draw(text, g, 0.0f, color, false, matrices.peek().getPositionMatrix(), vertexConsumers, visibleThroughObjects ? TextLayerType.SEE_THROUGH : TextLayerType.NORMAL, 0, 15728880);
-
+		
 		matrices.pop();
     }
 }
