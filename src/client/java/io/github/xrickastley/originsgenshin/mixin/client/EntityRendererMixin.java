@@ -73,6 +73,7 @@ public abstract class EntityRendererMixin {
 		this.renderElementalGauges(livingEntity, matrixStack, tickDelta);
 	}
 
+	@Unique
 	protected void renderElementsIfPresent(final LivingEntity livingEntity, final MatrixStack matrixStack, final float tickDelta) {
 		if (!(livingEntity.getWorld() instanceof ClientWorld)) return;
 
@@ -94,66 +95,41 @@ public abstract class EntityRendererMixin {
 			.forEach(elementArray::add);
 
 		final int elementCount = elementArray.size();
-
 		final Iterator<Vec3d> coords = this.generateTexturesUsingCenter(new Vec3d(0, 0, 0), 1, elementCount).iterator();
-
-		/*
-		if (logCooldowns.getOrDefault(livingEntity.getUuidAsString(), -1L) < Util.getMeasuringTimeMs()) {
-			component
-				.getAppliedElements()
-				.forEach(application ->
-					OriginsGenshin
-						.sublogger(this)
-						.info("Application: {} GU {}", df.format(application.getCurrentGauge()), application.getElement())
-				);
-		
-			logCooldowns.put(livingEntity.getUuidAsString(), Util.getMeasuringTimeMs() + 10_000);
-		}
-		
-		// System.out.println(elementsToRender.count());
-		*/
 		
 		RenderSystem.enableCull();
 
-		elementArray
-			.forEach(application -> {	
-				try {
-					this.renderElement(
-						livingEntity,
-						matrixStack, 
-						(float) coords.next().getZ(), 
-						application.getElement().getTexture(), 
-						(application.getRemainingTicks() - tickDelta) / 20.0f
-					);
-				} catch (Exception e) {
-					if (logCooldowns.getOrDefault("c12dd02b-7f89-4dc6-a1f0-ad56007bb56e", -1L) > Util.getMeasuringTimeMs()) return;
-
-					OriginsGenshin
-						.sublogger(this)
-						.error("An error occured while trying to render elements: ", e);
-
-					logCooldowns.put("c12dd02b-7f89-4dc6-a1f0-ad56007bb56e", Util.getMeasuringTimeMs() + 25_000);
-				}
-			});
+		elementArray.forEach(application -> 
+			this.renderElement(
+				livingEntity,
+				matrixStack, 
+				(float) coords.next().getZ(), 
+				application.getElement().getTexture(), 
+				(application.getRemainingTicks() - tickDelta) / 20.0f
+			)
+		);
 
 		RenderSystem.disableCull();
 	}
 
-	protected void renderElement(final LivingEntity livingEntity, final MatrixStack matrixStack, float xOffset, Identifier texture) {
-		this.renderElement(livingEntity, matrixStack, xOffset, texture, Integer.MAX_VALUE);
-	}
-
+	@Unique
 	protected void renderElement(final LivingEntity livingEntity, final MatrixStack matrixStack, float xOffset, Identifier texture, double secondsLeft) {
-		Tessellator tessellator = Tessellator.getInstance();
-		BufferBuilder buffer = tessellator.getBuffer();
+		final Tessellator tessellator = Tessellator.getInstance();
+		final BufferBuilder buffer = tessellator.getBuffer();
+
+		final float BLINK_SECONDS = 1.5f;
+		final float BLINK_COUNT = 3;
+		
+		final float blinkInterval = BLINK_SECONDS / BLINK_COUNT;
+		final float intervalSplit = blinkInterval / 2f;
 
 		matrixStack.push();
 		matrixStack.translate(0, livingEntity.getBoundingBox().getLengthY(), 0);
 		matrixStack.multiplyPositionMatrix(new Matrix4f().rotation(dispatcher.camera.getRotation()));
 		matrixStack.scale(-0.50F, 0.50F, 0.50F);
 
-        float finalXOffset = -0.5f + xOffset;
-        float yOffset = 0.5f;
+        final float finalXOffset = -0.5f + xOffset;
+        final float yOffset = 0.5f;
 
 		Matrix4f positionMatrix = matrixStack.peek().getPositionMatrix();
 
@@ -163,12 +139,7 @@ public abstract class EntityRendererMixin {
         buffer.vertex(positionMatrix, 1 + finalXOffset, 1 + yOffset, 0).texture(1f, 0f).next();
         buffer.vertex(positionMatrix, 0 + finalXOffset, 1 + yOffset, 0).texture(0f, 0f).next();
 
-		float blinkSeconds = 1.5f;
-		float blinkCount = 3;
-		float blinkInterval = blinkSeconds / blinkCount;
-		float intervalSplit = blinkInterval / 2f;
-
-		float alpha = (double) secondsLeft <= (blinkSeconds + intervalSplit)
+		float alpha = (double) secondsLeft <= (BLINK_SECONDS + intervalSplit)
 			? secondsLeft % blinkInterval <= intervalSplit
 				? (float) MathHelper.lerp((secondsLeft % blinkInterval) / intervalSplit, 0f, 1f)
 				: (float) MathHelper.lerp(((secondsLeft % blinkInterval) - 0.25) / intervalSplit, 1f, 0f)
@@ -189,6 +160,7 @@ public abstract class EntityRendererMixin {
 		matrixStack.pop();
 	}
 
+	@Unique
 	private ArrayList<Vec3d> generateTexturesUsingCenter(Vec3d center, double length, int amount) {
 		double totalDistance = length * (amount - 1);
 		double offset = totalDistance / 2;
@@ -204,14 +176,13 @@ public abstract class EntityRendererMixin {
 		return result;
 	}
 
+	@Unique
 	protected void renderElementalGauges(final LivingEntity livingEntity, final MatrixStack matrixStack, final float tickDelta) {
 		final ClientConfig config = AutoConfig
 			.getConfigHolder(ClientConfig.class)
 			.getConfig();
 
 		if (!config.developer.displayElementalGauges) return;
-
-		if (!(livingEntity.getWorld() instanceof ClientWorld)) return;
 
 		if (!livingEntity.isAlive()) return;
 
@@ -223,25 +194,17 @@ public abstract class EntityRendererMixin {
 			.sortElements((a, b) -> a.getElement().getPriority() - b.getElement().getPriority())
 			.forEach(appliedElements::add);
 
-		// if (livingEntity.age % 5 == 0 && tickDelta == 1) System.out.println("Applied elements: " + appliedElements.toString());
-
 		final int elementCount = appliedElements.size();
 		final Iterator<ElementalApplication> aeIterator = appliedElements.iterator();
 
-		// if (livingEntity.age % 20 == 0 && tickDelta % 1 == 0 && livingEntity.getUuidAsString().equals("37e6eda1-4824-4342-97bf-751abdaee3e1")) 
-		// 	OriginsGenshin.LOGGER.info("appliedElements: {}", appliedElements);
-
 		Stream
 			.iterate(0.0f, n -> (n / 1.25f) < elementCount, n -> n + 1.25f)
-			.forEachOrdered(yOffset -> {
-				try {
-					renderElementalGauge(livingEntity, aeIterator.next(), yOffset - 0.5f, matrixStack, tickDelta);
-				} catch (Exception e) {
-					System.out.println(e);
-				}
-			});
+			.forEachOrdered(yOffset -> 
+				renderElementalGauge(livingEntity, aeIterator.next(), yOffset - 0.5f, matrixStack, tickDelta)
+			);
 	}
 
+	@Unique
 	protected void renderElementalGauge(final LivingEntity livingEntity, final ElementalApplication application, final float yOffset, final MatrixStack matrixStack, final float tickDelta) {
 		if (application.isEmpty()) return;
 
@@ -255,13 +218,8 @@ public abstract class EntityRendererMixin {
 			.getConfig();
 
 		matrixStack.push();
-		matrixStack.translate(
-			0f, 
-			livingEntity.getBoundingBox().getLengthY() * 1.15,
-			0f
-		);
+		matrixStack.translate(0f, livingEntity.getBoundingBox().getLengthY() * 1.15, 0f);
 		matrixStack.multiplyPositionMatrix(new Matrix4f().rotation(dispatcher.camera.getRotation()));
-		// matrixStack.multiply(dispatcher.getRotation());
 		matrixStack.scale(-GAUGE_SCALE, GAUGE_SCALE * 0.5f, GAUGE_SCALE);
 
 		final float xOffset = (float) (livingEntity.getBoundingBox().getLengthX() * 1.5f) / GAUGE_SCALE;
@@ -313,28 +271,8 @@ public abstract class EntityRendererMixin {
 		final float scaledGauge = (float) (0.1 * gaugeWidth / application.getGaugeUnits());
 		final int splits = (int) Math.floor(gaugeWidth / (0.1 * gaugeWidth / application.getGaugeUnits()));
 
-		if (logCooldowns.getOrDefault("ba48c836-56c1-4d41-9189-c16c4cee0686", -1L) <= Util.getMeasuringTimeMs()) {
-			OriginsGenshin
-				.sublogger("EntityRendererMixin")
-				.info(
-					"Gauge Units: {} | Gauge Width: {} | Splits: {} | Loss: {}", 
-					application.getGaugeUnits(), 
-					gaugeWidth, 
-					(int) Math.floor(gaugeWidth / (0.1 * gaugeWidth / application.getGaugeUnits())),
-					gaugeWidth / application.getGaugeUnits() - (gaugeWidth / application.getGaugeUnits() * 0.1 * 10)
-				);
-
-			logCooldowns.put("ba48c836-56c1-4d41-9189-c16c4cee0686", Util.getMeasuringTimeMs() + 10_000);
-		}
-
 		for (int c = 1; c < splits && config.developer.displayGaugeRuler; c += 1) {
-			float i = c * scaledGauge;
-
-			if (logCooldowns.getOrDefault("d7a0d29e-9d7d-4faa-a988-a14bc3218af8", -1L) <= Util.getMeasuringTimeMs()) {
-				OriginsGenshin
-					.sublogger("EntityRendererMixin")
-					.info("i: {} | scaledGauge: {} - {} (x10) | modulo: {}", i, scaledGauge, scaledGauge * 10, i % (scaledGauge * 10));
-			}
+			final float i = c * scaledGauge;
 
 			final float addedY = c % 10 == 0
 				? 1f
@@ -366,9 +304,6 @@ public abstract class EntityRendererMixin {
 			RenderSystem.lineWidth(prev);
 		}
 
-		// if (logCooldowns.getOrDefault("d7a0d29e-9d7d-4faa-a988-a14bc3218af8", -1L) <= Util.getMeasuringTimeMs()) 
-			logCooldowns.put("d7a0d29e-9d7d-4faa-a988-a14bc3218af8", Util.getMeasuringTimeMs() + 10_000);
-
 		RenderSystem.enableCull();
 
 		matrixStack.pop();
@@ -376,14 +311,8 @@ public abstract class EntityRendererMixin {
 
 	@Unique
 	protected float getProgress(ElementalApplication application, float tickDelta) {
-		if (application.getType() == Type.GAUGE_UNITS) {
-			// System.out.printf("Current gauge: %.2f, Gauge units: %.2f\n", application.getCurrentGauge(), application.getGaugeUnits());
-
-			return (float) (application.getCurrentGauge() / application.getGaugeUnits());
-		} else {
-			// System.out.printf("Remaining ticks: %.2f, Duration: %.2f\n", application.getRemainingTicks() - tickDelta, application.getDuration());
-
-			return (float) ((application.getRemainingTicks() - tickDelta) / application.getDuration());
-		}
+		return application.getType() == Type.GAUGE_UNITS
+			? (float) (application.getCurrentGauge() / application.getGaugeUnits())
+			: (float) ((application.getRemainingTicks() - tickDelta) / application.getDuration());
 	}
 }
