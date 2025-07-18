@@ -41,8 +41,6 @@ public abstract sealed class AbstractBurningElementalReaction
 
 	protected AbstractBurningElementalReaction(ElementalReactionSettings settings) {
 		super(settings);
-
-		// Reactions against the Burning aura consume both Burning and Pyro *equally*
 	}
 
 	@Override
