@@ -104,6 +104,8 @@ public final class GaugeUnitElementalApplication extends ElementalApplication {
 			? Math.min(this.decayRate, guApp.decayRate)
 			: guApp.decayRate;
 
+		if (this.isAura) this.currentGauge *= 0.8;
+
 		ElementComponent.sync(this.entity);
 	}
 
