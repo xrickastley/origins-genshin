@@ -38,6 +38,7 @@ public class ClientParticleFactory {
 			register(OriginsGenshinParticleFactory.BURNING, BurningParticleFactory::new);
 			register(OriginsGenshinParticleFactory.SPREAD, SpreadParticleFactory::new);
 			register(OriginsGenshinParticleFactory.AGGRAVATE, AggravateParticleFactory::new);
+			register(OriginsGenshinParticleFactory.CRYSTALLIZE, CrystallizeParticleFactory::new);
 			
 			register(OriginsGenshinParticleFactory.DAMAGE_TEXT, DamageTextParticle.Factory::new);
 			register(OriginsGenshinParticleFactory.TEST, TestParticleFactory::new);
