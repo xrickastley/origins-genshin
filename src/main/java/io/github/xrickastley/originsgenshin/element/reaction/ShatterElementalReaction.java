@@ -17,7 +17,7 @@ import net.minecraft.entity.LivingEntity;
  * Shatter has been modified slightly.
  * 
  * When the target takes **any** Geo DMG (considering ICD), Shatter is triggered and the Frozen Aura
- * is removed.
+ * is removed. 
  */
 public final class ShatterElementalReaction extends ElementalReaction {
 	public ShatterElementalReaction() {
@@ -25,7 +25,7 @@ public final class ShatterElementalReaction extends ElementalReaction {
 			new ElementalReactionSettings("Shatter", OriginsGenshin.identifier("shatter"), null)
 				.setReactionCoefficient(0)
 				.setAuraElement(Element.FROZEN)
-				.setTriggeringElement(Element.GEO, Integer.MIN_VALUE)
+				.setTriggeringElement(Element.GEO, Integer.MAX_VALUE)
 		);
 	}
 

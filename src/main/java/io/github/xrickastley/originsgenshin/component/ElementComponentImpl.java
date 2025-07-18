@@ -276,7 +276,7 @@ public final class ElementComponentImpl implements ElementComponent {
 			.streamEntries()
 			.map(Reference::value)
 			.filter(reaction -> reaction.isTriggerable(owner) && reaction.hasAnyElement(validElements))
-			.sorted(Comparator.<ElementalReaction>comparingInt(reaction -> reaction.getPriority(triggeringElement)).reversed());
+			.sorted(Comparator.comparing(reaction -> reaction.getPriority(triggeringElement)));
 	}
 
 	/**
@@ -371,7 +371,6 @@ public final class ElementComponentImpl implements ElementComponent {
 				? this
 					.getTriggerableReactions(priority, application)
 					.filter(r -> AbstractBurningElementalReaction.mixin$onlyAllowPyroReactions(!triggeredReactions.stream().anyMatch(r2 -> r2.idEquals(r)), this, r))
-					.peek(System.out::println)
 					.findFirst()
 				: Optional.empty();
 		}
