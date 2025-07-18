@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
+
 import org.spongepowered.asm.mixin.Debug;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -19,6 +22,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.component.ElementComponent;
 import io.github.xrickastley.originsgenshin.element.Element;
+import io.github.xrickastley.originsgenshin.element.ElementalApplication;
 import io.github.xrickastley.originsgenshin.element.ElementalApplications;
 import io.github.xrickastley.originsgenshin.element.ElementalDamageSource;
 import io.github.xrickastley.originsgenshin.element.InternalCooldownContext;
@@ -28,6 +32,9 @@ import io.github.xrickastley.originsgenshin.element.reaction.AmplifyingElemental
 import io.github.xrickastley.originsgenshin.element.reaction.ElementalReaction;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinAttributes;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinGameRules;
+import io.github.xrickastley.originsgenshin.networking.ShowElementalDamageS2CPacket;
+import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -148,27 +155,20 @@ public abstract class LivingEntityMixin extends Entity {
 		}
 	}
 
-	/*
 	@Inject(
 		method = "applyDamage",
 		at = @At("TAIL")
 	)
 	private void damageHandlers_elements(final DamageSource source, float amount, CallbackInfo ci) {
-		IDamageSource damageSourceMixin = ((IDamageSource) source);
+		final ElementalDamageSource eds = source instanceof final ElementalDamageSource eds2
+			? eds2
+			: new ElementalDamageSource(source, ElementalApplications.gaugeUnits((LivingEntity)(Entity) this, Element.PHYSICAL, 0), InternalCooldownContext.ofNone(source.getAttacker()));
 
-		if (elementHandler == null) elementHandler = new ElementHandler((LivingEntity)(Entity) this);
-			
-		World world = this.getWorld();
+		final World world = this.getWorld();
 
 		// OriginsGenshin.LOGGER.info("world.isClient: {}\ndamageSourceMixin.hasElement(): {}\ndamageSourceMixin.getElement(): {}\nworld instanceof {}", world.isClient, damageSourceMixin.hasElement(), damageSourceMixin.getElement(), world.getClass().getSimpleName());
 		
-		final Element element = damageSourceMixin.getElement();
-		
-		if (element != null) this.elementHandler.applyElement(
-			damageSourceMixin.getElement(),
-			damageSourceMixin.getElementalGaugeUnits(),
-			damageSourceMixin.getInternalCooldownData()
-		);
+		final Element element = eds.getElementalApplication().getElement();
 		
 		if (world.isClient || !(world instanceof ServerWorld)) return;
 
@@ -184,5 +184,4 @@ public abstract class LivingEntityMixin extends Entity {
 
 		// ((ServerWorld) world).spawnParticles(OriginsGenshinParticleFactory.DAMAGE_TEXT, this.getX(), this.getY() + (this.getHeight() * (1 - Math.min(Math.random(), 0.5))), this.getZ(), 0, amount, color.asARGB(), 1, 1);
 	}
-	*/
 }

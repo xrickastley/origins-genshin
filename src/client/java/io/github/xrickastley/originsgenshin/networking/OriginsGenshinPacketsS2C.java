@@ -1,6 +1,5 @@
 package io.github.xrickastley.originsgenshin.networking;
 
-import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.element.reaction.ElementalReaction;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinParticleFactory;
 import io.github.xrickastley.originsgenshin.registry.OriginsGenshinRegistries;
@@ -33,15 +32,9 @@ public class OriginsGenshinPacketsS2C {
 
 		final Box boundingBox = entity.getBoundingBox();
 
-		// TODO: After TextRenderer fix, change Y to *always* be boundingBox-Y / 2
-
 		final double x = entity.getX() + (boundingBox.getLengthX() * 1.25 * Math.random());
-		final double y = entity.getY() + (boundingBox.getLengthY() * 0.75 * Math.random()) + 0.5;
+		final double y = entity.getY() + (boundingBox.getLengthY() * 0.50);
 		final double z = entity.getZ() + (boundingBox.getLengthZ() * 1.25 * Math.random());
-
-		OriginsGenshin
-			.sublogger(OriginsGenshinPacketsS2C.class)
-			.info("Spawning particle for {} {} at: {}, {}, {}", entity.getName().getString(), entity.getPos(), x, y, z);
 
 		MinecraftClient
 			.getInstance()
@@ -60,10 +53,16 @@ public class OriginsGenshinPacketsS2C {
 			? packet.element().getDamageColor()
 			: Colors.PHYSICAL;
 
+		final Box boundingBox = entity.getBoundingBox();
+
+		final double x = entity.getX() + (boundingBox.getLengthX() * 1.25 * Math.random());
+		final double y = entity.getY() + (boundingBox.getLengthY() * 0.50 * Math.random()) + 0.50;
+		final double z = entity.getZ() + (boundingBox.getLengthZ() * 1.25 * Math.random());
+
 		MinecraftClient
 			.getInstance()
 			.player
 			.getWorld()
-			.addImportantParticle(OriginsGenshinParticleFactory.DAMAGE_TEXT, entity.getX(), entity.getY() + (entity.getHeight() * (1 - Math.min(Math.random(), 0.5))), entity.getZ(), packet.amount(), color.asARGB(), 1.0f);
+			.addImportantParticle(OriginsGenshinParticleFactory.DAMAGE_TEXT, x, y, z, packet.amount(), color.asARGB(), 1.0f);
 	}
 }
