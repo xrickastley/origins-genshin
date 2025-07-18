@@ -9,8 +9,8 @@ public final class HydroBloomElementalReaction extends AbstractBloomElementalRea
 		super(
 			new ElementalReactionSettings("Bloom (Hydro)", OriginsGenshin.identifier("bloom_hydro"), OriginsGenshinParticleFactory.BLOOM)
 				.setReactionCoefficient(0.5)
-				.setAuraElement(Element.DENDRO, 4)
-				.setTriggeringElement(Element.HYDRO)
+				.setAuraElement(Element.DENDRO)
+				.setTriggeringElement(Element.HYDRO, 4)
 		);
 	}
 }

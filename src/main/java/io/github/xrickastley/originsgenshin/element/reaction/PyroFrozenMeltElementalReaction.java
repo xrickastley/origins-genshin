@@ -9,7 +9,7 @@ import net.minecraft.entity.LivingEntity;
 
 public final class PyroFrozenMeltElementalReaction extends AbstractPyroMeltElementalReaction {
 	protected PyroFrozenMeltElementalReaction() {
-		super("Melt (Pyro)", "melt_pyro-frozen", Element.FROZEN, 3);
+		super("Melt (Pyro)", "melt_pyro-frozen", Element.FROZEN);
 	}
 
 	@Override

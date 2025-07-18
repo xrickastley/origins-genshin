@@ -36,34 +36,53 @@ public final class ElementalReactionSettings {
 		return this;
 	}
 
-	public ElementalReactionSettings setAuraElement(Element auraElement) {
-		return setAuraElement(auraElement, -1);
+	public ElementalReactionSettings setAuraElement(Element element) {
+		return setAuraElement(element, -1);
 	}
 
 	/**
-	 * Sets the Aura Element of the Elemental Reaction.
-	 * @param auraElement The Aura Element of the Elemental Reaction.
-	 * @param priority The priority of this reaction triggering when {@code auraElement} is one of the currently applied aura elements.
+	 * Sets the Aura Element of the Elemental Reaction. <br> <br>
+	 * 
+	 * This is the element that <b>must</b> be applied onto the entity in order for the reaction to
+	 * be triggered by applying the Triggering Element onto the entity. <br> <br>
+	 * 
+	 * However, when the Elemental Reaction is considered "reversable" through 
+	 * {@link ElementalReactionSettings#reversable(boolean) ElementalReactionSettings#reversable()},
+	 * the Aura Element may be considered as the Triggering Element, and the Triggering Element 
+	 * may be considered as the Aura Element.
+	 * 
+	 * @param element The Aura Element of the Elemental Reaction.
+	 * @param priority The priority of this reaction triggering when {@code auraElement} is currently
+	 * the triggering element. {@code priority} will only be applied when {@code reversable} is 
+	 * {@code true}, as that is the only instance the {@code auraElement} can be considered a
+	 * triggering element.
 	 */
-	public ElementalReactionSettings setAuraElement(Element auraElement, int priority) {
-		this.auraElement = new Pair<Element,Integer>(auraElement, priority);
+	public ElementalReactionSettings setAuraElement(Element element, int priority) {
+		this.auraElement = new Pair<Element,Integer>(element, priority);
 
 		return this;
 	}
 
-	public ElementalReactionSettings setTriggeringElement(Element triggeringElement) {
-		return setTriggeringElement(triggeringElement, -1);
+	public ElementalReactionSettings setTriggeringElement(Element element) {
+		return setTriggeringElement(element, -1);
 	}
 
 	/**
-	 * Sets the Triggering Element of the Elemental Reaction.
-	 * @param triggeringElement The Triggering Element of the Elemental Reaction.
-	 * @param priority The priority of this reaction triggering when {@code triggeringElement} is one of the currently applied aura 
-	 * elements. {@code priority} will only be applied when {@code reversable} is true, as that is the only instance the 
-	 * {@code triggeringElement} can be considered an aura element.
+	 * Sets the Triggering Element of the Elemental Reaction. <br> <br>
+	 * 
+	 * This is the element that <b>must</b> be applied onto the entity with the specified Aura
+	 * Element in order for the reaction to be triggered. <br> <br>
+	 * 
+	 * However, when the Elemental Reaction is considered "reversable" through 
+	 * {@link ElementalReactionSettings#reversable(boolean) ElementalReactionSettings#reversable()},
+	 * the Triggering Element may be considered as the Aura Element, and the Aura Element may be
+	 * considered as the Triggering Element.
+	 * 
+	 * @param element The Triggering Element of the Elemental Reaction.
+	 * @param priority The priority of this reaction triggering when {@code triggeringElement} is the triggering element.
 	 */
-	public ElementalReactionSettings setTriggeringElement(Element triggeringElement, int priority) {
-		this.triggeringElement = new Pair<Element,Integer>(triggeringElement, priority);
+	public ElementalReactionSettings setTriggeringElement(Element element, int priority) {
+		this.triggeringElement = new Pair<Element,Integer>(element, priority);
 
 		return this;
 	}

@@ -139,14 +139,19 @@ public abstract class ElementalReaction {
 	}
 
 	/**
-	 * Gets the priority of this Elemental Reaction for a specific living entity.
-	 * @param entity The living entity.
-	 * @return The priority of this Elemental Reaction for the specified entity.
+	 * Gets the priority of this Elemental Reaction.
+	 * @param application The applied Elemental Application, which should be the triggering element.
+	 * @return The priority of this Elemental Reaction.
 	 */
 	public int getPriority(ElementalApplication application) {
 		return getPriority(application.getElement());
 	}
 
+	/**
+	 * Gets the priority of this Elemental Reaction.
+	 * @param triggeringElement The applied element, also known as the triggering element.
+	 * @return The priority of this Elemental Reaction.
+	 */
 	public int getPriority(Element triggeringElement) {
 		return triggeringElement.equals(this.triggeringElement.getLeft())
 			? this.triggeringElement.getRight()

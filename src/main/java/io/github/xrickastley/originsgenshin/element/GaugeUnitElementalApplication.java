@@ -15,8 +15,8 @@ import net.minecraft.util.math.MathHelper;
 public final class GaugeUnitElementalApplication extends ElementalApplication {
 	protected double decayRate;
 
-	protected GaugeUnitElementalApplication(LivingEntity entity, Element element, UUID uuid, double gaugeUnits, boolean aura) {
-		super(Type.GAUGE_UNIT, entity, element, uuid, gaugeUnits, true);
+	protected GaugeUnitElementalApplication(LivingEntity entity, Element element, UUID uuid, double gaugeUnits, boolean isAura) {
+		super(Type.GAUGE_UNIT, entity, element, uuid, gaugeUnits, isAura);
 
 		this.decayRate = GaugeUnitElementalApplication.getDefaultDecayRate(gaugeUnits);
 

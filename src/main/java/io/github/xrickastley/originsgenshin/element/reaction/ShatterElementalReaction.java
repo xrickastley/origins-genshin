@@ -24,8 +24,8 @@ public final class ShatterElementalReaction extends ElementalReaction {
 		super(
 			new ElementalReactionSettings("Shatter", OriginsGenshin.identifier("shatter"), null)
 				.setReactionCoefficient(0)
-				.setAuraElement(Element.FROZEN, Integer.MIN_VALUE)
-				.setTriggeringElement(Element.GEO)
+				.setAuraElement(Element.FROZEN)
+				.setTriggeringElement(Element.GEO, Integer.MIN_VALUE)
 		);
 	}
 

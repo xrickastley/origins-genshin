@@ -9,8 +9,8 @@ public final class CryoSwirlElementalReaction extends AbstractSwirlElementalReac
 		super(
 			new ElementalReactionSettings("Swirl", OriginsGenshin.identifier("swirl_cryo"), OriginsGenshinParticleFactory.SWIRL)
 				.setReactionCoefficient(0.5)
-				.setAuraElement(Element.CRYO, 4)
-				.setTriggeringElement(Element.ANEMO, 3)
+				.setAuraElement(Element.CRYO, 3)
+				.setTriggeringElement(Element.ANEMO, 4)
 				.reversable(true)
 		);
 	}

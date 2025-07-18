@@ -9,8 +9,8 @@ public final class DendroBloomElementalReaction extends AbstractBloomElementalRe
 		super(
 			new ElementalReactionSettings("Bloom (Dendro)", OriginsGenshin.identifier("bloom_dendro"), OriginsGenshinParticleFactory.BLOOM)
 				.setReactionCoefficient(2)
-				.setAuraElement(Element.HYDRO, 4)
-				.setTriggeringElement(Element.DENDRO)
+				.setAuraElement(Element.HYDRO)
+				.setTriggeringElement(Element.DENDRO, 4)
 		);
 	}
 }

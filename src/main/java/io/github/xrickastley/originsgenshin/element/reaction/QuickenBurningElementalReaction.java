@@ -9,8 +9,8 @@ public final class QuickenBurningElementalReaction extends AbstractBurningElemen
 		super(
 			new ElementalReactionSettings("Burning (Quicken)", OriginsGenshin.identifier("burning_quicken"), OriginsGenshinParticleFactory.BURNING)
 				.setReactionCoefficient(0) // Coefficient: 0 since Burning is "special", removes itself when Dendro is gone/by natural causes.
-				.setAuraElement(Element.QUICKEN, 1)
-				.setTriggeringElement(Element.PYRO)
+				.setAuraElement(Element.QUICKEN)
+				.setTriggeringElement(Element.PYRO, 6)
 		);
 	}
 }

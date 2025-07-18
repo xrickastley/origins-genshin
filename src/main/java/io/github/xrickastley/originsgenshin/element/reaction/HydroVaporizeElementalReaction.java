@@ -9,8 +9,8 @@ public final class HydroVaporizeElementalReaction extends AmplifyingElementalRea
 		super(
 			new ElementalReactionSettings("Vaporize (Hydro)", OriginsGenshin.identifier("vaporize_hydro"), OriginsGenshinParticleFactory.VAPORIZE)
 				.setReactionCoefficient(2.0)
-				.setAuraElement(Element.PYRO, 1)
-				.setTriggeringElement(Element.HYDRO),
+				.setAuraElement(Element.PYRO)
+				.setTriggeringElement(Element.HYDRO, 1),
 			2
 		);
 	}

@@ -9,8 +9,8 @@ public final class QuickenBloomElementalReaction extends AbstractBloomElementalR
 		super(
 			new ElementalReactionSettings("Bloom (Quicken)", OriginsGenshin.identifier("bloom_quicken"), OriginsGenshinParticleFactory.BLOOM)
 				.setReactionCoefficient(2.0)
-				.setAuraElement(Element.QUICKEN, 2)
-				.setTriggeringElement(Element.HYDRO)
+				.setAuraElement(Element.QUICKEN)
+				.setTriggeringElement(Element.HYDRO, 4)
 		);
 	}
 }

@@ -9,8 +9,8 @@ public final class PyroVaporizeElementalReaction extends AmplifyingElementalReac
 		super(
 			new ElementalReactionSettings("Vaporize (Pyro)", OriginsGenshin.identifier("vaporize_pyro"), OriginsGenshinParticleFactory.VAPORIZE)
 				.setReactionCoefficient(0.5)
-				.setAuraElement(Element.HYDRO, 1)
-				.setTriggeringElement(Element.PYRO),
+				.setAuraElement(Element.HYDRO)
+				.setTriggeringElement(Element.PYRO, 5),
 			1.5
 		);
 	}

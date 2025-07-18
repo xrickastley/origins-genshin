@@ -9,8 +9,8 @@ public final class CryoMeltElementalReaction extends AmplifyingElementalReaction
 		super(
 			new ElementalReactionSettings("Melt", OriginsGenshin.identifier("melt_cryo"), OriginsGenshinParticleFactory.MELT)
 				.setReactionCoefficient(0.5)
-				.setAuraElement(Element.PYRO, 2)
-				.setTriggeringElement(Element.CRYO),
+				.setAuraElement(Element.PYRO)
+				.setTriggeringElement(Element.CRYO, 2),
 			1.5
 		);
 	}
