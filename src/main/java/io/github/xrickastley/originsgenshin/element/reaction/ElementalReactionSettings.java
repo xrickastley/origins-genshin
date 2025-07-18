@@ -4,6 +4,7 @@ import javax.annotation.Nullable;
 
 import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication.Type;
+
 import net.minecraft.particle.DefaultParticleType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
@@ -18,6 +19,7 @@ public final class ElementalReactionSettings {
 	protected boolean reversable = false;
 	protected boolean applyResultAsAura = false;
 	protected boolean endsReactionTrigger = false;
+	protected boolean preventsPriorityUpgrade = false;
 
 	public ElementalReactionSettings(String name, Identifier id, @Nullable DefaultParticleType particle) {
 		this.name = name;
@@ -88,8 +90,11 @@ public final class ElementalReactionSettings {
 	}
 
 	/**
-	 * Sets the Elemental Reaction as reversable. When this is {@code true}, {@code triggeringElement} can be considered as an aura
-	 * element.
+	 * Sets the Elemental Reaction as reversable. <br> <br> 
+	 * 
+	 * When this is {@code true}, the <b>Triggering Element</b> can be considered as an <b>Aura
+	 * Element</b>.
+	 * 
 	 * @param reversable Whether or not the Elemental Reaction is reversable.
 	 */
 	public ElementalReactionSettings reversable(boolean reversable) {
@@ -112,7 +117,8 @@ public final class ElementalReactionSettings {
 	 * Do note that this setting will not affect Elemental Applications with {@link Type#DURATION},
 	 * as those are always applied as an Aura Element after possible reactions.
 	 * 
-	 * @param applyResultAsAura Whether or not the remaining Gauge Units from the triggering element are applied as an Elemental Aura.
+	 * @param applyResultAsAura Whether or not the remaining Gauge Units from the triggering 
+	 * element are applied as an Elemental Aura.
 	 */
 	public ElementalReactionSettings applyResultAsAura(boolean applyResultAsAura) {
 		this.applyResultAsAura = applyResultAsAura;
@@ -121,15 +127,35 @@ public final class ElementalReactionSettings {
 	}
 
 	/**
-	 * Whether or not this reaction ends all future reactions from triggering.
+	 * Whether or not this reaction ends all future reactions from triggering. <br> <br>
 	 * 
 	 * Once a reaction is triggered, an attempt to trigger another is made. This setting denies
 	 * other reactions to be triggered after triggering this reaction.
 	 * 
-	 * @param applyResultAsAura Whether or not reactions can be triggered after this reaction.
+	 * @param endsReactionTrigger Whether or not reactions can be triggered after this reaction.
 	 */
 	public ElementalReactionSettings endsReactionTrigger(boolean endsReactionTrigger) {
 		this.endsReactionTrigger = endsReactionTrigger;
+
+		return this;
+	}
+
+	/**
+	 * Whether or not this reaction prevents the priority upgrade. <br> <br>
+	 * 
+	 * Once a reaction is triggered, an attempt to trigger another is made. If no reactions were
+	 * found, an attempt to upgrade the "element priority" is done. This setting denies that 
+	 * attempt after triggering this reaction. <br> <br>
+	 * 
+	 * However, the attempt to upgrade the priority will only be denied <b>once</b> after this
+	 * reaction. Suceeding reactions <b>must</b> also have this property enabled in order for the
+	 * upgrade to be <i>fully</i> denied.
+	 * 
+	 * @param preventsPriorityUpgrade Whether or not the element priority can be upgraded after 
+	 * this reaction.
+	 */
+	public ElementalReactionSettings preventsPriorityUpgrade(boolean preventsPriorityUpgrade) {
+		this.preventsPriorityUpgrade = preventsPriorityUpgrade;
 
 		return this;
 	}

@@ -30,7 +30,7 @@ public abstract sealed class AbstractBurningElementalReaction
 	extends ElementalReaction 
 	permits BurningElementalReaction, QuickenBurningElementalReaction
 {
-	private static final InternalCooldownType BURNING_PYRO_ICD = InternalCooldownType.registered(OriginsGenshin.identifier("reactions/burning/pyro_icd"), 40, 3);
+	private static final InternalCooldownType BURNING_PYRO_ICD = InternalCooldownType.registered(OriginsGenshin.identifier("reactions/burning/pyro_icd"), 40, Integer.MAX_VALUE);
 	private static final Supplier<Set<ElementalReaction>> REACTIONS = Suppliers.memoize(
 		() -> OriginsGenshinRegistries.ELEMENTAL_REACTION
 			.streamEntries()

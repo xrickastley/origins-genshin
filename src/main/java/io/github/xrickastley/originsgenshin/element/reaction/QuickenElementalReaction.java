@@ -18,7 +18,7 @@ public final class QuickenElementalReaction extends ElementalReaction {
 				.setAuraElement(Element.DENDRO, 2)
 				.setTriggeringElement(Element.ELECTRO, 8)
 				.reversable(true)
-				.endsReactionTrigger(true)
+				.preventsPriorityUpgrade(true)
 		);
 	}
 

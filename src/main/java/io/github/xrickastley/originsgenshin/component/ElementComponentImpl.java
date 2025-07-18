@@ -263,20 +263,19 @@ public final class ElementComponentImpl implements ElementComponent {
 	}
 
 	private Stream<ElementalReaction> getTriggerableReactions(int priority, ElementalApplication triggeringElement) {
-		return getTriggerableReactions(
-			this.getAppliedElements()
-				.filter(application -> application.getElement().getPriority() == priority)
-				.map(ElementalApplication::getElement),
-			triggeringElement
-		);
-	}
+		final Array<Element> validElements = this.getAppliedElements()
+			.filter(application -> application.getElement().getPriority() == priority)
+			.map(ElementalApplication::getElement);
 
-	private Stream<ElementalReaction> getTriggerableReactions(Array<Element> validElements, ElementalApplication triggeringElement) {
+		LOGGER.info("Valid elements: {} | Triggering element: {}", validElements, triggeringElement);
+
 		return OriginsGenshinRegistries.ELEMENTAL_REACTION
 			.streamEntries()
 			.map(Reference::value)
-			.filter(reaction -> reaction.isTriggerable(owner) && reaction.hasAnyElement(validElements))
+//			.peek(r -> LOGGER.info("(InStream) Reaction: {} | isTriggerable: {} | hasAnyElement: {} | highestElementPriority: {} ({})", r.getId(), r.isTriggerable(owner), r.hasAnyElement(validElements), r.getHighestElementPriority(), r.getHighestElementPriority() == priority))
+			.filter(reaction -> reaction.isTriggerable(owner) && reaction.hasAnyElement(validElements) && reaction.getHighestElementPriority() == priority)
 			.sorted(Comparator.comparing(reaction -> reaction.getPriority(triggeringElement)));
+//			.peek(r -> LOGGER.info("(InStream/Ordered) Reaction: {} | Priority: {}", r.getId(), r.getPriority(triggeringElement)));
 	}
 
 	/**
@@ -343,7 +342,7 @@ public final class ElementComponentImpl implements ElementComponent {
 			return Collections.emptySet();
 		}
 
-		final int priority = Math.min(optionalPriority.get(), application.getElement().getPriority());
+		int priority = Math.min(optionalPriority.get(), application.getElement().getPriority());
 
 		Optional<ElementalReaction> optional = this
 			.getTriggerableReactions(priority, application)
@@ -355,9 +354,10 @@ public final class ElementComponentImpl implements ElementComponent {
 		final Set<ElementalReaction> triggeredReactions = new HashSet<>();
 
 		LOGGER.info("Target elemental priority: {}", priority);
-		while (application.getCurrentGauge() > 0 && optional.isPresent()) {
-			System.out.println("Set triggered reactions at age to: " + this.owner.age);
-			triggeredReactionsAtAge = this.owner.age;
+		LOGGER.info("Set triggered reactions at age to: {}", this.owner.age);
+		triggeredReactionsAtAge = this.owner.age;
+
+		while (optional.isPresent() && (application.getCurrentGauge() > 0 || optional.get().isTriggerable(owner))) {
 			final ElementalReaction reaction = optional.get();
 
 			LOGGER.info("Triggering reaction: {}, Current Gauge ({}): {}", reaction.getId(), application.getElement(), application.getCurrentGauge());
@@ -367,14 +367,32 @@ public final class ElementComponentImpl implements ElementComponent {
 
 			triggeredReactions.add(reaction);
 
-			optional = !reaction.shouldEndReactionTrigger()
-				? this
+			if (reaction.shouldEndReactionTrigger()) break;
+
+			optional = this
+				.getTriggerableReactions(priority, application)
+				.filter(r -> AbstractBurningElementalReaction.mixin$onlyAllowPyroReactions(!triggeredReactions.stream().anyMatch(r2 -> r2.idEquals(r)), this, r))
+				.findFirst();
+
+			if (optional.isEmpty() && !reaction.shouldPreventPriorityUpgrade()) {
+				final int newPriority = this.getHighestElementPriority().orElse(-1);
+
+				if (newPriority == -1 || newPriority >= priority) break;
+
+				LOGGER.info("Target elemental priority has been upgraded: {} -> {}", priority, newPriority);
+
+				priority = newPriority;
+				optional = this
 					.getTriggerableReactions(priority, application)
 					.filter(r -> AbstractBurningElementalReaction.mixin$onlyAllowPyroReactions(!triggeredReactions.stream().anyMatch(r2 -> r2.idEquals(r)), this, r))
-					.findFirst()
-				: Optional.empty();
-		}
+					.findFirst();
 
+				if (optional.isPresent()) 
+					LOGGER.info("Found reaction after priority upgrade: {}, Current Gauge ({}): {}", optional.get().getId(), application.getElement(), application.getCurrentGauge());
+			}
+		}
+		
+		LOGGER.info("No more reactions may be triggered! | Current Gauge ({}): {}", application.getElement(), application.getCurrentGauge());
 		LOGGER.info("Element: {} | CanBeAura: {} | Triggered reactions: {} | Apply Element as Aura: {} | Is Gauge Units: {}", context.getElement(), context.getElement().canBeAura(), triggeredReactions.size(), applyElementAsAura, application.isGaugeUnits());
 
 		if (!context.getElement().canBeAura() || (triggeredReactions.size() > 0 && !applyElementAsAura && application.isGaugeUnits()) || AbstractBurningElementalReaction.mixin$allowDendroPassthrough(this.getHighestElementPriority().orElse(Integer.MIN_VALUE) < application.getElement().getPriority(), this, application)) {

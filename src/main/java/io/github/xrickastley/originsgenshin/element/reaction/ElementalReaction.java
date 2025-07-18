@@ -42,6 +42,7 @@ public abstract class ElementalReaction {
 	protected final boolean allowChildElements = false;
 	protected final boolean applyResultAsAura;
 	protected final boolean endsReactionTrigger;
+	protected final boolean preventsPriorityUpgrade;
 	
 	protected ElementalReaction(ElementalReactionSettings settings) {
 		this.name = settings.name;
@@ -54,6 +55,7 @@ public abstract class ElementalReaction {
 		this.reversable = settings.reversable;
 		this.applyResultAsAura = settings.applyResultAsAura;
 		this.endsReactionTrigger = settings.endsReactionTrigger;
+		this.preventsPriorityUpgrade = settings.preventsPriorityUpgrade;
 	}
 
 	public static float getReactionDamage(Entity entity, double reactionMultiplier) {
@@ -118,6 +120,10 @@ public abstract class ElementalReaction {
 		return triggeringElement.getRight();
 	}
 
+	public int getHighestElementPriority() {
+		return Math.min(this.auraElement.getLeft().getPriority(), this.triggeringElement.getLeft().getPriority());
+	}
+
 	public @Nullable DefaultParticleType getParticle() {
 		return this.particle;
 	}
@@ -136,6 +142,10 @@ public abstract class ElementalReaction {
 
 	public boolean shouldEndReactionTrigger() {
 		return this.endsReactionTrigger;
+	}
+
+	public boolean shouldPreventPriorityUpgrade() {
+		return this.preventsPriorityUpgrade;
 	}
 
 	/**
@@ -183,14 +193,22 @@ public abstract class ElementalReaction {
 	public boolean isTriggerable(LivingEntity entity) {
 		final ElementComponent component = ElementComponent.KEY.get(entity);
 
-		ElementalApplication applicationAE = component.getElementalApplication(auraElement.getLeft());
-		ElementalApplication applicationTE = component.getElementalApplication(triggeringElement.getLeft());
+		final ElementalApplication auraElement = component.getElementalApplication(this.auraElement.getLeft());
+		final ElementalApplication trigElement = component.getElementalApplication(this.triggeringElement.getLeft());
 
-		return reversable
+		final boolean result = reversable
 			// Any of the elements can be an Aura element.
-			? applicationAE != null && applicationTE != null && applicationAE.getCurrentGauge() > 0 && applicationTE.getCurrentGauge() > 0
+			? auraElement != null && trigElement != null && !auraElement.isEmpty() && !trigElement.isEmpty()
 			// The aura element must STRICTLY be an Aura element.
-			: applicationAE != null && applicationTE != null && applicationAE.isAuraElement() && applicationAE.getCurrentGauge() > 0 && applicationTE.getCurrentGauge() > 0;
+			: auraElement != null && trigElement != null && auraElement.isAuraElement() && !auraElement.isEmpty() && !trigElement.isEmpty();
+
+		if (this instanceof QuickenBloomElementalReaction) {
+			LOGGER.info("Aura element: {} | Triggering element: {} | Result: {}", auraElement, trigElement, result);
+			LOGGER.info("auraElement != null ({}) && trigElement != null ({}) && !auraElement.isEmpty() ({}) && !trigElement.isEmpty() ({}) -> {}", auraElement != null, trigElement != null, auraElement == null ? "NullPointerException" : !auraElement.isEmpty(), trigElement == null ? "NullPointerException" : !trigElement.isEmpty(), result);
+		}
+			
+
+		return result;
 	}
 
 	public boolean trigger(LivingEntity entity) {
