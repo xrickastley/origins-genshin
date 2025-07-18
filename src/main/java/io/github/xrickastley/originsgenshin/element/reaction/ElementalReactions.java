@@ -44,7 +44,13 @@ public class ElementalReactions {
 	public static final ElementalReaction ELECTRO_SWIRL = new ElectroSwirlElementalReaction();
 	public static final ElementalReaction CRYO_SWIRL = new CryoSwirlElementalReaction();
 	public static final ElementalReaction FROZEN_SWIRL = new FrozenSwirlElementalReaction();
-	// TODO: Reaction: Crystallize (+ Crystallize Shards)
+	// TODO: Crystallize Shards
+	// Creates a Crystallize Shard at the location, providing a shield upon picking it up.
+	public static final ElementalReaction PYRO_CRYSTALLIZE = new PyroCrystallizeElementalReaction();
+	public static final ElementalReaction HYDRO_CRYSTALLIZE = new HydroCrystallizeElementalReaction();
+	public static final ElementalReaction ELECTRO_CRYSTALLIZE = new ElectroCrystallizeElementalReaction();
+	public static final ElementalReaction CRYO_CRYSTALLIZE = new CryoCrystallizeElementalReaction();
+	public static final ElementalReaction FROZEN_CRYSTALLIZE = new FrozenCrystallizeElementalReaction();
 	// TODO: Reaction: Hyperbloom + Burgeon
 	// TODO: Reaction display.
 
@@ -73,6 +79,11 @@ public class ElementalReactions {
 		register(ElementalReactions.ELECTRO_SWIRL);
 		register(ElementalReactions.CRYO_SWIRL);
 		register(ElementalReactions.FROZEN_SWIRL);
+		register(ElementalReactions.PYRO_CRYSTALLIZE);
+		register(ElementalReactions.HYDRO_CRYSTALLIZE);
+		register(ElementalReactions.ELECTRO_CRYSTALLIZE);
+		register(ElementalReactions.CRYO_CRYSTALLIZE);
+		register(ElementalReactions.FROZEN_CRYSTALLIZE);
 	}
 
 	private static ElementalReaction register(ElementalReaction reaction) {
