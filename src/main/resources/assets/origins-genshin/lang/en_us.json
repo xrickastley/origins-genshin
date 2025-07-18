@@ -5,6 +5,7 @@
 	
 	"text.autoconfig.origins-genshin.option.developer": "Developer Options",
 	"text.autoconfig.origins-genshin.option.developer.displayElementalGauges": "Display Elemental Gauges",
+	"text.autoconfig.origins-genshin.option.developer.displayGaugeRuler": "Display Gauge Ruler",
 
 	"entity.origins-genshin.dendro_core": "Dendro Core",
 
