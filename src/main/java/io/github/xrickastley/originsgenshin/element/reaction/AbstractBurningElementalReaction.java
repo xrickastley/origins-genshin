@@ -15,6 +15,7 @@ import io.github.xrickastley.originsgenshin.component.ElementComponent;
 import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementHolder;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
+import io.github.xrickastley.originsgenshin.element.ElementalApplications;
 import io.github.xrickastley.originsgenshin.element.ElementalDamageSource;
 import io.github.xrickastley.originsgenshin.element.InternalCooldownContext;
 import io.github.xrickastley.originsgenshin.element.InternalCooldownType;
@@ -56,7 +57,7 @@ public abstract sealed class AbstractBurningElementalReaction
 		final ElementHolder holder = component.getElementHolder(Element.PYRO);
 
 		if (context.getInternalCooldown(holder).handleInternalCooldown()) {
-			final ElementalApplication application = ElementalApplication.gaugeUnits(entity, Element.PYRO, 1.0f, true);	
+			final ElementalApplication application = ElementalApplications.gaugeUnits(entity, Element.PYRO, 1.0f, true);	
 
 			if (!holder.hasElementalApplication() || holder.getElementalApplication().isEmpty()) {
 				holder.setElementalApplication(application);
@@ -68,7 +69,7 @@ public abstract sealed class AbstractBurningElementalReaction
 		component
 			.getElementHolder(Element.BURNING)
 			.setElementalApplication(
-				ElementalApplication.gaugeUnits(entity, Element.BURNING, 2.0f, true)
+				ElementalApplications.gaugeUnits(entity, Element.BURNING, 2.0f, true)
 			);
 
 		component.resetBurningCD();
@@ -131,7 +132,7 @@ public abstract sealed class AbstractBurningElementalReaction
 				entity
 					.getDamageSources()
 					.create(OriginsGenshinDamageTypes.BURNING, entity, component.getBurningOrigin()), 
-				ElementalApplication.gaugeUnits(target, Element.PYRO, 1), 
+				ElementalApplications.gaugeUnits(target, Element.PYRO, 1), 
 				InternalCooldownContext.ofType(entity, "origins-genshin:reactions/burning", BURNING_PYRO_ICD)
 			);
 
@@ -206,7 +207,7 @@ public abstract sealed class AbstractBurningElementalReaction
 		application.reduceGauge(Element.DENDRO.getCustomDecayRate().apply(application).doubleValue());
 	}
 
-	public static Optional<ElementalReaction> mixin$changeReaction(Optional<ElementalReaction> original, final ElementComponent component) {
+	public static Optional<ElementalReaction> mixin$changeReaction(Optional<ElementalReaction> original, final ElementComponent component, final ElementalApplication application) {
 		if (!component.hasElementalApplication(Element.BURNING)) return original;
 		
 		return OriginsGenshinRegistries.ELEMENTAL_REACTION

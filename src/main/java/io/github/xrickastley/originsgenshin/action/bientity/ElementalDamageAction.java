@@ -16,6 +16,7 @@ import io.github.apace100.calio.data.SerializableDataTypes;
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.data.OriginsGenshinDataTypes;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
+import io.github.xrickastley.originsgenshin.element.ElementalApplications;
 import io.github.xrickastley.originsgenshin.element.ElementalDamageSource;
 import io.github.xrickastley.originsgenshin.element.InternalCooldownContext;
 import io.github.xrickastley.originsgenshin.element.InternalCooldownType;
@@ -51,7 +52,7 @@ public class ElementalDamageAction {
 			DamageSource source = MiscUtil.createDamageSource(actor.getDamageSources(), data.get("source"), data.get("damage_type"), actor);
 			
 			if (data.isPresent("element") && target instanceof final LivingEntity livingTarget) {
-				final ElementalApplication application = ElementalApplication.gaugeUnits(livingTarget, data.get("element"), data.getDouble("gauge_units"));
+				final ElementalApplication application = ElementalApplications.gaugeUnits(livingTarget, data.get("element"), data.getDouble("gauge_units"));
 
 				source = new ElementalDamageSource(source, application, InternalCooldownContext.ofType(actor, data.getString("source_tag"), data.get("source_type")));
 			}

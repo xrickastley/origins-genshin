@@ -4,6 +4,7 @@ import javax.annotation.Nullable;
 
 import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
+import io.github.xrickastley.originsgenshin.element.ElementalApplications;
 import io.github.xrickastley.originsgenshin.element.ElementalDamageSource;
 import io.github.xrickastley.originsgenshin.element.InternalCooldownContext;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinStatusEffects;
@@ -27,7 +28,7 @@ public abstract sealed class AbstractSuperconductElementalReaction
 				entity
 					.getDamageSources()
 					.create(OriginsGenshinDamageTypes.SUPERCONDUCT, origin),
-				ElementalApplication.gaugeUnits(target, Element.CRYO, 1.5),
+				ElementalApplications.gaugeUnits(target, Element.CRYO, 1.5),
 				InternalCooldownContext.ofNone(origin)
 			);
 

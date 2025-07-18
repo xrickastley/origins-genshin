@@ -5,6 +5,7 @@ import javax.annotation.Nullable;
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
+import io.github.xrickastley.originsgenshin.element.ElementalApplications;
 import io.github.xrickastley.originsgenshin.element.ElementalDamageSource;
 import io.github.xrickastley.originsgenshin.element.InternalCooldownContext;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinGameRules;
@@ -90,7 +91,7 @@ public class OverloadedElementalReaction extends ElementalReaction {
 		if (!(entity instanceof final LivingEntity living)) return;
 
 		final float amount = ElementalReaction.getReactionDamage(entity, 2.75);
-		final ElementalApplication application = ElementalApplication.gaugeUnits(living, Element.PYRO, 0);
+		final ElementalApplication application = ElementalApplications.gaugeUnits(living, Element.PYRO, 0);
 		final ElementalDamageSource source = new ElementalDamageSource(
 			entity
 				.getDamageSources()

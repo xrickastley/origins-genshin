@@ -19,10 +19,9 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 
-import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.component.ElementComponent;
+import io.github.xrickastley.originsgenshin.element.DurationElementalApplication;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
-import io.github.xrickastley.originsgenshin.element.ElementalApplication.Type;
 import io.github.xrickastley.originsgenshin.util.ClientConfig;
 import io.github.xrickastley.originsgenshin.util.Color;
 import me.shedaniel.autoconfig.AutoConfig;
@@ -40,7 +39,6 @@ import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.Util;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 
@@ -311,8 +309,8 @@ public abstract class EntityRendererMixin {
 
 	@Unique
 	protected float getProgress(ElementalApplication application, float tickDelta) {
-		return application.getType() == Type.GAUGE_UNITS
-			? (float) (application.getCurrentGauge() / application.getGaugeUnits())
-			: (float) ((application.getRemainingTicks() - tickDelta) / application.getDuration());
+		return application instanceof final DurationElementalApplication durationApp
+			? (float) ((application.getRemainingTicks() - tickDelta) / durationApp.getDuration())
+			: (float) (application.getCurrentGauge() / application.getGaugeUnits());
 	}
 }

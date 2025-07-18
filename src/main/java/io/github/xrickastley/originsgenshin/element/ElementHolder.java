@@ -58,7 +58,7 @@ public final class ElementHolder {
 	public ElementalApplication getOrCreateElementalApplication(double gaugeUnits, boolean aura) {
 		if (!this.shouldDoElements()) throw new IllegalStateException("The Game Rule \"doElements\" is false! Check if you can apply elements through ElementHolder#shouldDoElements before calling this method!");
 
-		this.application = ElementalApplication.gaugeUnits(owner, element, gaugeUnits, aura);
+		this.application = ElementalApplications.gaugeUnits(owner, element, gaugeUnits, aura);
 
 		return this.application;
 	}
@@ -66,7 +66,7 @@ public final class ElementHolder {
 	public ElementalApplication getOrCreateElementalApplication(double duration, double gaugeUnits) {
 		if (!this.shouldDoElements()) throw new IllegalStateException("The Game Rule \"doElements\" is false! Check if you can apply elements through ElementHolder#shouldDoElements before calling this method!");
 		
-		this.application = ElementalApplication.duration(owner, element, gaugeUnits, duration);
+		this.application = ElementalApplications.duration(owner, element, gaugeUnits, duration);
 
 		return this.application;
 	}

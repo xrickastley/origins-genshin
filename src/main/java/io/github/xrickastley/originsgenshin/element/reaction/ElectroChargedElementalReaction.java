@@ -8,6 +8,7 @@ import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.component.ElementComponent;
 import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
+import io.github.xrickastley.originsgenshin.element.ElementalApplications;
 import io.github.xrickastley.originsgenshin.element.ElementalDamageSource;
 import io.github.xrickastley.originsgenshin.element.InternalCooldownContext;
 import io.github.xrickastley.originsgenshin.events.ReactionTriggered;
@@ -79,7 +80,7 @@ public class ElectroChargedElementalReaction extends ElementalReaction {
 				entity
 					.getDamageSources()
 					.create(OriginsGenshinDamageTypes.ELECTRO_CHARGED, entity, origin), 
-				ElementalApplication.gaugeUnits(target, Element.ELECTRO, 0), 
+				ElementalApplications.gaugeUnits(target, Element.ELECTRO, 0), 
 				InternalCooldownContext.ofNone(origin)
 			);
 

@@ -9,7 +9,7 @@ import javax.annotation.Nullable;
 
 import io.github.xrickastley.originsgenshin.component.ElementComponent;
 import io.github.xrickastley.originsgenshin.element.Element;
-import io.github.xrickastley.originsgenshin.element.ElementalApplication;
+import io.github.xrickastley.originsgenshin.element.ElementalApplications;
 import io.github.xrickastley.originsgenshin.element.ElementalDamageSource;
 import io.github.xrickastley.originsgenshin.element.InternalCooldownContext;
 import io.github.xrickastley.originsgenshin.element.reaction.ElementalReaction;
@@ -98,7 +98,7 @@ public final class DendroCoreEntity extends LivingEntity {
 				this.getWorld()
 					.getDamageSources()
 					.create(OriginsGenshinDamageTypes.DENDRO_CORE, this, owner),
-				ElementalApplication.gaugeUnits(target, Element.DENDRO, 0.0),
+				ElementalApplications.gaugeUnits(target, Element.DENDRO, 0.0),
 				InternalCooldownContext.ofNone(owner)
 			);
 

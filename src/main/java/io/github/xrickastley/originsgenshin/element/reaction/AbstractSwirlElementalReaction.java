@@ -4,6 +4,7 @@ import javax.annotation.Nullable;
 
 import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
+import io.github.xrickastley.originsgenshin.element.ElementalApplications;
 import io.github.xrickastley.originsgenshin.element.ElementalDamageSource;
 import io.github.xrickastley.originsgenshin.element.InternalCooldownContext;
 import io.github.xrickastley.originsgenshin.registry.OriginsGenshinDamageTypes;
@@ -101,7 +102,7 @@ public abstract sealed class AbstractSwirlElementalReaction
 				entity
 					.getDamageSources()
 					.create(OriginsGenshinDamageTypes.SWIRL, origin),
-				ElementalApplication.gaugeUnits(target, swirlElement, target == entity ? 0f : gaugeSwirlAttack, true),
+				ElementalApplications.gaugeUnits(target, swirlElement, target == entity ? 0f : gaugeSwirlAttack, true),
 				InternalCooldownContext.ofNone(origin)
 			);
 

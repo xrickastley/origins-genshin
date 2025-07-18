@@ -16,6 +16,7 @@ import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementHolder;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
+import io.github.xrickastley.originsgenshin.element.ElementalApplications;
 import io.github.xrickastley.originsgenshin.element.ElementalDamageSource;
 import io.github.xrickastley.originsgenshin.element.InternalCooldownContext;
 import io.github.xrickastley.originsgenshin.element.reaction.ElementalReaction;
@@ -91,11 +92,11 @@ public interface ElementComponent extends AutoSyncedComponent, CommonTickingComp
 		.sublogger(ElementComponent.class)
 		.info("(add) Currently applied elements: {} | isAura: {}", this.getAppliedElements(), isAura);
 		
-		return this.addElementalApplication(ElementalApplication.gaugeUnits(this.getOwner(), element, gaugeUnits, isAura), icdContext);
+		return this.addElementalApplication(ElementalApplications.gaugeUnits(this.getOwner(), element, gaugeUnits, isAura), icdContext);
 	}
 	
 	default List<ElementalReaction> addElementalApplication(Element element, InternalCooldownContext icdContext, double gaugeUnits, double duration) {
-		return this.addElementalApplication(ElementalApplication.duration(this.getOwner(), element, gaugeUnits, duration), icdContext);
+		return this.addElementalApplication(ElementalApplications.duration(this.getOwner(), element, gaugeUnits, duration), icdContext);
 	}
 	
 	public List<ElementalReaction> addElementalApplication(ElementalApplication application, InternalCooldownContext icdContext);

@@ -5,6 +5,7 @@ import javax.annotation.Nullable;
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
+import io.github.xrickastley.originsgenshin.element.ElementalApplications;
 import io.github.xrickastley.originsgenshin.element.ElementalDamageSource;
 import io.github.xrickastley.originsgenshin.element.InternalCooldownContext;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinStatusEffects;
@@ -37,7 +38,7 @@ public final class ShatterElementalReaction extends ElementalReaction {
 			entity
 				.getDamageSources()
 				.create(OriginsGenshinDamageTypes.SHATTER, origin), 
-			ElementalApplication.gaugeUnits(entity, Element.PHYSICAL, 0.0, false), 
+			ElementalApplications.gaugeUnits(entity, Element.PHYSICAL, 0.0, false), 
 			InternalCooldownContext.ofNone(entity)
 		);
 

@@ -20,6 +20,7 @@ import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementHolder;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
+import io.github.xrickastley.originsgenshin.element.ElementalApplications;
 import io.github.xrickastley.originsgenshin.element.ElementalDamageSource;
 import io.github.xrickastley.originsgenshin.element.InternalCooldownContext;
 import io.github.xrickastley.originsgenshin.element.reaction.AbstractBurningElementalReaction;
@@ -201,7 +202,7 @@ public final class ElementComponentImpl implements ElementComponent {
 		for (final NbtElement nbt : list) {
 			if (!(nbt instanceof final NbtCompound compound)) return;
 
-			final ElementalApplication application = ElementalApplication.fromNbt(owner, compound, syncedAt);
+			final ElementalApplication application = ElementalApplications.fromNbt(owner, compound, syncedAt);
 
 			this.getElementHolder(application.getElement())
 				.setElementalApplication(application);
