@@ -143,21 +143,16 @@ public abstract class ElementalReaction {
 	 * @param entity The living entity.
 	 * @return The priority of this Elemental Reaction for the specified entity.
 	 */
-	public int getPriority(LivingEntity entity) {
-		return ElementComponent.KEY.get(entity)
-			.getAppliedElements()
-			.filter(application -> auraElement.getLeft().isChild(application.getElement()))
-			.findFirst()
-			.map(application -> getPriority(application.getElement()))
-			.orElse(-1);
+	public int getPriority(ElementalApplication application) {
+		return getPriority(application.getElement());
 	}
 
-	public int getPriority(Element element) {
-		return element.equals(auraElement.getLeft())
-			? auraElement.getRight()
-			: element.equals(triggeringElement.getLeft()) && reversable
-				? triggeringElement.getRight()
-				: -1;
+	public int getPriority(Element triggeringElement) {
+		return triggeringElement.equals(this.triggeringElement.getLeft())
+			? this.triggeringElement.getRight()
+			: triggeringElement.equals(this.auraElement.getLeft()) && this.reversable
+				? this.auraElement.getRight()
+				:  -1;
 	}
 
 	/**

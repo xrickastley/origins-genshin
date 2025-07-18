@@ -261,20 +261,21 @@ public final class ElementComponentImpl implements ElementComponent {
 			: new Array<>();
 	}
 
-	private Stream<ElementalReaction> getTriggerableReactions(int priority) {
+	private Stream<ElementalReaction> getTriggerableReactions(int priority, ElementalApplication triggeringElement) {
 		return getTriggerableReactions(
 			this.getAppliedElements()
 				.filter(application -> application.getElement().getPriority() == priority)
-				.map(ElementalApplication::getElement)
+				.map(ElementalApplication::getElement),
+			triggeringElement
 		);
 	}
 
-	private Stream<ElementalReaction> getTriggerableReactions(Array<Element> validElements) {
+	private Stream<ElementalReaction> getTriggerableReactions(Array<Element> validElements, ElementalApplication triggeringElement) {
 		return OriginsGenshinRegistries.ELEMENTAL_REACTION
 			.streamEntries()
 			.map(Reference::value)
 			.filter(reaction -> reaction.isTriggerable(owner) && reaction.hasAnyElement(validElements))
-			.sorted(Comparator.comparing(reaction -> reaction.getPriority(owner)));
+			.sorted(Comparator.comparing(reaction -> reaction.getPriority(triggeringElement)));
 	}
 
 	/**
@@ -344,10 +345,10 @@ public final class ElementComponentImpl implements ElementComponent {
 		final int priority = Math.min(optionalPriority.get(), application.getElement().getPriority());
 
 		Optional<ElementalReaction> optional = this
-			.getTriggerableReactions(priority)
+			.getTriggerableReactions(priority, application)
 			.findFirst();
 
-		optional = AbstractBurningElementalReaction.mixin$changeReaction(optional, this);
+		optional = AbstractBurningElementalReaction.mixin$changeReaction(optional, this, application);
 
 		boolean applyElementAsAura = true;
 		final Set<ElementalReaction> triggeredReactions = new HashSet<>();
@@ -367,7 +368,7 @@ public final class ElementComponentImpl implements ElementComponent {
 
 			optional = !reaction.shouldEndReactionTrigger()
 				? this
-					.getTriggerableReactions(priority)
+					.getTriggerableReactions(priority, application)
 					.filter(r -> AbstractBurningElementalReaction.mixin$onlyAllowPyroReactions(!triggeredReactions.stream().anyMatch(r2 -> r2.idEquals(r)), this, r))
 					.findFirst()
 				: Optional.empty();

@@ -213,7 +213,7 @@ public abstract sealed class AbstractBurningElementalReaction
 			.streamEntries()
 			.map(Reference::value)
 			.filter(r -> r.isTriggerable(component.getOwner()) && (r.getAuraElement() == Element.PYRO || (r.getTriggeringElement() == Element.PYRO && r.reversable)))
-			.sorted(Comparator.comparing(r -> r.getPriority(component.getOwner())))
+			.sorted(Comparator.comparing(r -> r.getPriority(application)))
 			.findFirst();
 	}
 }
