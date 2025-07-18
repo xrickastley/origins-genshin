@@ -30,8 +30,9 @@ public final class ElementalApplication {
 	protected final Type type;
 	protected double gaugeUnits;
 	protected double currentGauge;
+	protected double decayRate;
 	protected double duration;
-	public long appliedAt;
+	protected long appliedAt;
 
 	private ElementalApplication(LivingEntity entity, Element element, UUID uuid, double gaugeUnits, boolean aura) {
 		this.entity = entity;
@@ -44,6 +45,7 @@ public final class ElementalApplication {
 
 		this.gaugeUnits = gaugeUnits;
 		this.currentGauge = gaugeUnits;
+		this.decayRate = ElementalApplication.getDefaultDecayRate(gaugeUnits);
 
 		// Aura tax.
 		if (this.isAura && element.hasAuraTax()) this.currentGauge *= 0.8;
@@ -137,7 +139,7 @@ public final class ElementalApplication {
 	 * Gets the {@code Element} of to this Elemental Application.
 	 */
 	public Element getElement() {
-		return element;
+		return this.element;
 	}
 
 	/**
@@ -148,7 +150,7 @@ public final class ElementalApplication {
 	}
 
 	public double getGaugeUnits() {
-		return gaugeUnits;
+		return this.gaugeUnits;
 	}
 
 	public double getCurrentGauge() {
@@ -156,7 +158,7 @@ public final class ElementalApplication {
 	}
 
 	public double getDuration() {
-		return duration;
+		return this.duration;
 	}
 
 	public int getRemainingTicks() {
@@ -166,17 +168,14 @@ public final class ElementalApplication {
 			return (int) (appliedAt + duration - entity.getWorld().getTime());
 		}
 
-		// Currently in s/GU
-		double decayRate = 35 / (4 * this.gaugeUnits) + (25 / 8.0);
-		// Now in ticks/GU
-		double decayRateTicks = decayRate / 0.05;
-		double remainingTicks = decayRateTicks * this.currentGauge;
+		// GU/tick -> ticks/GU
+		final double decayRate = 1 / this.getDecayRate();
 
-		return (int) remainingTicks;
+		return (int) (decayRate * this.currentGauge);
 	}
 
 	public UUID getUuid() {
-		return uuid;
+		return this.uuid;
 	}
 
 	public LivingEntity getEntity() {
@@ -242,10 +241,6 @@ public final class ElementalApplication {
 		return difference;
 	}
 
-	public boolean matchesUUID(ElementalApplication other) {
-		return this.uuid.equals(other.uuid);
-	}
-
 	public ElementalApplication asAura() {
 		final ElementalApplication application = new ElementalApplication(entity, element, UUID.randomUUID(), gaugeUnits, true);
 
@@ -286,12 +281,14 @@ public final class ElementalApplication {
 		if (application.type != this.type) throw new ElementalApplicationOperationException(Operation.REAPPLICATION_INVALID_TYPES, this, application);
 
 		if (this.isGaugeUnits()) {
-			// However, the current gauge, handled by currentGauge, is always the most of both applications.
-			this.currentGauge = Math.max(this.gaugeUnits, application.gaugeUnits);
-			// The decay rate, handled by gaugeUnits, is always the lesser of both applications.
-			this.gaugeUnits = this.element.hasDecayInheritance()
-				? Math.min(this.gaugeUnits, application.gaugeUnits)
-				: application.gaugeUnits;
+			// The current gauge, handled by currentGauge, is always the most of both applications.
+			this.gaugeUnits = Math.max(this.gaugeUnits, application.gaugeUnits);
+			this.currentGauge = gaugeUnits;
+
+			// The decay rate, handled by gaugeUnits, is always the lesser of both applications, given that the element has Decay Inheritance.
+			this.decayRate = this.element.hasDecayInheritance()
+				? Math.min(this.decayRate, application.decayRate)
+				: application.decayRate;
 		} else {
 			this.appliedAt = application.appliedAt;
 			this.duration = application.duration;
@@ -311,7 +308,7 @@ public final class ElementalApplication {
 	}
 
 	/**
-	 * Gets the current decay rate per tick.
+	 * Gets the current decay rate in {@code Gauge Units/tick}.
 	 */
 	protected double getDecayRate() {
 		final @Nullable Function<ElementalApplication, Number> customDecayRate = this.element.getCustomDecayRate();
@@ -321,13 +318,17 @@ public final class ElementalApplication {
 			: customDecayRate.apply(this).doubleValue();
 	}
 
+	protected double getDefaultDecayRate() {
+		return decayRate;
+	}
+
 	/**
 	 * Gets the default decay rate per tick, derived from <a href="https://genshin-impact.fandom.com/wiki/Elemental_Gauge_Theory#Aura_Duration_and_Decay_Rate">
 	 * Elemental Gauge Theory: Aura Duration and Decay Rate</a>.
 	 */
-	public double getDefaultDecayRate() {
+	protected static double getDefaultDecayRate(final double gaugeUnits) {
 		// Currently in s/GU
-		double decayRate = (35 / (4 * this.gaugeUnits)) + (25.0 / 8.0);
+		double decayRate = (35 / (4 * gaugeUnits)) + (25.0 / 8.0);
 		// Now in ticks/GU
 		double decayRateTicks = decayRate / 0.05;
 		// Now a GU/tick, allowing us to tick down the gauge easily.
@@ -373,13 +374,6 @@ public final class ElementalApplication {
 		}
 	}
 
-	public static enum Type {
-		// Has a specified amount of Gauge Units that decay over time.
-		GAUGE_UNITS,
-		// Has a specified amount of Gauge Units that are removed after DURATION.
-		DURATION;
-	}
-
 	@Override
 	public String toString() {
 		return this.type == Type.GAUGE_UNITS
@@ -399,5 +393,12 @@ public final class ElementalApplication {
 				this.getGaugeUnits(),
 				this.getDuration()
 			);
+	}
+
+	public static enum Type {
+		// Has a specified amount of Gauge Units that decay over time.
+		GAUGE_UNITS,
+		// Has a specified amount of Gauge Units that are removed after DURATION.
+		DURATION;
 	}
 }
