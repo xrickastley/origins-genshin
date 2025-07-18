@@ -28,7 +28,7 @@ public abstract sealed class AbstractSuperconductElementalReaction
 				entity
 					.getDamageSources()
 					.create(OriginsGenshinDamageTypes.SUPERCONDUCT, origin),
-				ElementalApplications.gaugeUnits(target, Element.CRYO, 1.5),
+				ElementalApplications.gaugeUnits(target, Element.CRYO, 0),
 				InternalCooldownContext.ofNone(origin)
 			);
 
