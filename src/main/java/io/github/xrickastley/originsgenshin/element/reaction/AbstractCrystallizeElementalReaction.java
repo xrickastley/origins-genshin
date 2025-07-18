@@ -7,7 +7,7 @@ import net.minecraft.entity.LivingEntity;
 
 public abstract sealed class AbstractCrystallizeElementalReaction 
 	extends ElementalReaction 
-	permits PyroCrystallizeElementalReaction, BurningCrystallizeElementalReaction, HydroCrystallizeElementalReaction, ElectroCrystallizeElementalReaction, CryoCrystallizeElementalReaction, FrozenCrystallizeElementalReaction
+	permits PyroCrystallizeElementalReaction, HydroCrystallizeElementalReaction, ElectroCrystallizeElementalReaction, CryoCrystallizeElementalReaction, FrozenCrystallizeElementalReaction
 {
 	protected AbstractCrystallizeElementalReaction(ElementalReactionSettings settings) {
 		super(settings);
