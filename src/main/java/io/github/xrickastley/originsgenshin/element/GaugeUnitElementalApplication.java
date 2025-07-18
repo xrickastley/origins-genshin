@@ -5,6 +5,7 @@ import java.util.function.Function;
 
 import org.jetbrains.annotations.Nullable;
 
+import io.github.xrickastley.originsgenshin.component.ElementComponent;
 import io.github.xrickastley.originsgenshin.exception.ElementalApplicationOperationException;
 import io.github.xrickastley.originsgenshin.exception.ElementalApplicationOperationException.Operation;
 
@@ -102,6 +103,8 @@ public final class GaugeUnitElementalApplication extends ElementalApplication {
 		this.decayRate = this.element.hasDecayInheritance()
 			? Math.min(this.decayRate, guApp.decayRate)
 			: guApp.decayRate;
+
+		ElementComponent.sync(this.entity);
 	}
 
 	@Override

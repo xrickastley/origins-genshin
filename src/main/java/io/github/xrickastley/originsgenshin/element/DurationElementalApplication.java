@@ -2,6 +2,7 @@ package io.github.xrickastley.originsgenshin.element;
 
 import java.util.UUID;
 
+import io.github.xrickastley.originsgenshin.component.ElementComponent;
 import io.github.xrickastley.originsgenshin.exception.ElementalApplicationOperationException;
 import io.github.xrickastley.originsgenshin.exception.ElementalApplicationOperationException.Operation;
 import net.minecraft.entity.LivingEntity;
@@ -62,6 +63,8 @@ public final class DurationElementalApplication extends ElementalApplication {
 		this.duration = durationApp.duration;
 		this.gaugeUnits = Math.max(this.gaugeUnits, durationApp.gaugeUnits);
 		this.currentGauge = gaugeUnits;
+
+		ElementComponent.sync(this.entity);
 	}
 
 	@Override
