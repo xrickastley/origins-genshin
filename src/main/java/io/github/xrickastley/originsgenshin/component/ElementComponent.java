@@ -81,16 +81,16 @@ public interface ElementComponent extends AutoSyncedComponent, CommonTickingComp
 	 * @param element The element to test.
 	 * @param origin The entity that applied this element. If {@code null}, the element is automatically considered to be applicable.
 	 * @param sourceTag The source of this element. This is the skill that dealt the damage.
-	 * @param handleICD Whether or not ICD should be handled. Only set this to {@code true} if {@link ElementComponent#canApplyElement}
+	 * @param handleICD Whether the ICD should be handled. Only set this to {@code true} if {@link ElementComponent#canApplyElement}
 	 */
 	public boolean canApplyElement(Element element, InternalCooldownContext icdContext, boolean handleICD);
 	
 	default List<ElementalReaction> addElementalApplication(Element element, InternalCooldownContext icdContext, double gaugeUnits) {
-		final boolean isAura = this.getAppliedElements().length() == 0;
+		final boolean isAura = this.getAppliedElements().isEmpty();
 		
 		OriginsGenshin
-		.sublogger(ElementComponent.class)
-		.info("(add) Currently applied elements: {} | isAura: {}", this.getAppliedElements(), isAura);
+			.sublogger(ElementComponent.class)
+			.info("(add) Currently applied elements: {} | isAura: {}", this.getAppliedElements(), isAura);
 		
 		return this.addElementalApplication(ElementalApplications.gaugeUnits(this.getOwner(), element, gaugeUnits, isAura), icdContext);
 	}
@@ -106,7 +106,11 @@ public interface ElementComponent extends AutoSyncedComponent, CommonTickingComp
 	 * @param element The element to check.
 	 * @return Whether or not the entity has the specified element applied.
 	 */
-	public boolean hasElementalApplication(Element element);
+	default boolean hasElementalApplication(Element element) {
+		return this
+			.getElementHolder(element)
+			.hasElementalApplication();
+	}
 
 	/**
 	 * Reduces the amount of gauge units in a specified element, then returns the eventual amount of gauge units reduced.
@@ -116,16 +120,24 @@ public interface ElementComponent extends AutoSyncedComponent, CommonTickingComp
 	 * element had a current gauge value lesser than {@code gaugeUnits}. However, if this value is {@code -1.0}, the provided
 	 * {@code element} was not found or did not exist.
 	 * 
-	 * @see {@link ElementalApplication#reduceGauge}
+	 * @see ElementalApplication#reduceGauge
 	 */
-	public double reduceElementalApplication(Element element, double gaugeUnits);
+	default double reduceElementalApplication(Element element, double gaugeUnits) {
+		return Optional.ofNullable(this.getElementalApplication(element))
+			.map(application -> application.reduceGauge(gaugeUnits))
+			.orElse(-1.0);
+	}
 
 	/**
 	 * Gets an Elemental Application with the specified {@code element}.
 	 * @param element The {@code Element} to get an Elemental Application from.
 	 * @return The {@code ElementalApplication}, if one exists for {@code element}. 
 	 */
-	public ElementalApplication getElementalApplication(Element element);
+	default ElementalApplication getElementalApplication(Element element) {
+		return this
+			.getElementHolder(element)
+			.getElementalApplication();
+	}
 
 	/**
 	 * Gets all currently applied elements as a {@link Stream}.
@@ -133,9 +145,11 @@ public interface ElementComponent extends AutoSyncedComponent, CommonTickingComp
 	public Array<ElementalApplication> getAppliedElements();
 
 	/**
-	 * Applies an {@link ElementalDamageSource} to this entity, <i>possibly</i> triggering an {@link ElementalReaction}. If no reaction is triggered, {@code null} is returned instead.
+	 * Applies an {@link ElementalDamageSource} to this entity, <i>possibly</i> triggering 
+	 * multiple {@link ElementalReaction}s. If no reactions were triggered, the list will be empty.
+	 * 
 	 * @param source The {@code ElementalDamageSource} to apply to this entity.
-	 * @return A triggered {@link ElementalReaction}, or {@code null} if no reaction was triggered.
+	 * @return The triggered {@link ElementalReaction}s.
 	 */
 	public List<ElementalReaction> applyFromDamageSource(final ElementalDamageSource source);
 

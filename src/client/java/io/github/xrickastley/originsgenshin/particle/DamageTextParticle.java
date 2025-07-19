@@ -34,7 +34,7 @@ public class DamageTextParticle extends TextBillboardParticle {
 		this.maxAge = 40;
 		this.fadeAge = maxAge - 15;
 		this.color = MathHelper.floor(color);
-		this.setText(TextHelper.withFont(String.format("%d", (int) Math.min(Math.round(amount), 1)), TextBillboardParticle.GENSHIN_FONT));
+		this.setText(TextHelper.withFont(String.format("%d", (int) Math.max(Math.round(amount), 1)), TextBillboardParticle.GENSHIN_FONT));
 		
 		// System.out.println(this.text.toString());
 	}

@@ -135,6 +135,7 @@ public final class ElementComponentImpl implements ElementComponent {
 		return new ArrayList<>(triggeredReactions);
 	}
 
+	/*
 	@Override
 	public boolean hasElementalApplication(Element element) {
 		return elementHolder
@@ -142,20 +143,7 @@ public final class ElementComponentImpl implements ElementComponent {
 			.map(ElementHolder::getElementalApplication)
 			.anyMatch(application -> application != null && application.isOfElement(element) && !application.isEmpty());
 	}
-
-	@Override
-	public double reduceElementalApplication(Element element, double gaugeUnits) {
-		return Optional.ofNullable(this.getElementalApplication(element))
-			.map(application -> application.reduceGauge(gaugeUnits))
-			.orElse(-1.0);
-	}
-
-	@Override
-	public @Nullable ElementalApplication getElementalApplication(Element element) {
-		return this
-			.getElementHolder(element)
-			.getElementalApplication();
-	}
+	*/
 
 	@Override
 	public Array<ElementalApplication> getAppliedElements() {

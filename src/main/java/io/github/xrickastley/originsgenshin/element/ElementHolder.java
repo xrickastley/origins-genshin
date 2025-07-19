@@ -40,7 +40,7 @@ public final class ElementHolder {
 	}
 
 	public boolean hasElementalApplication() {
-		return application != null;
+		return application != null && !application.isEmpty();
 	}
 
 	public Element getElement() {

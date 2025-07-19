@@ -1,8 +1,10 @@
 package io.github.xrickastley.originsgenshin;
 
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.minecraft.command.argument.serialize.ConstantArgumentSerializer;
 import net.minecraft.entity.Entity;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.entry.RegistryEntry;
@@ -15,6 +17,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import io.github.apace100.apoli.util.Scheduler;
+import io.github.xrickastley.originsgenshin.command.ElementArgumentType;
+import io.github.xrickastley.originsgenshin.command.ElementCommand;
 import io.github.xrickastley.originsgenshin.element.InternalCooldownType;
 import io.github.xrickastley.originsgenshin.element.reaction.ElementalReactions;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinAttributes;
@@ -69,7 +73,15 @@ public class OriginsGenshin implements ModInitializer {
 						return 1;
 					})
 			);
+
+			ElementCommand.register(dispatcher);
 		});
+
+		ArgumentTypeRegistry.registerArgumentType(
+			OriginsGenshin.identifier("element"),
+			ElementArgumentType.class,
+			ConstantArgumentSerializer.of(ElementArgumentType::new)
+		);
 	}
 
 	public static Identifier identifier(String path) {
