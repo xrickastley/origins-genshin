@@ -72,14 +72,14 @@ public abstract sealed class ElementalApplication permits DurationElementalAppli
 	public abstract int getRemainingTicks();
 
 	/**
-	 * Whether or not this Elemental Application is using Gauge Units.
+	 * Whether this Elemental Application is using Gauge Units.
 	 */
 	public boolean isGaugeUnits() {
 		return this.type == Type.GAUGE_UNIT;
 	}
 
 	/**
-	 * Whether or not this Elemental Application is using a specified duration.
+	 * Whether this Elemental Application is using a specified duration.
 	 */
 	public boolean isDuration() {
 		return this.type == Type.DURATION;
@@ -94,14 +94,14 @@ public abstract sealed class ElementalApplication permits DurationElementalAppli
 	}
 
 	/**
-	 * Whether or not this Elemental Application is an aura element.
+	 * Whether this Elemental Application is an aura element.
 	 */
 	public boolean isAuraElement() {
 		return this.isAura;
 	}
 
 	/**
-	 * Whether or not this Elemental Application is empty. <br> <br>
+	 * Whether this Elemental Application is empty. <br> <br>
 	 * 
 	 * This is {@code true}, 
 	 * <ul>

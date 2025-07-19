@@ -57,7 +57,7 @@ public class ElementalSkillRenderer extends PowerRenderer {
 	/**
 	 * Compares the currently existing {@code power} and the given {@code newPower}. If {@code newPower} isn't null and {@code newPower.hasElementalSkill()} is true, replaces the current elemental Skill power with the new one.
 	 * @param newPower The elemental Skill power to replace the currently existing {@code power}, if it exists.
-	 * @return Whether or not the elemental Skill power was replaced.
+	 * @return Whether the elemental Skill power was replaced.
 	 */
 	public boolean setOrPersist(ActiveCooldownPower newPower) {
 		if (newPower == null || !((IActiveCooldownPower) newPower).hasElementalSkill()) return false;

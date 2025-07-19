@@ -14,15 +14,30 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.math.MathHelper;
 
 public final class GaugeUnitElementalApplication extends ElementalApplication {
-	protected double decayRate;
+	private double decayRate;
 
-	protected GaugeUnitElementalApplication(LivingEntity entity, Element element, UUID uuid, double gaugeUnits, boolean isAura) {
+	GaugeUnitElementalApplication(LivingEntity entity, Element element, UUID uuid, double gaugeUnits, boolean isAura) {
 		super(Type.GAUGE_UNIT, entity, element, uuid, gaugeUnits, isAura);
 
 		this.decayRate = GaugeUnitElementalApplication.getDefaultDecayRate(gaugeUnits);
 
 		// Aura tax.
 		if (this.isAura && element.hasAuraTax()) this.currentGauge *= 0.8;
+	}
+
+	static ElementalApplication fromNbt(LivingEntity entity, NbtCompound nbt, long syncedAt) {
+		final Element element = Element.valueOf(nbt.getString("Element"));
+		final UUID uuid = nbt.getUuid("UUID");
+		final double gaugeUnits = nbt.getDouble("GaugeUnits");
+		final double currentGauge = nbt.getDouble("CurrentGauge");
+		final boolean isAura = nbt.getBoolean("IsAura");
+
+		final var application = new GaugeUnitElementalApplication(entity, element, uuid, gaugeUnits, isAura);
+
+		final double syncedGaugeDeduction = Math.max(entity.getWorld().getTime() - syncedAt, 0) * application.getDecayRate();
+		application.currentGauge = MathHelper.clamp(currentGauge - syncedGaugeDeduction, 0, application.gaugeUnits);
+
+		return application;
 	}
 
 	/**
@@ -36,21 +51,6 @@ public final class GaugeUnitElementalApplication extends ElementalApplication {
 		double decayRateTicks = decayRate / 0.05;
 		// Now a GU/tick, allowing us to tick down the gauge easily.
 		return 1 / decayRateTicks;
-	}
-
-	protected static ElementalApplication fromNbt(LivingEntity entity, NbtCompound nbt, long syncedAt) {
-		final Element element = Element.valueOf(nbt.getString("Element"));
-		final UUID uuid = nbt.getUuid("UUID");
-		final double gaugeUnits = nbt.getDouble("GaugeUnits");
-		final double currentGauge = nbt.getDouble("CurrentGauge");
-		final boolean isAura = nbt.getBoolean("IsAura");
-
-		final var application = new GaugeUnitElementalApplication(entity, element, uuid, gaugeUnits, isAura);
-
-		final double syncedGaugeDeduction = Math.max(entity.getWorld().getTime() - syncedAt, 0) * application.getDecayRate();
-		application.currentGauge = MathHelper.clamp(currentGauge - syncedGaugeDeduction, 0, application.gaugeUnits);
-
-		return application;
 	}
 
 	/**

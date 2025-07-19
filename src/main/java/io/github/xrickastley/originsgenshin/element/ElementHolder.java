@@ -13,7 +13,7 @@ import io.github.xrickastley.originsgenshin.factory.OriginsGenshinGameRules;
 import net.minecraft.entity.LivingEntity;
 
 public final class ElementHolder {
-	// The one holding the element.
+	// The entity holding the element.
 	private final LivingEntity owner;
 	protected final Map<UUID, InternalCooldownHolder> internalCooldowns = new ConcurrentHashMap<>();
 	private final Element element;
@@ -51,12 +51,8 @@ public final class ElementHolder {
 		return this.application;
 	}
 
-	public boolean shouldDoElements() {
-		return owner.getWorld().getGameRules().getBoolean(OriginsGenshinGameRules.DO_ELEMENTS);
-	}
-
 	public ElementalApplication getOrCreateElementalApplication(double gaugeUnits, boolean aura) {
-		if (!this.shouldDoElements()) throw new IllegalStateException("The Game Rule \"doElements\" is false! Check if you can apply elements through ElementHolder#shouldDoElements before calling this method!");
+		if (!this.shouldDoElements() && this.application == null) throw new IllegalStateException("The Game Rule \"doElements\" is false! Check if you can apply elements through ElementHolder#shouldDoElements before calling this method!");
 
 		this.application = ElementalApplications.gaugeUnits(owner, element, gaugeUnits, aura);
 
@@ -64,7 +60,7 @@ public final class ElementHolder {
 	}
 	
 	public ElementalApplication getOrCreateElementalApplication(double duration, double gaugeUnits) {
-		if (!this.shouldDoElements()) throw new IllegalStateException("The Game Rule \"doElements\" is false! Check if you can apply elements through ElementHolder#shouldDoElements before calling this method!");
+		if (!this.shouldDoElements() && this.application == null) throw new IllegalStateException("The Game Rule \"doElements\" is false! Check if you can apply elements through ElementHolder#shouldDoElements before calling this method!");
 		
 		this.application = ElementalApplications.duration(owner, element, gaugeUnits, duration);
 
@@ -87,10 +83,17 @@ public final class ElementHolder {
 		}
 	}
 
+	public boolean shouldDoElements() {
+		return owner.getWorld().getGameRules().getBoolean(OriginsGenshinGameRules.DO_ELEMENTS);
+	}
+
 	/**
 	 * Checks if the element can be applied.
 	 * @param element The element to test.
 	 * @param sourceTag The source of this element. This is the skill that dealt the damage.
+	 * @param icdContext The {@code InternalCooldownContext} of this {@code ElementalDamageSource}.
+	 * This controls the Internal Cooldown of specific attacks, as Internal Cooldowns are different
+	 * between contexts.
 	 */
 	public boolean canApplyElement(Element element, InternalCooldownContext icdContext) {
 		return this.canApplyElement(element, icdContext, false);
@@ -100,6 +103,9 @@ public final class ElementHolder {
 	 * Checks if the element can be applied.
 	 * @param element The element to test.
 	 * @param sourceTag The source of this element. This is the skill that dealt the damage.
+	 * @param icdContext The {@code InternalCooldownContext} of this {@code ElementalDamageSource}.
+	 * This controls the Internal Cooldown of specific attacks, as Internal Cooldowns are different
+	 * between contexts.
 	 * @param handleICD Whether the ICD should be handled.
 	 */
 	public boolean canApplyElement(Element element, InternalCooldownContext icdContext, boolean handleICD) {

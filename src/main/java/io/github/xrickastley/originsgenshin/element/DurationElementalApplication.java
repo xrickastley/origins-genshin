@@ -10,17 +10,17 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 
 public final class DurationElementalApplication extends ElementalApplication {
-	protected double duration;
-	protected long appliedAt;
+	private double duration;
+	private long appliedAt;
 
-	protected DurationElementalApplication(LivingEntity entity, Element element, UUID uuid, double gaugeUnits, double duration) {
+	DurationElementalApplication(LivingEntity entity, Element element, UUID uuid, double gaugeUnits, double duration) {
 		super(Type.DURATION, entity, element, uuid, gaugeUnits, true);
 
 		this.duration = duration;
 		this.appliedAt = entity.getWorld().getTime();
 	}
 	
-	protected static ElementalApplication fromNbt(LivingEntity entity, NbtCompound nbt, long syncedAt) {
+	static ElementalApplication fromNbt(LivingEntity entity, NbtCompound nbt, long syncedAt) {
 		final Element element = Element.valueOf(nbt.getString("Element"));
 		final UUID uuid = nbt.getUuid("UUID");
 		final double gaugeUnits = nbt.getDouble("GaugeUnits");

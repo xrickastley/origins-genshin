@@ -47,7 +47,7 @@ public final class InternalCooldown {
 	/**
 	 * Handles the Internal Cooldown. <br> <br>
 	 * 
-	 * Upon using this method, a hit is registered, and it returns whether or not the element can
+	 * Upon using this method, a hit is registered, and it returns Whether the element can
 	 * be applied. <br> <br>
 	 * 
 	 * @see {@link InternalCooldown#isInInternalCooldown} for only checking the Internal Cooldown

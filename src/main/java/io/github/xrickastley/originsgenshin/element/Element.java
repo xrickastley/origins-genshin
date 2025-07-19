@@ -164,6 +164,7 @@ public enum Element {
 		return settings.canBeAura;
 	}
 	
+	// TODO: fix
 	/**
 	 * Controls reapplication of elements <br> <br>
 	 * 
@@ -195,7 +196,7 @@ public enum Element {
 	 * as a child of this element.
 	 * 
 	 * @param element The element to check.
-	 * @return Whether or not {@code element} is a first-child of this {@link Element}.
+	 * @return Whether {@code element} is a first-child of this {@link Element}.
 	 */
 	public boolean isChild(Element element) {
 		return this.children
@@ -355,7 +356,7 @@ public enum Element {
 		 * lower priorities may <b>not</b> be applied while that element is currently applied as
 		 * an Aura Element. <br> <br>
 		 * 
-		 * This setting changes whether or not the element is included as a "higher priority" 
+		 * This setting changes Whether the element is included as a "higher priority" 
 		 * element upon checking. If <b>all</b> currently applied Aura elements with the "higher
 		 * priority" are excluded, the next highest priority elements will be considered.
 		 */

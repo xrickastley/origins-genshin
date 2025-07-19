@@ -95,7 +95,7 @@ public final class ElementalReactionSettings {
 	 * When this is {@code true}, the <b>Triggering Element</b> can be considered as an <b>Aura
 	 * Element</b>.
 	 * 
-	 * @param reversable Whether or not the Elemental Reaction is reversable.
+	 * @param reversable Whether the Elemental Reaction is reversable.
 	 */
 	public ElementalReactionSettings reversable(boolean reversable) {
 		this.reversable = reversable;
@@ -104,7 +104,7 @@ public final class ElementalReactionSettings {
 	}
 
 	/**
-	 * Whether or not the triggering Element is applied as an aura. <br> <br>
+	 * Whether the triggering Element is applied as an aura. <br> <br>
 	 * 
 	 * Once all possible Elemental Reactions have been triggered, the triggering element
 	 * may have some Gauge Units left. This setting allows for the remaining Gauge Units
@@ -117,7 +117,7 @@ public final class ElementalReactionSettings {
 	 * Do note that this setting will not affect Elemental Applications with {@link Type#DURATION},
 	 * as those are always applied as an Aura Element after possible reactions.
 	 * 
-	 * @param applyResultAsAura Whether or not the remaining Gauge Units from the triggering 
+	 * @param applyResultAsAura Whether the remaining Gauge Units from the triggering 
 	 * element are applied as an Elemental Aura.
 	 */
 	public ElementalReactionSettings applyResultAsAura(boolean applyResultAsAura) {
@@ -127,12 +127,12 @@ public final class ElementalReactionSettings {
 	}
 
 	/**
-	 * Whether or not this reaction ends all future reactions from triggering. <br> <br>
+	 * Whether this reaction ends all future reactions from triggering. <br> <br>
 	 * 
 	 * Once a reaction is triggered, an attempt to trigger another is made. This setting denies
 	 * other reactions to be triggered after triggering this reaction.
 	 * 
-	 * @param endsReactionTrigger Whether or not reactions can be triggered after this reaction.
+	 * @param endsReactionTrigger Whether reactions can be triggered after this reaction.
 	 */
 	public ElementalReactionSettings endsReactionTrigger(boolean endsReactionTrigger) {
 		this.endsReactionTrigger = endsReactionTrigger;
@@ -141,7 +141,7 @@ public final class ElementalReactionSettings {
 	}
 
 	/**
-	 * Whether or not this reaction prevents the priority upgrade. <br> <br>
+	 * Whether this reaction prevents the priority upgrade. <br> <br>
 	 * 
 	 * Once a reaction is triggered, an attempt to trigger another is made. If no reactions were
 	 * found, an attempt to upgrade the "element priority" is done. This setting denies that 
@@ -151,7 +151,7 @@ public final class ElementalReactionSettings {
 	 * reaction. Suceeding reactions <b>must</b> also have this property enabled in order for the
 	 * upgrade to be <i>fully</i> denied.
 	 * 
-	 * @param preventsPriorityUpgrade Whether or not the element priority can be upgraded after 
+	 * @param preventsPriorityUpgrade Whether the element priority can be upgraded after 
 	 * this reaction.
 	 */
 	public ElementalReactionSettings preventsPriorityUpgrade(boolean preventsPriorityUpgrade) {

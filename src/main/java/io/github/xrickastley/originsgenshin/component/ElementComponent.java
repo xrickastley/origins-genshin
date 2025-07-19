@@ -68,9 +68,8 @@ public interface ElementComponent extends AutoSyncedComponent, CommonTickingComp
 
 	/**
 	 * Checks if the element can be applied.
-	 * @param element The element to test.
-	 * @param origin The entity that applied this element. If {@code null}, the element is automatically considered to be applicable.
-	 * @param sourceTag The source of this element. This is the skill that dealt the damage.
+	 * @param element The element to check.
+	 * @param icdContext The {@link InternalCooldownContext} of the Element to be applied.
 	 */
 	default boolean canApplyElement(Element element, InternalCooldownContext icdContext) {
 		return this.canApplyElement(element, icdContext, false);
@@ -78,10 +77,9 @@ public interface ElementComponent extends AutoSyncedComponent, CommonTickingComp
 
 	/**
 	 * Checks if the element can be applied.
-	 * @param element The element to test.
-	 * @param origin The entity that applied this element. If {@code null}, the element is automatically considered to be applicable.
-	 * @param sourceTag The source of this element. This is the skill that dealt the damage.
-	 * @param handleICD Whether the ICD should be handled. Only set this to {@code true} if {@link ElementComponent#canApplyElement}
+	 * @param element The element to check.
+	 * @param icdContext The {@link InternalCooldownContext} of the Element to be applied.
+	 * @param handleICD Whether the ICD should be handled. This will register a "hit" to the gauge sequence. 
 	 */
 	public boolean canApplyElement(Element element, InternalCooldownContext icdContext, boolean handleICD);
 	
@@ -104,7 +102,7 @@ public interface ElementComponent extends AutoSyncedComponent, CommonTickingComp
 	/**
 	 * Checks if this entity has a specified Elemental Application with the provided {@code element}.
 	 * @param element The element to check.
-	 * @return Whether or not the entity has the specified element applied.
+	 * @return Whether the entity has the specified element applied.
 	 */
 	default boolean hasElementalApplication(Element element) {
 		return this

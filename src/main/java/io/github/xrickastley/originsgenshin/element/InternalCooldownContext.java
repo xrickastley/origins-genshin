@@ -23,13 +23,13 @@ import net.minecraft.entity.LivingEntity;
  * 
  * The <b>tag</b>, referred to as the {@link InternalCooldownTag} in this codebase, is internally a {@code String}
  * that identifes the attack. This tag can be shared or differ across different elemental attacks, 
- * and is one of the factors that dictate whether or not two elemental attacks (with the same 
+ * and is one of the factors that dictate Whether two elemental attacks (with the same 
  * Element) share ICD. <br> <br>
  * 
  * The <b>type</b>, referred to as the {@link InternalCooldownType} in this codebase, is an instance of
  * {@code InternalCooldownType} that controls the "Reset Interval" and the "Gauge Sequence" for an attack.
  * Much like the tag, this type can be shared or differ across different elemental attacks, and is 
- * also one of the factors that dictate whether or not two elemental attacks (with the same 
+ * also one of the factors that dictate Whether two elemental attacks (with the same 
  * Element) share ICD. <br> <br>
  * 
  * <h2>Sharing ICD</h2>
