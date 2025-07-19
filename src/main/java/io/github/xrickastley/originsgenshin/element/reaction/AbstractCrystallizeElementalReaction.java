@@ -9,7 +9,7 @@ public abstract sealed class AbstractCrystallizeElementalReaction
 	extends ElementalReaction 
 	permits PyroCrystallizeElementalReaction, HydroCrystallizeElementalReaction, ElectroCrystallizeElementalReaction, CryoCrystallizeElementalReaction, FrozenCrystallizeElementalReaction
 {
-	protected AbstractCrystallizeElementalReaction(ElementalReactionSettings settings) {
+	AbstractCrystallizeElementalReaction(ElementalReactionSettings settings) {
 		super(settings);
 	}
 

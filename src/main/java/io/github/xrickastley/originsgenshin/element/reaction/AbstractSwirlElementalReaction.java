@@ -31,7 +31,7 @@ public abstract sealed class AbstractSwirlElementalReaction
 	 * 
 	 * @param settings The {@code ElementalReactionSettings} for this {@code ElementalReaction}.
 	 */
-	protected AbstractSwirlElementalReaction(ElementalReactionSettings settings) {
+	AbstractSwirlElementalReaction(ElementalReactionSettings settings) {
 		this(settings, settings.auraElement.getLeft());
 	}
 
@@ -48,11 +48,11 @@ public abstract sealed class AbstractSwirlElementalReaction
 	 * Swirl Elemental Application</a> 
 	 * 
 	 * @param settings The {@code ElementalReactionSettings} for this {@code ElementalReaction}.
-	 * @param damageTargetInstead Whether or not Swirl will <i>only</i> spread the element and 
+	 * @param damageTargetInstead Whether Swirl will <i>only</i> spread the element and 
 	 * deals damage to the Swirl target instead, i.e. the entity the Swirl reaction was triggered
 	 * on.
 	 */
-	protected AbstractSwirlElementalReaction(ElementalReactionSettings settings, boolean damageTargetInstead) {
+	AbstractSwirlElementalReaction(ElementalReactionSettings settings, boolean damageTargetInstead) {
 		super(settings);
 
 		this.swirlElement = settings.auraElement.getLeft();
@@ -74,7 +74,7 @@ public abstract sealed class AbstractSwirlElementalReaction
 	 * @param settings The {@code ElementalReactionSettings} for this {@code ElementalReaction}.
 	 * @param swirlElement The element to Swirl.
 	 */
-	protected AbstractSwirlElementalReaction(ElementalReactionSettings settings, Element swirlElement) {
+	AbstractSwirlElementalReaction(ElementalReactionSettings settings, Element swirlElement) {
 		super(settings);
 
 		this.swirlElement = swirlElement;

@@ -40,7 +40,7 @@ public abstract sealed class AbstractBurningElementalReaction
 			.collect(Collectors.toSet())
 	);
 
-	protected AbstractBurningElementalReaction(ElementalReactionSettings settings) {
+	AbstractBurningElementalReaction(ElementalReactionSettings settings) {
 		super(settings);
 	}
 

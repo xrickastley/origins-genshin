@@ -5,7 +5,7 @@ import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinParticleFactory;
 
 public final class BurningElementalReaction extends AbstractBurningElementalReaction {
-	public BurningElementalReaction() {
+	BurningElementalReaction() {
 		super(
 			new ElementalReactionSettings("Burning", OriginsGenshin.identifier("burning"), OriginsGenshinParticleFactory.BURNING)
 				.setReactionCoefficient(0) // Coefficient: 0 since Burning is "special", removes itself when Dendro is gone/by natural causes.

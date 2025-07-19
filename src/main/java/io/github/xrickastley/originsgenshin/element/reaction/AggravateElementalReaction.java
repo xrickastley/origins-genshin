@@ -5,7 +5,7 @@ import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinParticleFactory;
 
 public final class AggravateElementalReaction extends AdditiveElementalReaction {
-	public AggravateElementalReaction() {
+	AggravateElementalReaction() {
 		super(
 			new ElementalReactionSettings("Aggravate", OriginsGenshin.identifier("aggravate"), OriginsGenshinParticleFactory.AGGRAVATE)
 				// Triggering Frozen should consume the entirety of both Cryo and Hydro aura.

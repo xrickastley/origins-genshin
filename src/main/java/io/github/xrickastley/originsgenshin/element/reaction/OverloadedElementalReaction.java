@@ -23,7 +23,7 @@ import net.minecraft.world.explosion.Explosion.DestructionType;
 import net.minecraft.world.explosion.ExplosionBehavior;
 
 public class OverloadedElementalReaction extends ElementalReaction {
-	public OverloadedElementalReaction() {
+	OverloadedElementalReaction() {
 		super(
 			new ElementalReactionSettings("Overloaded", OriginsGenshin.identifier("overloaded"), OriginsGenshinParticleFactory.OVERLOADED)
 				.setReactionCoefficient(1.0)

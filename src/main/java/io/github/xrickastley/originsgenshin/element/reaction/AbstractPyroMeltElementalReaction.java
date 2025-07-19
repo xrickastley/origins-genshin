@@ -8,7 +8,7 @@ public abstract sealed class AbstractPyroMeltElementalReaction
 	extends AmplifyingElementalReaction 
 	permits PyroCryoMeltElementalReaction, PyroFrozenMeltElementalReaction
 {
-	protected AbstractPyroMeltElementalReaction(String name, String idPath, Element auraElement) {
+	AbstractPyroMeltElementalReaction(String name, String idPath, Element auraElement) {
 		super(
 			new ElementalReactionSettings(name, OriginsGenshin.identifier(idPath), OriginsGenshinParticleFactory.MELT)
 				.setReactionCoefficient(2.0)

@@ -5,7 +5,7 @@ import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinParticleFactory;
 
 public final class CryoSwirlElementalReaction extends AbstractSwirlElementalReaction {
-	public CryoSwirlElementalReaction() {
+	CryoSwirlElementalReaction() {
 		super(
 			new ElementalReactionSettings("Swirl", OriginsGenshin.identifier("swirl_cryo"), OriginsGenshinParticleFactory.SWIRL)
 				.setReactionCoefficient(0.5)

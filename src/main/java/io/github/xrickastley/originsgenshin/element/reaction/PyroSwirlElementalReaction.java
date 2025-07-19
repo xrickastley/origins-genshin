@@ -5,7 +5,7 @@ import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinParticleFactory;
 
 public final class PyroSwirlElementalReaction extends AbstractSwirlElementalReaction {
-	public PyroSwirlElementalReaction() {
+	PyroSwirlElementalReaction() {
 		super(
 			new ElementalReactionSettings("Swirl (Pyro)", OriginsGenshin.identifier("swirl_pyro"), OriginsGenshinParticleFactory.SWIRL)
 				.setReactionCoefficient(0.5)

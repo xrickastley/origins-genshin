@@ -16,7 +16,7 @@ public abstract sealed class AbstractSuperconductElementalReaction
 	extends ElementalReaction
 	permits SuperconductElementalReaction, FrozenSuperconductElementalReaction
 {
-	protected AbstractSuperconductElementalReaction(ElementalReactionSettings settings) {
+	AbstractSuperconductElementalReaction(ElementalReactionSettings settings) {
 		super(settings);
 	}
 

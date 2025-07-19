@@ -5,7 +5,7 @@ import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinParticleFactory;
 
 public final class SpreadElementalReaction extends AdditiveElementalReaction {
-	public SpreadElementalReaction() {
+	SpreadElementalReaction() {
 		super(
 			new ElementalReactionSettings("Spread", OriginsGenshin.identifier("spread"), OriginsGenshinParticleFactory.SPREAD)
 				// Triggering Frozen should consume the entirety of both Cryo and Hydro aura.

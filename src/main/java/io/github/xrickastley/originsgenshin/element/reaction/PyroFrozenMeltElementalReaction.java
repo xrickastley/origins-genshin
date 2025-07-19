@@ -8,7 +8,7 @@ import io.github.xrickastley.originsgenshin.factory.OriginsGenshinStatusEffects;
 import net.minecraft.entity.LivingEntity;
 
 public final class PyroFrozenMeltElementalReaction extends AbstractPyroMeltElementalReaction {
-	protected PyroFrozenMeltElementalReaction() {
+	PyroFrozenMeltElementalReaction() {
 		super("Melt (Pyro)", "melt_pyro-frozen", Element.FROZEN);
 	}
 

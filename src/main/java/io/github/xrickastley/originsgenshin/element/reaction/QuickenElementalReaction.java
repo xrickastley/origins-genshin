@@ -11,7 +11,7 @@ import io.github.xrickastley.originsgenshin.factory.OriginsGenshinParticleFactor
 import net.minecraft.entity.LivingEntity;
 
 public final class QuickenElementalReaction extends ElementalReaction {
-	public QuickenElementalReaction() {
+	QuickenElementalReaction() {
 		super(
 			new ElementalReactionSettings("Quicken", OriginsGenshin.identifier("quicken"), OriginsGenshinParticleFactory.QUICKEN)
 				.setReactionCoefficient(1.0)

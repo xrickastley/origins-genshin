@@ -20,7 +20,7 @@ import net.minecraft.entity.LivingEntity;
  * is removed. 
  */
 public final class ShatterElementalReaction extends ElementalReaction {
-	public ShatterElementalReaction() {
+	ShatterElementalReaction() {
 		super(
 			new ElementalReactionSettings("Shatter", OriginsGenshin.identifier("shatter"), null)
 				.setReactionCoefficient(0)

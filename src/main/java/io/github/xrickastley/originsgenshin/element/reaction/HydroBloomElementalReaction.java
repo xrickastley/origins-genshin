@@ -5,7 +5,7 @@ import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinParticleFactory;
 
 public final class HydroBloomElementalReaction extends AbstractBloomElementalReaction {
-	public HydroBloomElementalReaction() {
+	HydroBloomElementalReaction() {
 		super(
 			new ElementalReactionSettings("Bloom (Hydro)", OriginsGenshin.identifier("bloom_hydro"), OriginsGenshinParticleFactory.BLOOM)
 				.setReactionCoefficient(0.5)

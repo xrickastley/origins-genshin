@@ -5,7 +5,7 @@ import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinParticleFactory;
 
 public final class CryoMeltElementalReaction extends AmplifyingElementalReaction {
-	protected CryoMeltElementalReaction() {
+	CryoMeltElementalReaction() {
 		super(
 			new ElementalReactionSettings("Melt", OriginsGenshin.identifier("melt_cryo"), OriginsGenshinParticleFactory.MELT)
 				.setReactionCoefficient(0.5)

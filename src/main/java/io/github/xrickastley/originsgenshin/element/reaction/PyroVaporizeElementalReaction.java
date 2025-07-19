@@ -5,7 +5,7 @@ import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinParticleFactory;
 
 public final class PyroVaporizeElementalReaction extends AmplifyingElementalReaction {
-	protected PyroVaporizeElementalReaction() {
+	PyroVaporizeElementalReaction() {
 		super(
 			new ElementalReactionSettings("Vaporize (Pyro)", OriginsGenshin.identifier("vaporize_pyro"), OriginsGenshinParticleFactory.VAPORIZE)
 				.setReactionCoefficient(0.5)

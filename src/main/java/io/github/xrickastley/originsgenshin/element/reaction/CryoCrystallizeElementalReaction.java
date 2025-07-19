@@ -5,7 +5,7 @@ import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinParticleFactory;
 
 public final class CryoCrystallizeElementalReaction extends AbstractCrystallizeElementalReaction {
-	protected CryoCrystallizeElementalReaction() {
+	CryoCrystallizeElementalReaction() {
 		super(
 			new ElementalReactionSettings("Crystallize", OriginsGenshin.identifier("crystallize_cryo"), OriginsGenshinParticleFactory.CRYSTALLIZE)
 				.setReactionCoefficient(0.5)

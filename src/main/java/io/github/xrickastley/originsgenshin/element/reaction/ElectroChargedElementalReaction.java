@@ -17,7 +17,7 @@ import io.github.xrickastley.originsgenshin.registry.OriginsGenshinDamageTypes;
 import net.minecraft.entity.LivingEntity;
 
 public class ElectroChargedElementalReaction extends ElementalReaction {
-	public ElectroChargedElementalReaction() {
+	ElectroChargedElementalReaction() {
 		super(
 			new ElementalReactionSettings("Electro-Charged", OriginsGenshin.identifier("electro-charged"), OriginsGenshinParticleFactory.ELECTRO_CHARGED)
 				.setReactionCoefficient(0)
