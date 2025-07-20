@@ -44,8 +44,8 @@ import net.minecraft.util.dynamic.Codecs;
  * hardcoded instances of it.
  * 
  * <ul>
- * 	<li>{@link InternalCooldownType#of()} creates a <i>purely</i> hardcoded instance of {@code InternalCooldownType}.</li>
- * 	<li>{@link InternalCooldownType#registered()} creates a hardcoded instance of {@code InternalCooldownType} that is 
+ * 	<li>{@link InternalCooldownType#of(Identifier, int, int) InternalCooldownType.of()} creates a <i>purely</i> hardcoded instance of {@code InternalCooldownType}.</li>
+ * 	<li>{@link InternalCooldownType#registered(Identifier, int, int) InternalCooldownType.registered()} creates a hardcoded instance of {@code InternalCooldownType} that is 
  * 	registered to the {@link OriginsGenshinRegistries#INTERNAL_COOLDOWN_TYPE} registry. This hardcoded instance is <i>not</i>
  * 	overwritable by data-driven means.</li>
  * </ul>

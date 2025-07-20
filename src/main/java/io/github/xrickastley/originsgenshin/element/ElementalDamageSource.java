@@ -51,7 +51,7 @@ public class ElementalDamageSource extends DamageSource {
 	/**
 	 * Creates an {@link ElementalDamageSource}.
 	 * @param type The damage type of this {@code DamageSource}.
-	 * @param attacker The position this {@code DamageSource} originated from.
+	 * @param position The position this {@code DamageSource} originated from.
 	 * @param application The Elemental Application of this {@code ElementalDamageSource}. This is 
 	 * the Elemental Application that will be applied to the target entity, if possible.
 	 * @param icdContext The {@code InternalCooldownContext} of this {@code ElementalDamageSource}.
@@ -98,6 +98,7 @@ public class ElementalDamageSource extends DamageSource {
 		this.application = application;
 		this.icdContext = icdContext;
 	}
+
 
 	public ElementalApplication getElementalApplication() {
 		return this.application;

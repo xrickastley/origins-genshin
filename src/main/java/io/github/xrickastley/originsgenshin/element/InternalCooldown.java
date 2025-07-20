@@ -39,10 +39,12 @@ public final class InternalCooldown {
 	}
 
 	/**
-	 * Checks if an element can be applied. <br> <br>
+	 * Checks if an element can be applied based on this Internal Cooldown. <br> <br>
 	 * 
-	 * @see {@link InternalCooldown#isInInternalCooldown} for registering a hit and checking the
-	 * Internal Cooldown after.
+	 * For registering a hit and checking the Internal Cooldown after, use
+	 * {@link InternalCooldown#handleInternalCooldown} instead.
+	 * 
+	 * @see InternalCooldown#handleInternalCooldown
 	 */
 	public boolean isInInternalCooldown() {
 		return tag.getTag() != null && holder.getOwner().age >= cooldown || totalHits > type.getGaugeSequence();
@@ -54,8 +56,10 @@ public final class InternalCooldown {
 	 * Upon using this method, a hit is registered, and it returns Whether the element can
 	 * be applied. <br> <br>
 	 * 
-	 * @see {@link InternalCooldown#isInInternalCooldown} for only checking the Internal Cooldown
-	 * without registering a hit.
+	 * For only checking the Internal Cooldown without registering a hit, use
+	 * {@link InternalCooldown#isInInternalCooldown} instead.
+	 * 
+	 * @see InternalCooldown#isInInternalCooldown
 	 */
 	public boolean handleInternalCooldown() {
 		if (tag.getTag() == null) return true;

@@ -438,7 +438,7 @@ public class Array<T> implements List<T> {
 	 * A {@link CopyOnWriteArrayList} method, returns an iterator over the elements in this list in proper sequence. <br> <br>
      *
      * The returned iterator provides a snapshot of the state of the list when the iterator was constructed. 
-	 * No synchronization is needed while traversing the iterator. The iterator does <i>NOT<i> support the {@code remove}
+	 * No synchronization is needed while traversing the iterator. The iterator does <i>NOT</i> support the {@code remove}
 	 * method.
 	 * {@inheritDoc}
 	 */

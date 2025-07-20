@@ -90,7 +90,6 @@ public final class ElementHolder {
 	/**
 	 * Checks if the element can be applied.
 	 * @param element The element to test.
-	 * @param sourceTag The source of this element. This is the skill that dealt the damage.
 	 * @param icdContext The {@code InternalCooldownContext} of this {@code ElementalDamageSource}.
 	 * This controls the Internal Cooldown of specific attacks, as Internal Cooldowns are different
 	 * between contexts.
@@ -102,7 +101,6 @@ public final class ElementHolder {
 	/**
 	 * Checks if the element can be applied.
 	 * @param element The element to test.
-	 * @param sourceTag The source of this element. This is the skill that dealt the damage.
 	 * @param icdContext The {@code InternalCooldownContext} of this {@code ElementalDamageSource}.
 	 * This controls the Internal Cooldown of specific attacks, as Internal Cooldowns are different
 	 * between contexts.
