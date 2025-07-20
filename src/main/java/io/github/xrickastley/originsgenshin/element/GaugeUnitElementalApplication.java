@@ -66,7 +66,7 @@ public final class GaugeUnitElementalApplication extends ElementalApplication {
 
 	@Override
 	protected double getDefaultDecayRate() {
-		return decayRate;
+		return this.decayRate;
 	}
 
 	@Override
@@ -77,6 +77,12 @@ public final class GaugeUnitElementalApplication extends ElementalApplication {
 		return (int) (decayRate * this.currentGauge);
 	}
 
+	/**
+	 * {@inheritDoc} <br> <br>
+	 * 
+	 * This implementation guarantees this to be {@code true} when {@code currentGauge} reaches 
+	 * {@code 0}.  
+	 */
 	@Override
 	public boolean isEmpty() {
 		return this.currentGauge <= 0;

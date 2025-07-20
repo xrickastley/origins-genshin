@@ -8,6 +8,7 @@ import io.github.xrickastley.originsgenshin.exception.ElementalApplicationOperat
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
+import net.minecraft.world.World;
 
 public final class DurationElementalApplication extends ElementalApplication {
 	private double duration;
@@ -48,6 +49,13 @@ public final class DurationElementalApplication extends ElementalApplication {
 		return (int) (appliedAt + duration - entity.getWorld().getTime());
 	}
 
+	/**
+	 * {@inheritDoc} <br> <br>
+	 * 
+	 * This implementation guarantees this to be {@code true} when {@code currentGauge} reaches 
+	 * {@code 0} or when the current world time, given by {@link LivingEntity#getWorld()}
+	 * {@link World#getTime() .getTime()} exceeds {@code duration + appliedAt}.  
+	 */
 	@Override
 	public boolean isEmpty() {
 		return this.currentGauge <= 0 || entity.getWorld().getTime() >= (this.appliedAt + this.duration);

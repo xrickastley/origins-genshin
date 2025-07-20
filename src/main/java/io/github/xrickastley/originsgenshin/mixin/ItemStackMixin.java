@@ -1,5 +1,6 @@
 package io.github.xrickastley.originsgenshin.mixin;
 
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -12,8 +13,10 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 
+// Prioritized since Frozen **MUST** disable using items.
 @Mixin(value = ItemStack.class, priority = Integer.MIN_VALUE)
 public class ItemStackMixin {
+	@Final
 	@Inject(
 		method = "use",
 		at = @At("HEAD"),

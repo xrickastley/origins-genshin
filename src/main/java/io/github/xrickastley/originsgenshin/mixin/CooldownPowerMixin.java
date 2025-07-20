@@ -1,5 +1,6 @@
 package io.github.xrickastley.originsgenshin.mixin;
 
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
 import org.spongepowered.asm.mixin.injection.At;
@@ -14,9 +15,7 @@ import io.github.apace100.apoli.util.HudRender;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinStatusEffects;
 import net.minecraft.entity.LivingEntity;
 
-/**
- * Prioritized since Frozen **MUST** disable using powers.
- */
+// Prioritized since Frozen **MUST** disable using powers.
 @Pseudo
 @Mixin(value = CooldownPower.class, priority = Integer.MIN_VALUE)
 public abstract class CooldownPowerMixin 
@@ -29,6 +28,7 @@ public abstract class CooldownPowerMixin
 		throw new AssertionError();
 	}
 
+	@Final
 	@ModifyReturnValue(
 		method = "canUse",
 		at = @At("RETURN"),

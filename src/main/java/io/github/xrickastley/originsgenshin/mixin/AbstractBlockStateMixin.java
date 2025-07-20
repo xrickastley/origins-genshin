@@ -1,5 +1,6 @@
 package io.github.xrickastley.originsgenshin.mixin;
 
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -15,11 +16,10 @@ import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
 import net.minecraft.world.BlockView;
 
-/**
- * Prioritized since Frozen **MUST** disable block placements.
- */
+// Prioritized since Frozen **MUST** disable block placements.
 @Mixin(value = AbstractBlockState.class, priority = Integer.MIN_VALUE)
 public class AbstractBlockStateMixin {
+	@Final
 	@Inject(
     	method = "getOutlineShape(Lnet/minecraft/world/BlockView;Lnet/minecraft/util/math/BlockPos;Lnet/minecraft/block/ShapeContext;)Lnet/minecraft/util/shape/VoxelShape;",
     	at = @At("HEAD"),

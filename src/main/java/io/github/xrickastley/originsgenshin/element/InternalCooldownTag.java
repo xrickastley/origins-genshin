@@ -5,6 +5,14 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.jetbrains.annotations.Nullable;
 
+/**
+ * An {@code InternalCooldownTag} is a class used for holding unique instances of Internal Cooldown
+ * Tags per session. <br> <br>
+ * 
+ * This is a simple class that wraps a {@code String} around itself that creates new 
+ * {@code InternalCooldownTag} instances for new "tags" and returns already existing 
+ * {@code InternalCooldownTag} instances for cached "tags".
+ */
 public final class InternalCooldownTag {
 	private static final Map<String, InternalCooldownTag> INSTANCES = new ConcurrentHashMap<>();
 	public static final InternalCooldownTag NONE = new InternalCooldownTag(null);
@@ -17,22 +25,47 @@ public final class InternalCooldownTag {
 		if (tag != null) InternalCooldownTag.INSTANCES.put(tag, this);
 	}
 
+	/**
+	 * Gets an {@code InternalCooldownTag} instance based on a possible tag. <br> <br>
+	 * 
+	 * If the tag is {@code null}, {@link InternalCooldownTag#NONE} is returned. Otherwise, a
+	 * cached or new instance of {@code InternalCooldownTag} is returned depending on the given
+	 * {@code String} tag.
+	 * 
+	 * @param tag The tag to get an {@code InternalCooldownTag} instance of.
+	 */
 	public static InternalCooldownTag of(final @Nullable String tag) {
 		return tag == null
 			? InternalCooldownTag.NONE
 			: InternalCooldownTag.tag(tag);
 	}
 
+	/**
+	 * Gets a "null" {@code InternalCooldownTag} instance. <br> <br>
+	 * 
+	 * This is equivalent to {@link InternalCooldownTag#NONE}.
+	 */
 	public static InternalCooldownTag none() {
 		return InternalCooldownTag.NONE;
 	}
 
+	/**
+	 * Gets an {@code InternalCooldownTag} instance based on a given tag. <br> <br>
+	 * 
+	 * A cached or new instance of {@code InternalCooldownTag} is returned depending on the given
+	 * {@code String} tag.
+	 * 
+	 * @param tag The tag to get an {@code InternalCooldownTag} instance of.
+	 */
 	public static InternalCooldownTag tag(final String tag) {
 		return INSTANCES.containsKey(tag)
 			? INSTANCES.get(tag)
 			: new InternalCooldownTag(tag);
 	}
 
+	/**
+	 * Gets the tag of this {@code InternalCooldownTag}
+	 */
 	public @Nullable String getTag() {
 		return this.tag;
 	}

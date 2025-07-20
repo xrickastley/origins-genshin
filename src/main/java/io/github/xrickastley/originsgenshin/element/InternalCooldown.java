@@ -20,20 +20,24 @@ public final class InternalCooldown {
 	private int cooldown = 0;
 	private int totalHits = 0;
 
-	public InternalCooldown(final InternalCooldownHolder holder, final InternalCooldownTag tag, final InternalCooldownType type) {
+	InternalCooldown(final InternalCooldownHolder holder, final InternalCooldownTag tag, final InternalCooldownType type) {
 		this.holder = holder;
 		this.type = type;
 		this.tag = tag;
 	}
 
-	public static String getIcdIdentifier(InternalCooldownTag tag, InternalCooldownType type) {
+	public static String getIdentifier(InternalCooldownTag tag, InternalCooldownType type) {
 		return tag.getTag() + type.getId().toString();
 	}
 
-	public static String getIcdIdentifier(String tag, InternalCooldownType type) {
+	public static String getIdentifier(String tag, InternalCooldownType type) {
 		return tag + type.getId().toString();
 	}
-	
+
+	static InternalCooldown none(final InternalCooldownHolder holder) {
+		return new InternalCooldown(holder, InternalCooldownTag.NONE, InternalCooldownType.NONE);
+	}
+
 	/**
 	 * Checks if an element can be applied. <br> <br>
 	 * 
@@ -41,7 +45,7 @@ public final class InternalCooldown {
 	 * Internal Cooldown after.
 	 */
 	public boolean isInInternalCooldown() {
-		return tag != null && holder.getOwner().age >= cooldown || totalHits > type.getGaugeSequence();
+		return tag.getTag() != null && holder.getOwner().age >= cooldown || totalHits > type.getGaugeSequence();
 	}
 
 	/**
@@ -54,7 +58,7 @@ public final class InternalCooldown {
 	 * without registering a hit.
 	 */
 	public boolean handleInternalCooldown() {
-		if (tag == null) return true;
+		if (tag.getTag() == null) return true;
 		
 		OriginsGenshin
 			.sublogger(this)

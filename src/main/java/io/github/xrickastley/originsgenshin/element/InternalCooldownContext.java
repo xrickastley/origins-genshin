@@ -116,7 +116,7 @@ public final class InternalCooldownContext {
 	}
 
 	public InternalCooldown getInternalCooldown(final InternalCooldownHolder holder) {
-		return holder.getInternalCooldown(this.tag.getTag(), this.type);
+		return holder.getInternalCooldown(this.tag, this.type);
 	}
 
 	public boolean hasOrigin() {

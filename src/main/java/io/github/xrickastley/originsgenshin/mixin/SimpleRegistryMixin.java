@@ -55,6 +55,7 @@ public abstract class SimpleRegistryMixin<T> implements Registry<T>, SimpleRegis
 	@Shadow
 	private int nextId;
 
+	@Final
 	@Inject(
 		method = "freeze",
 		at = @At("HEAD"),

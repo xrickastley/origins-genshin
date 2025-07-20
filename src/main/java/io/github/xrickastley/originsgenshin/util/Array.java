@@ -74,7 +74,7 @@ public class Array<T> implements List<T> {
 
     /**
      * A {@link CopyOnWriteArrayList} method, appends the specified element to the end of this {@code Array}.
-     * {@inheritdoc}
+     * {@inheritDoc}
      */
 	public boolean add(T e) {
 		return this.array.add(e);
@@ -83,7 +83,7 @@ public class Array<T> implements List<T> {
 	/**
      * A {@link CopyOnWriteArrayList} method, inserts the specified element at the specified position in this {@code Array}. 
 	 * Shifts the element currently at that position (if any) and any subsequent elements to the right (adds one to their indices).
-	 * {@inheritdoc}
+	 * {@inheritDoc}
      */
 	public void add(int index, T e) {
 		this.array.add(index, e);
@@ -92,7 +92,7 @@ public class Array<T> implements List<T> {
 	/**
 	 * A {@link CopyOnWriteArrayList} method, appends all the elements in the specified collection to the end of this list,
 	 * in the order that they are returned by the specified collection's iterator.
-	 * {@inheritdoc}
+	 * {@inheritDoc}
 	 */
 	@Override
 	public boolean addAll(@NotNull Collection<? extends T> c) {
@@ -104,7 +104,7 @@ public class Array<T> implements List<T> {
 	 * at the specified position. Shifts the element currently at that position (if any) and any subsequent elements to the 
 	 * right (increases their indices). The new elements will appear in this list in the order that they are returned by the 
 	 * specified collection's iterator.
-	 * {@inheritdoc}
+	 * {@inheritDoc}
 	 */
 	@Override
 	public boolean addAll(int index, @NotNull Collection<? extends T> c) {
@@ -192,7 +192,7 @@ public class Array<T> implements List<T> {
 	/**
 	 * A {@link CopyOnWriteArrayList} method, returns {@code true} if this {@code Array} contains all the elements
 	 * of the specified collection.
-	 * {@inheritdoc}
+	 * {@inheritDoc}
 	 */
 	@Override
 	public boolean containsAll(@NotNull Collection<?> c) {
@@ -402,7 +402,7 @@ public class Array<T> implements List<T> {
 
 	/**
 	 * A {@link CopyOnWriteArrayList} method and an alias for {@link Array#at}, returns the element located at the specified
-	 * index. {@inheritdoc}
+	 * index. {@inheritDoc}
 	 * 
 	 * @see Array#at
 	 */
@@ -440,7 +440,7 @@ public class Array<T> implements List<T> {
      * The returned iterator provides a snapshot of the state of the list when the iterator was constructed. 
 	 * No synchronization is needed while traversing the iterator. The iterator does <i>NOT<i> support the {@code remove}
 	 * method.
-	 * {@inheritdoc}
+	 * {@inheritDoc}
 	 */
 	@Override
 	public @NotNull Iterator<T> iterator() {
@@ -621,7 +621,7 @@ public class Array<T> implements List<T> {
 
 	/**
      * A {@link CopyOnWriteArrayList} method, removes the element at the specified position in this list and shifts 
-	 * any subsequent elements to the left (subtracts one from their indices). <br> <br> {@inheritdoc}
+	 * any subsequent elements to the left (subtracts one from their indices). <br> <br> {@inheritDoc}
      */
 	public T remove(int index) {
 		return this.array.remove(index);
@@ -736,7 +736,7 @@ public class Array<T> implements List<T> {
 	}
 
 	/**
-	 * A {@link CopyOnWriteArrayList} method, returns a sequential {@code Stream} with this {@code Array} as its source. <br> <br> {@inheritdoc}
+	 * A {@link CopyOnWriteArrayList} method, returns a sequential {@code Stream} with this {@code Array} as its source. <br> <br> {@inheritDoc}
 	 */
 	public Stream<T> stream() {
 		return this.array.stream();
@@ -749,7 +749,7 @@ public class Array<T> implements List<T> {
      *
      * The semantics of the list returned by this method become undefined if the backing list (i.e., this list) is modified in
      * any way other than via the returned list.
-	 * {@inheritdoc}
+	 * {@inheritDoc}
 	 */
 	@Override
 	public @NotNull List<T> subList(int fromIndex, int toIndex) {

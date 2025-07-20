@@ -53,6 +53,7 @@ public abstract class LivingEntityMixin extends Entity {
 		throw new AssertionError();
 	}
 
+	// Is final since Additive DMG Bonus should be a Base DMG multiplier.
 	@Final
 	@ModifyVariable(
 		method = "damage",

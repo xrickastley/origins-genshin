@@ -22,7 +22,7 @@ public abstract sealed class ElementalApplication permits DurationElementalAppli
 	protected double gaugeUnits;
 	protected double currentGauge;
 
-	protected ElementalApplication(Type type, LivingEntity entity, Element element, UUID uuid, double gaugeUnits, boolean isAura) {
+	ElementalApplication(Type type, LivingEntity entity, Element element, UUID uuid, double gaugeUnits, boolean isAura) {
 		this.type = type;
 		this.entity = entity;
 		this.element = element;
@@ -72,14 +72,14 @@ public abstract sealed class ElementalApplication permits DurationElementalAppli
 	public abstract int getRemainingTicks();
 
 	/**
-	 * Whether this Elemental Application is using Gauge Units.
+	 * Returns whether this Elemental Application is using Gauge Units.
 	 */
 	public boolean isGaugeUnits() {
 		return this.type == Type.GAUGE_UNIT;
 	}
 
 	/**
-	 * Whether this Elemental Application is using a specified duration.
+	 * Returns whether this Elemental Application is using a specified duration.
 	 */
 	public boolean isDuration() {
 		return this.type == Type.DURATION;
@@ -94,20 +94,14 @@ public abstract sealed class ElementalApplication permits DurationElementalAppli
 	}
 
 	/**
-	 * Whether this Elemental Application is an aura element.
+	 * Returns whether this Elemental Application is an aura element.
 	 */
 	public boolean isAuraElement() {
 		return this.isAura;
 	}
 
 	/**
-	 * Whether this Elemental Application is empty. <br> <br>
-	 * 
-	 * This is {@code true}, 
-	 * <ul>
-	 * 	<li>For {@link Type#DURATION} when {@code duration + entity.age} reaches {@code appliedAt} or when {@code gaugeUnits} reaches {@code 0} 
-	 * 	<li>For {@link Type#GAUGE_UNIT} when {@code currentGauge} reaches {@code 0}.
-	 * </ul>
+	 * Returns whether this Elemental Application is empty.
 	 */
 	public abstract boolean isEmpty();
 

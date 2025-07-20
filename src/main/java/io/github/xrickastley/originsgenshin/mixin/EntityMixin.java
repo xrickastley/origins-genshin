@@ -7,6 +7,7 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -22,14 +23,13 @@ import io.github.xrickastley.originsgenshin.element.InternalCooldownType;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinGameRules;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinStatusEffects;
 
-/**
- * Prioritized since Frozen **MUST** disable movement.
- */
+// Prioritized since Frozen **MUST** disable movement.
 @Mixin(value = Entity.class, priority = Integer.MIN_VALUE)
 public abstract class EntityMixin {
 	@Shadow
 	public abstract World getWorld();
 
+	@Final
 	@Inject(
 		method = "move",
 		at = @At("HEAD"),
@@ -45,6 +45,7 @@ public abstract class EntityMixin {
 		}
 	}
 
+	@Final
 	@ModifyArg(
 		method = "onStruckByLightning",
 		at = @At(

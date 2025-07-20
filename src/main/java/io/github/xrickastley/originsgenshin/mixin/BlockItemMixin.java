@@ -1,5 +1,6 @@
 package io.github.xrickastley.originsgenshin.mixin;
 
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 
@@ -14,12 +15,11 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 
-/**
- * Prioritized since Frozen **MUST** disable actions.
- */
+// Prioritized since Frozen **MUST** disable actions.
 @Mixin(value = BlockItem.class, priority = Integer.MIN_VALUE)
 public class BlockItemMixin {
-    @WrapOperation(
+    @Final
+	@WrapOperation(
 		method = "useOnBlock",
 		at = @At(
 			value = "INVOKE", 
