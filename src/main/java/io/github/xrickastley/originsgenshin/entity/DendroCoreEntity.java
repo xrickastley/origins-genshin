@@ -93,6 +93,8 @@ public final class DendroCoreEntity extends LivingEntity {
 	@Override
 	public void kill() {
 		for (final LivingEntity target : ElementalReaction.getEntitiesInAoE(this, 5.0)) {
+			if (target instanceof DendroCoreEntity) continue;
+			
 			float damage = ElementalReaction.getReactionDamage(this, 2.0);
 			final ElementalDamageSource source = new ElementalDamageSource(
 				this.getWorld()
