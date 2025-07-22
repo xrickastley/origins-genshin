@@ -173,6 +173,8 @@ public interface ElementComponent extends AutoSyncedComponent, CommonTickingComp
 	public Array<ElementalApplication> getPrioritizedElements();
 
 	public static void sync(Entity entity) {
+		if (entity.getWorld().isClient) return;
+
 		KEY.sync(entity);
 	}
 }
