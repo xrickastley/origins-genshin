@@ -471,7 +471,11 @@ public class Array<T> implements List<T> {
 		final Iterator<T> iterator = array.iterator();
 		final StringBuilder sb = new StringBuilder();
 
-		while (iterator.hasNext()) sb.append(iterator.next() + separator);
+		while (iterator.hasNext()) {
+			sb.append(iterator.next());
+
+			if (iterator.hasNext()) sb.append(separator);
+		}
 
 		return sb.toString();
 	}
