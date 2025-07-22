@@ -177,6 +177,6 @@ public interface ElementComponent extends AutoSyncedComponent, CommonTickingComp
 	public static void sync(Entity entity) {
 		if (entity.getWorld().isClient) return;
 
-		KEY.sync(entity);
+		ElementComponent.KEY.sync(entity);
 	}
 }

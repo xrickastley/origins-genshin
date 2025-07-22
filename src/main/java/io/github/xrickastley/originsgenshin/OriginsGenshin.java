@@ -25,6 +25,7 @@ import io.github.xrickastley.originsgenshin.factory.OriginsGenshinAttributes;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinBiEntityActions;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinEntities;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinGameRules;
+import io.github.xrickastley.originsgenshin.factory.OriginsGenshinPowers;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinStatusEffects;
 import io.github.xrickastley.originsgenshin.registry.OriginsGenshinRegistries;
 import io.github.xrickastley.originsgenshin.registry.OriginsGenshinRegistryKeys;
@@ -46,13 +47,14 @@ public class OriginsGenshin implements ModInitializer {
 		OriginsGenshinEntities.register();
 		OriginsGenshinBiEntityActions.register();
 		OriginsGenshinStatusEffects.register();
+		OriginsGenshinPowers.register();
 		OriginsGenshinGameRules.register();
 
 		ElementalReactions.register();
 
 		ResourceManagerHelper
 			.get(ResourceType.SERVER_DATA)
-			.registerReloadListener(new OriginsGenshinReloadListener());
+			.registerReloadListener(OriginsGenshinReloadListener.INSTANCE);
 
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
 			dispatcher.register(

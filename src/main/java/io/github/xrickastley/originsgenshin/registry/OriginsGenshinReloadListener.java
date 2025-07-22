@@ -34,12 +34,14 @@ import net.minecraft.resource.ResourceManager;
 import net.minecraft.util.Identifier;
 
 public class OriginsGenshinReloadListener implements SimpleSynchronousResourceReloadListener {
+	public static final OriginsGenshinReloadListener INSTANCE = new OriginsGenshinReloadListener();
+
 	private static final Logger LOGGER = OriginsGenshin.sublogger(OriginsGenshinReloadListener.class);
 	private static final List<ReloadableRegistry<?, ?>> REGISTRIES = new ArrayList<>();
 	private static final Map<Registry<?>, List<Consumer<Registry<?>>>> BEFORE_LOAD_LISTENERS = new HashMap<>();
 	private static final Map<Registry<?>, List<Consumer<Registry<?>>>> AFTER_LOAD_LISTENERS = new HashMap<>();
 
-	public OriginsGenshinReloadListener() {}
+	private OriginsGenshinReloadListener() {}
 
 	public static <D, T> void addReloadableRegistry(ReloadableRegistry<D, T> reloadableRegistry) {
 		REGISTRIES.add(reloadableRegistry);

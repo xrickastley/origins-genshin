@@ -34,7 +34,6 @@ import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.registry.entry.RegistryEntry.Reference;
 import net.minecraft.server.world.ServerWorld;
-import net.minecraft.util.Util;
 
 public final class ElementComponentImpl implements ElementComponent {
 	protected static final Set<Class<LivingEntity>> DENIED_ENTITIES = new HashSet<>();

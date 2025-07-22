@@ -175,9 +175,9 @@ public abstract sealed class ElementalApplication permits DurationElementalAppli
 			= SerializableDataType.compound(
 				ElementalApplication.Builder.class,
 				new SerializableData()
-					.add("type", OriginsGenshinDataTypes.ELEMENTAL_APPLICATION_TYPE)
+					.add("type", OriginsGenshinDataTypes.ELEMENTAL_APPLICATION_TYPE, ElementalApplication.Type.GAUGE_UNIT)
 					.add("element", OriginsGenshinDataTypes.ELEMENT)
-					.add("aura", SerializableDataTypes.BOOLEAN)
+					.add("aura", SerializableDataTypes.BOOLEAN, true)
 					.add("gauge_units", SerializableDataTypes.DOUBLE)
 					.add("duration", SerializableDataTypes.DOUBLE, -1.0),
 				dataInst -> ElementalApplications.builder()

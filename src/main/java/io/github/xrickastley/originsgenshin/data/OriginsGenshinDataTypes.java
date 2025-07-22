@@ -8,6 +8,7 @@ import io.github.apace100.calio.data.SerializableDataType;
 import io.github.apace100.calio.data.SerializableDataTypes;
 import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
+import io.github.xrickastley.originsgenshin.element.InternalCooldownContext;
 import io.github.xrickastley.originsgenshin.element.InternalCooldownTag;
 import io.github.xrickastley.originsgenshin.element.InternalCooldownType;
 import io.github.xrickastley.originsgenshin.registry.OriginsGenshinRegistries;
@@ -31,6 +32,9 @@ public class OriginsGenshinDataTypes {
 
 	public static final SerializableDataType<ElementalApplication.Builder> ELEMENTAL_APPLICATION_BUILDER
 		= ElementalApplication.Builder.DATA;
+
+	public static final SerializableDataType<InternalCooldownContext.Builder> INTERNAL_COOLDOWN_CONTEXT_BUILDER
+		= InternalCooldownContext.Builder.DATA;
 
 	public static final SerializableDataType<Color> COLOR
 		= SerializableDataType.compound(

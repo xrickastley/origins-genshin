@@ -12,6 +12,7 @@
     "ItemStackMixin",
     "LivingEntityMixin",
     "OriginMixin",
+    "PowerTypesMixin",
     "PrioritizedPlayerEntityMixin",
     "SimpleRegistryMixin"
   ],
