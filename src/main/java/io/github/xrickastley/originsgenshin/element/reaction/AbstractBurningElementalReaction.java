@@ -93,6 +93,14 @@ public abstract sealed class AbstractBurningElementalReaction
 		});
 
 		ElementRemoved.EVENT.register(application -> {
+			/*
+			OriginsGenshin
+				.sublogger(AbstractBurningElementalReaction.class)
+				.info("Element Removed: {} (by {}) | {}", application.getElement(), Thread.currentThread().getStackTrace()[3].toString(), application.getElement() != Element.DENDRO && application.getElement() != Element.QUICKEN ? "Returning early!" : "Doing logic...");
+			*/
+
+			if (application.getElement() == Element.BURNING) ElementComponent.sync(application.getEntity());
+
 			if (application.getElement() != Element.DENDRO && application.getElement() != Element.QUICKEN) return;
 
 			final ElementComponent component = ElementComponent.KEY.get(application.getEntity());
