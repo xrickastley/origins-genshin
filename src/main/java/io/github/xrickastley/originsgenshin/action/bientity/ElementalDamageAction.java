@@ -16,32 +16,30 @@ import io.github.apace100.calio.data.SerializableDataTypes;
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.data.OriginsGenshinDataTypes;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
-import io.github.xrickastley.originsgenshin.element.ElementalApplications;
 import io.github.xrickastley.originsgenshin.element.ElementalDamageSource;
 import io.github.xrickastley.originsgenshin.element.InternalCooldownContext;
-import io.github.xrickastley.originsgenshin.element.InternalCooldownType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.util.Pair;
 
 public class ElementalDamageAction {
-		public static void action(SerializableData.Instance data, Pair<Entity, Entity> entities) {
+	public static void action(SerializableData.Instance data, Pair<Entity, Entity> entities) {
 
-		Entity actor = entities.getLeft();
-		Entity target = entities.getRight();
+		final Entity actor = entities.getLeft();
+		final Entity target = entities.getRight();
 
 		if (actor == null || target == null) return;
 
 		Float damageAmount = data.get("amount");
-		List<Modifier> modifiers = new LinkedList<>();
+		final List<Modifier> modifiers = new LinkedList<>();
 
 		data.<Modifier>ifPresent("modifier", modifiers::add);
 		data.<List<Modifier>>ifPresent("modifiers", modifiers::addAll);
 
 		if (!modifiers.isEmpty() && target instanceof final LivingEntity livingTarget) {
-			float targetMaxHealth = livingTarget.getMaxHealth();
-			float newDamageAmount = (float) ModifierUtil.applyModifiers(actor, modifiers, targetMaxHealth);
+			final float targetMaxHealth = livingTarget.getMaxHealth();
+			final float newDamageAmount = (float) ModifierUtil.applyModifiers(actor, modifiers, targetMaxHealth);
 
 			damageAmount = newDamageAmount > targetMaxHealth ? newDamageAmount - targetMaxHealth : newDamageAmount;
 		}
@@ -51,11 +49,12 @@ public class ElementalDamageAction {
 		try {
 			DamageSource source = MiscUtil.createDamageSource(actor.getDamageSources(), data.get("source"), data.get("damage_type"), actor);
 			
-			if (data.isPresent("element") && target instanceof final LivingEntity livingTarget) {
-				final ElementalApplication application = ElementalApplications.gaugeUnits(livingTarget, data.get("element"), data.getDouble("gauge_units"));
-
-				source = new ElementalDamageSource(source, application, InternalCooldownContext.ofType(actor, data.getString("source_tag"), data.get("source_type")));
-			}
+			if (data.isPresent("element") && target instanceof final LivingEntity livingTarget && actor instanceof final LivingEntity livingActor) 
+				source = new ElementalDamageSource(
+					source,
+					data.<ElementalApplication.Builder>get("element").build(livingTarget),
+					data.<InternalCooldownContext.Builder>get("internal_cooldown").build(livingActor)
+				);
 			
 			target.damage(source, damageAmount);
 		} catch (JsonSyntaxException e) {
@@ -72,10 +71,8 @@ public class ElementalDamageAction {
 				.add("damage_type", SerializableDataTypes.DAMAGE_TYPE, null)
 				.add("modifier", Modifier.DATA_TYPE, null)
 				.add("modifiers", Modifier.LIST_TYPE, null)
-				.add("element", OriginsGenshinDataTypes.ELEMENT, null)
-				.add("gauge_units", SerializableDataTypes.DOUBLE, 1.0)
-				.add("source_tag", SerializableDataTypes.STRING, null)
-				.add("source_type", OriginsGenshinDataTypes.INTERNAL_COOLDOWN_TYPE, InternalCooldownType.DEFAULT),
+				.add("element", OriginsGenshinDataTypes.ELEMENTAL_APPLICATION_BUILDER)
+				.add("internal_cooldown", OriginsGenshinDataTypes.INTERNAL_COOLDOWN_CONTEXT_BUILDER, InternalCooldownContext.Builder.ofNone()),
 			ElementalDamageAction::action
 		);
 	}
