@@ -1,7 +1,11 @@
 package io.github.xrickastley.originsgenshin.element;
 
+import java.util.Objects;
+
 import org.jetbrains.annotations.Nullable;
 
+import io.github.apace100.calio.data.SerializableData;
+import io.github.apace100.calio.data.SerializableDataType;
 import io.github.xrickastley.originsgenshin.util.ClassInstanceUtil;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -130,5 +134,46 @@ public final class InternalCooldownContext {
 	@Override
 	public String toString() {
 		return String.format("InternalCooldownContext@%s[origin=%s,tag=%s,type=%s]", Integer.toHexString(this.hashCode()), origin == null ? "null" : origin, tag, type);
+	}
+
+	public static final class Builder {
+		public static final SerializableDataType<InternalCooldownContext.Builder> DATA
+			= SerializableDataType.compound(
+				InternalCooldownContext.Builder.class,
+				new SerializableData(),
+				dataInst -> new InternalCooldownContext.Builder()
+					.setTag(dataInst.get("tag"))
+					.setType(dataInst.get("type")),
+				(data, inst) -> {
+					final SerializableData.Instance dataInst = data.new Instance();
+					dataInst.set("tag", inst.tag);
+					dataInst.set("type", inst.type);
+					return dataInst;
+				}
+			);
+
+		private InternalCooldownTag tag;
+		private InternalCooldownType type;
+
+		private Builder() {}
+
+		public InternalCooldownContext.Builder setTag(InternalCooldownTag tag) {
+			this.tag = tag;
+
+			return this;
+		}
+
+		public InternalCooldownContext.Builder setType(InternalCooldownType type) {
+			this.type = type;
+
+			return this;
+		}
+
+		public InternalCooldownContext build(@Nullable LivingEntity origin) {
+			this.tag = Objects.requireNonNull(this.tag);
+			this.type = Objects.requireNonNull(this.type);
+
+			return InternalCooldownContext.ofType(origin, tag, type);
+		}
 	}
 }

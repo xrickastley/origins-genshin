@@ -1,7 +1,12 @@
 package io.github.xrickastley.originsgenshin.element;
 
+import java.util.Objects;
 import java.util.UUID;
 
+import io.github.apace100.calio.data.SerializableData;
+import io.github.apace100.calio.data.SerializableDataType;
+import io.github.apace100.calio.data.SerializableDataTypes;
+import io.github.xrickastley.originsgenshin.data.OriginsGenshinDataTypes;
 import io.github.xrickastley.originsgenshin.element.reaction.AbstractBurningElementalReaction;
 import io.github.xrickastley.originsgenshin.exception.ElementalApplicationOperationException;
 import io.github.xrickastley.originsgenshin.exception.ElementalApplicationOperationException.Operation;
@@ -163,5 +168,97 @@ public abstract sealed class ElementalApplication permits DurationElementalAppli
 		GAUGE_UNIT,
 		// Has a specified amount of Gauge Units that are removed after DURATION.
 		DURATION;
+	}
+
+	public static final class Builder {
+		public static final SerializableDataType<ElementalApplication.Builder> DATA
+			= SerializableDataType.compound(
+				ElementalApplication.Builder.class,
+				new SerializableData()
+					.add("type", OriginsGenshinDataTypes.ELEMENTAL_APPLICATION_TYPE)
+					.add("element", OriginsGenshinDataTypes.ELEMENT)
+					.add("aura", SerializableDataTypes.BOOLEAN)
+					.add("gauge_units", SerializableDataTypes.DOUBLE)
+					.add("duration", SerializableDataTypes.DOUBLE, -1.0),
+				dataInst -> ElementalApplications.builder()
+					.setType(dataInst.get("type"))
+					.setElement(dataInst.get("element"))
+					.setAsAura(dataInst.getBoolean("aura"))
+					.setGaugeUnits(dataInst.getDouble("gauge_units"))
+					.setDuration(dataInst.getDouble("duration")),
+				(data, inst) -> {
+					final SerializableData.Instance dataInst = data.new Instance();
+					dataInst.set("type", inst.type);
+					dataInst.set("element", inst.element);
+					dataInst.set("aura", inst.isAura);
+					dataInst.set("gauge_units", inst.gaugeUnits);
+					dataInst.set("duration", inst.duration);
+					return dataInst;
+				}
+			);
+
+		private Type type;
+		private Element element;
+		private boolean isAura;
+		private double gaugeUnits;
+		private double duration;
+
+		Builder() {
+			this.isAura = true;
+		}
+
+		public Builder setType(Type type) {
+			this.type = type;
+
+			return this;
+		}
+
+		public Builder setElement(Element element) {
+			this.element = element;
+
+			return this;
+		}
+
+		public Builder setAsAura(boolean isAura) {
+			this.isAura = isAura;
+
+			return this;
+		}
+
+		public Builder setGaugeUnits(double gaugeUnits) {
+			this.gaugeUnits = gaugeUnits;
+
+			return this;
+		}
+
+		public Builder setDuration(double duration) {
+			this.duration = duration;
+
+			return this;
+		}
+
+		public ElementalApplication build(final LivingEntity entity) {
+			this.type = Objects.requireNonNull(type);
+			this.element = Objects.requireNonNull(element);
+			this.gaugeUnits = Objects.requireNonNull(gaugeUnits);
+			
+			if (type == Type.DURATION) {
+				this.duration = Objects.requireNonNull(duration);
+
+				return ElementalApplications.duration(entity, element, gaugeUnits, duration);
+			} else {
+				return ElementalApplications.gaugeUnits(entity, element, gaugeUnits, isAura);
+			}
+		}
+
+		public static SerializableData.Instance toData(SerializableData data, ElementalApplication.Builder instance) {
+			SerializableData.Instance dataInst = data.new Instance();
+			dataInst.set("type", instance.type);
+			dataInst.set("element", instance.element);
+			dataInst.set("aura", instance.isAura);
+			dataInst.set("gauge_units", instance.gaugeUnits);
+			dataInst.set("duration", instance.duration);
+			return dataInst;
+		}
 	}
 }

@@ -57,4 +57,17 @@ public class ElementalApplications {
 			? GaugeUnitElementalApplication.fromNbt(entity, compound, syncedAt)
 			: DurationElementalApplication.fromNbt(entity, compound, syncedAt);
 	}
+
+	/**
+	 * Creates a new Elemental Application Builder. <br> <br>
+	 * 
+	 * A builder is used for creating an Elemental Application without a {@code LivingEntity} to
+	 * "own" the Elemental Application as of the moment. <br> <br>
+	 * 
+	 * Once an entity exists, an instance of {@code ElementalApplication} may be created through
+	 * {@link ElementalApplication.Builder#build(LivingEntity) Builder#build()}.
+	 */
+	public static ElementalApplication.Builder builder() {
+		return new ElementalApplication.Builder();
+	}
 }
