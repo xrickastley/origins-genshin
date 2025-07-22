@@ -1,6 +1,7 @@
 package io.github.xrickastley.originsgenshin.component;
 
 import java.util.List;
+import java.util.Map;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -33,11 +34,12 @@ import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.registry.entry.RegistryEntry.Reference;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.Util;
 
 public final class ElementComponentImpl implements ElementComponent {
 	protected static final Set<Class<LivingEntity>> DENIED_ENTITIES = new HashSet<>();
 	private final LivingEntity owner;
-	private final ConcurrentHashMap<Element, ElementHolder> elementHolder = new ConcurrentHashMap<>();
+	private final Map<Element, ElementHolder> elementHolders = new ConcurrentHashMap<>();
 	private final Logger LOGGER = OriginsGenshin.sublogger(ElementComponent.class);
 	private int triggeredReactionsAtAge = -1;
 	private int electroChargedCooldown = -1;
@@ -48,7 +50,7 @@ public final class ElementComponentImpl implements ElementComponent {
 	public ElementComponentImpl(LivingEntity owner) {
 		this.owner = owner;
 
-		for (final Element element : Element.values()) elementHolder.put(element, ElementHolder.of(owner, element));
+		for (final Element element : Element.values()) elementHolders.put(element, ElementHolder.of(owner, element));
 	}
 
 	@Override
@@ -97,7 +99,7 @@ public final class ElementComponentImpl implements ElementComponent {
 
 	@Override
 	public ElementHolder getElementHolder(Element element) {
-		return this.elementHolder.computeIfAbsent(element, e -> ElementHolder.of(owner, e));
+		return this.elementHolders.computeIfAbsent(element, e -> ElementHolder.of(owner, e));
 	}
 	
 	@Override
@@ -148,7 +150,7 @@ public final class ElementComponentImpl implements ElementComponent {
 	@Override
 	public Array<ElementalApplication> getAppliedElements() {
 		return new Array<>(
-			elementHolder
+			elementHolders
 				.values().stream()
 				.map(ElementHolder::getElementalApplication)
 				.filter(application -> application != null && !application.isEmpty())
@@ -171,6 +173,8 @@ public final class ElementComponentImpl implements ElementComponent {
 		tag.putLong("SyncedAt", owner.getWorld().getTime());
 		tag.putInt("ElectroChargedCooldown", electroChargedCooldown);
 		tag.putInt("BurningCooldown", burningCooldown);
+
+		// LOGGER.info("Wrote NBT for {} at: {} ({})", owner, owner.getWorld().getTime(), Util.getMeasuringTimeMs());
 	}
 
 	@Override
@@ -180,12 +184,13 @@ public final class ElementComponentImpl implements ElementComponent {
 
 		final NbtList list = tag.getList("AppliedElements", NbtElement.COMPOUND_TYPE);
 		final long syncedAt = tag.getLong("SyncedAt");
+		
+		// LOGGER.info("Read NBT for {} at: {} ({}) | Synced at server time: {}", owner, owner.getWorld().getTime(), Util.getMeasuringTimeMs(), syncedAt);
+		// LOGGER.info("Current NbtList: {}", list);
 
-		this.elementHolder
+		this.elementHolders
 			.values().stream()
 			.forEach(holder -> holder.setElementalApplication(null));
-
-		LOGGER.info("Current NbtList: {}", list);
 
 		for (final NbtElement nbt : list) {
 			if (!(nbt instanceof final NbtCompound compound)) return;
@@ -209,12 +214,11 @@ public final class ElementComponentImpl implements ElementComponent {
 			.peek(application -> application.tick())
 			.length();
 
-		if (tickedElements > 0) removeConsumedElements();
+		if (tickedElements > 0) this.removeConsumedElements();
 	}
 
 	private void removeConsumedElements() {
-		// Copy to prevent ConcurrentModificationException.
-		boolean hasRemovedElements = elementHolder
+		final boolean hasRemovedElements = elementHolders
 			.values().stream()
 			.filter(ElementHolder::hasElementalApplication)
 			.filter(ec -> ec.getElementalApplication().isEmpty())
@@ -238,7 +242,7 @@ public final class ElementComponentImpl implements ElementComponent {
 
 		return priority.isPresent()
 			? new Array<>(
-				elementHolder
+				elementHolders
 					.values().stream()
 					.map(ElementHolder::getElementalApplication)
 					.filter(application -> {
@@ -255,7 +259,7 @@ public final class ElementComponentImpl implements ElementComponent {
 			.filter(application -> application.getElement().getPriority() == priority)
 			.map(ElementalApplication::getElement);
 
-		LOGGER.info("Valid elements: {} | Triggering element: {}", validElements, triggeringElement);
+		// LOGGER.info("Valid elements: {} | Triggering element: {}", validElements, triggeringElement);
 
 		return OriginsGenshinRegistries.ELEMENTAL_REACTION
 			.streamEntries()
@@ -285,7 +289,7 @@ public final class ElementComponentImpl implements ElementComponent {
 	private boolean attemptReapply(ElementalApplication application) {
 		final ElementalApplication currentApplication = this.getElementalApplication(application.getElement());
 
-		LOGGER.info("Current application: {} | Application: {} | CanBeAura: {}", currentApplication, application, application.getElement().canBeAura());
+		// LOGGER.info("Current application: {} | Application: {} | CanBeAura: {}", currentApplication, application, application.getElement().canBeAura());
 
 		if (currentApplication != null && !currentApplication.isEmpty() && application.getElement().canBeAura()) {
 			Optional<Integer> priority = this.getHighestElementPriority();

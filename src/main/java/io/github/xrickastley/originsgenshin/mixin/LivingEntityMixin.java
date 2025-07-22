@@ -19,7 +19,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.component.ElementComponent;
 import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementalApplications;
@@ -77,9 +76,12 @@ public abstract class LivingEntityMixin extends Entity {
 			)
 			: 0.0f;
 
+		
+		/*
 		OriginsGenshin
 			.sublogger("LivingEntityMixin")
 			.info("Phase: ADDITIVE - Damage: {}, Additive: {}, Final Base DMG: {}", amount, additive, amount + additive);
+		*/
 
 		return OriginsGenshinAttributes.modifyDamage((LivingEntity)(Entity) this, eds, amount + additive);
 	}
@@ -104,9 +106,11 @@ public abstract class LivingEntityMixin extends Entity {
 			)
 			: 1.0;
 
+		/*
 		OriginsGenshin
 			.sublogger("LivingEntityMixin")
 			.info("Phase: AMPLIFY - Damage: {}, Multiplier: {}, Final DMG: {}", amount, amplifier, amount * amplifier);
+		*/
 
 		return amount * (float) amplifier;
 	}
@@ -165,23 +169,16 @@ public abstract class LivingEntityMixin extends Entity {
 			: new ElementalDamageSource(source, ElementalApplications.gaugeUnits((LivingEntity)(Entity) this, Element.PHYSICAL, 0), InternalCooldownContext.ofNone(source.getAttacker()));
 
 		final World world = this.getWorld();
-
-		// OriginsGenshin.LOGGER.info("world.isClient: {}\ndamageSourceMixin.hasElement(): {}\ndamageSourceMixin.getElement(): {}\nworld instanceof {}", world.isClient, damageSourceMixin.hasElement(), damageSourceMixin.getElement(), world.getClass().getSimpleName());
-		
-		final Element element = eds.getElementalApplication().getElement();
 		
 		if (world.isClient || !(world instanceof ServerWorld)) return;
+		
+		final Element element = eds.getElementalApplication().getElement();
+		final ShowElementalDamageS2CPacket showElementalDMGPacket = new ShowElementalDamageS2CPacket(this.getId(), element, amount);
 
-		OriginsGenshin.sublogger(LivingEntityMixin.class).info("Spawning damage particles!");
+		for (final ServerPlayerEntity player : PlayerLookup.tracking(this)) {
+			if (player.getId() == this.getId()) return;
 
-		ShowElementalDamageS2CPacket showElementalDMGPacket = new ShowElementalDamageS2CPacket(this.getId(), element, amount);
-
-		for (ServerPlayerEntity otherPlayer : PlayerLookup.tracking(this)) {
-			if (otherPlayer.getId() == this.getId()) return;
-
-			ServerPlayNetworking.send(otherPlayer, showElementalDMGPacket);
+			ServerPlayNetworking.send(player, showElementalDMGPacket);
 		}
-
-		// ((ServerWorld) world).spawnParticles(OriginsGenshinParticleFactory.DAMAGE_TEXT, this.getX(), this.getY() + (this.getHeight() * (1 - Math.min(Math.random(), 0.5))), this.getZ(), 0, amount, color.asARGB(), 1, 1);
 	}
 }

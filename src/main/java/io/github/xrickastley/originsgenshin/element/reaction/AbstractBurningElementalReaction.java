@@ -102,6 +102,12 @@ public abstract sealed class AbstractBurningElementalReaction
 				.setElementalApplication(null);
 
 			ElementComponent.sync(application.getEntity());
+
+			/*
+			OriginsGenshin
+				.sublogger(AbstractBurningElementalReaction.class)
+				.info("Burning: {} | Syncing elements to client...", component.getElementHolder(Element.BURNING).getElementalApplication());
+			*/
 		});
 
 		ReactionTriggered.EVENT.register((reaction, reducedGauge, target, origin) -> {
@@ -134,9 +140,19 @@ public abstract sealed class AbstractBurningElementalReaction
 
 		if (!component.hasElementalApplication(Element.BURNING) || component.isBurningOnCD() || entity.getWorld().isClient) return;
 		
+		if (!component.hasElementalApplication(Element.DENDRO) && !component.hasElementalApplication(Element.QUICKEN)) {
+			component
+				.getElementHolder(Element.BURNING)
+				.setElementalApplication(null);
+
+			return;
+		}
+
+		/*
 		OriginsGenshin
 			.sublogger(AbstractBurningElementalReaction.class)
 			.info("Entities in AoE: {} | Filter: {}", ElementalReaction.getEntitiesInAoE(entity, 1), ElementalReaction.getEntitiesInAoE(entity, 1, t -> !ElementComponent.KEY.get(t).isBurningOnCD()));
+		*/
 
 		for (final LivingEntity target : ElementalReaction.getEntitiesInAoE(entity, 1, t -> !ElementComponent.KEY.get(t).isBurningOnCD())) {
 			// TODO: Burning DMG from this point (of reapplication) will be calculated based on the stats of the character responsible for the latest instance of Dendro or Pyro application.

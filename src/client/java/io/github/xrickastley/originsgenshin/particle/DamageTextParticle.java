@@ -77,7 +77,7 @@ public class DamageTextParticle extends TextBillboardParticle {
 		public Factory(SpriteProvider sp) {}
 
 		public Particle createParticle(DefaultParticleType defaultParticleType, ClientWorld clientWorld, double x, double y, double z, double velX, double velY, double velZ) {
-			OriginsGenshin.sublogger(DamageTextParticle.class).info("Creating particle: DamageTextParticle from DamageTextParticle.Factory");
+			// OriginsGenshin.sublogger(DamageTextParticle.class).info("Creating particle: DamageTextParticle from DamageTextParticle.Factory");
 
 			// VelX and VelY serve as damage dealt and color, respectively.
 			return new DamageTextParticle(clientWorld, x, y, z, velX, velY);
