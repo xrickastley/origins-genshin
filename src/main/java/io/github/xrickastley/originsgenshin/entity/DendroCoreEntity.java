@@ -113,8 +113,8 @@ public final class DendroCoreEntity extends LivingEntity {
 	@Override
 	public boolean damage(DamageSource source, float amount) {
 		if (source != this.getWorld().getDamageSources().genericKill() || amount != Float.MAX_VALUE) return false;
-		
-		remove(RemovalReason.KILLED);
+
+		this.kill();
 
 		return true;
 	}
@@ -135,12 +135,12 @@ public final class DendroCoreEntity extends LivingEntity {
 	@Override
 	public void tick() {
 		super.tick();
-		
+
 		if (this.age == 1) removeOldDendroCores(); 
 
-		if (this.age < 120) return;
+		if (this.age == 120) this.kill();
 
-		this.kill();
+		if (this.age >= 122) this.remove(RemovalReason.KILLED);
 	}
 
 	private void removeOldDendroCores() {
@@ -159,7 +159,7 @@ public final class DendroCoreEntity extends LivingEntity {
 
 			final Queue<DendroCoreEntity> queue = new LinkedList<>(dendroCores);
 
-			while (queue.peek() != null && queue.size() > 5) queue.remove().age = 118;
+			while (queue.peek() != null && queue.size() > 5) queue.remove().kill();
 		}
 	}
 

@@ -32,7 +32,7 @@ public class DendroCoreEntityRenderer extends LivingEntityRenderer<DendroCoreEnt
 		this.shadowOpacity = 0f;
 		this.shadowRadius = 0f;
 
-		final double explodeProgress = Ease.IN_QUART.applyLerp(MathHelper2.endOffset(dendroCore.age + g, 2, 0, 120), 0, 1);
+		final double explodeProgress = Ease.IN_QUAD.applyLerp(MathHelper2.endOffset(dendroCore.age + g, 3, 0, 120), 0, 1);
 		final float scale = 0.625f + (float) (explodeProgress * 5.0);
 
 		matrixStack.push();
