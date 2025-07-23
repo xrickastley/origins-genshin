@@ -16,6 +16,7 @@ import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
 import io.github.xrickastley.originsgenshin.events.ReactionTriggered;
 import io.github.xrickastley.originsgenshin.networking.ShowElementalReactionS2CPacket;
+import io.github.xrickastley.originsgenshin.registry.OriginsGenshinRegistries;
 
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -56,6 +57,8 @@ public abstract class ElementalReaction {
 		this.applyResultAsAura = settings.applyResultAsAura;
 		this.endsReactionTrigger = settings.endsReactionTrigger;
 		this.preventsPriorityUpgrade = settings.preventsPriorityUpgrade;
+
+		OriginsGenshinRegistries.ELEMENTAL_REACTION.createEntry(this);
 	}
 
 	public static float getReactionDamage(Entity entity, double reactionMultiplier) {
