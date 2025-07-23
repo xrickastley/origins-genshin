@@ -95,7 +95,7 @@ public final class DendroCoreEntity extends LivingEntity {
 
 		this.target = target;
 
-		if (this.target != null) this.ageSplit = (int) (this.squaredDistanceTo(target) / 24.0);
+		if (this.target != null) this.ageSplit = Math.max((int) (this.squaredDistanceTo(target) / 24.0), 1);
 	}
 
 	public void setAsBurgeon() {
