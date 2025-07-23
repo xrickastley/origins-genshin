@@ -27,6 +27,7 @@ import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
 import net.minecraft.util.math.Box;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 public abstract class ElementalReaction {
@@ -260,12 +261,20 @@ public abstract class ElementalReaction {
 
 	protected void displayReaction(LivingEntity target) {
 		if (target.getWorld().isClient()) return;
+
+		final Box boundingBox = target.getBoundingBox();
 		
-		ShowElementalReactionS2CPacket packet = new ShowElementalReactionS2CPacket(target.getId(), this.getId());
+		final double x = target.getX() + (boundingBox.getLengthX() * 1.25 * Math.random());
+		final double y = target.getY() + (boundingBox.getLengthY() * 0.50);
+		final double z = target.getZ() + (boundingBox.getLengthZ() * 1.25 * Math.random());
+
+		final Vec3d pos = new Vec3d(x, y, z);
+
+		final ShowElementalReactionS2CPacket packet = new ShowElementalReactionS2CPacket(pos, this.getId());
 
 		if (target instanceof final ServerPlayerEntity serverPlayer) ServerPlayNetworking.send(serverPlayer, packet);
 		
-		for (ServerPlayerEntity otherPlayer : PlayerLookup.tracking(target)) {
+		for (final ServerPlayerEntity otherPlayer : PlayerLookup.tracking(target)) {
 			if (otherPlayer.getId() == target.getId()) continue;
 			
 			ServerPlayNetworking.send(otherPlayer, packet);

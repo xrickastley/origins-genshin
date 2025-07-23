@@ -13,6 +13,7 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.math.Box;
+import net.minecraft.util.math.Vec3d;
 
 public class OriginsGenshinPacketsS2C {
 	public static void register() {
@@ -24,23 +25,17 @@ public class OriginsGenshinPacketsS2C {
 	
 	@SuppressWarnings("resource")
 	protected static void onElementalReactionShow(ShowElementalReactionS2CPacket packet, ClientPlayerEntity player, PacketSender responseSender) {
-		Entity entity = player.networkHandler.getWorld().getEntityById(packet.entityId());
+		final Vec3d pos = packet.pos();
  
 		final ElementalReaction reaction = OriginsGenshinRegistries.ELEMENTAL_REACTION.get(packet.reaction());
  
 		if (reaction == null || reaction.getParticle() == null) return;
 
-		final Box boundingBox = entity.getBoundingBox();
-
-		final double x = entity.getX() + (boundingBox.getLengthX() * 1.25 * Math.random());
-		final double y = entity.getY() + (boundingBox.getLengthY() * 0.50);
-		final double z = entity.getZ() + (boundingBox.getLengthZ() * 1.25 * Math.random());
-
 		MinecraftClient
 			.getInstance()
 			.player
 			.getWorld()
-			.addImportantParticle(reaction.getParticle(), x, y, z, 0.02, 0.02, 0.02);
+			.addImportantParticle(reaction.getParticle(), pos.x, pos.y, pos.z, 0.02, 0.02, 0.02);
 	}
 	
 	@SuppressWarnings("resource")
