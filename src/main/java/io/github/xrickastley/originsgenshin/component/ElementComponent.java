@@ -12,6 +12,7 @@ import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
 import dev.onyxstudios.cca.api.v3.component.tick.CommonTickingComponent;
 import io.github.xrickastley.originsgenshin.util.Array;
 import io.github.xrickastley.originsgenshin.util.ClassInstanceUtil;
+import io.github.apace100.apoli.component.PowerHolderComponent;
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementHolder;
@@ -19,9 +20,13 @@ import io.github.xrickastley.originsgenshin.element.ElementalApplication;
 import io.github.xrickastley.originsgenshin.element.ElementalApplications;
 import io.github.xrickastley.originsgenshin.element.ElementalDamageSource;
 import io.github.xrickastley.originsgenshin.element.InternalCooldownContext;
+import io.github.xrickastley.originsgenshin.element.InternalCooldownType;
 import io.github.xrickastley.originsgenshin.element.reaction.ElementalReaction;
+import io.github.xrickastley.originsgenshin.power.ElementalInfusionPower;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.registry.tag.DamageTypeTags;
 
 public interface ElementComponent extends AutoSyncedComponent, CommonTickingComponent {
 	public static final ComponentKey<ElementComponent> KEY = ComponentRegistry.getOrCreate(OriginsGenshin.identifier("elements"), ElementComponent.class);
@@ -36,6 +41,28 @@ public interface ElementComponent extends AutoSyncedComponent, CommonTickingComp
 	 */
 	public static <T extends LivingEntity> void denyElementsFor(Class<T> entityClass) {
 		ElementComponentImpl.DENIED_ENTITIES.add(ClassInstanceUtil.castInstance(entityClass));
+	}
+
+	public static DamageSource applyElementalInfusions(DamageSource source, LivingEntity entity) {
+		if (source.isIn(DamageTypeTags.IS_LIGHTNING)) {
+			return new ElementalDamageSource(source, ElementalApplications.gaugeUnits(entity, Element.ELECTRO, 0, true), InternalCooldownContext.ofType(source.getAttacker(), "origins-genshin:natural_environment", InternalCooldownType.INTERVAL_ONLY));
+		} else if (source.isIn(DamageTypeTags.IS_FIRE)) {
+			return new ElementalDamageSource(source, ElementalApplications.gaugeUnits(entity, Element.PYRO, 0, true), InternalCooldownContext.ofType(source.getAttacker(), "origins-genshin:natural_environment", InternalCooldownType.INTERVAL_ONLY));
+		}
+
+		if (source.getAttacker() == null || (source instanceof final ElementalDamageSource eds && eds.getElementalApplication().getElement() != Element.PHYSICAL)) return source;
+
+		final @Nullable ElementalInfusionPower power = PowerHolderComponent
+			.getPowers(source.getAttacker(), ElementalInfusionPower.class)
+			.stream()
+			.filter(ElementalInfusionPower::isActive)
+			.sorted()
+			.findFirst()
+			.orElse(null);
+
+		return power == null
+			? source
+			: new ElementalDamageSource(source, power.getApplication(entity), power.getIcdContext());
 	}
 
 	public LivingEntity getOwner();

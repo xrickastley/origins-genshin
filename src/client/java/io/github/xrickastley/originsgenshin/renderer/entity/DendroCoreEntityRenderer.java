@@ -32,15 +32,21 @@ public class DendroCoreEntityRenderer extends LivingEntityRenderer<DendroCoreEnt
 		this.shadowOpacity = 0f;
 		this.shadowRadius = 0f;
 
-		final double explodeProgress = Ease.IN_QUAD.applyLerp(MathHelper2.endOffset(dendroCore.age + g, 3, 0, 120), 0, 1);
-		final float scale = 0.625f + (float) (explodeProgress * 5.0);
-
-		matrixStack.push();
-		matrixStack.scale(scale, scale, scale);
-
 		super.render(dendroCore, f, g, matrixStack, vertexConsumerProvider, i);
+	}
 
-        matrixStack.pop();
+	@Override
+	protected void scale(DendroCoreEntity dendroCore, MatrixStack matrixStack, float delta) {
+		if (dendroCore.isHyperbloom()) {
+			matrixStack.scale(0.5f, 0.5f, 0.5f);
+
+			return;
+		}
+
+		final double explodeProgress = Ease.IN_QUAD.applyLerp(MathHelper2.endOffset(dendroCore.age + delta, 2, 0, 120), 0, 1.5);
+		final float scale = 0.625f + (float) (explodeProgress * 1.25);
+
+		matrixStack.scale(scale, scale, scale);
 	}
 
 	@Override

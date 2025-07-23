@@ -3,8 +3,6 @@ package io.github.xrickastley.originsgenshin.mixin;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
 
-import blue.endless.jankson.annotation.Nullable;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -21,7 +19,6 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import io.github.apace100.apoli.component.PowerHolderComponent;
 import io.github.xrickastley.originsgenshin.component.ElementComponent;
 import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementalApplications;
@@ -34,7 +31,7 @@ import io.github.xrickastley.originsgenshin.element.reaction.ElementalReaction;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinAttributes;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinGameRules;
 import io.github.xrickastley.originsgenshin.networking.ShowElementalDamageS2CPacket;
-import io.github.xrickastley.originsgenshin.power.ElementalInfusionPower;
+
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.block.Blocks;
@@ -64,19 +61,7 @@ public abstract class LivingEntityMixin extends Entity {
 		argsOnly = true
 	)
 	private DamageSource applyElementalInfusions(DamageSource source) {
-		if (source.getAttacker() == null || (source instanceof final ElementalDamageSource eds && eds.getElementalApplication().getElement() != Element.PHYSICAL)) return source;
-
-		final @Nullable ElementalInfusionPower power = PowerHolderComponent
-			.getPowers(source.getAttacker(), ElementalInfusionPower.class)
-			.stream()
-			.filter(ElementalInfusionPower::isActive)
-			.sorted()
-			.findFirst()
-			.orElse(null);
-
-		return power == null
-			? source
-			: new ElementalDamageSource(source, power.getApplication((LivingEntity)(Entity) this), power.getIcdContext());
+		return ElementComponent.applyElementalInfusions(source, (LivingEntity)(Entity) this);
 	}
 
 	// Is final since Additive DMG Bonus should be a Base DMG multiplier.

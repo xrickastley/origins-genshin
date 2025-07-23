@@ -28,6 +28,8 @@ public class OriginsGenshinParticleFactory {
 	public static final DefaultParticleType SPREAD = register("spread");
 	public static final DefaultParticleType AGGRAVATE = register("aggravate");
 	public static final DefaultParticleType CRYSTALLIZE = register("crystallize");
+	public static final DefaultParticleType HYPERBLOOM = register("hyperbloom");
+	public static final DefaultParticleType BURGEON = register("burgeon");
 
 	public static final DefaultParticleType DAMAGE_TEXT = register("damage_text");
 	public static final DefaultParticleType TEST = register("test");

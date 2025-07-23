@@ -52,6 +52,8 @@ public class ElementalReactions {
 	public static final ElementalReaction CRYO_CRYSTALLIZE = new CryoCrystallizeElementalReaction();
 	public static final ElementalReaction FROZEN_CRYSTALLIZE = new FrozenCrystallizeElementalReaction();
 	// TODO: Reaction: Hyperbloom + Burgeon
+	public static final ElementalReaction HYPERBLOOM = new HyperbloomElementalReaction();
+	public static final ElementalReaction BURGEON = new BurgeonElementalReaction();
 	// TODO: Reaction display.
 
 	public static void register() {
@@ -84,6 +86,8 @@ public class ElementalReactions {
 		register(ElementalReactions.ELECTRO_CRYSTALLIZE);
 		register(ElementalReactions.CRYO_CRYSTALLIZE);
 		register(ElementalReactions.FROZEN_CRYSTALLIZE);
+		register(ElementalReactions.HYPERBLOOM);
+		register(ElementalReactions.BURGEON);
 	}
 
 	private static ElementalReaction register(ElementalReaction reaction) {
