@@ -83,7 +83,7 @@ public abstract class LivingEntityMixin extends Entity {
 					.stream()
 					.filter(reaction -> reaction instanceof AdditiveElementalReaction)
 					.map(reaction -> ((AdditiveElementalReaction) reaction))
-					.reduce(0.0f, (acc, reaction) -> acc + reaction.applyAmplifier(this.getWorld(), amount), Float::sum),
+					.reduce(0.0f, (acc, reaction) -> acc + (float) reaction.getDamageBonus(this.getWorld()), Float::sum),
 				0.0f
 			)
 			: 0.0f;
