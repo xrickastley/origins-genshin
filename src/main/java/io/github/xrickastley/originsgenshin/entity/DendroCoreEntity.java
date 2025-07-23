@@ -47,7 +47,6 @@ public final class DendroCoreEntity extends LivingEntity {
 	private boolean exploded = false;
 	private int hyperbloomAge = 0;
 	private int curTicksInHitbox = 0;
-	// private int 
 
 	public DendroCoreEntity(EntityType<? extends LivingEntity> entityType, World world) {
 		this(entityType, world, null);
