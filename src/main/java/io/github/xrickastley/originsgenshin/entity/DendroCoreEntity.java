@@ -36,12 +36,18 @@ import net.minecraft.world.World;
 
 // Should technically extend Entity, but extends LivingEntity instead to NOT deal with more Networking and Spawn Packets.
 public final class DendroCoreEntity extends LivingEntity {
+	private static final double SPRAWLING_SHOT_SPEED = 0.75;
+	private static final double SPRAWLING_SHOT_GRAVITY = -0.05;
+	private static final double SPRAWLING_SHOT_RADIUS = 24;
+	private static final int SPRAWLING_SHOT_DELAY = 6;
+
 	private List<LivingEntity> owners;
 	private @Nullable LivingEntity target;
 	private Type type = Type.NORMAL;
 	private boolean exploded = false;
 	private int hyperbloomAge = 0;
-	private int ageSplit = 10;
+	private int curTicksInHitbox = 0;
+	// private int 
 
 	public DendroCoreEntity(EntityType<? extends LivingEntity> entityType, World world) {
 		this(entityType, world, null);
@@ -86,7 +92,7 @@ public final class DendroCoreEntity extends LivingEntity {
 		this.setNoGravity(true);
 
 		final @Nullable LivingEntity target = ElementalReaction
-			.getEntitiesInAoE(this, 32.0)
+			.getEntitiesInAoE(this, DendroCoreEntity.SPRAWLING_SHOT_RADIUS)
 			.stream()
 			.filter(e -> !this.owners.contains(e) && !(e instanceof DendroCoreEntity))
 			.sorted(Comparator.comparing(e -> e.squaredDistanceTo(this)))
@@ -95,7 +101,7 @@ public final class DendroCoreEntity extends LivingEntity {
 
 		this.target = target;
 
-		if (this.target != null) this.ageSplit = Math.max((int) (this.squaredDistanceTo(target) / 24.0), 1);
+		if (this.target == null) return;
 	}
 
 	public void setAsBurgeon() {
@@ -123,26 +129,29 @@ public final class DendroCoreEntity extends LivingEntity {
 		final int hyperbloomTick = this.age - this.hyperbloomAge;
 
 		if (target != null) {
-			Vec3d vecToTarget = target.getEyePos().subtract(this.getPos());
+			final Vec3d target = this.target.getEyePos().subtract(this.getPos());
+			final double distance = Math.sqrt(target.x * target.x + target.z * target.z);
+			final int ticks = Math.max(1, (int) (distance / DendroCoreEntity.SPRAWLING_SHOT_SPEED));
 
-            if (hyperbloomTick < ageSplit)
-				vecToTarget = vecToTarget.add(0.0, 3, 0.0);
-            else
-                vecToTarget = vecToTarget.add(0.0, (ageSplit - hyperbloomTick) * 0.1, 0.0);
+			// y value is derived from y(t) = y_0 + v_yt + \frac{1}{2}ay \times t^2
+			final Vec3d velocity = new Vec3d(
+				target.x / ticks,
+				(target.y - 0.5 * DendroCoreEntity.SPRAWLING_SHOT_GRAVITY * ticks * ticks) / ticks,
+				target.z / ticks
+			);
 
-			if (!this.getWorld().isClient) {
-				System.out.println(String.format("vecToTarget: %s | hyperbloomTick: %d", vecToTarget, hyperbloomTick));
-				System.out.println(String.format("ageSplit: %d (%.2f)", ageSplit, ageSplit * 2.5));
-			}
+            super.setVelocity(velocity);
 
-            super.setVelocity(vecToTarget.normalize().multiply(0.75));
+			final Box boundingBox = this.target.getBoundingBox();
 
-			if (target.getBoundingBox().contains(this.getPos())) {
-				this.target.damage(this.createDamageSource(target), ElementalReaction.getReactionDamage(this, 3.0));
-				this.remove(RemovalReason.KILLED);
-			}
+			if (!boundingBox.contains(this.getPos())) return;
 
-			if (hyperbloomTick >= (ageSplit * 10)) this.remove(RemovalReason.KILLED);
+			this.curTicksInHitbox++;
+
+			if (this.curTicksInHitbox < DendroCoreEntity.SPRAWLING_SHOT_DELAY) return;
+
+			this.target.damage(this.createDamageSource(this.target), ElementalReaction.getReactionDamage(this, 3.0));
+			this.remove(RemovalReason.KILLED);
 		} else {
 			super.setVelocity(new Vec3d(0, 0.5, 0));
 			
@@ -166,7 +175,9 @@ public final class DendroCoreEntity extends LivingEntity {
 	}
 
 	@Override
-	public void setVelocity(Vec3d velocity) {}
+	public void setVelocity(Vec3d velocity) {
+		super.setVelocity(velocity);
+	}
 
 	@Override
 	public Iterable<ItemStack> getArmorItems() {
@@ -197,7 +208,6 @@ public final class DendroCoreEntity extends LivingEntity {
 	@Override
 	public void kill() {
 		this.explode(2.0);
-		this.remove(RemovalReason.KILLED);
 	}
 
 	@Override
@@ -247,8 +257,6 @@ public final class DendroCoreEntity extends LivingEntity {
 	}
 
 	private void removeOldDendroCores() {
-		if (this.getWorld().isClient) return;
-
 		final Box box = Box.of(this.getLerpedPos(1f), 24, 24, 24);
 		final List<DendroCoreEntity> dendroCores = this.getWorld().getEntitiesByClass(DendroCoreEntity.class, box, dc -> true);
 
@@ -263,6 +271,10 @@ public final class DendroCoreEntity extends LivingEntity {
 
 	private boolean explode(final double reactionMultiplier) {
 		if (this.exploded) return false;
+
+		OriginsGenshin
+			.sublogger(this)
+			.info("Exploded {}", this);
 
 		this.exploded = true;
 		this.age = 118;
