@@ -126,16 +126,16 @@ public abstract class EntityRendererMixin {
 		matrixStack.multiplyPositionMatrix(new Matrix4f().rotation(dispatcher.camera.getRotation()));
 		matrixStack.scale(-0.50F, 0.50F, 0.50F);
 
-        final float finalXOffset = -0.5f + xOffset;
-        final float yOffset = 0.5f;
+		final float finalXOffset = -0.5f + xOffset;
+		final float yOffset = 0.5f;
 
 		Matrix4f positionMatrix = matrixStack.peek().getPositionMatrix();
 
 		buffer.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE);
-        buffer.vertex(positionMatrix, 0 + finalXOffset, 0 + yOffset, 0).texture(0f, 1f).next();
-        buffer.vertex(positionMatrix, 1 + finalXOffset, 0 + yOffset, 0).texture(1f, 1f).next();
-        buffer.vertex(positionMatrix, 1 + finalXOffset, 1 + yOffset, 0).texture(1f, 0f).next();
-        buffer.vertex(positionMatrix, 0 + finalXOffset, 1 + yOffset, 0).texture(0f, 0f).next();
+		buffer.vertex(positionMatrix, 0 + finalXOffset, 0 + yOffset, 0).texture(0f, 1f).next();
+		buffer.vertex(positionMatrix, 1 + finalXOffset, 0 + yOffset, 0).texture(1f, 1f).next();
+		buffer.vertex(positionMatrix, 1 + finalXOffset, 1 + yOffset, 0).texture(1f, 0f).next();
+		buffer.vertex(positionMatrix, 0 + finalXOffset, 1 + yOffset, 0).texture(0f, 0f).next();
 
 		float alpha = (double) secondsLeft <= (BLINK_SECONDS + intervalSplit)
 			? secondsLeft % blinkInterval <= intervalSplit
@@ -228,10 +228,10 @@ public abstract class EntityRendererMixin {
 		final Matrix4f positionMatrix = matrixStack.peek().getPositionMatrix();
 
 		buffer.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
-        buffer.vertex(positionMatrix, 0 + xOffset, 0 - yOffset, 0).color(0xffffffff).next();
-        buffer.vertex(positionMatrix, gaugeWidth + xOffset, 0 - yOffset, 0).color(0xffffffff).next();
-        buffer.vertex(positionMatrix, gaugeWidth + xOffset, 1 - yOffset, 0).color(0xffffffff).next();
-        buffer.vertex(positionMatrix, 0 + xOffset, 1 - yOffset, 0).color(0xffffffff).next();
+		buffer.vertex(positionMatrix, 0 + xOffset, 0 - yOffset, 0).color(0xffffffff).next();
+		buffer.vertex(positionMatrix, gaugeWidth + xOffset, 0 - yOffset, 0).color(0xffffffff).next();
+		buffer.vertex(positionMatrix, gaugeWidth + xOffset, 1 - yOffset, 0).color(0xffffffff).next();
+		buffer.vertex(positionMatrix, 0 + xOffset, 1 - yOffset, 0).color(0xffffffff).next();
 
 		RenderSystem.setShader(GameRenderer::getPositionColorProgram);
 
@@ -244,10 +244,10 @@ public abstract class EntityRendererMixin {
 			: elementColor.multiply(1, 1, 1, 0.5).asARGB();
 
 		buffer.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
-        buffer.vertex(positionMatrix, xOffset, 0 - yOffset, -0.0001f).color(color).next();
-        buffer.vertex(positionMatrix, (gaugeWidth * progress) + xOffset, 0 - yOffset, -0.0001f).color(color).next();
-        buffer.vertex(positionMatrix, (gaugeWidth * progress) + xOffset, 1 - yOffset, -0.0001f).color(color).next();
-        buffer.vertex(positionMatrix, xOffset, 1 - yOffset, -0.0001f).color(color).next(); 
+		buffer.vertex(positionMatrix, xOffset, 0 - yOffset, -0.0001f).color(color).next();
+		buffer.vertex(positionMatrix, (gaugeWidth * progress) + xOffset, 0 - yOffset, -0.0001f).color(color).next();
+		buffer.vertex(positionMatrix, (gaugeWidth * progress) + xOffset, 1 - yOffset, -0.0001f).color(color).next();
+		buffer.vertex(positionMatrix, xOffset, 1 - yOffset, -0.0001f).color(color).next(); 
 		
 		tessellator.draw();
 
@@ -255,10 +255,10 @@ public abstract class EntityRendererMixin {
 			final float gaugeProgress = (float) (application.getCurrentGauge() / application.getGaugeUnits());
 
 			buffer.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_COLOR);
-    	    buffer.vertex(positionMatrix, xOffset, 0 - yOffset, -0.0001f).color(color).next();
-	        buffer.vertex(positionMatrix, (gaugeWidth * gaugeProgress) + xOffset, 0 - yOffset, -0.0001f).color(color).next();
-	        buffer.vertex(positionMatrix, (gaugeWidth * gaugeProgress) + xOffset, 1 - yOffset, -0.0001f).color(color).next();
-	        buffer.vertex(positionMatrix, xOffset, 1 - yOffset, -0.0001f).color(color).next(); 
+			buffer.vertex(positionMatrix, xOffset, 0 - yOffset, -0.0001f).color(color).next();
+			buffer.vertex(positionMatrix, (gaugeWidth * gaugeProgress) + xOffset, 0 - yOffset, -0.0001f).color(color).next();
+			buffer.vertex(positionMatrix, (gaugeWidth * gaugeProgress) + xOffset, 1 - yOffset, -0.0001f).color(color).next();
+			buffer.vertex(positionMatrix, xOffset, 1 - yOffset, -0.0001f).color(color).next(); 
 		
 			tessellator.draw();
 		}

@@ -52,7 +52,7 @@ public class ClientParticleFactory {
 	}
 
 	private static <P extends ParticleEffect> void register(ParticleType<P> particle, PendingParticleFactory<P> factory) {
-        ParticleFactoryRegistry.getInstance().register(particle, factory);
+		ParticleFactoryRegistry.getInstance().register(particle, factory);
 	}
 }
 

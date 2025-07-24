@@ -143,17 +143,17 @@ public class ReactionParticle extends TextBillboardParticle {
 	}
 	
 	public static void drawString(final Camera camera, final MatrixStack matrices, final VertexConsumerProvider vertexConsumers, final OrderedText text, final double x, final double y, final double z, final int color, final float size, final boolean center, final float offset, final boolean visibleThroughObjects) {
-        final MinecraftClient client = MinecraftClient.getInstance();
+		final MinecraftClient client = MinecraftClient.getInstance();
 		final TextRenderer textRenderer = client.textRenderer;
-    
+	
 		final double d = camera.getPos().x;
-        final double e = camera.getPos().y;
-        final double f = camera.getPos().z;
-        
+		final double e = camera.getPos().y;
+		final double f = camera.getPos().z;
+		
 		matrices.push();
-        matrices.translate((float) (x - d), (float) (y - e), (float) (z - f));
+		matrices.translate((float) (x - d), (float) (y - e), (float) (z - f));
 		matrices.multiplyPositionMatrix(new Matrix4f().rotation(camera.getRotation()));
-        matrices.scale(-size, -size, size);
+		matrices.scale(-size, -size, size);
 
 		float g = center ? (-textRenderer.getWidth(text) / 2.0f) : 0.0f;
 		g -= offset / size;
@@ -161,5 +161,5 @@ public class ReactionParticle extends TextBillboardParticle {
 		textRenderer.draw(text, g, 0.0f, color, false, matrices.peek().getPositionMatrix(), vertexConsumers, visibleThroughObjects ? TextLayerType.SEE_THROUGH : TextLayerType.NORMAL, 0, 15728880);
 		
 		matrices.pop();
-    }
+	}
 }

@@ -21,5 +21,5 @@ public class GameRendererMixin {
 	)
 	private void drawText(final float tickDelta, final long limitTime, final MatrixStack matrices, final CallbackInfo ci) {
 		DelayedRenderer.render(tickDelta, matrices);
-    }
+	}
 }

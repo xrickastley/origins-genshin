@@ -21,10 +21,10 @@ public class ElementArgumentType implements ArgumentType<Element> {
 	public static ElementArgumentType element() {
 		return new ElementArgumentType();
 	}
-    
-    public static Element getElement(final CommandContext<ServerCommandSource> context, final String name) throws CommandSyntaxException {
+	
+	public static Element getElement(final CommandContext<ServerCommandSource> context, final String name) throws CommandSyntaxException {
 		return context.getArgument(name, Element.class);
-    }
+	}
 
 	@Override
 	public Element parse(final StringReader stringReader) throws CommandSyntaxException {
@@ -32,17 +32,17 @@ public class ElementArgumentType implements ArgumentType<Element> {
 
 		return Element.valueOf(string.toUpperCase());
 	}
-    
-    public <S> CompletableFuture<Suggestions> listSuggestions(final CommandContext<S> context, final SuggestionsBuilder builder) {
-        return CommandSource.suggestMatching(
+	
+	public <S> CompletableFuture<Suggestions> listSuggestions(final CommandContext<S> context, final SuggestionsBuilder builder) {
+		return CommandSource.suggestMatching(
 			ElementArgumentType.map(Element.values(), e -> e.toString().toLowerCase()), 
 			builder
 		);
-    }
-    
-    public Collection<String> getExamples() {
-        return ElementArgumentType.map(Element.values(), e -> e.toString().toLowerCase());
-    }
+	}
+	
+	public Collection<String> getExamples() {
+		return ElementArgumentType.map(Element.values(), e -> e.toString().toLowerCase());
+	}
 
 	private static <T, R> List<R> map(T[] array, Function<T, R> mapper) {
 		final List<R> result = new ArrayList<>();

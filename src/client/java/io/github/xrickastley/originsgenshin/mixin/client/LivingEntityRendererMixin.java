@@ -136,65 +136,65 @@ public abstract class LivingEntityRendererMixin<T extends LivingEntity, M extend
 	}
 
 	/*
-    @Inject(method = { "render(Lnet/minecraft/entity/LivingEntity;FFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V" }, at = { @At("HEAD") }, cancellable = true)
-    private void enchancement$frostbite(final T livingEntity, final float yaw, final float tickDelta, final MatrixStack matrices, final VertexConsumerProvider vertexConsumers, final int light, final CallbackInfo ci) {
-        if (this instanceof final FrozenPlayerEntityRenderer frozenPlayerEntityRenderer) {
-            if (livingEntity instanceof final FrozenPlayerEntity frozenPlayer) {
-                if (frozenPlayer.getDataTracker().get(FrozenPlayerEntity.SLIM)) {
-                    this.field_4737 = (M)frozenPlayerEntityRenderer.slimModel;
-                }
-                else {
-                    this.field_4737 = (M)frozenPlayerEntityRenderer.defaultModel;
-                }
-            }
-        }
-        final FrozenComponent frozenComponent = (FrozenComponent)ModEntityComponents.FROZEN.get((Object)livingEntity);
-        if (frozenComponent.isFrozen()) {
-            final MinecraftClient client = MinecraftClient.getInstance();
-            matrices.push();
-            livingEntity.setPose(frozenComponent.getForcedPose());
-            this.field_4737.handSwingProgress = this.method_4044(livingEntity, tickDelta);
-            this.field_4737.riding = livingEntity.hasVehicle();
-            this.field_4737.child = livingEntity.isBaby();
-            final float bodyYaw = frozenComponent.getForcedBodyYaw();
-            float pitch = frozenComponent.getForcedPitch();
-            float headYawMinusBodyYaw = frozenComponent.getForcedHeadYaw() - bodyYaw;
-            float limbAngle = frozenComponent.getForcedLimbAngle();
-            final float limbDistance = frozenComponent.getForcedLimbDistance();
-            final float animationProgress = this.method_4045(livingEntity, tickDelta);
-            if (LivingEntityRenderer.shouldFlipUpsideDown((LivingEntity)livingEntity)) {
-                pitch *= -1.0f;
-                headYawMinusBodyYaw *= -1.0f;
-            }
-            if (livingEntity.isBaby()) {
-                limbAngle *= 3.0f;
-            }
-            this.method_4058(livingEntity, matrices, animationProgress, bodyYaw, tickDelta);
-            matrices.scale(-1.0f, -1.0f, 1.0f);
-            this.method_4042(livingEntity, matrices, tickDelta);
-            matrices.translate(0.0f, -1.501f, 0.0f);
-            this.field_4737.animateModel((Entity)livingEntity, limbAngle, limbDistance, tickDelta);
-            this.field_4737.setAngles((Entity)livingEntity, limbAngle, limbDistance, 0.0f, headYawMinusBodyYaw, pitch);
-            final boolean visible = this.method_4056(livingEntity);
-            final boolean translucent = !visible && !livingEntity.isInvisibleTo((PlayerEntity)client.player);
-            final RenderLayer renderLayer = this.method_24302(livingEntity, visible, translucent, client.hasOutline((Entity)livingEntity));
-            if (renderLayer != null) {
-                this.field_4737.render(matrices, vertexConsumers.getBuffer(renderLayer), light, LivingEntityRenderer.getOverlay((LivingEntity)livingEntity, this.method_23185(livingEntity, tickDelta)), 1.0f, 1.0f, 1.0f, translucent ? 0.15f : 1.0f);
-            }
-            if (!livingEntity.isSpectator()) {
-                for (final FeatureRenderer<T, M> featureRenderer : this.field_4738) {
-                    featureRenderer.render(matrices, vertexConsumers, light, (Entity)livingEntity, limbAngle, limbDistance, tickDelta, animationProgress, headYawMinusBodyYaw, pitch);
-                }
-            }
-            matrices.pop();
-            super.render((Entity)livingEntity, yaw, tickDelta, matrices, vertexConsumers, light);
-            ci.cancel();
-        }
-    }
-    */
+	@Inject(method = { "render(Lnet/minecraft/entity/LivingEntity;FFLnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumerProvider;I)V" }, at = { @At("HEAD") }, cancellable = true)
+	private void enchancement$frostbite(final T livingEntity, final float yaw, final float tickDelta, final MatrixStack matrices, final VertexConsumerProvider vertexConsumers, final int light, final CallbackInfo ci) {
+		if (this instanceof final FrozenPlayerEntityRenderer frozenPlayerEntityRenderer) {
+			if (livingEntity instanceof final FrozenPlayerEntity frozenPlayer) {
+				if (frozenPlayer.getDataTracker().get(FrozenPlayerEntity.SLIM)) {
+					this.field_4737 = (M)frozenPlayerEntityRenderer.slimModel;
+				}
+				else {
+					this.field_4737 = (M)frozenPlayerEntityRenderer.defaultModel;
+				}
+			}
+		}
+		final FrozenComponent frozenComponent = (FrozenComponent)ModEntityComponents.FROZEN.get((Object)livingEntity);
+		if (frozenComponent.isFrozen()) {
+			final MinecraftClient client = MinecraftClient.getInstance();
+			matrices.push();
+			livingEntity.setPose(frozenComponent.getForcedPose());
+			this.field_4737.handSwingProgress = this.method_4044(livingEntity, tickDelta);
+			this.field_4737.riding = livingEntity.hasVehicle();
+			this.field_4737.child = livingEntity.isBaby();
+			final float bodyYaw = frozenComponent.getForcedBodyYaw();
+			float pitch = frozenComponent.getForcedPitch();
+			float headYawMinusBodyYaw = frozenComponent.getForcedHeadYaw() - bodyYaw;
+			float limbAngle = frozenComponent.getForcedLimbAngle();
+			final float limbDistance = frozenComponent.getForcedLimbDistance();
+			final float animationProgress = this.method_4045(livingEntity, tickDelta);
+			if (LivingEntityRenderer.shouldFlipUpsideDown((LivingEntity)livingEntity)) {
+				pitch *= -1.0f;
+				headYawMinusBodyYaw *= -1.0f;
+			}
+			if (livingEntity.isBaby()) {
+				limbAngle *= 3.0f;
+			}
+			this.method_4058(livingEntity, matrices, animationProgress, bodyYaw, tickDelta);
+			matrices.scale(-1.0f, -1.0f, 1.0f);
+			this.method_4042(livingEntity, matrices, tickDelta);
+			matrices.translate(0.0f, -1.501f, 0.0f);
+			this.field_4737.animateModel((Entity)livingEntity, limbAngle, limbDistance, tickDelta);
+			this.field_4737.setAngles((Entity)livingEntity, limbAngle, limbDistance, 0.0f, headYawMinusBodyYaw, pitch);
+			final boolean visible = this.method_4056(livingEntity);
+			final boolean translucent = !visible && !livingEntity.isInvisibleTo((PlayerEntity)client.player);
+			final RenderLayer renderLayer = this.method_24302(livingEntity, visible, translucent, client.hasOutline((Entity)livingEntity));
+			if (renderLayer != null) {
+				this.field_4737.render(matrices, vertexConsumers.getBuffer(renderLayer), light, LivingEntityRenderer.getOverlay((LivingEntity)livingEntity, this.method_23185(livingEntity, tickDelta)), 1.0f, 1.0f, 1.0f, translucent ? 0.15f : 1.0f);
+			}
+			if (!livingEntity.isSpectator()) {
+				for (final FeatureRenderer<T, M> featureRenderer : this.field_4738) {
+					featureRenderer.render(matrices, vertexConsumers, light, (Entity)livingEntity, limbAngle, limbDistance, tickDelta, animationProgress, headYawMinusBodyYaw, pitch);
+				}
+			}
+			matrices.pop();
+			super.render((Entity)livingEntity, yaw, tickDelta, matrices, vertexConsumers, light);
+			ci.cancel();
+		}
+	}
+	*/
 
 	/*
-    @ModifyArgs(
+	@ModifyArgs(
 		method = "render", 
 		at = @At(
 			value = "INVOKE", 

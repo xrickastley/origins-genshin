@@ -28,7 +28,7 @@ import net.minecraft.client.gui.DrawContext;
 
 public class OriginsGenshinClient implements ClientModInitializer {
 	public static final String MOD_ID = "origins-genshin";
-    public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
+	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 
 	private static final MinecraftClient client = MinecraftClient.getInstance();
 	private static final Rescaler rescaler = new Rescaler(1920, 1080);

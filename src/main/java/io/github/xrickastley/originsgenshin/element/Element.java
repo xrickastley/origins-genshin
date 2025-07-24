@@ -156,9 +156,9 @@ public enum Element {
 		return settings.damageColor;
 	}
 
-    public Identifier getId() {
-        return this.id;
-    }
+	public Identifier getId() {
+		return this.id;
+	}
 
 	public boolean canBeAura() {
 		return settings.canBeAura;

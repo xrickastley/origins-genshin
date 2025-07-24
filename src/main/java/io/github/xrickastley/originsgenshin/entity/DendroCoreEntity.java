@@ -139,7 +139,7 @@ public final class DendroCoreEntity extends LivingEntity {
 				target.z / ticks
 			);
 
-            super.setVelocity(velocity);
+			super.setVelocity(velocity);
 
 			final Box boundingBox = this.target.getBoundingBox();
 

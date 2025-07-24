@@ -68,11 +68,11 @@ public abstract class SimpleRegistryMixin<T> implements Registry<T>, SimpleRegis
 	@Unique
 	public void originsgenshin$clearEntries() {
 		this.keyToEntry.clear();
-        this.idToEntry.clear();
-        this.valueToEntry.clear();
-        this.rawIdToEntry.clear();
-        this.entryToRawId.clear();
-        this.entryToLifecycle.clear();
+		this.idToEntry.clear();
+		this.valueToEntry.clear();
+		this.rawIdToEntry.clear();
+		this.entryToRawId.clear();
+		this.entryToLifecycle.clear();
 		this.nextId = 0;
 	}
 }

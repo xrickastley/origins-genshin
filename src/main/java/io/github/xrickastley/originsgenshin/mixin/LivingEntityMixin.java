@@ -132,8 +132,8 @@ public abstract class LivingEntityMixin extends Entity {
 		at = @At("RETURN")
 	)
 	private static DefaultAttributeContainer.Builder addToLivingAttributes(DefaultAttributeContainer.Builder builder) {
-        return OriginsGenshinAttributes.apply(builder);
-    }
+		return OriginsGenshinAttributes.apply(builder);
+	}
 
 	@Inject(
 		method = "onStatusEffectRemoved",

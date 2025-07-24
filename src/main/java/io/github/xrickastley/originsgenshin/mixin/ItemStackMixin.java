@@ -22,9 +22,9 @@ public class ItemStackMixin {
 		at = @At("HEAD"),
 		cancellable = true
 	)
-    private void preventItemUse(World world, PlayerEntity user, Hand hand, CallbackInfoReturnable<TypedActionResult<ItemStack>> cir) {
-        ItemStack handStack = user.getStackInHand(hand);
+	private void preventItemUse(World world, PlayerEntity user, Hand hand, CallbackInfoReturnable<TypedActionResult<ItemStack>> cir) {
+		ItemStack handStack = user.getStackInHand(hand);
 
 		if (user.hasStatusEffect(OriginsGenshinStatusEffects.FROZEN)) cir.setReturnValue(TypedActionResult.fail(handStack));
-    }
+	}
 }

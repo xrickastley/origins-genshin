@@ -35,9 +35,9 @@ public class OverloadedElementalReaction extends ElementalReaction {
 
 	@Override
 	protected void onReaction(LivingEntity entity, ElementalApplication auraElement, ElementalApplication triggeringElement, double reducedGauge, @Nullable LivingEntity origin) {
-        final World world = entity.getWorld();
+		final World world = entity.getWorld();
 	
-        if (world.isClient) return;
+		if (world.isClient) return;
 
 		final double x = entity.getX();
 		final double y = entity.getY();
@@ -58,19 +58,19 @@ public class OverloadedElementalReaction extends ElementalReaction {
 				: DestructionType.KEEP
 		);
 		
-        explosion.collectBlocksAndPushEntities();
-        explosion.affectWorld(world.isClient);
+		explosion.collectBlocksAndPushEntities();
+		explosion.affectWorld(world.isClient);
 		explosion
 			.getAffectedEntities()
 			.forEach(e -> damage(e, origin));
 
-        //  Sync the explosion effect to the client if the explosion is created on the server
-        if (!(world instanceof ServerWorld serverWorld)) return;
+		//  Sync the explosion effect to the client if the explosion is created on the server
+		if (!(world instanceof ServerWorld serverWorld)) return;
 
-        if (!explosion.shouldDestroy()) explosion.clearAffectedBlocks();
+		if (!explosion.shouldDestroy()) explosion.clearAffectedBlocks();
 
-        for (ServerPlayerEntity serverPlayerEntity : serverWorld.getPlayers()) {
-            if (serverPlayerEntity.squaredDistanceTo(x, y, z) >= 4096.0) continue;
+		for (ServerPlayerEntity serverPlayerEntity : serverWorld.getPlayers()) {
+			if (serverPlayerEntity.squaredDistanceTo(x, y, z) >= 4096.0) continue;
 
 			serverPlayerEntity.networkHandler.sendPacket(
 				new ExplosionS2CPacket(
@@ -84,7 +84,7 @@ public class OverloadedElementalReaction extends ElementalReaction {
 						.get(serverPlayerEntity)
 				)
 			);
-        }
+		}
 	}
 
 	private void damage(Entity entity, @Nullable Entity origin) {

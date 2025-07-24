@@ -35,6 +35,6 @@ public class OriginsGenshinParticleFactory {
 	public static final DefaultParticleType TEST = register("test");
 
 	private static DefaultParticleType register(String name) {
-        return Registry.register(Registries.PARTICLE_TYPE, OriginsGenshin.identifier(name), FabricParticleTypes.simple());
+		return Registry.register(Registries.PARTICLE_TYPE, OriginsGenshin.identifier(name), FabricParticleTypes.simple());
 	}
 }

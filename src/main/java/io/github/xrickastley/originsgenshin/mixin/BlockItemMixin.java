@@ -18,7 +18,7 @@ import net.minecraft.world.World;
 // Prioritized since Frozen **MUST** disable actions.
 @Mixin(value = BlockItem.class, priority = Integer.MIN_VALUE)
 public class BlockItemMixin {
-    @Final
+	@Final
 	@WrapOperation(
 		method = "useOnBlock",
 		at = @At(
@@ -26,11 +26,11 @@ public class BlockItemMixin {
 			target = "Lnet/minecraft/item/BlockItem;use(Lnet/minecraft/world/World;Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/util/Hand;)Lnet/minecraft/util/TypedActionResult;"
 		)
 	)
-    private TypedActionResult<ItemStack> frozen_PreventItemUse(BlockItem instance, World world, PlayerEntity user, Hand hand, Operation<TypedActionResult<ItemStack>> original) {
-        ItemStack handStack = user.getStackInHand(hand);
+	private TypedActionResult<ItemStack> frozen_PreventItemUse(BlockItem instance, World world, PlayerEntity user, Hand hand, Operation<TypedActionResult<ItemStack>> original) {
+		ItemStack handStack = user.getStackInHand(hand);
 
 		return user.hasStatusEffect(OriginsGenshinStatusEffects.FROZEN)
 			? TypedActionResult.fail(handStack)
 			: original.call(instance, world, user, hand);
-    }
+	}
 }

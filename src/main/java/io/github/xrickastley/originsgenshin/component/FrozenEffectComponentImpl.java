@@ -20,8 +20,8 @@ public class FrozenEffectComponentImpl implements FrozenEffectComponent {
 	private float forceHeadYaw = 0.0f; 
 	private float forceBodyYaw = 0.0f;
 	private float forcePitch = 0.0f;
-    private float forceLimbAngle = 0.0f;
-    private float forceLimbDistance = 0.0f;
+	private float forceLimbAngle = 0.0f;
+	private float forceLimbDistance = 0.0f;
 
 	public FrozenEffectComponentImpl(LivingEntity owner) {
 		this.owner = owner;

@@ -17,22 +17,22 @@ import net.minecraft.world.explosion.ExplosionBehavior;
 
 @Mixin(Explosion.class)
 public interface ExplosionAccessor {
-    @Accessor("world")
-    public World getWorld();
-    @Accessor("x")
-    public double getX();
-    @Accessor("y")
-    public double getY();
-    @Accessor("z")
-    public double getZ();
-    @Accessor("entity")
-    public Entity getEntity();
-    @Accessor("power")
-    public float getPower();
-    @Accessor("behavior")
-    public ExplosionBehavior getBehavior();
-    @Accessor("affectedBlocks")
-    public ObjectArrayList<BlockPos> getAffectedBlocks();
-    @Accessor("affectedPlayers")
-    public Map<PlayerEntity, Vec3d> getAffectedPlayers();
+	@Accessor("world")
+	public World getWorld();
+	@Accessor("x")
+	public double getX();
+	@Accessor("y")
+	public double getY();
+	@Accessor("z")
+	public double getZ();
+	@Accessor("entity")
+	public Entity getEntity();
+	@Accessor("power")
+	public float getPower();
+	@Accessor("behavior")
+	public ExplosionBehavior getBehavior();
+	@Accessor("affectedBlocks")
+	public ObjectArrayList<BlockPos> getAffectedBlocks();
+	@Accessor("affectedPlayers")
+	public Map<PlayerEntity, Vec3d> getAffectedPlayers();
 }

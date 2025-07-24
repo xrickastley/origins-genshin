@@ -41,7 +41,7 @@ public class ElementCommand {
 			: String.format("%.3fU %s", a.getCurrentGauge(), element);
 	};
 
-    public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
+	public static void register(CommandDispatcher<ServerCommandSource> dispatcher) {
 		dispatcher.register(
 			CommandManager
 				.literal("element")

@@ -178,10 +178,10 @@ public final class Color {
 	 */
 	public static Color fromRGBAHex(String rgbaHex) {
 		Pattern pattern = Pattern.compile("[a-f0-9]{2}");
-        Matcher matcher = pattern.matcher(rgbaHex.strip().replace("#", "").toLowerCase());
-        ArrayList<String> hexCodes = new ArrayList<>();
+		Matcher matcher = pattern.matcher(rgbaHex.strip().replace("#", "").toLowerCase());
+		ArrayList<String> hexCodes = new ArrayList<>();
 
-        while (matcher.find()) hexCodes.add(matcher.group());
+		while (matcher.find()) hexCodes.add(matcher.group());
 
 		return new Color(
 			Integer.parseInt(hexCodes.get(0), 16),

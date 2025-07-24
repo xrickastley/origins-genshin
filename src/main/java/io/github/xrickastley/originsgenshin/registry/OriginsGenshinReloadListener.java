@@ -119,9 +119,9 @@ public class OriginsGenshinReloadListener implements SimpleSynchronousResourceRe
 	}
 
 	private JsonElement parseJson(InputStream stream) throws IOException {
-        try (JsonReader reader = new JsonReader(new InputStreamReader(stream))) {
-            return JsonParser.parseReader(reader);
-        } catch (IOException e) {
+		try (JsonReader reader = new JsonReader(new InputStreamReader(stream))) {
+			return JsonParser.parseReader(reader);
+		} catch (IOException e) {
 			throw e;
 		}
 	}

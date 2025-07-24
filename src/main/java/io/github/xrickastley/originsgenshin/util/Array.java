@@ -72,19 +72,19 @@ public class Array<T> implements List<T> {
 		this.array = new CopyOnWriteArrayList<>(array.array);
 	}
 
-    /**
-     * A {@link CopyOnWriteArrayList} method, appends the specified element to the end of this {@code Array}.
-     * {@inheritDoc}
-     */
+	/**
+	 * A {@link CopyOnWriteArrayList} method, appends the specified element to the end of this {@code Array}.
+	 * {@inheritDoc}
+	 */
 	public boolean add(T e) {
 		return this.array.add(e);
 	}
 	
 	/**
-     * A {@link CopyOnWriteArrayList} method, inserts the specified element at the specified position in this {@code Array}. 
+	 * A {@link CopyOnWriteArrayList} method, inserts the specified element at the specified position in this {@code Array}. 
 	 * Shifts the element currently at that position (if any) and any subsequent elements to the right (adds one to their indices).
 	 * {@inheritDoc}
-     */
+	 */
 	public void add(int index, T e) {
 		this.array.add(index, e);
 	}
@@ -321,7 +321,7 @@ public class Array<T> implements List<T> {
 	}
 
 	/**
-     * A {@link Stream} method, returns an {@link Optional} describing the first element of this {@code Array}, or an empty 
+	 * A {@link Stream} method, returns an {@link Optional} describing the first element of this {@code Array}, or an empty 
 	 * {@code Optional} if the this {@code Array} is empty.
 	 */
 	public Optional<T> findFirst() {
@@ -436,8 +436,8 @@ public class Array<T> implements List<T> {
 
 	/**
 	 * A {@link CopyOnWriteArrayList} method, returns an iterator over the elements in this list in proper sequence. <br> <br>
-     *
-     * The returned iterator provides a snapshot of the state of the list when the iterator was constructed. 
+	 *
+	 * The returned iterator provides a snapshot of the state of the list when the iterator was constructed. 
 	 * No synchronization is needed while traversing the iterator. The iterator does <i>NOT</i> support the {@code remove}
 	 * method.
 	 * {@inheritDoc}
@@ -538,7 +538,7 @@ public class Array<T> implements List<T> {
 
 	/**
 	 * A {@link Stream} method, performs the specified action for each element in an array, then returns the {@code Array}.
-     * @param consumer The action to be performed for each element.
+	 * @param consumer The action to be performed for each element.
 	 * @see Iterable#forEach
 	 */
 	public Array<T> peek(Consumer<? super T> consumer) {
@@ -570,12 +570,12 @@ public class Array<T> implements List<T> {
 	/**
 	 * Performs a reduction on the elements of this {@code Array}, using the provided {@code initialValue} and 
 	 * {@code accumulator} function. This is equivalent to:
-     * <pre>{@code 
+	 * <pre>{@code 
 	 *U result = initialValue;
-     *for (T element : this.array)
-     *    result = accumulator.apply(result, element);
-     *return result;
-     *}</pre>
+	 *for (T element : this.array)
+	 *	result = accumulator.apply(result, element);
+	 *return result;
+	 *}</pre>
 	 * 
 	 * @param <U> The type of the initial value, and the value {@code reducer} must return.
 	 * @param accumulator A function that combines both the value and the current element.
@@ -616,17 +616,17 @@ public class Array<T> implements List<T> {
 	}
 
 	/**
-     * A {@link CopyOnWriteArrayList} method, removes the first occurrence of the specified element from this {@code Array},
+	 * A {@link CopyOnWriteArrayList} method, removes the first occurrence of the specified element from this {@code Array},
 	 * if it is present. <br> <br> {@inheritDoc} 
-     */
+	 */
 	public boolean remove(Object o) {
 		return this.array.remove(o);
 	}
 
 	/**
-     * A {@link CopyOnWriteArrayList} method, removes the element at the specified position in this list and shifts 
+	 * A {@link CopyOnWriteArrayList} method, removes the element at the specified position in this list and shifts 
 	 * any subsequent elements to the left (subtracts one from their indices). <br> <br> {@inheritDoc}
-     */
+	 */
 	public T remove(int index) {
 		return this.array.remove(index);
 	}
@@ -707,20 +707,20 @@ public class Array<T> implements List<T> {
 	}
 
 	/**
-     * A renamed implementation of 
+	 * A renamed implementation of 
 	 * <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort">Array.prototype.sort()</a>,
 	 * sorts an array's elements' string value in ascending, ASCII character order.
-     */
+	 */
 	public Array<T> sortElements() {
 		return this.sortElements((a, b) -> a.toString().compareTo(b.toString()));
 	}
 
 	/**
-     * A renamed implementation of 
+	 * A renamed implementation of 
 	 * <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort">Array.prototype.sort()</a>,
 	 * sorts this {@code Array} in place according to the order induced by the specified {@code BiFunction}. The sort is 
 	 * <i>stable</i>: this method must not reorder equal elements. <br> <br>
-     *
+	 *
 	 * The resulting sort will be based on the value of {@code compareFn(a, b)}.
 	 * <ul>
 	 * 	<li>If {@code compareFn(a, b) < 0}, then {@code a > b}.
@@ -732,7 +732,7 @@ public class Array<T> implements List<T> {
 	 * 
 	 * @param compareFn The function used to compare {@code Array} elements. 
 	 * @implNote Time complexity: {@code O(n log n)}
-     */
+	 */
 	public Array<T> sortElements(BiFunction<T, T, Integer> compareFn) {
 		array.sort(compareFn::apply);
 
@@ -750,9 +750,9 @@ public class Array<T> implements List<T> {
 	 * A {@link CopyOnWriteArrayList} method, returns a view of the portion of this list between {@code fromIndex}, inclusive, 
 	 * and {@code toIndex}, exclusive. The returned list is backed by this list, so changes in the returned list are reflected
 	 * in this list. <br> <br>
-     *
-     * The semantics of the list returned by this method become undefined if the backing list (i.e., this list) is modified in
-     * any way other than via the returned list.
+	 *
+	 * The semantics of the list returned by this method become undefined if the backing list (i.e., this list) is modified in
+	 * any way other than via the returned list.
 	 * {@inheritDoc}
 	 */
 	@Override
