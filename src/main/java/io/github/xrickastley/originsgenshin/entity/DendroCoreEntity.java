@@ -16,6 +16,7 @@ import io.github.xrickastley.originsgenshin.element.ElementalDamageSource;
 import io.github.xrickastley.originsgenshin.element.InternalCooldownContext;
 import io.github.xrickastley.originsgenshin.element.reaction.ElementalReaction;
 import io.github.xrickastley.originsgenshin.element.reaction.ElementalReactions;
+import io.github.xrickastley.originsgenshin.factory.OriginsGenshinSoundEvents;
 import io.github.xrickastley.originsgenshin.registry.OriginsGenshinDamageTypes;
 import io.github.xrickastley.originsgenshin.util.ClassInstanceUtil;
 import net.minecraft.entity.Entity;
@@ -28,6 +29,7 @@ import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.item.ItemStack;
+import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.Arm;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.Box;
@@ -290,6 +292,9 @@ public final class DendroCoreEntity extends LivingEntity {
 
 			target.damage(source, damage);
 		}
+
+		this.getWorld()
+			.playSound(null, this.getBlockPos(), OriginsGenshinSoundEvents.DENDRO_CORE_EXPLOSION, SoundCategory.PLAYERS, 1.0f, 1.0f);
 
 		return true;
 	}

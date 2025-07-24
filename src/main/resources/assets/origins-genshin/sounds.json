@@ -1,0 +1,18 @@
+{
+  "reaction": {
+    "category": "player",
+    "sounds": [
+      {
+        "name": "origins-genshin:reaction"
+      }
+    ]
+  },
+  "dendro_core_explosion": {
+    "category": "player",
+    "sounds": [
+      {
+        "name": "origins-genshin:dendro_core_explosion"
+      }
+    ]
+  }
+}

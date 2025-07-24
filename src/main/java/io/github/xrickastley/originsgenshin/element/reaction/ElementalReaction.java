@@ -15,6 +15,7 @@ import io.github.xrickastley.originsgenshin.component.ElementComponent;
 import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
 import io.github.xrickastley.originsgenshin.events.ReactionTriggered;
+import io.github.xrickastley.originsgenshin.factory.OriginsGenshinSoundEvents;
 import io.github.xrickastley.originsgenshin.networking.ShowElementalReactionS2CPacket;
 import io.github.xrickastley.originsgenshin.registry.OriginsGenshinRegistries;
 
@@ -24,6 +25,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.particle.DefaultParticleType;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
 import net.minecraft.util.math.Box;
@@ -251,6 +253,10 @@ public abstract class ElementalReaction {
 		ReactionTriggered.EVENT
 			.invoker()
 			.onReactionTriggered(this, reducedGauge, entity, origin);
+
+		entity
+			.getWorld()
+			.playSound(null, entity.getBlockPos(), OriginsGenshinSoundEvents.REACTION, SoundCategory.PLAYERS, 1.0f, 1.0f);
 
 		return true;
 	}
