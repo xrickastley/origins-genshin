@@ -90,7 +90,6 @@ public class OverloadedElementalReaction extends ElementalReaction {
 	private void damage(Entity entity, @Nullable Entity origin) {
 		if (!(entity instanceof final LivingEntity living)) return;
 
-		final float amount = ElementalReaction.getReactionDamage(entity, 2.75);
 		final ElementalApplication application = ElementalApplications.gaugeUnits(living, Element.PYRO, 0);
 		final ElementalDamageSource source = new ElementalDamageSource(
 			entity
@@ -99,6 +98,10 @@ public class OverloadedElementalReaction extends ElementalReaction {
 			application, 
 			InternalCooldownContext.ofNone(entity)
 		);
+
+		float amount = ElementalReaction.getReactionDamage(entity, 2.75);
+		
+		if (entity == origin) amount = 0;
 
 		entity.damage(source, amount);
 	}
