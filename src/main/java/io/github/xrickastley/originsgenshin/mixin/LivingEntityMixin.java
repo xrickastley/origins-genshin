@@ -117,7 +117,7 @@ public abstract class LivingEntityMixin extends Entity {
 
 		OriginsGenshin
 			.sublogger("LivingEntityMixin")
-			.info("Damage Phase: AMPLIFY - Damage: {}, Multiplier: {}, Final DMG: {}", amount, amplifier, amount * amplifier);
+			.debug("Damage Phase: AMPLIFY - Damage: {}, Multiplier: {}, Final DMG: {}", amount, amplifier, amount * amplifier);
 
 		return amount * (float) amplifier;
 	}
