@@ -111,7 +111,6 @@ public enum Element {
 			.setDecayRate(Decays.NO_DECAY_RATE)
 			.bypassesCooldown(true)
 			.hasAuraTax(false)
-			.excludesPriorityCheck(true)
 	);
 
 	private final Identifier id;
@@ -201,10 +200,6 @@ public enum Element {
 		return settings.hasAuraTax;
 	}
 
-	public boolean excludesPriorityCheck() {
-		return settings.excludesPriorityCheck;
-	}
-
 	/**
 	 * A class used in creating data for Elements, instead of multiple overloaded constructors.
 	 */
@@ -220,7 +215,6 @@ public enum Element {
 		protected boolean decayInheritance = true;
 		protected boolean bypassesCooldown = false;
 		protected boolean hasAuraTax = true;
-		protected boolean excludesPriorityCheck = false;
 
 		/**
 		 * Creates a new, empty instance of {@code ElementSettings}.
@@ -336,26 +330,6 @@ public enum Element {
 		 */
 		public ElementSettings decayInheritance(boolean decayInheritance) {
 			this.decayInheritance = decayInheritance;
-
-			return this;
-		}
-
-		/**
-		 * Sets if the element excludes itself from the priority check. <br> <br>
-		 *
-		 * When elements are applied and no reactions are triggered, an attempt is made to make
-		 * the element an Aura element, allowing for "double auras" to exist. <br> <br>
-		 *
-		 * If an element with a <b>higher</b> priority exists as an Aura Element, elements with
-		 * lower priorities may <b>not</b> be applied while that element is currently applied as
-		 * an Aura Element. <br> <br>
-		 *
-		 * This setting changes whether the element is included as a "higher priority"
-		 * element upon checking. If <b>all</b> currently applied Aura elements with the "higher
-		 * priority" are excluded, the next highest priority elements will be considered.
-		 */
-		public ElementSettings excludesPriorityCheck(boolean priorityCheck) {
-			this.excludesPriorityCheck = priorityCheck;
 
 			return this;
 		}
