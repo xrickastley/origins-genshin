@@ -14,5 +14,13 @@
         "name": "origins-genshin:dendro_core_explosion"
       }
     ]
+  },
+  "sprawling_shot_hit": {
+    "category": "player",
+    "sounds": [
+      {
+        "name": "origins-genshin:sprawling_shot_hit"
+      }
+    ]
   }
 }

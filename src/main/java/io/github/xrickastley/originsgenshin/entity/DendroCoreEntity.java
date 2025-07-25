@@ -126,7 +126,7 @@ public final class DendroCoreEntity extends LivingEntity {
 
 	// why does it say NPE on target.getBoundingBox :sob:, IT'S ALREADY TARGET != NULL??
 	@SuppressWarnings("null")
-	public void doHyperbloom() {
+	private void doHyperbloom() {
 		final int hyperbloomTick = this.age - this.hyperbloomAge;
 
 		if (target != null) {
@@ -153,6 +153,9 @@ public final class DendroCoreEntity extends LivingEntity {
 
 			this.target.damage(this.createDamageSource(this.target), ElementalReaction.getReactionDamage(this, 3.0));
 			this.remove(RemovalReason.KILLED);
+			
+			this.getWorld()
+				.playSound(null, this.getBlockPos(), OriginsGenshinSoundEvents.SPRAWLING_SHOT_HIT, SoundCategory.PLAYERS, 0.5f, 1.0f);
 		} else {
 			super.setVelocity(new Vec3d(0, 0.5, 0));
 			
@@ -294,7 +297,7 @@ public final class DendroCoreEntity extends LivingEntity {
 		}
 
 		this.getWorld()
-			.playSound(null, this.getBlockPos(), OriginsGenshinSoundEvents.DENDRO_CORE_EXPLOSION, SoundCategory.PLAYERS, 1.0f, 1.0f);
+			.playSound(null, this.getBlockPos(), OriginsGenshinSoundEvents.DENDRO_CORE_EXPLOSION, SoundCategory.PLAYERS, 0.5f, 1.0f);
 
 		return true;
 	}
