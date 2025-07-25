@@ -47,6 +47,8 @@ public interface ElementComponent extends AutoSyncedComponent, CommonTickingComp
 	}
 
 	public static DamageSource applyElementalInfusions(DamageSource source, LivingEntity entity) {
+		if (source instanceof ElementalDamageSource) return source;
+
 		if (source.isIn(DamageTypeTags.IS_LIGHTNING)) {
 			return new ElementalDamageSource(source, ElementalApplications.gaugeUnits(entity, Element.ELECTRO, 0, true), InternalCooldownContext.ofType(source.getAttacker(), "origins-genshin:natural_environment", InternalCooldownType.INTERVAL_ONLY));
 		} else if (source.isIn(DamageTypeTags.IS_FIRE)) {
