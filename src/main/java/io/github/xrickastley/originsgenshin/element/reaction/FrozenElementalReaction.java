@@ -42,6 +42,6 @@ public final class FrozenElementalReaction extends ElementalReaction {
 
 		OriginsGenshin
 			.sublogger(this)
-			.info("Frozen (Elemental Application): {} | Frozen (Status Effect): {}", ElementComponent.KEY.get(entity).getElementalApplication(Element.FROZEN), entity.getStatusEffect(OriginsGenshinStatusEffects.FROZEN));
+			.debug("Frozen (Elemental Application): {} | Frozen (Status Effect): {}", ElementComponent.KEY.get(entity).getElementalApplication(Element.FROZEN), entity.getStatusEffect(OriginsGenshinStatusEffects.FROZEN));
 	}
 }

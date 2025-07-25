@@ -34,9 +34,5 @@ public final class QuickenElementalReaction extends ElementalReaction {
 			.setElementalApplication(
 				ElementalApplications.duration(entity, Element.QUICKEN, quickenAuraGauge, tickDuration)
 			);
-
-		OriginsGenshin
-			.sublogger(this)
-			.info("Quicken: {}", ElementComponent.KEY.get(entity).getElementalApplication(Element.QUICKEN));
 	}
 }

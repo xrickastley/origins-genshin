@@ -126,12 +126,6 @@ public interface ElementComponent extends AutoSyncedComponent, CommonTickingComp
 	default List<ElementalReaction> addElementalApplication(Element element, InternalCooldownContext icdContext, double gaugeUnits) {
 		final boolean isAura = this.getAppliedElements().isEmpty();
 
-		/*
-		OriginsGenshin
-			.sublogger(ElementComponent.class)
-			.info("(add) Currently applied elements: {} | isAura: {}", this.getAppliedElements(), isAura);
-		*/
-
 		return this.addElementalApplication(ElementalApplications.gaugeUnits(this.getOwner(), element, gaugeUnits, isAura), icdContext);
 	}
 

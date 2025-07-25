@@ -138,8 +138,8 @@ public final class ElementComponentImpl implements ElementComponent {
 
 		final Set<ElementalReaction> triggeredReactions = this.triggerReactions(application, icdContext.getOrigin());
 
-		LOGGER.info("Current element data: {}", getElementHolder(application.getElement()).getElementalApplication());
-		LOGGER.info("Currently applied elements: {}", this.getAppliedElements());
+		LOGGER.debug("Current element data: {}", getElementHolder(application.getElement()).getElementalApplication());
+		LOGGER.debug("Currently applied elements: {}", this.getAppliedElements());
 
 		ElementComponent.sync(owner);
 
@@ -191,8 +191,6 @@ public final class ElementComponentImpl implements ElementComponent {
 
 			tag.put("LastReaction", lastReaction);
 		}
-
-		// LOGGER.info("Wrote NBT for {} at: {} ({})", owner, owner.getWorld().getTime(), Util.getMeasuringTimeMs());
 	}
 
 	@Override
@@ -212,9 +210,6 @@ public final class ElementComponentImpl implements ElementComponent {
 		final NbtList list = tag.getList("AppliedElements", NbtElement.COMPOUND_TYPE);
 		final long syncedAt = tag.getLong("SyncedAt");
 
-		// LOGGER.info("Read NBT for {} at: {} ({}) | Synced at server time: {}", owner, owner.getWorld().getTime(), Util.getMeasuringTimeMs(), syncedAt);
-		// LOGGER.info("Current NbtList: {}", list);
-
 		this.elementHolders
 			.values().stream()
 			.forEach(holder -> holder.setElementalApplication(null));
@@ -227,7 +222,7 @@ public final class ElementComponentImpl implements ElementComponent {
 			this.getElementHolder(application.getElement())
 				.setElementalApplication(application);
 
-			if (owner.getWorld() instanceof ServerWorld) LOGGER.info("[{}] Adding ElementalApplication: {}", owner.getWorld().getClass().getSimpleName(), application);
+			if (owner.getWorld() instanceof ServerWorld) LOGGER.debug("[{}] Adding ElementalApplication: {}", owner.getWorld().getClass().getSimpleName(), application);
 		}
  	}
 
@@ -272,11 +267,7 @@ public final class ElementComponentImpl implements ElementComponent {
 				elementHolders
 					.values().stream()
 					.map(ElementHolder::getElementalApplication)
-					.filter(application -> {
-						LOGGER.info("Element: {}, shouldBeRemoved: {}, elementPriority: {}, priority: {}", application.getElement(), application.isEmpty(), application.getElement().getPriority(), priority.get());
-
-						return !application.isEmpty() && application.getElement().getPriority() == priority.get();
-					})
+					.filter(application -> !application.isEmpty() && application.getElement().getPriority() == priority.get())
 			)
 			: new Array<>();
 	}
@@ -286,15 +277,11 @@ public final class ElementComponentImpl implements ElementComponent {
 			.filter(application -> application.getElement().getPriority() == priority)
 			.map(ElementalApplication::getElement);
 
-		// LOGGER.info("Valid elements: {} | Triggering element: {}", validElements, triggeringElement);
-
 		return OriginsGenshinRegistries.ELEMENTAL_REACTION
 			.streamEntries()
 			.map(Reference::value)
-//			.peek(r -> LOGGER.info("(InStream) Reaction: {} | isTriggerable: {} | hasAnyElement: {} | highestElementPriority: {} ({})", r.getId(), r.isTriggerable(owner), r.hasAnyElement(validElements), r.getHighestElementPriority(), r.getHighestElementPriority() == priority))
 			.filter(reaction -> reaction.isTriggerable(owner) && reaction.hasAnyElement(validElements) && reaction.getHighestElementPriority() == priority)
 			.sorted(Comparator.comparing(reaction -> reaction.getPriority(triggeringElement)));
-//			.peek(r -> LOGGER.info("(InStream/Ordered) Reaction: {} | Priority: {}", r.getId(), r.getPriority(triggeringElement)));
 	}
 
 	/**
@@ -315,8 +302,6 @@ public final class ElementComponentImpl implements ElementComponent {
 	 */
 	private boolean attemptReapply(ElementalApplication application) {
 		final ElementalApplication currentApplication = this.getElementalApplication(application.getElement());
-
-		// LOGGER.info("Current application: {} | Application: {} | CanBeAura: {}", currentApplication, application, application.getElement().canBeAura());
 
 		if (currentApplication != null && !currentApplication.isEmpty() && application.getElement().canBeAura()) {
 			Optional<Integer> priority = this.getHighestElementPriority();
@@ -347,12 +332,9 @@ public final class ElementComponentImpl implements ElementComponent {
 		final Optional<Integer> optionalPriority = this.getHighestElementPriority();
 		final ElementHolder context = this.getElementHolder(application.getElement());
 
-		LOGGER.info("Triggered reactions at age: {}, Current age: {}, Current Priority: {}, Applied elements:", lastReaction, this.owner.age, optionalPriority.orElse(-1));
+		LOGGER.debug("Triggered reactions at age: {}, Current age: {}, Current Priority: {}, Applied elements: {}", lastReaction, this.owner.age, optionalPriority.orElse(-1), this.getAppliedElements());
 
 		context.setElementalApplication(application);
-
-		for (ElementalApplication element : this.getAppliedElements())
-			LOGGER.info("\t- {}", element.getElement());
 
 		// At least one element must be applied for a priority to exist; no priority, no applied element.
 		if (!optionalPriority.isPresent()) {
@@ -372,13 +354,13 @@ public final class ElementComponentImpl implements ElementComponent {
 		boolean applyElementAsAura = true;
 		final Set<ElementalReaction> triggeredReactions = new LinkedHashSet<>();
 
-		LOGGER.info("Target elemental priority: {}", priority);
-		LOGGER.info("Set triggered reactions at age to: {}", this.owner.age);
+		LOGGER.debug("Target elemental priority: {}", priority);
+		LOGGER.debug("Set triggered reactions at age to: {}", this.owner.age);
 
 		while (optional.isPresent() && (application.getCurrentGauge() > 0 || optional.get().isTriggerable(owner))) {
 			final ElementalReaction reaction = optional.get();
 
-			LOGGER.info("Triggering reaction: {}, Current Gauge ({}): {}", reaction.getId(), application.getElement(), application.getCurrentGauge());
+			LOGGER.debug("Triggering reaction: {}, Current Gauge ({}): {}", reaction.getId(), application.getElement(), application.getCurrentGauge());
 
 			reaction.trigger(owner, origin);
 			applyElementAsAura = applyElementAsAura && reaction.shouldApplyResultAsAura();
@@ -397,7 +379,7 @@ public final class ElementComponentImpl implements ElementComponent {
 
 				if (newPriority == -1 || newPriority >= priority) break;
 
-				LOGGER.info("Target elemental priority has been upgraded: {} -> {}", priority, newPriority);
+				LOGGER.debug("Target elemental priority has been upgraded: {} -> {}", priority, newPriority);
 
 				priority = newPriority;
 				optional = this
@@ -406,7 +388,7 @@ public final class ElementComponentImpl implements ElementComponent {
 					.findFirst();
 
 				if (optional.isPresent())
-					LOGGER.info("Found reaction after priority upgrade: {}, Current Gauge ({}): {}", optional.get().getId(), application.getElement(), application.getCurrentGauge());
+					LOGGER.debug("Found reaction after priority upgrade: {}, Current Gauge ({}): {}", optional.get().getId(), application.getElement(), application.getCurrentGauge());
 			}
 		}
 
@@ -415,15 +397,15 @@ public final class ElementComponentImpl implements ElementComponent {
 		if (firstReaction.isPresent())
 			this.lastReaction = new Pair<>(firstReaction.get(), this.owner.getWorld().getTime());
 
-		LOGGER.info("No more reactions may be triggered! | Current Gauge ({}): {}", application.getElement(), application.getCurrentGauge());
-		LOGGER.info("Element: {} | CanBeAura: {} | Triggered reactions: {} | Apply Element as Aura: {} | Is Gauge Units: {}", context.getElement(), context.getElement().canBeAura(), triggeredReactions.size(), applyElementAsAura, application.isGaugeUnits());
+		LOGGER.debug("No more reactions may be triggered! | Current Gauge ({}): {}", application.getElement(), application.getCurrentGauge());
+		LOGGER.debug("Element: {} | CanBeAura: {} | Triggered reactions: {} | Apply Element as Aura: {} | Is Gauge Units: {}", context.getElement(), context.getElement().canBeAura(), triggeredReactions.size(), applyElementAsAura, application.isGaugeUnits());
 
 		if (!context.getElement().canBeAura() || (triggeredReactions.size() > 0 && !applyElementAsAura && application.isGaugeUnits()) || AbstractBurningElementalReaction.mixin$allowDendroPassthrough(this.getHighestElementPriority().orElse(Integer.MIN_VALUE) < application.getElement().getPriority(), this, application)) {
-			LOGGER.info("Removing application: {}", application);
+			LOGGER.debug("Removing application: {}", application);
 
 			context.setElementalApplication(null);
 		} else if (application.isGaugeUnits()) {
-			LOGGER.info("Setting as aura: {}", application);
+			LOGGER.debug("Setting as aura: {}", application);
 
 			context.setElementalApplication(application.asAura());
 		}

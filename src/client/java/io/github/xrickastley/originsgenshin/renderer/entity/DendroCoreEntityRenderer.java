@@ -31,7 +31,7 @@ public class DendroCoreEntityRenderer extends LivingEntityRenderer<DendroCoreEnt
 		} catch (Exception e) {
 			OriginsGenshin
 				.sublogger(DendroCoreEntityRenderer.class)
-				.info("An exception occured while trying to load ObjEntityModel, resorting to fallback...", e);
+				.warn("An exception occured while trying to load ObjEntityModel, resorting to fallback...", e);
 
 			return new DendroCoreEntityModel(context.getPart(DendroCoreEntityModel.MODEL_LAYER));
 		}

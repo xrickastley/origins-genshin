@@ -15,6 +15,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.component.ElementComponent;
 import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementalApplications;
@@ -87,12 +88,9 @@ public abstract class LivingEntityMixin extends Entity {
 			)
 			: 0.0f;
 
-
-		/*
 		OriginsGenshin
 			.sublogger("LivingEntityMixin")
-			.info("Phase: ADDITIVE - Damage: {}, Additive: {}, Final Base DMG: {}", amount, additive, amount + additive);
-		*/
+			.debug("Damage Phase: ADDITIVE - Damage: {}, Additive: {}, Final Base DMG: {}", amount, additive, amount + additive);
 
 		return OriginsGenshinAttributes.modifyDamage((LivingEntity)(Entity) this, eds, amount + additive);
 	}
@@ -117,11 +115,9 @@ public abstract class LivingEntityMixin extends Entity {
 			)
 			: 1.0;
 
-		/*
 		OriginsGenshin
 			.sublogger("LivingEntityMixin")
-			.info("Phase: AMPLIFY - Damage: {}, Multiplier: {}, Final DMG: {}", amount, amplifier, amount * amplifier);
-		*/
+			.info("Damage Phase: AMPLIFY - Damage: {}, Multiplier: {}, Final DMG: {}", amount, amplifier, amount * amplifier);
 
 		return amount * (float) amplifier;
 	}

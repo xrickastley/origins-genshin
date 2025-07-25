@@ -97,10 +97,6 @@ public class ElectroChargedElementalReaction extends ElementalReaction {
 	public static void mixin$tick(LivingEntity entity) {
 		if (!ElementalReactions.ELECTRO_CHARGED.isTriggerable(entity) || entity.getWorld().isClient) return;
 
-		OriginsGenshin
-			.sublogger("LivingEntityMixin")
-			.info("Electro-Charged - isTriggerable: {} | Hydro: {} | Electro: {}", ElementalReactions.ELECTRO_CHARGED.isTriggerable(entity), ElementComponent.KEY.get(entity).getElementalApplication(Element.HYDRO), ElementComponent.KEY.get(entity).getElementalApplication(Element.ELECTRO));
-
 		ElementalReactions.ELECTRO_CHARGED.trigger(entity);
 
 		ElementComponent.sync(entity);

@@ -94,12 +94,6 @@ public abstract sealed class AbstractBurningElementalReaction
 		});
 
 		ElementRemoved.EVENT.register(application -> {
-			/*
-			OriginsGenshin
-				.sublogger(AbstractBurningElementalReaction.class)
-				.info("Element Removed: {} (by {}) | {}", application.getElement(), Thread.currentThread().getStackTrace()[3].toString(), application.getElement() != Element.DENDRO && application.getElement() != Element.QUICKEN ? "Returning early!" : "Doing logic...");
-			*/
-
 			if (application.getElement() == Element.BURNING) ElementComponent.sync(application.getEntity());
 
 			if (application.getElement() != Element.DENDRO && application.getElement() != Element.QUICKEN) return;
@@ -111,12 +105,6 @@ public abstract sealed class AbstractBurningElementalReaction
 				.setElementalApplication(null);
 
 			ElementComponent.sync(application.getEntity());
-
-			/*
-			OriginsGenshin
-				.sublogger(AbstractBurningElementalReaction.class)
-				.info("Burning: {} | Syncing elements to client...", component.getElementHolder(Element.BURNING).getElementalApplication());
-			*/
 		});
 
 		ReactionTriggered.EVENT.register((reaction, reducedGauge, target, origin) -> {
@@ -130,10 +118,6 @@ public abstract sealed class AbstractBurningElementalReaction
 			final double newReducedGauge = (applicationAE.getElement() == Element.PYRO
 				? applicationTE.getCurrentGauge() + reducedGauge
 				: applicationAE.getCurrentGauge() + reducedGauge) * reaction.reactionCoefficient;
-
-			OriginsGenshin
-				.sublogger(AbstractBurningElementalReaction.class)
-				.info("Reaction: {} | Aura element: {}U {} | Triggering element: {}U {} | Reduced gauge (new): {}", reaction.getId(), applicationAE.getCurrentGauge() + reducedGauge, applicationAE.getElement(), applicationTE.getCurrentGauge() + reducedGauge, applicationTE.getElement(), newReducedGauge);
 
 			component
 				.getElementalApplication(Element.BURNING)
@@ -156,12 +140,6 @@ public abstract sealed class AbstractBurningElementalReaction
 
 			return;
 		}
-
-		/*
-		OriginsGenshin
-			.sublogger(AbstractBurningElementalReaction.class)
-			.info("Entities in AoE: {} | Filter: {}", ElementalReaction.getEntitiesInAoE(entity, 1), ElementalReaction.getEntitiesInAoE(entity, 1, t -> !ElementComponent.KEY.get(t).isBurningOnCD()));
-		*/
 
 		for (final LivingEntity target : ElementalReaction.getEntitiesInAoE(entity, 1, t -> !ElementComponent.KEY.get(t).isBurningOnCD())) {
 			// TODO: Burning DMG from this point (of reapplication) will be calculated based on the stats of the character responsible for the latest instance of Dendro or Pyro application.

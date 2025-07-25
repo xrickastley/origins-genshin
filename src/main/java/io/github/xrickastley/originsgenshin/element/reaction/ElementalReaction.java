@@ -208,12 +208,6 @@ public abstract class ElementalReaction {
 			// The aura element must STRICTLY be an Aura element.
 			: auraElement != null && trigElement != null && auraElement.isAuraElement() && !auraElement.isEmpty() && !trigElement.isEmpty();
 
-		if (this instanceof QuickenBloomElementalReaction) {
-			LOGGER.info("Aura element: {} | Triggering element: {} | Result: {}", auraElement, trigElement, result);
-			LOGGER.info("auraElement != null ({}) && trigElement != null ({}) && !auraElement.isEmpty() ({}) && !trigElement.isEmpty() ({}) -> {}", auraElement != null, trigElement != null, auraElement == null ? "NullPointerException" : !auraElement.isEmpty(), trigElement == null ? "NullPointerException" : !trigElement.isEmpty(), result);
-		}
-
-
 		return result;
 	}
 
@@ -236,15 +230,15 @@ public abstract class ElementalReaction {
 
 		final DecimalFormat df = new DecimalFormat("0.0");
 
-		LOGGER.info("Phase: BEFORE - Aura element: {} GU {}; Triggering elements: {} GU {}; Reaction coefficient: {}", df.format(applicationAE.getCurrentGauge()), applicationAE.getElement(), df.format(applicationTE.getCurrentGauge()), applicationTE.getElement(), reactionCoefficient);
+		LOGGER.debug("Phase: BEFORE - Aura element: {} GU {}; Triggering elements: {} GU {}; Reaction coefficient: {}", df.format(applicationAE.getCurrentGauge()), applicationAE.getElement(), df.format(applicationTE.getCurrentGauge()), applicationTE.getElement(), reactionCoefficient);
 
 		final double reducedGauge = applicationAE.reduceGauge(reactionCoefficient * applicationTE.getCurrentGauge());
 
-		LOGGER.info("Phase: CALCULATE - Reaction coefficient: {} | Reduced Gauge (AE): {}", reactionCoefficient, reducedGauge);
+		LOGGER.debug("Phase: CALCULATE - Reaction coefficient: {} | Reduced Gauge (AE): {}", reactionCoefficient, reducedGauge);
 
 		applicationTE.reduceGauge(reducedGauge);
 
-		LOGGER.info("Phase: AFTER - Aura element: {} GU {}; Triggering elements: {} GU {}; Reaction coefficient: {}", df.format(applicationAE.getCurrentGauge()), applicationAE.getElement(), df.format(applicationTE.getCurrentGauge()), applicationTE.getElement(), reactionCoefficient);
+		LOGGER.debug("Phase: AFTER - Aura element: {} GU {}; Triggering elements: {} GU {}; Reaction coefficient: {}", df.format(applicationAE.getCurrentGauge()), applicationAE.getElement(), df.format(applicationTE.getCurrentGauge()), applicationTE.getElement(), reactionCoefficient);
 
 		AbstractBurningElementalReaction.mixin$reduceBurningGauge(applicationAE, applicationTE, entity, reducedGauge);
 		this.onReaction(entity, applicationAE, applicationTE, reducedGauge, origin);

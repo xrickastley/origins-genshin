@@ -64,11 +64,9 @@ public final class InternalCooldown {
 	public boolean handleInternalCooldown() {
 		if (tag.getTag() == null) return true;
 
-		/*
 		OriginsGenshin
 			.sublogger(this)
-			.info("InternalCooldown@{} => Reset Interval ({} ticks): {} ({} ≥ {}) | Gauge Sequence ({}-hit rule): {} ({} ≥ 3)", Integer.toHexString(this.hashCode()), type.getResetInterval(), holder.getOwner().age >= cooldown, holder.getOwner().age, cooldown, type.getGaugeSequence(), totalHits >= type.getGaugeSequence(), totalHits, type.getGaugeSequence());
-		*/
+			.debug("InternalCooldown@{} => Reset Interval ({} ticks): {} ({} ≥ {}) | Gauge Sequence ({}-hit rule): {} ({} ≥ {})", Integer.toHexString(this.hashCode()), type.getResetInterval(), holder.getOwner().age >= cooldown, holder.getOwner().age, cooldown, type.getGaugeSequence(), totalHits >= type.getGaugeSequence(), totalHits, type.getGaugeSequence());
 
 		if (holder.getOwner().age >= cooldown) {
 			cooldown = holder.getOwner().age + type.getResetInterval();
