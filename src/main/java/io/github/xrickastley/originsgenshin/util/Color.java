@@ -161,8 +161,6 @@ public final class Color {
 	 * @return The resulting {@code Color} object.
 	 */
 	public Color multiply(double r, double g, double b, double a) {
-		// System.out.println(String.format("alpha: %f | a: %f | result: %f", this.alpha, a, this.alpha * a));
-
 		return new Color(this.red * r, this.green * g, this.blue * b, this.alpha * a);
 	}
 

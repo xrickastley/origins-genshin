@@ -34,8 +34,6 @@ public class ElementParticle extends SpriteBillboardParticle {
 
 	@Override
 	public void tick() {
-		// System.out.println("EE");
-
 		this.prevPosX = this.x;
 		this.prevPosY = this.y;
 		this.prevPosZ = this.z;
