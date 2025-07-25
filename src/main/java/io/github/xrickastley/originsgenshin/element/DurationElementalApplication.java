@@ -3,8 +3,9 @@ package io.github.xrickastley.originsgenshin.element;
 import java.util.UUID;
 
 import io.github.xrickastley.originsgenshin.component.ElementComponent;
-import io.github.xrickastley.originsgenshin.exception.ElementalApplicationOperationException;
 import io.github.xrickastley.originsgenshin.exception.ElementalApplicationOperationException.Operation;
+import io.github.xrickastley.originsgenshin.exception.ElementalApplicationOperationException;
+
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
@@ -18,7 +19,7 @@ public final class DurationElementalApplication extends ElementalApplication {
 
 		this.duration = duration;
 	}
-	
+
 	static ElementalApplication fromNbt(LivingEntity entity, NbtCompound nbt, long syncedAt) {
 		final Element element = Element.valueOf(nbt.getString("Element"));
 		final UUID uuid = nbt.getUuid("UUID");
@@ -49,10 +50,10 @@ public final class DurationElementalApplication extends ElementalApplication {
 
 	/**
 	 * {@inheritDoc} <br> <br>
-	 * 
-	 * This implementation guarantees this to be {@code true} when {@code currentGauge} reaches 
+	 *
+	 * This implementation guarantees this to be {@code true} when {@code currentGauge} reaches
 	 * {@code 0} or when the current world time, given by {@link LivingEntity#getWorld()}
-	 * {@link World#getTime() .getTime()} exceeds {@code duration + appliedAt}.  
+	 * {@link World#getTime() .getTime()} exceeds {@code duration + appliedAt}.
 	 */
 	@Override
 	public boolean isEmpty() {
@@ -64,7 +65,7 @@ public final class DurationElementalApplication extends ElementalApplication {
 		if (application.element != this.element) throw new ElementalApplicationOperationException(Operation.REAPPLICATION_INVALID_ELEMENT, this, application);
 
 		if (application.type != this.type || !(application instanceof final DurationElementalApplication durationApp)) throw new ElementalApplicationOperationException(Operation.REAPPLICATION_INVALID_TYPES, this, application);
-		
+
 		this.gaugeUnits = Math.max(this.gaugeUnits, application.gaugeUnits);
 		this.currentGauge = gaugeUnits;
 		this.duration = durationApp.duration;
@@ -96,7 +97,7 @@ public final class DurationElementalApplication extends ElementalApplication {
 		super.updateFromNbt(nbt, syncedAt);
 
 		final ElementalApplication application = ElementalApplications.fromNbt(entity, (NbtCompound) nbt, syncedAt);
-		
+
 		this.duration = ((DurationElementalApplication) application).duration;
 		this.appliedAt = ((DurationElementalApplication) application).appliedAt;
 	}

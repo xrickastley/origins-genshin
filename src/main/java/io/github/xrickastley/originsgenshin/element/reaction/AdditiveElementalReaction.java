@@ -1,10 +1,11 @@
 package io.github.xrickastley.originsgenshin.element.reaction;
 
-import javax.annotation.Nullable;
-
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
+
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.world.World;
+
+import javax.annotation.Nullable;
 
 public abstract class AdditiveElementalReaction extends ElementalReaction {
 	final double amplifier;
@@ -30,11 +31,11 @@ public abstract class AdditiveElementalReaction extends ElementalReaction {
 	public double applyAmplifier(World world, double damage) {
 		return getDamageBonus(world) + damage;
 	}
-	
+
 	public double getAmplifier() {
 		return this.amplifier;
 	}
-	
+
 	public double getDamageBonus(World world) {
 		return ElementalReaction.getReactionDamage(world, amplifier);
 	}

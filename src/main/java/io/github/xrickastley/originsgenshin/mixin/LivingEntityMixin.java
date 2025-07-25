@@ -6,10 +6,6 @@ import com.llamalad7.mixinextras.sugar.Local;
 import java.util.ArrayList;
 import java.util.List;
 
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.server.network.ServerPlayerEntity;
-import net.minecraft.server.world.ServerWorld;
-
 import org.spongepowered.asm.mixin.Debug;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -40,6 +36,9 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.world.World;
 
 @Mixin(LivingEntity.class)
@@ -88,7 +87,7 @@ public abstract class LivingEntityMixin extends Entity {
 			)
 			: 0.0f;
 
-		
+
 		/*
 		OriginsGenshin
 			.sublogger("LivingEntityMixin")
@@ -97,13 +96,13 @@ public abstract class LivingEntityMixin extends Entity {
 
 		return OriginsGenshinAttributes.modifyDamage((LivingEntity)(Entity) this, eds, amount + additive);
 	}
-	
+
 	@ModifyVariable(
 		method = "modifyAppliedDamage",
 		at = @At(
 			value = "TAIL",
 			shift = At.Shift.BEFORE
-		),	
+		),
 		argsOnly = true
 	)
 	private float applyReactionAmplifiers(float amount, @Local(argsOnly = true) DamageSource source) {
@@ -162,7 +161,7 @@ public abstract class LivingEntityMixin extends Entity {
 			);
 		} else if ((this.isOnFire() || this.getBlockStateAtPos().getBlock() == Blocks.FIRE) && this.getWorld().getGameRules().getBoolean(OriginsGenshinGameRules.PYRO_FROM_FIRE)) {
 			final ElementComponent component = ElementComponent.KEY.get(this);
-			
+
 			component.addElementalApplication(
 				Element.PYRO,
 				InternalCooldownContext.ofType(this, "origins-genshin:natural_environment", InternalCooldownType.INTERVAL_ONLY),
@@ -181,9 +180,9 @@ public abstract class LivingEntityMixin extends Entity {
 			: new ElementalDamageSource(source, ElementalApplications.gaugeUnits((LivingEntity)(Entity) this, Element.PHYSICAL, 0), InternalCooldownContext.ofNone(source.getAttacker()));
 
 		final World world = this.getWorld();
-		
+
 		if (world.isClient || !(world instanceof ServerWorld)) return;
-		
+
 		final Element element = eds.getElementalApplication().getElement();
 		final ShowElementalDamageS2CPacket showElementalDMGPacket = new ShowElementalDamageS2CPacket(this.getId(), element, amount);
 

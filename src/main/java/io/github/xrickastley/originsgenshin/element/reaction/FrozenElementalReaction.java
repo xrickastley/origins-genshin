@@ -1,7 +1,5 @@
 package io.github.xrickastley.originsgenshin.element.reaction;
 
-import javax.annotation.Nullable;
-
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.component.ElementComponent;
 import io.github.xrickastley.originsgenshin.element.Element;
@@ -9,8 +7,11 @@ import io.github.xrickastley.originsgenshin.element.ElementalApplication;
 import io.github.xrickastley.originsgenshin.element.InternalCooldownContext;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinParticleFactory;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinStatusEffects;
+
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
+
+import javax.annotation.Nullable;
 
 public final class FrozenElementalReaction extends ElementalReaction {
 	FrozenElementalReaction() {
@@ -30,7 +31,7 @@ public final class FrozenElementalReaction extends ElementalReaction {
 		final double freezeAuraGauge = 2 * Math.min(auraElement.getCurrentGauge() + reducedGauge, triggeringElement.getCurrentGauge() + reducedGauge);
 		// Freeze Duration (Seconds) = 2√(5 * freezeAuraGauge) + 4) - 4
 		final double freezeTickDuration = (2.0 * Math.sqrt((5 * freezeAuraGauge) + 4) - 4) * 20;
-		
+
 		ElementComponent.KEY
 			.get(entity)
 			.addElementalApplication(Element.FROZEN, InternalCooldownContext.ofNone(origin), freezeAuraGauge, freezeTickDuration);

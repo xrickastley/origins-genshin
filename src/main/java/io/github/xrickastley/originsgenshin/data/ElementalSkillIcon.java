@@ -7,7 +7,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.util.Identifier;
 
 public class ElementalSkillIcon extends RenderableIcon {
-	protected final int charges; 
+	protected final int charges;
 	protected final ChargeRender chargeRender;
 
 	public ElementalSkillIcon(Identifier icon, PowerType<?> cooldown, boolean reverse, int charges, ChargeRender chargeRender, ConditionFactory<Entity>.Instance condition, ConditionFactory<Entity>.Instance disableCondition) {
@@ -17,7 +17,7 @@ public class ElementalSkillIcon extends RenderableIcon {
 		this.chargeRender = chargeRender;
 		this.chargeRender.setElementalSkillIcon(this);
 	}
-	
+
 	public int getCharges() {
 		return Math.min(3, Math.max(charges, 1));
 	}

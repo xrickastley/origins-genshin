@@ -1,11 +1,12 @@
 package io.github.xrickastley.originsgenshin.element;
 
-import blue.endless.jankson.annotation.Nullable;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.DamageType;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.math.Vec3d;
+
+import blue.endless.jankson.annotation.Nullable;
 
 public class ElementalDamageSource extends DamageSource {
 	private final ElementalApplication application;
@@ -23,7 +24,7 @@ public class ElementalDamageSource extends DamageSource {
 	 */
 	public ElementalDamageSource(final DamageSource source, final ElementalApplication application, final InternalCooldownContext icdContext) {
 		super(source.getTypeRegistryEntry(), source.getSource(), source.getAttacker());
-	
+
 		this.application = application;
 		this.icdContext = icdContext;
 	}
@@ -47,12 +48,12 @@ public class ElementalDamageSource extends DamageSource {
 		this.application = application;
 		this.icdContext = icdContext;
 	}
-	
+
 	/**
 	 * Creates an {@link ElementalDamageSource}.
 	 * @param type The damage type of this {@code DamageSource}.
 	 * @param position The position this {@code DamageSource} originated from.
-	 * @param application The Elemental Application of this {@code ElementalDamageSource}. This is 
+	 * @param application The Elemental Application of this {@code ElementalDamageSource}. This is
 	 * the Elemental Application that will be applied to the target entity, if possible.
 	 * @param icdContext The {@code InternalCooldownContext} of this {@code ElementalDamageSource}.
 	 * This controls the Internal Cooldown of specific attacks, as Internal Cooldowns are different
@@ -64,7 +65,7 @@ public class ElementalDamageSource extends DamageSource {
 		this.application = application;
 		this.icdContext = icdContext;
 	}
-	
+
 	/**
 	 * Creates an {@link ElementalDamageSource}.
 	 * @param type The damage type of this {@code DamageSource}.
@@ -82,7 +83,7 @@ public class ElementalDamageSource extends DamageSource {
 		this.application = application;
 		this.icdContext = icdContext;
 	}
-	
+
 	/**
 	 * Creates an {@link ElementalDamageSource}.
 	 * @param type The damage type of this {@code DamageSource}.

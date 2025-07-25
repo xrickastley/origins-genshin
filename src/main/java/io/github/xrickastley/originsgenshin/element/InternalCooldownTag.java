@@ -8,9 +8,9 @@ import org.jetbrains.annotations.Nullable;
 /**
  * An {@code InternalCooldownTag} is a class used for holding unique instances of Internal Cooldown
  * Tags per session. <br> <br>
- * 
- * This is a simple class that wraps a {@code String} around itself that creates new 
- * {@code InternalCooldownTag} instances for new "tags" and returns already existing 
+ *
+ * This is a simple class that wraps a {@code String} around itself that creates new
+ * {@code InternalCooldownTag} instances for new "tags" and returns already existing
  * {@code InternalCooldownTag} instances for cached "tags".
  */
 public final class InternalCooldownTag {
@@ -27,11 +27,11 @@ public final class InternalCooldownTag {
 
 	/**
 	 * Gets an {@code InternalCooldownTag} instance based on a possible tag. <br> <br>
-	 * 
+	 *
 	 * If the tag is {@code null}, {@link InternalCooldownTag#NONE} is returned. Otherwise, a
 	 * cached or new instance of {@code InternalCooldownTag} is returned depending on the given
 	 * {@code String} tag.
-	 * 
+	 *
 	 * @param tag The tag to get an {@code InternalCooldownTag} instance of.
 	 */
 	public static InternalCooldownTag of(final @Nullable String tag) {
@@ -42,7 +42,7 @@ public final class InternalCooldownTag {
 
 	/**
 	 * Gets a "null" {@code InternalCooldownTag} instance. <br> <br>
-	 * 
+	 *
 	 * This is equivalent to {@link InternalCooldownTag#NONE}.
 	 */
 	public static InternalCooldownTag none() {
@@ -51,10 +51,10 @@ public final class InternalCooldownTag {
 
 	/**
 	 * Gets an {@code InternalCooldownTag} instance based on a given tag. <br> <br>
-	 * 
+	 *
 	 * A cached or new instance of {@code InternalCooldownTag} is returned depending on the given
 	 * {@code String} tag.
-	 * 
+	 *
 	 * @param tag The tag to get an {@code InternalCooldownTag} instance of.
 	 */
 	public static InternalCooldownTag tag(final String tag) {

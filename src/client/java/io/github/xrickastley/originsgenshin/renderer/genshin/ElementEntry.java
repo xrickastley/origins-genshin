@@ -1,12 +1,13 @@
 package io.github.xrickastley.originsgenshin.renderer.genshin;
 
-import org.joml.Matrix4f;
-
 import com.mojang.blaze3d.systems.RenderSystem;
+
+import org.joml.Matrix4f;
 
 import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
 import io.github.xrickastley.originsgenshin.util.Ease;
+
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.GameRenderer;
@@ -18,7 +19,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.math.MathHelper;
 
-public class ElementEntry {		
+public class ElementEntry {
 	private static final float BLINK_SECONDS = 1.5f;
 	private static final float BLINK_COUNT = 3;
 

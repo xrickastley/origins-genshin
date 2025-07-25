@@ -6,6 +6,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementalDamageSource;
+
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.ClampedEntityAttribute;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
@@ -25,7 +26,7 @@ public class OriginsGenshinAttributes {
 	public static final EntityAttribute DENDRO_DMG_BONUS = createAttribute("dendro_dmg_bonus", 0, 0, 400);
 	public static final EntityAttribute CRYO_DMG_BONUS = createAttribute("cryo_dmg_bonus", 0, 0, 400);
 	public static final EntityAttribute GEO_DMG_BONUS = createAttribute("geo_dmg_bonus", 0, 0, 400);
-	
+
 	public static final EntityAttribute PHYSICAL_RES = createAttribute("physical_res", 0, 0, 100);
 	public static final EntityAttribute PYRO_RES = createAttribute("pyro_res", 0, 0, 100);
 	public static final EntityAttribute HYDRO_RES = createAttribute("hydro_res", 0, 0, 100);
@@ -44,7 +45,7 @@ public class OriginsGenshinAttributes {
 		registerAndLink("generic.dendro_dmg_bonus", DENDRO_DMG_BONUS, Element.DENDRO, ModifierType.DMG_BONUS);
 		registerAndLink("generic.cryo_dmg_bonus", CRYO_DMG_BONUS, Element.CRYO, ModifierType.DMG_BONUS);
 		registerAndLink("generic.geo_dmg_bonus", GEO_DMG_BONUS, Element.GEO, ModifierType.DMG_BONUS);
-		
+
 		registerAndLink("generic.physical_res", PHYSICAL_RES, Element.PHYSICAL, ModifierType.RES);
 		registerAndLink("generic.pyro_res", PYRO_RES, Element.PYRO, ModifierType.RES);
 		registerAndLink("generic.hydro_res", HYDRO_RES, Element.HYDRO, ModifierType.RES);
@@ -98,7 +99,7 @@ public class OriginsGenshinAttributes {
 
 	private static EntityAttribute registerAndLink(String name, EntityAttribute attribute, Element element, ModifierType modifierType) {
 		final ConcurrentHashMap<ModifierType, EntityAttribute> modifierMap = OriginsGenshinAttributes.LINKS.getOrDefault(element, new ConcurrentHashMap<>());
-		
+
 		modifierMap.put(modifierType, attribute);
 
 		OriginsGenshinAttributes.LINKS.put(element, modifierMap);
@@ -111,7 +112,7 @@ public class OriginsGenshinAttributes {
 
 		return Registry.register(Registries.ATTRIBUTE, OriginsGenshin.identifier(name), attribute);
 	}
-	
+
 	private static EntityAttribute createAttribute(final String name, double base, double min, double max) {
 		return new ClampedEntityAttribute(
 			String.format("attribute.name.generic.%s.%s", OriginsGenshin.MOD_ID, name), base, min, max

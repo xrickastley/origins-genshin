@@ -7,38 +7,38 @@ import net.minecraft.world.GameRules;
 
 public class OriginsGenshinGameRules {
 	public static final GameRules.Key<GameRules.BooleanRule> DO_ELEMENTS = GameRuleRegistry.register(
-		"doElements", 
-		GameRules.Category.PLAYER, 
+		"doElements",
+		GameRules.Category.PLAYER,
 		GameRuleFactory.createBooleanRule(true)
 	);
 
 	public static final GameRules.Key<DoubleRule> LEVEL_MULTIPLIER = GameRuleRegistry.register(
-		"levelMultiplier", 
-		GameRules.Category.PLAYER, 
+		"levelMultiplier",
+		GameRules.Category.PLAYER,
 		GameRuleFactory.createDoubleRule(1)
 	);
 
 	public static final GameRules.Key<GameRules.BooleanRule> OVERLOADED_EXPLOSIONS_DAMAGE_BLOCKS = GameRuleRegistry.register(
-		"overloadedBlockDestruction", 
-		GameRules.Category.PLAYER, 
+		"overloadedBlockDestruction",
+		GameRules.Category.PLAYER,
 		GameRuleFactory.createBooleanRule(true)
 	);
-	
+
 	public static final GameRules.Key<GameRules.BooleanRule> PYRO_FROM_FIRE = GameRuleRegistry.register(
-		"pyroFromFire", 
-		GameRules.Category.PLAYER, 
+		"pyroFromFire",
+		GameRules.Category.PLAYER,
 		GameRuleFactory.createBooleanRule(true)
 	);
-	
+
 	public static final GameRules.Key<GameRules.BooleanRule> HYDRO_FROM_WATER = GameRuleRegistry.register(
-		"hydroFromWater", 
-		GameRules.Category.PLAYER, 
+		"hydroFromWater",
+		GameRules.Category.PLAYER,
 		GameRuleFactory.createBooleanRule(true)
 	);
-	
+
 	public static final GameRules.Key<GameRules.BooleanRule> ELECTRO_FROM_LIGHTNING = GameRuleRegistry.register(
-		"electroFromLightning", 
-		GameRules.Category.PLAYER, 
+		"electroFromLightning",
+		GameRules.Category.PLAYER,
 		GameRuleFactory.createBooleanRule(true)
 	);
 

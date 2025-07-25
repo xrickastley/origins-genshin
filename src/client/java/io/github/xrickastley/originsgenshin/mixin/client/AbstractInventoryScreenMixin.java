@@ -1,15 +1,15 @@
 package io.github.xrickastley.originsgenshin.mixin.client;
 
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.entity.effect.StatusEffectInstance;
+import com.mojang.blaze3d.systems.RenderSystem;
+
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-
-import net.minecraft.client.gui.screen.ingame.AbstractInventoryScreen;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.screen.ingame.AbstractInventoryScreen;
+import net.minecraft.entity.effect.StatusEffectInstance;
 
 @Mixin(AbstractInventoryScreen.class)
 public class AbstractInventoryScreenMixin {
@@ -22,7 +22,7 @@ public class AbstractInventoryScreenMixin {
 		RenderSystem.defaultBlendFunc();
 		RenderSystem.enableCull();
 	}
-	
+
 	@Inject(
 		method = "drawStatusEffectSprites",
 		at = @At("TAIL")

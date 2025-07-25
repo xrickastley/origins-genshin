@@ -1,11 +1,5 @@
 package io.github.xrickastley.originsgenshin.command;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-import java.util.concurrent.CompletableFuture;
-import java.util.function.Function;
-
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.context.CommandContext;
@@ -13,7 +7,14 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
+
 import io.github.xrickastley.originsgenshin.element.Element;
+
 import net.minecraft.command.CommandSource;
 import net.minecraft.server.command.ServerCommandSource;
 
@@ -21,7 +22,7 @@ public class ElementArgumentType implements ArgumentType<Element> {
 	public static ElementArgumentType element() {
 		return new ElementArgumentType();
 	}
-	
+
 	public static Element getElement(final CommandContext<ServerCommandSource> context, final String name) throws CommandSyntaxException {
 		return context.getArgument(name, Element.class);
 	}
@@ -32,14 +33,14 @@ public class ElementArgumentType implements ArgumentType<Element> {
 
 		return Element.valueOf(string.toUpperCase());
 	}
-	
+
 	public <S> CompletableFuture<Suggestions> listSuggestions(final CommandContext<S> context, final SuggestionsBuilder builder) {
 		return CommandSource.suggestMatching(
-			ElementArgumentType.map(Element.values(), e -> e.toString().toLowerCase()), 
+			ElementArgumentType.map(Element.values(), e -> e.toString().toLowerCase()),
 			builder
 		);
 	}
-	
+
 	public Collection<String> getExamples() {
 		return ElementArgumentType.map(Element.values(), e -> e.toString().toLowerCase());
 	}

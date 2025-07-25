@@ -1,17 +1,14 @@
 package io.github.xrickastley.originsgenshin.util;
 
+import com.google.common.collect.Sets;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 
-import javax.annotation.Nullable;
-
-import com.google.common.collect.Sets;
-
 import io.github.xrickastley.originsgenshin.mixin.ExplosionAccessor;
-import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 
 import net.minecraft.block.BlockState;
 import net.minecraft.enchantment.ProtectionEnchantment;
@@ -28,6 +25,10 @@ import net.minecraft.world.World;
 import net.minecraft.world.event.GameEvent;
 import net.minecraft.world.explosion.Explosion;
 import net.minecraft.world.explosion.ExplosionBehavior;
+
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
+
+import javax.annotation.Nullable;
 
 /**
  * A class for explosions that don't damage entities.
@@ -49,7 +50,7 @@ public class NonEntityDamagingExplosion extends Explosion {
 
 		supplyFromAccessor();
 	}
-	
+
 	public NonEntityDamagingExplosion(final World world, @Nullable final Entity entity, final double x, final double y, final double z, final float power, final boolean createFire, final Explosion.DestructionType destructionType, final List<BlockPos> affectedBlocks) {
 		super(world, entity, x, y, z, power, createFire, destructionType);
 
@@ -61,15 +62,15 @@ public class NonEntityDamagingExplosion extends Explosion {
 
 		supplyFromAccessor();
 	}
-	
+
 	public NonEntityDamagingExplosion(final World world, @Nullable final Entity entity, @Nullable final ExplosionBehavior behavior, final double x, final double y, final double z, final float power, final boolean createFire, final Explosion.DestructionType destructionType) {
 		super(world, entity, null, behavior, x, y, z, power, createFire, destructionType);
-		
+
 		supplyFromAccessor();
 	}
 
 	/**
-	 * Another version of {@link Explosion#collectBlocksAndDamageEntities}, but pushes 
+	 * Another version of {@link Explosion#collectBlocksAndDamageEntities}, but pushes
 	 * entities (applies velocity) instead of damaging them.
 	 */
 	public void collectBlocksAndPushEntities() {
@@ -93,16 +94,16 @@ public class NonEntityDamagingExplosion extends Explosion {
 						double m = this.x;
 						double n = this.y;
 						double o = this.z;
-						
+
 						while (h > 0.0f) {
 							final BlockPos blockPos = BlockPos.ofFloored(m, n, o);
 							final BlockState blockState = this.world.getBlockState(blockPos);
 							final FluidState fluidState = this.world.getFluidState(blockPos);
-							
+
 							if (!this.world.isInBuildLimit(blockPos)) break;
-							
+
 							final Optional<Float> optional = this.behavior.getBlastResistance(this, this.world, blockPos, blockState, fluidState);
-							
+
 							if (optional.isPresent()) h -= (optional.get() + 0.3f) * 0.3f;
 
 							if (h > 0.0f && this.behavior.canDestroyBlock(this, this.world, blockPos, blockState, h)) {
@@ -117,7 +118,7 @@ public class NonEntityDamagingExplosion extends Explosion {
 				}
 			}
 		}
-	   
+
 		this.affectedBlocks.addAll(set);
 
 		final float q = this.power * 2.0f;
@@ -130,21 +131,21 @@ public class NonEntityDamagingExplosion extends Explosion {
 
 		final List<Entity> list = this.world.getOtherEntities(this.entity, new Box(k, r, t, l, s, u));
 		final Vec3d vec3d = new Vec3d(this.x, this.y, this.z);
-		
+
 		for (final Entity entity : list) {
 			if (entity.isImmuneToExplosion()) continue;
-			
+
 			final double v = Math.sqrt(entity.squaredDistanceTo(vec3d)) / q;
-			
+
 			if (v > 1.0) continue;
-			
+
 			double w = entity.getX() - this.x;
 			double x = ((entity instanceof TntEntity) ? entity.getY() : entity.getEyeY()) - this.y;
 			double y = entity.getZ() - this.z;
 			final double z = Math.sqrt(w * w + x * x + y * y);
-			
+
 			if (z == 0.0) continue;
-			
+
 			w /= z;
 			x /= z;
 			y /= z;
@@ -162,7 +163,7 @@ public class NonEntityDamagingExplosion extends Explosion {
 			y *= ac;
 
 			final Vec3d vec3d2 = new Vec3d(w, x, y);
-			
+
 			entity.setVelocity(entity.getVelocity().add(vec3d2));
 
 			if (!(entity instanceof final PlayerEntity playerEntity)) continue;
@@ -178,7 +179,7 @@ public class NonEntityDamagingExplosion extends Explosion {
 	public List<Entity> getAffectedEntities() {
 		return this.affectedEntities;
 	}
-	
+
 	private void supplyFromAccessor() {
 		final ExplosionAccessor accessor = (ExplosionAccessor) this;
 

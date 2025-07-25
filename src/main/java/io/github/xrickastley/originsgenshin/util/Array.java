@@ -1,7 +1,5 @@
 package io.github.xrickastley.originsgenshin.util;
 
-import org.jetbrains.annotations.NotNull;
-
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.function.BiFunction;
@@ -10,9 +8,11 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
+import org.jetbrains.annotations.NotNull;
+
 /**
- * Wraps a {@link CopyOnWriteArrayList} around the JavaScript Array API, bringing the implementation of 
- * JavaScript's array methods to Java. 
+ * Wraps a {@link CopyOnWriteArrayList} around the JavaScript Array API, bringing the implementation of
+ * JavaScript's array methods to Java.
  */
 public class Array<T> implements List<T> {
 	private CopyOnWriteArrayList<T> array = new CopyOnWriteArrayList<>();
@@ -51,7 +51,7 @@ public class Array<T> implements List<T> {
 	public Array(Iterator<T> iterator) {
 		while (iterator.hasNext()) array.add(iterator.next());
 	}
-	
+
 	/**
 	 * Creates an {@code Array} from the specified {@link Collection}.
 	 * @param collection The {@code Collection} to create the array from.
@@ -62,10 +62,10 @@ public class Array<T> implements List<T> {
 
 	/**
 	 * Creates an {@code Array} from another {@code Array}. <br> <br>
-	 * 
-	 * This array will have all the elements of {@code array}, but any changes made to this array will 
+	 *
+	 * This array will have all the elements of {@code array}, but any changes made to this array will
 	 * <strong>not</strong> reflect in the original array.
-	 * 
+	 *
 	 * @param array The {@code Array} to create the array from.
 	 */
 	public Array(Array<T> array) {
@@ -79,9 +79,9 @@ public class Array<T> implements List<T> {
 	public boolean add(T e) {
 		return this.array.add(e);
 	}
-	
+
 	/**
-	 * A {@link CopyOnWriteArrayList} method, inserts the specified element at the specified position in this {@code Array}. 
+	 * A {@link CopyOnWriteArrayList} method, inserts the specified element at the specified position in this {@code Array}.
 	 * Shifts the element currently at that position (if any) and any subsequent elements to the right (adds one to their indices).
 	 * {@inheritDoc}
 	 */
@@ -101,8 +101,8 @@ public class Array<T> implements List<T> {
 
 	/**
 	 * A {@link CopyOnWriteArrayList} method, inserts all the elements in the specified collection into this list, starting
-	 * at the specified position. Shifts the element currently at that position (if any) and any subsequent elements to the 
-	 * right (increases their indices). The new elements will appear in this list in the order that they are returned by the 
+	 * at the specified position. Shifts the element currently at that position (if any) and any subsequent elements to the
+	 * right (increases their indices). The new elements will appear in this list in the order that they are returned by the
 	 * specified collection's iterator.
 	 * {@inheritDoc}
 	 */
@@ -119,7 +119,7 @@ public class Array<T> implements List<T> {
 	/**
 	 * A {@link CopyOnWriteArrayList} method and an alias for {@link Array#length}, returns the length (the number of elements)
 	 * in this {@code Array}. This is a number one higher than the highest index in the array.
-	 * 
+	 *
 	 * @see Array#length
 	 */
 	@Override
@@ -161,11 +161,11 @@ public class Array<T> implements List<T> {
 
 		return concatArray;
 	}
-	
+
 	/**
 	 * Combines two or more arrays. This returns a new {@code Array} without modifying any existing Arrays.
-	 * 
-	 * @param arrays Additional arrays with the items to add at the end of the array. These arrays are 
+	 *
+	 * @param arrays Additional arrays with the items to add at the end of the array. These arrays are
 	 * iterated over, with their inner elements being added as elements of the array.
 	 */
 	@SuppressWarnings("unchecked")
@@ -178,10 +178,10 @@ public class Array<T> implements List<T> {
 	}
 
 	/**
-	 * Alias for {@link Array#includes}, returns {@code true} if this {@code Array} contains the specified element. 
-	 * More formally, returns {@code true} if and only if this {@code Array} contains at least one element {@code e} such 
+	 * Alias for {@link Array#includes}, returns {@code true} if this {@code Array} contains the specified element.
+	 * More formally, returns {@code true} if and only if this {@code Array} contains at least one element {@code e} such
 	 * that {@code Objects.equals(o, e)}.
-	 * 
+	 *
 	 * @param object The element to search for in this {@code Array}.
 	 * @implNote Time complexity: {@code O(n)}
 	 */
@@ -220,7 +220,7 @@ public class Array<T> implements List<T> {
 	public boolean allMatch(Predicate<? super T> predicate) {
 		return every(predicate);
 	}
-	
+
 	/**
 	 * Alias for {@link Array#some}, determines whether at least one element of this {@code Array} satisfy the specified predicate.
 	 * @param predicate The predicate to apply to the elements of this {@code Array}.
@@ -232,7 +232,7 @@ public class Array<T> implements List<T> {
 			.stream()
 			.anyMatch(predicate);
 	}
-	
+
 	/**
 	 * Changes all array elements to {@code value} and returns the modified array.
 	 * @param value The value to fill this array with.
@@ -254,20 +254,20 @@ public class Array<T> implements List<T> {
 
 	/**
 	 * Changes all array elements from {@code start} to {@code end} into {@code value} and returns the modified array. <br> <br>
-	 * 
+	 *
 	 * @param value The value to fill this array with.
 	 * @param start The starting fill index point of the array. If this value is negative, it is treated as {@code length + start}
-	 * @param end The ending fill index point of the array. This element at this index is <strong>included</strong> 
+	 * @param end The ending fill index point of the array. This element at this index is <strong>included</strong>
 	 * and is also changed to {@code value}. If this value is negative, it is treated as {@code length + end}
 	 * @implNote Time complexity: {@code O(n)}
 	 */
 	public Array<T> fill(T value, int start, int end) {
-		final int newStart = start < 0 
-			? start + this.length() 
+		final int newStart = start < 0
+			? start + this.length()
 			: start;
-		
-		final int newEnd = end < 0 
-			? end + this.length() 
+
+		final int newEnd = end < 0
+			? end + this.length()
 			: end;
 
 		for (int i = 0; i < array.size(); i++) {
@@ -276,7 +276,7 @@ public class Array<T> implements List<T> {
 
 		return this;
 	}
-	
+
 	/**
 	 * Returns a new {@code Array} consisting of all the elements of this {@code Array} that satisfy the specified predicate.
 	 * @param predicate The predicate to apply to the elements of this {@code Array}.
@@ -293,7 +293,7 @@ public class Array<T> implements List<T> {
 	/**
 	 * Returns the value of the first element in this {@code Array} that satisfies the given predicate, and {@code null}
 	 * otherwise.
-	 * 
+	 *
 	 * @param predicate The predicate to apply in finding an element from this {@code Array}.
 	 * @see Array#findAsOptional
 	 * @implNote Time complexity: {@code O(n)}
@@ -307,9 +307,9 @@ public class Array<T> implements List<T> {
 	}
 
 	/**
-	 * Returns the value of the first element in this {@code Array} that satisfies the given predicate as 
+	 * Returns the value of the first element in this {@code Array} that satisfies the given predicate as
 	 * an {@code Optional}.
-	 * 
+	 *
 	 * @param predicate The predicate to apply in finding an element from this {@code Array}.
 	 * @see Array#find
 	 * @implNote Time complexity: {@code O(n)}.
@@ -321,7 +321,7 @@ public class Array<T> implements List<T> {
 	}
 
 	/**
-	 * A {@link Stream} method, returns an {@link Optional} describing the first element of this {@code Array}, or an empty 
+	 * A {@link Stream} method, returns an {@link Optional} describing the first element of this {@code Array}, or an empty
 	 * {@code Optional} if the this {@code Array} is empty.
 	 */
 	public Optional<T> findFirst() {
@@ -331,7 +331,7 @@ public class Array<T> implements List<T> {
 	/**
 	 * Returns the index of the first element in this {@code Array} that satisfies the given predicate, and {@code -1}
 	 * otherwise.
-	 * 
+	 *
 	 * @param predicate The predicate to apply in finding an element from this {@code Array}.
 	 * @see Array#findIndexAsOptional
 	 * @implNote Time complexity: {@code O(n)}.
@@ -341,11 +341,11 @@ public class Array<T> implements List<T> {
 			.findIndexAsOptional(predicate)
 			.orElse(-1);
 	}
-	
+
 	/**
-	 * Returns the index of the first element in this {@code Array} that satisfies the given predicate as 
+	 * Returns the index of the first element in this {@code Array} that satisfies the given predicate as
 	 * an {@code Optional}.
-	 * 
+	 *
 	 * @param predicate The predicate to apply in finding an element from this {@code Array}.
 	 * @see Array#findIndex
 	 * @implNote Time complexity: {@code O(n)}.
@@ -361,7 +361,7 @@ public class Array<T> implements List<T> {
 	/**
 	 * Returns the value of the last element in this {@code Array} that satisfies the given predicate, and {@code null}
 	 * otherwise.
-	 * 
+	 *
 	 * @param predicate The predicate to apply in finding an element from this {@code Array}.
 	 * @see Array#findLastAsOptional
 	 * @implNote Time complexity: {@code O(n)}
@@ -371,11 +371,11 @@ public class Array<T> implements List<T> {
 			.toReversed()
 			.find(predicate);
 	}
-	
+
 	/**
-	 * Returns the value of the last element in this {@code Array} that satisfies the given predicate as 
+	 * Returns the value of the last element in this {@code Array} that satisfies the given predicate as
 	 * an {@code Optional}.
-	 * 
+	 *
 	 * @param predicate The predicate to apply in finding an element from this {@code Array}.
 	 * @see Array#findLast
 	 * @implNote Time complexity: {@code O(n)}
@@ -385,11 +385,11 @@ public class Array<T> implements List<T> {
 			.toReversed()
 			.findAsOptional(predicate);
 	}
-	
+
 	/**
 	 * Returns the index of the last element in this {@code Array} that satisfies the given predicate, and {@code -1}
 	 * otherwise.
-	 * 
+	 *
 	 * @param predicate The predicate to apply in finding an element from this {@code Array}.
 	 * @see Array#findIndexAsOptional
 	 * @implNote Time complexity: {@code O(n)}.
@@ -403,7 +403,7 @@ public class Array<T> implements List<T> {
 	/**
 	 * A {@link CopyOnWriteArrayList} method and an alias for {@link Array#at}, returns the element located at the specified
 	 * index. {@inheritDoc}
-	 * 
+	 *
 	 * @see Array#at
 	 */
 	@Override
@@ -412,9 +412,9 @@ public class Array<T> implements List<T> {
 	}
 
 	/**
-	 * Returns {@code true} if this {@code Array} contains the specified element. More formally, returns {@code true} if and 
+	 * Returns {@code true} if this {@code Array} contains the specified element. More formally, returns {@code true} if and
 	 * only if this {@code Array} contains at least one element {@code e} such that {@code Objects.equals(o, e)}.
-	 * 
+	 *
 	 * @param object The element to search for in this {@code Array}.
 	 * @implNote Time complexity: {@code O(n)}
 	 */
@@ -423,10 +423,10 @@ public class Array<T> implements List<T> {
 	}
 
 	/**
-	 * Returns the index of the first occurrence of the specified element in this {@code Array}, or {@code -1} if this 
-	 * {@code Array} does not contain the element. More formally, returns the lowest index {@code i} such that 
+	 * Returns the index of the first occurrence of the specified element in this {@code Array}, or {@code -1} if this
+	 * {@code Array} does not contain the element. More formally, returns the lowest index {@code i} such that
 	 * {@code Objects.equals(o, get(i))}, or {@code -1} if there is no such index.
-	 * 
+	 *
 	 * @param object The value to locate in this {@code Array}.
 	 * @implNote Time complexity: {@code O(n)}
 	 */
@@ -437,7 +437,7 @@ public class Array<T> implements List<T> {
 	/**
 	 * A {@link CopyOnWriteArrayList} method, returns an iterator over the elements in this list in proper sequence. <br> <br>
 	 *
-	 * The returned iterator provides a snapshot of the state of the list when the iterator was constructed. 
+	 * The returned iterator provides a snapshot of the state of the list when the iterator was constructed.
 	 * No synchronization is needed while traversing the iterator. The iterator does <i>NOT</i> support the {@code remove}
 	 * method.
 	 * {@inheritDoc}
@@ -446,7 +446,7 @@ public class Array<T> implements List<T> {
 	public @NotNull Iterator<T> iterator() {
 		return array.iterator();
 	}
-	
+
 	/**
 	 * A {@link CopyOnWriteArrayList} method, returns {@code true} if this list contains no elements.
 	 * {@inheritDoc}
@@ -481,8 +481,8 @@ public class Array<T> implements List<T> {
 	}
 
 	/**
-	 * Returns the index of the last occurrence of the specified element in this {@code Array}, or {@code -1} if this 
-	 * {@code Array} does not contain the element. More formally, returns the highest index {@code i} such that 
+	 * Returns the index of the last occurrence of the specified element in this {@code Array}, or {@code -1} if this
+	 * {@code Array} does not contain the element. More formally, returns the highest index {@code i} such that
 	 * {@code Objects.equals(o, get(i))}, or {@code -1} if there is no such index.
 	 * @param object The value to locate in the array.
 	 * @implNote Time complexity: {@code O(n)}
@@ -493,8 +493,8 @@ public class Array<T> implements List<T> {
 
 	/**
 	 * Returns the length (the number of elements) in this {@code Array}. This is a number one higher than the highest index
-	 * in the array. 
-	 * 
+	 * in the array.
+	 *
 	 * @implNote Time complexity: {@code O(1)}.
 	 */
 	public int length() {
@@ -521,10 +521,10 @@ public class Array<T> implements List<T> {
 	public <U> U @NotNull [] toArray(U @NotNull [] a) {
 		return this.array.toArray(a);
 	}
-	
+
 	/**
 	 * Returns a new {@code Array} consisting of the results of applying the given function to the elements of this {@code Array}.
-	 * 
+	 *
 	 * @param <R> The element type of the new {@code Array}.
 	 * @param mapper A function that takes an element and returns a value.
 	 */
@@ -548,8 +548,8 @@ public class Array<T> implements List<T> {
 	}
 
 	/**
-	 * Removes the element at the end of this {@code Array} and returns it. <br> <br> 
-	 * 
+	 * Removes the element at the end of this {@code Array} and returns it. <br> <br>
+	 *
 	 * If the array is empty, {@code null} is returned and the {@code Array} is not modified.
 	 */
 	public T pop() {
@@ -568,15 +568,15 @@ public class Array<T> implements List<T> {
 	}
 
 	/**
-	 * Performs a reduction on the elements of this {@code Array}, using the provided {@code initialValue} and 
+	 * Performs a reduction on the elements of this {@code Array}, using the provided {@code initialValue} and
 	 * {@code accumulator} function. This is equivalent to:
-	 * <pre>{@code 
+	 * <pre>{@code
 	 *U result = initialValue;
 	 *for (T element : this.array)
 	 *	result = accumulator.apply(result, element);
 	 *return result;
 	 *}</pre>
-	 * 
+	 *
 	 * @param <U> The type of the initial value, and the value {@code reducer} must return.
 	 * @param accumulator A function that combines both the value and the current element.
 	 * @param initialValue The initial value for the reducer function.
@@ -591,9 +591,9 @@ public class Array<T> implements List<T> {
 	}
 
 	/**
-	 * A right-sided version of {@link Array#reduce}, performs a reduction on the elements of this {@code Array} starting from the 
-	 * last element to the first element, using the provided {@code initialValue} and {@code accumulator} function. 
-	 * 
+	 * A right-sided version of {@link Array#reduce}, performs a reduction on the elements of this {@code Array} starting from the
+	 * last element to the first element, using the provided {@code initialValue} and {@code accumulator} function.
+	 *
 	 * @param <U> The type of the initial value, and the value {@code reducer} must return.
 	 * @param accumulator A function that combines both the value and the current element.
 	 * @param initialValue The initial value for the reducer function.
@@ -617,14 +617,14 @@ public class Array<T> implements List<T> {
 
 	/**
 	 * A {@link CopyOnWriteArrayList} method, removes the first occurrence of the specified element from this {@code Array},
-	 * if it is present. <br> <br> {@inheritDoc} 
+	 * if it is present. <br> <br> {@inheritDoc}
 	 */
 	public boolean remove(Object o) {
 		return this.array.remove(o);
 	}
 
 	/**
-	 * A {@link CopyOnWriteArrayList} method, removes the element at the specified position in this list and shifts 
+	 * A {@link CopyOnWriteArrayList} method, removes the element at the specified position in this list and shifts
 	 * any subsequent elements to the left (subtracts one from their indices). <br> <br> {@inheritDoc}
 	 */
 	public T remove(int index) {
@@ -639,12 +639,12 @@ public class Array<T> implements List<T> {
 		final CopyOnWriteArrayList<T> reverseArray = new CopyOnWriteArrayList<>();
 
 		for (int i = array.size() - 1; i >= 0; i--) reverseArray.add(array.get(i));
-		
+
 		this.array = reverseArray;
 
 		return this;
 	}
-	
+
 	/**
 	 * Removes the first element from an array and returns it. <br> <br>
 	 *
@@ -667,10 +667,10 @@ public class Array<T> implements List<T> {
 	 * Returns a copy of a section of an {@code Array} from {@code start} to {@code array.length() - 1}. This is returned as
 	 * a new {@code Array}, meaning that any modifications made to the returned {@code Array} are not reflected in the original
 	 * {@code Array}. <br> <br>
-	 * 
-	 * For both {@code start} and {@code end}, a negative index can be used to indicate an offset from the end of the array. 
+	 *
+	 * For both {@code start} and {@code end}, a negative index can be used to indicate an offset from the end of the array.
 	 * For example, {@code -2} refers to the second to last element of the array.
-	 * 
+	 *
 	 * @param start The beginning index of the specified portion of the array.
 	 */
 	public Array<T> slice(int start) {
@@ -680,10 +680,10 @@ public class Array<T> implements List<T> {
 	/**
 	 * Returns a copy of a section of an {@code Array}. This is returned as a new {@code Array}, meaning that any modifications
 	 * made to the returned {@code Array} are not made in the original {@code Array}. <br> <br>
-	 * 
-	 * For both {@code start} and {@code end}, a negative index can be used to indicate an offset from the end of the array. 
+	 *
+	 * For both {@code start} and {@code end}, a negative index can be used to indicate an offset from the end of the array.
 	 * For example, {@code -2} refers to the second to last element of the array.
-	 * 
+	 *
 	 * @param start The beginning index of the specified portion of the array.
 	 * @param end The end index of the specified portion of the array.
 	 */
@@ -691,7 +691,7 @@ public class Array<T> implements List<T> {
 		final int newStart = normalizeIndex(start);
 		final int newEnd = normalizeIndex(end);
 
-		return this.filter(element -> newStart <= this.indexOf(element) && this.indexOf(element) < newEnd);	
+		return this.filter(element -> newStart <= this.indexOf(element) && this.indexOf(element) < newEnd);
 	}
 
 	/**
@@ -707,7 +707,7 @@ public class Array<T> implements List<T> {
 	}
 
 	/**
-	 * A renamed implementation of 
+	 * A renamed implementation of
 	 * <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort">Array.prototype.sort()</a>,
 	 * sorts an array's elements' string value in ascending, ASCII character order.
 	 */
@@ -716,9 +716,9 @@ public class Array<T> implements List<T> {
 	}
 
 	/**
-	 * A renamed implementation of 
+	 * A renamed implementation of
 	 * <a href="https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Array/sort">Array.prototype.sort()</a>,
-	 * sorts this {@code Array} in place according to the order induced by the specified {@code BiFunction}. The sort is 
+	 * sorts this {@code Array} in place according to the order induced by the specified {@code BiFunction}. The sort is
 	 * <i>stable</i>: this method must not reorder equal elements. <br> <br>
 	 *
 	 * The resulting sort will be based on the value of {@code compareFn(a, b)}.
@@ -726,11 +726,11 @@ public class Array<T> implements List<T> {
 	 * 	<li>If {@code compareFn(a, b) < 0}, then {@code a > b}.
 	 * 	<li>If {@code compareFn(a, b) = 0}, then {@code a = b}.
 	 * 	<li>If {@code compareFn(a, b) > 0}, then {@code a < b}.
-	 * </ul> <br> <br> 
-	 * 
+	 * </ul> <br> <br>
+	 *
 	 * This method mutates the original {@code Array}.
-	 * 
-	 * @param compareFn The function used to compare {@code Array} elements. 
+	 *
+	 * @param compareFn The function used to compare {@code Array} elements.
 	 * @implNote Time complexity: {@code O(n log n)}
 	 */
 	public Array<T> sortElements(BiFunction<T, T, Integer> compareFn) {
@@ -747,7 +747,7 @@ public class Array<T> implements List<T> {
 	}
 
 	/**
-	 * A {@link CopyOnWriteArrayList} method, returns a view of the portion of this list between {@code fromIndex}, inclusive, 
+	 * A {@link CopyOnWriteArrayList} method, returns a view of the portion of this list between {@code fromIndex}, inclusive,
 	 * and {@code toIndex}, exclusive. The returned list is backed by this list, so changes in the returned list are reflected
 	 * in this list. <br> <br>
 	 *
@@ -771,10 +771,10 @@ public class Array<T> implements List<T> {
 	}
 
 	/**
-	 * Sorts this {@code Array} according to the order induced by the specified {@code Comparator}. The sort is 
+	 * Sorts this {@code Array} according to the order induced by the specified {@code Comparator}. The sort is
 	 * <i>stable</i>: this method must not reorder equal elements. Unlike {@link Array#sort}, this method returns a new {@code Array}
 	 * with the sorted elements.
-	 * @param compareFn The function used to compare {@code Array} elements. 
+	 * @param compareFn The function used to compare {@code Array} elements.
 	 * @implNote Time complexity: {@code O(n log n)}
 	 */
 	public Array<T> toSorted(BiFunction<T, T, Integer> compareFn) {

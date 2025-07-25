@@ -1,24 +1,20 @@
 package io.github.xrickastley.originsgenshin.component;
 
-import java.util.List;
-import java.util.Map;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
+import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
-import javax.annotation.Nonnull;
-
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
-import io.github.xrickastley.originsgenshin.util.Array;
-import io.github.xrickastley.originsgenshin.util.ImmutablePair;
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementHolder;
@@ -30,6 +26,9 @@ import io.github.xrickastley.originsgenshin.element.reaction.AbstractBurningElem
 import io.github.xrickastley.originsgenshin.element.reaction.ElectroChargedElementalReaction;
 import io.github.xrickastley.originsgenshin.element.reaction.ElementalReaction;
 import io.github.xrickastley.originsgenshin.registry.OriginsGenshinRegistries;
+import io.github.xrickastley.originsgenshin.util.Array;
+import io.github.xrickastley.originsgenshin.util.ImmutablePair;
+
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
@@ -38,6 +37,8 @@ import net.minecraft.registry.entry.RegistryEntry.Reference;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
+
+import javax.annotation.Nonnull;
 
 public final class ElementComponentImpl implements ElementComponent {
 	protected static final Set<Class<LivingEntity>> DENIED_ENTITIES = new HashSet<>();
@@ -60,7 +61,7 @@ public final class ElementComponentImpl implements ElementComponent {
 	public boolean isElectroChargedOnCD() {
 		return this.owner.age < this.electroChargedCooldown;
 	}
-	
+
 	@Override
 	public boolean isBurningOnCD() {
 		return this.owner.age < this.burningCooldown;
@@ -75,7 +76,7 @@ public final class ElementComponentImpl implements ElementComponent {
 	public void resetBurningCD() {
 		this.burningCooldown = this.owner.age + 5;
 	}
-	
+
 	@Override
 	public void setElectroChargedOrigin(@Nullable LivingEntity origin) {
 		this.electroChargedOrigin = origin;
@@ -109,7 +110,7 @@ public final class ElementComponentImpl implements ElementComponent {
 	public Pair<ElementalReaction, Long> getLastReaction() {
 		return ImmutablePair.of(this.lastReaction);
 	}
-	
+
 	@Override
 	public boolean canApplyElement(Element element, InternalCooldownContext icdContext, boolean handleICD) {
 		if (element.bypassesInternalCooldown() || !icdContext.hasOrigin()) return true;
@@ -136,7 +137,7 @@ public final class ElementComponentImpl implements ElementComponent {
 		if (this.attemptReapply(application)) return Collections.emptyList();
 
 		final Set<ElementalReaction> triggeredReactions = this.triggerReactions(application, icdContext.getOrigin());
-		
+
 		LOGGER.info("Current element data: {}", getElementHolder(application.getElement()).getElementalApplication());
 		LOGGER.info("Currently applied elements: {}", this.getAppliedElements());
 
@@ -210,7 +211,7 @@ public final class ElementComponentImpl implements ElementComponent {
 
 		final NbtList list = tag.getList("AppliedElements", NbtElement.COMPOUND_TYPE);
 		final long syncedAt = tag.getLong("SyncedAt");
-		
+
 		// LOGGER.info("Read NBT for {} at: {} ({}) | Synced at server time: {}", owner, owner.getWorld().getTime(), Util.getMeasuringTimeMs(), syncedAt);
 		// LOGGER.info("Current NbtList: {}", list);
 
@@ -250,7 +251,7 @@ public final class ElementComponentImpl implements ElementComponent {
 			.filter(ec -> ec.getElementalApplication().isEmpty())
 			.peek(ec -> ec.setElementalApplication(null))
 			.count() > 0;
-		
+
 		if (hasRemovedElements) ElementComponent.sync(owner);
 	}
 
@@ -298,18 +299,18 @@ public final class ElementComponentImpl implements ElementComponent {
 
 	/**
 	 * Attempts to reapply an {@link ElementalApplication Elemental Application}. <br> <br>
-	 * 
+	 *
 	 * This method returns whether the provided Elemental Application was "reapplied" in some way,
 	 * where {@code true} means that the element has been "reapplied" and cannot be used in an
 	 * Elemental Reaction and {@code false} means that the element has not been "reapplied" and can
 	 * be used in an Elemental Reaction. <br> <br>
-	 * 
-	 * This method also does <b>not</b> guarantee that all Elemental Applications provided are 
+	 *
+	 * This method also does <b>not</b> guarantee that all Elemental Applications provided are
 	 * indeed reapplied to their respective Elements, as they can be discarded due to the current
 	 * Element priority.
-	 * 
+	 *
 	 * @param application The {@code ElementalApplication} to reapply.
-	 * 
+	 *
 	 * @return {@code true} if the Elemental Application was "reapplied", {@code false} otherwise.
 	 */
 	private boolean attemptReapply(ElementalApplication application) {
@@ -337,8 +338,8 @@ public final class ElementComponentImpl implements ElementComponent {
 	 */
 	private Set<ElementalReaction> triggerReactions(ElementalApplication application, @Nullable LivingEntity origin) {
 		/**
-		 * Get the current element priority to keep track. 
-		 * 
+		 * Get the current element priority to keep track.
+		 *
 		 * For instance, if an element of priority 1 (p1) is added, and the current priority before
 		 * that was 2, Element p1 SHOULD, in theory, "lock" the higher gauges from being reacted
 		 * with.
@@ -347,10 +348,10 @@ public final class ElementComponentImpl implements ElementComponent {
 		final ElementHolder context = this.getElementHolder(application.getElement());
 
 		LOGGER.info("Triggered reactions at age: {}, Current age: {}, Current Priority: {}, Applied elements:", lastReaction, this.owner.age, optionalPriority.orElse(-1));
-		
+
 		context.setElementalApplication(application);
 
-		for (ElementalApplication element : this.getAppliedElements()) 
+		for (ElementalApplication element : this.getAppliedElements())
 			LOGGER.info("\t- {}", element.getElement());
 
 		// At least one element must be applied for a priority to exist; no priority, no applied element.
@@ -404,7 +405,7 @@ public final class ElementComponentImpl implements ElementComponent {
 					.filter(r -> AbstractBurningElementalReaction.mixin$onlyAllowPyroReactions(!triggeredReactions.stream().anyMatch(r2 -> r2.idEquals(r)), this, r))
 					.findFirst();
 
-				if (optional.isPresent()) 
+				if (optional.isPresent())
 					LOGGER.info("Found reaction after priority upgrade: {}, Current Gauge ({}): {}", optional.get().getId(), application.getElement(), application.getCurrentGauge());
 			}
 		}
@@ -413,7 +414,7 @@ public final class ElementComponentImpl implements ElementComponent {
 
 		if (firstReaction.isPresent())
 			this.lastReaction = new Pair<>(firstReaction.get(), this.owner.getWorld().getTime());
-		
+
 		LOGGER.info("No more reactions may be triggered! | Current Gauge ({}): {}", application.getElement(), application.getCurrentGauge());
 		LOGGER.info("Element: {} | CanBeAura: {} | Triggered reactions: {} | Apply Element as Aura: {} | Is Gauge Units: {}", context.getElement(), context.getElement().canBeAura(), triggeredReactions.size(), applyElementAsAura, application.isGaugeUnits());
 

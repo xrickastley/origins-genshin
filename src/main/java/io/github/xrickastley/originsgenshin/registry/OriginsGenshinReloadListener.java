@@ -1,5 +1,12 @@
 package io.github.xrickastley.originsgenshin.registry;
 
+import com.google.gson.JsonElement;
+import com.google.gson.JsonParser;
+import com.google.gson.stream.JsonReader;
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.JsonOps;
+import com.mojang.serialization.Lifecycle;
+
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -15,17 +22,11 @@ import java.util.stream.Collectors;
 import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
-import com.google.gson.JsonElement;
-import com.google.gson.JsonParser;
-import com.google.gson.stream.JsonReader;
-import com.mojang.serialization.Codec;
-import com.mojang.serialization.JsonOps;
-import com.mojang.serialization.Lifecycle;
-
 import io.github.apace100.calio.data.SerializableDataType;
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.interfaces.SimpleRegistryAccess;
 import io.github.xrickastley.originsgenshin.util.ClassInstanceUtil;
+
 import net.fabricmc.fabric.api.resource.SimpleSynchronousResourceReloadListener;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.RegistryKey;
@@ -99,19 +100,19 @@ public class OriginsGenshinReloadListener implements SimpleSynchronousResourceRe
 		final Identifier registryId = this.getRegistryId(id, registry);
 		final T value = reloadableRegistry.parse(registryId, reloadableRegistry.read(json));
 
-		// Disable overwriting pre-loaded keys. 
+		// Disable overwriting pre-loaded keys.
 		if (defaultKeys.contains(registryId)) {
 			LOGGER.warn("The entry at {} attempted to overwrite the preloaded entry {}, ignoring!", id, registryId);
 
 			return;
 		}
-		
+
 		if (registry.containsId(registryId)) {
 			final T prev = registry.get(registryId);
 			final int rawId = registry.getRawId(prev);
 			final RegistryKey<T> key = registry.getKey(prev).get();
 			final Lifecycle lifecycle = registry.getEntryLifecycle(prev);
-			
+
 			registry.set(rawId, key, value, lifecycle);
 		} else {
 			Registry.register(registry, registryId, value);
@@ -138,7 +139,7 @@ public class OriginsGenshinReloadListener implements SimpleSynchronousResourceRe
 			.getOrDefault(registry, new ArrayList<>())
 			.forEach(c -> c.accept(registry));
 	}
-	
+
 	private void callAfterLoadListeners(Registry<?> registry) {
 		AFTER_LOAD_LISTENERS
 			.getOrDefault(registry, new ArrayList<>())

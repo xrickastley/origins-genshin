@@ -1,6 +1,7 @@
 package io.github.xrickastley.originsgenshin.factory;
 
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
+
 import net.fabricmc.fabric.api.particle.v1.FabricParticleTypes;
 import net.minecraft.particle.DefaultParticleType;
 import net.minecraft.registry.Registries;

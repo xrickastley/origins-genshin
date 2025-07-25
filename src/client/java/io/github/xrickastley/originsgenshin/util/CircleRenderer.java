@@ -1,10 +1,10 @@
 package io.github.xrickastley.originsgenshin.util;
 
+import com.mojang.blaze3d.systems.RenderSystem;
+
 import java.util.ArrayList;
 
 import org.joml.Matrix4f;
-
-import com.mojang.blaze3d.systems.RenderSystem;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.BufferBuilder;
@@ -145,24 +145,24 @@ public class CircleRenderer {
 			.next();
 
 		double subdivisions = Math.ceil(360.0 * circle.getPercentFilled());
-			
+
 		for (int i = 0; i <= subdivisions; i++) {
 			float x = (float) (center.getX() + (Math.cos((i * (Math.PI / 180)) + (Math.PI / 2)) * (circle.getRadius() * scaleFactor)));
 			float y = (float) (center.getY() - (Math.sin((i * (Math.PI / 180)) + (Math.PI / 2)) * (circle.getRadius() * scaleFactor)));
-		
+
 			bufferBuilder
 				.vertex(posMatrix, x, y, (float) z)
 				.color(circle.getColor())
 				.next();
 		}
-		
+
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();
 		RenderSystem.enableCull();
 
 		RenderSystem.setShader(GameRenderer::getPositionColorProgram);
 		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-		
+
 		tessellator.draw();
 	}
 
@@ -178,7 +178,7 @@ public class CircleRenderer {
 
 		float x = (float) (center.getX() + (Math.cos((0 * (Math.PI / 180)) + (Math.PI / 2)) * innerRadius));
 		float y = (float) (center.getY() - (Math.sin((0 * (Math.PI / 180)) + (Math.PI / 2)) * innerRadius));
-		
+
 		bufferBuilder
 			.vertex(posMatrix, x, y, (float) center.getZ())
 			.color(circleOutline.getColor())
@@ -191,7 +191,7 @@ public class CircleRenderer {
 				.vertex(posMatrix, outerX, outerY, (float) center.getZ())
 				.color(circleOutline.getColor())
 				.next();
-			
+
 			// Add vertices for the inner circle
 			float innerX = (float) (center.getX() + (Math.cos((i * (Math.PI / 180)) + (Math.PI / 2)) * innerRadius));
 			float innerY = (float) (center.getY() - (Math.sin((i * (Math.PI / 180)) + (Math.PI / 2)) * innerRadius));
@@ -200,14 +200,14 @@ public class CircleRenderer {
 				.color(circleOutline.getColor())
 				.next();
 		}
-		
+
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();
 		RenderSystem.enableCull();
 
 		RenderSystem.setShader(GameRenderer::getPositionColorProgram);
 		RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-		
+
 		tessellator.draw();
 	}
 

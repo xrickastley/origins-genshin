@@ -7,9 +7,9 @@ import io.github.xrickastley.originsgenshin.util.Color;
 import io.github.xrickastley.originsgenshin.util.DelayedRenderer;
 import io.github.xrickastley.originsgenshin.util.Ease;
 import io.github.xrickastley.originsgenshin.util.TextHelper;
+
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleFactory;
@@ -41,7 +41,7 @@ public class DamageTextParticle extends TextBillboardParticle {
 	public void buildGeometry(VertexConsumer vertexConsumer, Camera camera, float f) {
 		DelayedRenderer.add((tickDelta, matrices) -> render(camera, tickDelta, matrices));
 	}
-	
+
 	public void render(Camera camera, float tickDelta, MatrixStack matrices) {
 		final MinecraftClient client = MinecraftClient.getInstance();
 		final VertexConsumerProvider.Immediate immediate = client.getBufferBuilders().getEntityVertexConsumers();
@@ -56,7 +56,7 @@ public class DamageTextParticle extends TextBillboardParticle {
 		final float x = (float) MathHelper.lerp(tickDelta, this.prevPosX, this.x);
 		final float y = (float) MathHelper.lerp(tickDelta, this.prevPosY, this.y) + (float) (Ease.OUT_SINE.applyLerpProgress(age, 0, maxAge) * 0.75f);
 		final float z = (float) MathHelper.lerp(tickDelta, this.prevPosZ, this.z);
-		
+
 		final int color = Color
 			.fromARGBHex(this.color)
 			.multiply(1, 1, 1, alpha)

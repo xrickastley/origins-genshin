@@ -4,20 +4,20 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 import java.util.function.Supplier;
 
-import javax.annotation.Nonnull;
-
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.util.math.MathHelper;
 
+import javax.annotation.Nonnull;
+
 public class FrozenEffectComponentImpl implements FrozenEffectComponent {
 	private final LivingEntity owner;
 	private boolean isFrozen = false;
 	private boolean hadNoAi = false;
 	private EntityPose forcePose = EntityPose.STANDING;
-	private float forceHeadYaw = 0.0f; 
+	private float forceHeadYaw = 0.0f;
 	private float forceBodyYaw = 0.0f;
 	private float forcePitch = 0.0f;
 	private float forceLimbAngle = 0.0f;
@@ -32,7 +32,7 @@ public class FrozenEffectComponentImpl implements FrozenEffectComponent {
 		this.isFrozen = tag.getBoolean("IsFrozen");
 		this.hadNoAi = tag.getBoolean("HadNoAi");
 		this.forcePose = EntityPose.valueOf(tag.getString("ForcePose"));
-		this.forceHeadYaw = tag.getFloat("ForceHeadYaw"); 
+		this.forceHeadYaw = tag.getFloat("ForceHeadYaw");
 		this.forceBodyYaw = tag.getFloat("ForceBodyYaw");
 		this.forcePitch = tag.getFloat("ForcePitch");
 		this.forceLimbAngle = tag.getFloat("ForceLimbAngle");
@@ -44,7 +44,7 @@ public class FrozenEffectComponentImpl implements FrozenEffectComponent {
 		tag.putBoolean("IsFrozen", this.isFrozen);
 		tag.putBoolean("HadNoAi", this.hadNoAi);
 		tag.putString("ForcePose", this.forcePose.toString());
-		tag.putFloat("ForceHeadYaw", this.forceHeadYaw); 
+		tag.putFloat("ForceHeadYaw", this.forceHeadYaw);
 		tag.putFloat("ForceBodyYaw", this.forceBodyYaw);
 		tag.putFloat("ForcePitch", this.forcePitch);
 		tag.putFloat("ForceLimbAngle", this.forceLimbAngle);
@@ -89,7 +89,7 @@ public class FrozenEffectComponentImpl implements FrozenEffectComponent {
 		return this.forceLimbDistance;
 	}
 
-	public void freeze() {		
+	public void freeze() {
 		this.isFrozen = true;
 		this.hadNoAi = this.getSubclassValue(MobEntity.class, MobEntity::isAiDisabled, () -> false);
 		this.forcePose = owner.getPose();

@@ -1,6 +1,6 @@
 package io.github.xrickastley.originsgenshin.mixin;
 
-import javax.annotation.Nullable;
+import com.llamalad7.mixinextras.sugar.Local;
 
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -11,27 +11,26 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import com.llamalad7.mixinextras.sugar.Local;
-
 import io.github.apace100.apoli.component.PowerHolderComponent;
 import io.github.apace100.apoli.power.ActiveCooldownPower;
 import io.github.apace100.apoli.power.Power;
 import io.github.apace100.calio.data.SerializableData;
 import io.github.apace100.calio.data.SerializableDataTypes;
 import io.github.apace100.origins.origin.Origin;
-
 import io.github.xrickastley.originsgenshin.interfaces.IActiveCooldownPower;
 import io.github.xrickastley.originsgenshin.interfaces.IOrigin;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 
+import javax.annotation.Nullable;
+
 @Pseudo
 @Mixin(Origin.class)
 public class OriginMixin implements IOrigin {
 	@Mutable
 	@Final
-	@Shadow(remap = false)	
+	@Shadow(remap = false)
 	public static final SerializableData DATA = Origin.DATA;
 
 	protected Identifier elementalBurstPower = null;
@@ -50,9 +49,9 @@ public class OriginMixin implements IOrigin {
 			for (Power power2 : PowerHolderComponent.KEY.get(player).getPowers()) {
 				if (power2.getType().getIdentifier().equals(elementalBurstPower)) power = (ActiveCooldownPower) power2;
 			}
-	
+
 			if (power == null) return null;
-	
+
 			return ((IActiveCooldownPower)(Object) power).hasElementalBurst()
 				? power
 				: null;
@@ -74,9 +73,9 @@ public class OriginMixin implements IOrigin {
 			for (Power power2 : PowerHolderComponent.KEY.get(player).getPowers()) {
 				if (power2.getType().getIdentifier().equals(elementalSkillPower)) power = (ActiveCooldownPower) power2;
 			}
-	
+
 			if (power == null) return null;
-	
+
 			return ((IActiveCooldownPower)(Object) power).hasElementalSkill()
 				? power
 				: null;

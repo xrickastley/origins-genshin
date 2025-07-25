@@ -1,9 +1,9 @@
 package io.github.xrickastley.originsgenshin.action.bientity;
 
+import com.google.gson.JsonSyntaxException;
+
 import java.util.LinkedList;
 import java.util.List;
-
-import com.google.gson.JsonSyntaxException;
 
 import io.github.apace100.apoli.Apoli;
 import io.github.apace100.apoli.data.ApoliDataTypes;
@@ -18,6 +18,7 @@ import io.github.xrickastley.originsgenshin.data.OriginsGenshinDataTypes;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
 import io.github.xrickastley.originsgenshin.element.ElementalDamageSource;
 import io.github.xrickastley.originsgenshin.element.InternalCooldownContext;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
@@ -25,7 +26,6 @@ import net.minecraft.util.Pair;
 
 public class ElementalDamageAction {
 	public static void action(SerializableData.Instance data, Pair<Entity, Entity> entities) {
-
 		final Entity actor = entities.getLeft();
 		final Entity target = entities.getRight();
 
@@ -48,19 +48,18 @@ public class ElementalDamageAction {
 
 		try {
 			DamageSource source = MiscUtil.createDamageSource(actor.getDamageSources(), data.get("source"), data.get("damage_type"), actor);
-			
-			if (data.isPresent("element") && target instanceof final LivingEntity livingTarget && actor instanceof final LivingEntity livingActor) 
+
+			if (data.isPresent("element") && target instanceof final LivingEntity livingTarget && actor instanceof final LivingEntity livingActor)
 				source = new ElementalDamageSource(
 					source,
 					data.<ElementalApplication.Builder>get("element").build(livingTarget),
 					data.<InternalCooldownContext.Builder>get("internal_cooldown").build(livingActor)
 				);
-			
+
 			target.damage(source, damageAmount);
 		} catch (JsonSyntaxException e) {
 			Apoli.LOGGER.error("Error trying to create damage source in a `damage` bi-entity action: " + e.getMessage());
 		}
-
 	}
 
 	public static ActionFactory<Pair<Entity, Entity>> getFactory() {

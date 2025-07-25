@@ -6,8 +6,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
 
-import javax.annotation.Nullable;
-
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.component.ElementComponent;
 import io.github.xrickastley.originsgenshin.element.Element;
@@ -19,6 +17,7 @@ import io.github.xrickastley.originsgenshin.element.reaction.ElementalReactions;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinSoundEvents;
 import io.github.xrickastley.originsgenshin.registry.OriginsGenshinDamageTypes;
 import io.github.xrickastley.originsgenshin.util.ClassInstanceUtil;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.EntityType;
@@ -35,6 +34,8 @@ import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+
+import javax.annotation.Nullable;
 
 // Should technically extend Entity, but extends LivingEntity instead to NOT deal with more Networking and Spawn Packets.
 public final class DendroCoreEntity extends LivingEntity {
@@ -53,7 +54,7 @@ public final class DendroCoreEntity extends LivingEntity {
 	public DendroCoreEntity(EntityType<? extends LivingEntity> entityType, World world) {
 		this(entityType, world, null);
 	}
-	
+
 	public DendroCoreEntity(EntityType<? extends LivingEntity> entityType, World world, @Nullable LivingEntity owner) {
 		super(entityType, world);
 
@@ -86,7 +87,7 @@ public final class DendroCoreEntity extends LivingEntity {
 
 	public void setAsHyperbloom() {
 		if (this.type != Type.NORMAL) throw new IllegalStateException("This DendroCoreEntity has already been transformed! Type: " + this.type);
-		
+
 		this.type = Type.HYPERBLOOM;
 		this.hyperbloomAge = this.age;
 		this.noClip = true;
@@ -119,7 +120,7 @@ public final class DendroCoreEntity extends LivingEntity {
 	public boolean isHyperbloom() {
 		return this.type == Type.HYPERBLOOM;
 	}
-	
+
 	public boolean isBurgeon() {
 		return this.type == Type.BURGEON;
 	}
@@ -153,12 +154,12 @@ public final class DendroCoreEntity extends LivingEntity {
 
 			this.target.damage(this.createDamageSource(this.target), ElementalReaction.getReactionDamage(this, 3.0));
 			this.remove(RemovalReason.KILLED);
-			
+
 			this.getWorld()
 				.playSound(null, this.getBlockPos(), OriginsGenshinSoundEvents.SPRAWLING_SHOT_HIT, SoundCategory.PLAYERS, 0.5f, 1.0f);
 		} else {
 			super.setVelocity(new Vec3d(0, 0.5, 0));
-			
+
 			if (hyperbloomTick >= 40) this.remove(RemovalReason.KILLED);
 		}
 	}
@@ -222,7 +223,7 @@ public final class DendroCoreEntity extends LivingEntity {
 			final Element element = eds.getElementalApplication().getElement();
 
 			if (element != Element.PYRO && element != Element.ELECTRO) return false;
-			
+
 			final ElementalReaction reaction = element == Element.PYRO
 				? ElementalReactions.BURGEON
 				: ElementalReactions.HYPERBLOOM;
@@ -250,7 +251,7 @@ public final class DendroCoreEntity extends LivingEntity {
 	public void tick() {
 		super.tick();
 
-		if (this.age == 1) this.removeOldDendroCores(); 
+		if (this.age == 1) this.removeOldDendroCores();
 
 		if (this.type == Type.HYPERBLOOM) this.doHyperbloom();
 
@@ -265,7 +266,7 @@ public final class DendroCoreEntity extends LivingEntity {
 		final List<DendroCoreEntity> dendroCores = this.getWorld().getEntitiesByClass(DendroCoreEntity.class, box, dc -> true);
 
 		if (dendroCores.size() <= 5) return;
-		
+
 		dendroCores.sort(Comparator.comparing(DendroCoreEntity::getAge).reversed());
 
 		final Queue<DendroCoreEntity> queue = new LinkedList<>(dendroCores);
@@ -276,17 +277,13 @@ public final class DendroCoreEntity extends LivingEntity {
 	private boolean explode(final double reactionMultiplier) {
 		if (this.exploded) return false;
 
-		OriginsGenshin
-			.sublogger(this)
-			.info("Exploded {}", this);
-
 		this.exploded = true;
-		this.age = 118;
+		this.age = 117;
 
 		final @Nullable LivingEntity recentOwner = owners.isEmpty() ? null : owners.get(owners.size() - 1);
 		for (final LivingEntity target : ElementalReaction.getEntitiesInAoE(this, 5.0)) {
 			if (target instanceof DendroCoreEntity) continue;
-			
+
 			final ElementalDamageSource source = this.createDamageSource(target, recentOwner);
 
 			float damage = ElementalReaction.getReactionDamage(this, reactionMultiplier);

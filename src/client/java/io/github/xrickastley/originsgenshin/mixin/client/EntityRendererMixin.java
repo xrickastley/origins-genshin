@@ -1,5 +1,7 @@
 package io.github.xrickastley.originsgenshin.mixin.client;
 
+import com.mojang.blaze3d.systems.RenderSystem;
+
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -16,8 +18,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-
 import io.github.xrickastley.originsgenshin.component.ElementComponent;
 import io.github.xrickastley.originsgenshin.element.DurationElementalApplication;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
@@ -25,7 +25,7 @@ import io.github.xrickastley.originsgenshin.element.reaction.ElementalReaction;
 import io.github.xrickastley.originsgenshin.renderer.genshin.ElementEntry;
 import io.github.xrickastley.originsgenshin.util.ClientConfig;
 import io.github.xrickastley.originsgenshin.util.Color;
-import me.shedaniel.autoconfig.AutoConfig;
+
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.render.BufferBuilder;
 import net.minecraft.client.render.GameRenderer;
@@ -39,6 +39,8 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.math.Vec3d;
+
+import me.shedaniel.autoconfig.AutoConfig;
 
 @Debug(export = true)
 @Mixin(EntityRenderer.class)
@@ -78,9 +80,9 @@ public abstract class EntityRendererMixin {
 			if (component.getAppliedElements().length() == 0) return;
 
 			final Optional<Integer> priority = component.getHighestElementPriority();
-			
+
 			if (!priority.isPresent()) return;
-			
+
 			elementArray.addAll(
 				component
 					.getAppliedElements()
@@ -92,7 +94,7 @@ public abstract class EntityRendererMixin {
 		final Iterator<Vec3d> coords = this
 			.generateTexturesUsingCenter(new Vec3d(0, 0, 0), 1, elementArray.size())
 			.iterator();
-		
+
 		elementArray
 			.forEach(entry -> entry.render(livingEntity, matrixStack, dispatcher.camera, (float) coords.next().getZ()));
 	}
@@ -125,7 +127,7 @@ public abstract class EntityRendererMixin {
 
 		final ElementComponent component = ElementComponent.KEY.get(livingEntity);
 		final ArrayList<ElementalApplication> appliedElements = new ArrayList<>();
-		
+
 		component
 			.getAppliedElements()
 			.sortElements((a, b) -> a.getElement().getPriority() - b.getElement().getPriority())
@@ -136,7 +138,7 @@ public abstract class EntityRendererMixin {
 
 		Stream
 			.iterate(0.0f, n -> (n / 1.25f) < elementCount, n -> n + 1.25f)
-			.forEachOrdered(yOffset -> 
+			.forEachOrdered(yOffset ->
 				renderElementalGauge(livingEntity, aeIterator.next(), yOffset - 0.5f, matrixStack, tickDelta)
 			);
 	}
@@ -186,8 +188,8 @@ public abstract class EntityRendererMixin {
 		buffer.vertex(positionMatrix, xOffset, 0 - yOffset, -0.0001f).color(color).next();
 		buffer.vertex(positionMatrix, (gaugeWidth * progress) + xOffset, 0 - yOffset, -0.0001f).color(color).next();
 		buffer.vertex(positionMatrix, (gaugeWidth * progress) + xOffset, 1 - yOffset, -0.0001f).color(color).next();
-		buffer.vertex(positionMatrix, xOffset, 1 - yOffset, -0.0001f).color(color).next(); 
-		
+		buffer.vertex(positionMatrix, xOffset, 1 - yOffset, -0.0001f).color(color).next();
+
 		tessellator.draw();
 
 		if (application.isDuration()) {
@@ -197,8 +199,8 @@ public abstract class EntityRendererMixin {
 			buffer.vertex(positionMatrix, xOffset, 0 - yOffset, -0.0001f).color(color).next();
 			buffer.vertex(positionMatrix, (gaugeWidth * gaugeProgress) + xOffset, 0 - yOffset, -0.0001f).color(color).next();
 			buffer.vertex(positionMatrix, (gaugeWidth * gaugeProgress) + xOffset, 1 - yOffset, -0.0001f).color(color).next();
-			buffer.vertex(positionMatrix, xOffset, 1 - yOffset, -0.0001f).color(color).next(); 
-		
+			buffer.vertex(positionMatrix, xOffset, 1 - yOffset, -0.0001f).color(color).next();
+
 			tessellator.draw();
 		}
 

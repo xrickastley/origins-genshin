@@ -2,6 +2,7 @@ package io.github.xrickastley.originsgenshin.particle;
 
 import io.github.xrickastley.originsgenshin.util.Colors;
 import io.github.xrickastley.originsgenshin.util.TextHelper;
+
 import net.minecraft.client.particle.Particle;
 import net.minecraft.client.particle.ParticleFactory;
 import net.minecraft.client.particle.SpriteProvider;

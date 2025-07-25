@@ -1,19 +1,20 @@
 package io.github.xrickastley.originsgenshin.particle;
 
+import com.mojang.blaze3d.systems.RenderSystem;
+
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
-import com.mojang.blaze3d.systems.RenderSystem;
 
 import io.github.xrickastley.originsgenshin.util.Color;
 import io.github.xrickastley.originsgenshin.util.Colors;
 import io.github.xrickastley.originsgenshin.util.DelayedRenderer;
 import io.github.xrickastley.originsgenshin.util.Ease;
+
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.font.TextRenderer.TextLayerType;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.LightmapTextureManager;
 import net.minecraft.client.render.Tessellator;
@@ -32,7 +33,7 @@ import net.minecraft.util.math.Vec3d;
 public class ReactionParticle extends TextBillboardParticle {
 	protected ReactionParticle(ClientWorld clientWorld, double x, double y, double z, double color) {
 		super(clientWorld, x, y, z, color);
-		
+
 		this.collidesWithWorld = false;
 		this.gravityStrength = 0f;
 		this.velocityY = 0d;
@@ -62,12 +63,12 @@ public class ReactionParticle extends TextBillboardParticle {
 	public void buildGeometry_v1(VertexConsumer vertexConsumer, Camera camera, float tickDelta) {
 		MinecraftClient client = MinecraftClient.getInstance();
 		TextRenderer renderer = client.textRenderer;
-		
+
 		Vec3d vec3d = camera.getPos();
 		float x = (float) (MathHelper.lerp(tickDelta, this.prevPosX, this.x) - vec3d.getX());
 		float y = (float) (MathHelper.lerp(tickDelta, this.prevPosY, this.y) - vec3d.getY());
 		float z = (float) (MathHelper.lerp(tickDelta, this.prevPosZ, this.z) - vec3d.getZ());
-		
+
 		if (this.alpha <= 0f || this.scale <= 0f) return;
 
 		y += (float) Ease.OUT_SINE.applyLerpProgress(age, 0, maxAge) * 0.75f;
@@ -103,7 +104,7 @@ public class ReactionParticle extends TextBillboardParticle {
 		// RenderSystem.depthFunc(GL11.GL_LEQUAL);
 
 		// RenderSystem.enableDepthTest();
-		
+
 		matrixStack.pop();
 	}
 
@@ -121,7 +122,7 @@ public class ReactionParticle extends TextBillboardParticle {
 		final float x = (float) MathHelper.lerp(tickDelta, this.prevPosX, this.x);
 		final float y = (float) MathHelper.lerp(tickDelta, this.prevPosY, this.y) + (float) (Ease.OUT_SINE.applyLerpProgress(age, 0, maxAge) * 0.75f);
 		final float z = (float) MathHelper.lerp(tickDelta, this.prevPosZ, this.z);
-		
+
 		final int color = Color
 			.fromARGBHex(this.color)
 			.multiply(1, 1, 1, alpha)
@@ -141,15 +142,15 @@ public class ReactionParticle extends TextBillboardParticle {
 	public void buildGeometry(VertexConsumer consumer, final Camera camera, float f) {
 		DelayedRenderer.add((tickDelta, matrices) -> render(camera, tickDelta, matrices));
 	}
-	
+
 	public static void drawString(final Camera camera, final MatrixStack matrices, final VertexConsumerProvider vertexConsumers, final OrderedText text, final double x, final double y, final double z, final int color, final float size, final boolean center, final float offset, final boolean visibleThroughObjects) {
 		final MinecraftClient client = MinecraftClient.getInstance();
 		final TextRenderer textRenderer = client.textRenderer;
-	
+
 		final double d = camera.getPos().x;
 		final double e = camera.getPos().y;
 		final double f = camera.getPos().z;
-		
+
 		matrices.push();
 		matrices.translate((float) (x - d), (float) (y - e), (float) (z - f));
 		matrices.multiplyPositionMatrix(new Matrix4f().rotation(camera.getRotation()));
@@ -159,7 +160,7 @@ public class ReactionParticle extends TextBillboardParticle {
 		g -= offset / size;
 
 		textRenderer.draw(text, g, 0.0f, color, false, matrices.peek().getPositionMatrix(), vertexConsumers, visibleThroughObjects ? TextLayerType.SEE_THROUGH : TextLayerType.NORMAL, 0, 15728880);
-		
+
 		matrices.pop();
 	}
 }

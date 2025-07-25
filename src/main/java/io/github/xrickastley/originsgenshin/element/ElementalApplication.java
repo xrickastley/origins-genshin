@@ -8,8 +8,9 @@ import io.github.apace100.calio.data.SerializableDataType;
 import io.github.apace100.calio.data.SerializableDataTypes;
 import io.github.xrickastley.originsgenshin.data.OriginsGenshinDataTypes;
 import io.github.xrickastley.originsgenshin.element.reaction.AbstractBurningElementalReaction;
-import io.github.xrickastley.originsgenshin.exception.ElementalApplicationOperationException;
 import io.github.xrickastley.originsgenshin.exception.ElementalApplicationOperationException.Operation;
+import io.github.xrickastley.originsgenshin.exception.ElementalApplicationOperationException;
+
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
@@ -130,9 +131,9 @@ public abstract sealed class ElementalApplication permits DurationElementalAppli
 	 */
 	public double reduceGauge(double gaugeUnits) {
 		final double previousValue = this.currentGauge;
-		
+
 		this.currentGauge = Math.max(this.currentGauge - gaugeUnits, 0);
-	
+
 		return previousValue - this.currentGauge;
 	}
 
@@ -158,7 +159,7 @@ public abstract sealed class ElementalApplication permits DurationElementalAppli
 	public abstract ElementalApplication asAura();
 
 	public abstract ElementalApplication asNonAura();
-	
+
 	public NbtCompound asNbt() {
 		final NbtCompound nbt = new NbtCompound();
 
@@ -267,7 +268,7 @@ public abstract sealed class ElementalApplication permits DurationElementalAppli
 			this.type = Objects.requireNonNull(type);
 			this.element = Objects.requireNonNull(element);
 			this.gaugeUnits = Objects.requireNonNull(gaugeUnits);
-			
+
 			if (type == Type.DURATION) {
 				this.duration = Objects.requireNonNull(duration);
 

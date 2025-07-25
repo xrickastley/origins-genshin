@@ -40,7 +40,7 @@ public final class Color {
 	public float getAlpha() {
 		return alpha;
 	}
-	
+
 	/**
 	 * Gets the {@code red} value as a percent.
 	 * @return The {@code red} value as a percent from {@code 0} to {@code 255}, defined as {@code red / 255}.
@@ -75,10 +75,10 @@ public final class Color {
 
 	public String asHex() {
 		return String.format(
-			"#%s%s%s%s", 
-			Integer.toHexString(red), 
-			Integer.toHexString(green), 
-			Integer.toHexString(blue), 
+			"#%s%s%s%s",
+			Integer.toHexString(red),
+			Integer.toHexString(green),
+			Integer.toHexString(blue),
 			Integer.toHexString((int) (alpha * 255))
 		);
 	}
@@ -88,7 +88,7 @@ public final class Color {
 		int r = red & 0xFF;
 		int g = green & 0xFF;
 		int b = blue & 0xFF;
-	
+
 		return (a << 24) | (r << 16) | (g << 8) | b;
 	}
 
@@ -108,7 +108,7 @@ public final class Color {
 	public Color add(double factor) {
 		return add(factor, factor, factor, factor);
 	}
-	
+
 	/**
 	 * Adds all the values of this {@code Color} by their respective factors.
 	 * @param r The factor to add to the red value.
@@ -119,7 +119,7 @@ public final class Color {
 	public Color add(double r, double g, double b) {
 		return add(r, g, b, 1);
 	}
-	
+
 	/**
 	 * Adds all the values of this {@code Color} by their respective factors.
 	 * @param r The factor to add to the red value.
@@ -140,7 +140,7 @@ public final class Color {
 	public Color multiply(double factor) {
 		return multiply(factor, factor, factor, factor);
 	}
-	
+
 	/**
 	 * Creates a new color based on this {@code Color} multiplied by their respective factors.
 	 * @param r The factor to multiply the red value with.
@@ -151,7 +151,7 @@ public final class Color {
 	public Color multiply(double r, double g, double b) {
 		return multiply(r, g, b, 1);
 	}
-	
+
 	/**
 	 * Creates a new color based on this {@code Color} multiplied by their respective factors.
 	 * @param r The factor to multiply the red value with.
@@ -192,7 +192,7 @@ public final class Color {
 				: 1
 		);
 	}
-	
+
 	public static Color fromARGBHex(int argbHex) {
 		int alpha = (argbHex >> 24) & 0xFF;
 		int red = (argbHex >> 16) & 0xFF;

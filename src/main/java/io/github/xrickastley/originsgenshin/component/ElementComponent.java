@@ -6,12 +6,6 @@ import java.util.stream.Stream;
 
 import org.jetbrains.annotations.Nullable;
 
-import dev.onyxstudios.cca.api.v3.component.ComponentKey;
-import dev.onyxstudios.cca.api.v3.component.ComponentRegistry;
-import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
-import dev.onyxstudios.cca.api.v3.component.tick.CommonTickingComponent;
-import io.github.xrickastley.originsgenshin.util.Array;
-import io.github.xrickastley.originsgenshin.util.ClassInstanceUtil;
 import io.github.apace100.apoli.component.PowerHolderComponent;
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.element.Element;
@@ -23,21 +17,29 @@ import io.github.xrickastley.originsgenshin.element.InternalCooldownContext;
 import io.github.xrickastley.originsgenshin.element.InternalCooldownType;
 import io.github.xrickastley.originsgenshin.element.reaction.ElementalReaction;
 import io.github.xrickastley.originsgenshin.power.ElementalInfusionPower;
+import io.github.xrickastley.originsgenshin.util.Array;
+import io.github.xrickastley.originsgenshin.util.ClassInstanceUtil;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.registry.tag.DamageTypeTags;
 import net.minecraft.util.Pair;
 
+import dev.onyxstudios.cca.api.v3.component.ComponentKey;
+import dev.onyxstudios.cca.api.v3.component.ComponentRegistry;
+import dev.onyxstudios.cca.api.v3.component.sync.AutoSyncedComponent;
+import dev.onyxstudios.cca.api.v3.component.tick.CommonTickingComponent;
+
 public interface ElementComponent extends AutoSyncedComponent, CommonTickingComponent {
 	public static final ComponentKey<ElementComponent> KEY = ComponentRegistry.getOrCreate(OriginsGenshin.identifier("elements"), ElementComponent.class);
-	
+
 	/**
 	 * Denies Elemental Applications for the specific entity class. <br> <br>
-	 * 
-	 * The provided entity class, and all it's subclasses, cannot have elements applied to them, 
+	 *
+	 * The provided entity class, and all it's subclasses, cannot have elements applied to them,
 	 * either by force or naturally.
-	 * 
+	 *
 	 * @param entityClass The entity to deny Elemental Applications for.
 	 */
 	public static <T extends LivingEntity> void denyElementsFor(Class<T> entityClass) {
@@ -79,13 +81,13 @@ public interface ElementComponent extends AutoSyncedComponent, CommonTickingComp
 	default boolean hasValidLastReaction() {
 		return this.hasLastReaction() && this.getLastReaction().getRight() + 10 >= this.getOwner().getWorld().getTime();
 	}
-	
+
 	public boolean isElectroChargedOnCD();
 
 	public boolean isBurningOnCD();
-	
+
 	public void resetElectroChargedCD();
-	
+
 	public void resetBurningCD();
 
 	public void setElectroChargedOrigin(@Nullable LivingEntity origin);
@@ -93,7 +95,7 @@ public interface ElementComponent extends AutoSyncedComponent, CommonTickingComp
 	public void setBurningOrigin(@Nullable LivingEntity origin);
 
 	public @Nullable LivingEntity getElectroChargedOrigin();
-	
+
 	public @Nullable LivingEntity getBurningOrigin();
 
 	default void setOrRetainElectroChargedOrigin(@Nullable LivingEntity origin) {
@@ -117,26 +119,26 @@ public interface ElementComponent extends AutoSyncedComponent, CommonTickingComp
 	 * Checks if the element can be applied.
 	 * @param element The element to check.
 	 * @param icdContext The {@link InternalCooldownContext} of the Element to be applied.
-	 * @param handleICD Whether the ICD should be handled. This will register a "hit" to the gauge sequence. 
+	 * @param handleICD Whether the ICD should be handled. This will register a "hit" to the gauge sequence.
 	 */
 	public boolean canApplyElement(Element element, InternalCooldownContext icdContext, boolean handleICD);
-	
+
 	default List<ElementalReaction> addElementalApplication(Element element, InternalCooldownContext icdContext, double gaugeUnits) {
 		final boolean isAura = this.getAppliedElements().isEmpty();
-		
+
 		/*
 		OriginsGenshin
 			.sublogger(ElementComponent.class)
 			.info("(add) Currently applied elements: {} | isAura: {}", this.getAppliedElements(), isAura);
 		*/
-		
+
 		return this.addElementalApplication(ElementalApplications.gaugeUnits(this.getOwner(), element, gaugeUnits, isAura), icdContext);
 	}
-	
+
 	default List<ElementalReaction> addElementalApplication(Element element, InternalCooldownContext icdContext, double gaugeUnits, double duration) {
 		return this.addElementalApplication(ElementalApplications.duration(this.getOwner(), element, gaugeUnits, duration), icdContext);
 	}
-	
+
 	public List<ElementalReaction> addElementalApplication(ElementalApplication application, InternalCooldownContext icdContext);
 
 	/**
@@ -154,10 +156,10 @@ public interface ElementComponent extends AutoSyncedComponent, CommonTickingComp
 	 * Reduces the amount of gauge units in a specified element, then returns the eventual amount of gauge units reduced.
 	 * @param element The element to reduce the gauge units of.
 	 * @param gaugeUnits The amount of gauge units to reduce.
-	 * @return The eventual amount of gauge units reduced. If this value is lower than {@code gaugeUnits}, the current 
+	 * @return The eventual amount of gauge units reduced. If this value is lower than {@code gaugeUnits}, the current
 	 * element had a current gauge value lesser than {@code gaugeUnits}. However, if this value is {@code -1.0}, the provided
 	 * {@code element} was not found or did not exist.
-	 * 
+	 *
 	 * @see ElementalApplication#reduceGauge
 	 */
 	default double reduceElementalApplication(Element element, double gaugeUnits) {
@@ -169,7 +171,7 @@ public interface ElementComponent extends AutoSyncedComponent, CommonTickingComp
 	/**
 	 * Gets an Elemental Application with the specified {@code element}.
 	 * @param element The {@code Element} to get an Elemental Application from.
-	 * @return The {@code ElementalApplication}, if one exists for {@code element}. 
+	 * @return The {@code ElementalApplication}, if one exists for {@code element}.
 	 */
 	default ElementalApplication getElementalApplication(Element element) {
 		return this
@@ -183,9 +185,9 @@ public interface ElementComponent extends AutoSyncedComponent, CommonTickingComp
 	public Array<ElementalApplication> getAppliedElements();
 
 	/**
-	 * Applies an {@link ElementalDamageSource} to this entity, <i>possibly</i> triggering 
+	 * Applies an {@link ElementalDamageSource} to this entity, <i>possibly</i> triggering
 	 * multiple {@link ElementalReaction}s. If no reactions were triggered, the list will be empty.
-	 * 
+	 *
 	 * @param source The {@code ElementalDamageSource} to apply to this entity.
 	 * @return The triggered {@link ElementalReaction}s.
 	 */
@@ -194,7 +196,7 @@ public interface ElementComponent extends AutoSyncedComponent, CommonTickingComp
 	/**
 	 * Gets the lowest {@code priority} value from the currently applied Elements
 	 * as an {@link Optional}. <br> <br>
-	 * 
+	 *
 	 * If the {@code Optional} has no value, this means that there are no Elements
 	 * currently applied.
 	 */
@@ -202,10 +204,10 @@ public interface ElementComponent extends AutoSyncedComponent, CommonTickingComp
 
 	/**
 	 * Gets all currently prioritized applied elements as a {@link Stream}. <br> <br>
-	 * 
+	 *
 	 * If there are applied Elements with multiple priority values, the most
 	 * prioritized one has to be consumed first before the others can be consumed. <br> <br>
-	 * 
+	 *
 	 * Say that Element A has a priority of {@code 1}, while Element B has a priority
 	 * of {@code 2}. Element A's application must be consumed entirely before Element B
 	 * could be reacted with or reapplied.

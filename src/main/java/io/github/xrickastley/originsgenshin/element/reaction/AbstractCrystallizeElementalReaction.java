@@ -1,12 +1,13 @@
 package io.github.xrickastley.originsgenshin.element.reaction;
 
-import javax.annotation.Nullable;
-
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
+
 import net.minecraft.entity.LivingEntity;
 
-public abstract sealed class AbstractCrystallizeElementalReaction 
-	extends ElementalReaction 
+import javax.annotation.Nullable;
+
+public abstract sealed class AbstractCrystallizeElementalReaction
+	extends ElementalReaction
 	permits PyroCrystallizeElementalReaction, HydroCrystallizeElementalReaction, ElectroCrystallizeElementalReaction, CryoCrystallizeElementalReaction, FrozenCrystallizeElementalReaction
 {
 	AbstractCrystallizeElementalReaction(ElementalReactionSettings settings) {

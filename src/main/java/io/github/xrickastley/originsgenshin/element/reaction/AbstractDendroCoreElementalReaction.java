@@ -1,15 +1,15 @@
 package io.github.xrickastley.originsgenshin.element.reaction;
 
-import javax.annotation.Nullable;
-
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
 import io.github.xrickastley.originsgenshin.entity.DendroCoreEntity;
 import io.github.xrickastley.originsgenshin.events.ReactionTriggered;
 
 import net.minecraft.entity.LivingEntity;
 
-public abstract sealed class AbstractDendroCoreElementalReaction 
-	extends ElementalReaction 
+import javax.annotation.Nullable;
+
+public abstract sealed class AbstractDendroCoreElementalReaction
+	extends ElementalReaction
 	permits HyperbloomElementalReaction, BurgeonElementalReaction
 {
 	AbstractDendroCoreElementalReaction(ElementalReactionSettings settings) {
@@ -35,7 +35,7 @@ public abstract sealed class AbstractDendroCoreElementalReaction
 			.onReactionTriggered(this, 0, entity, origin);
 
 		return true;
-	}	
+	}
 
 	@Override
 	protected void onReaction(LivingEntity entity, @Nullable ElementalApplication auraElement, ElementalApplication triggeringElement, double reducedGauge, @Nullable LivingEntity origin) {}

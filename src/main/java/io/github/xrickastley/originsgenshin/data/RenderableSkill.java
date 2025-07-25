@@ -11,7 +11,7 @@ import net.minecraft.entity.player.PlayerEntity;
 public abstract class RenderableSkill {
 	protected ActiveCooldownPower power;
 	protected final boolean showCooldown;
-	protected final boolean shouldRender; 
+	protected final boolean shouldRender;
 	protected final List<RenderableIcon> icons;
 	protected final ConditionFactory<Entity>.Instance disable;
 
@@ -64,5 +64,5 @@ public abstract class RenderableSkill {
 		return disable == null
 			? false
 			: disable.test(entity);
-	} 
+	}
 }

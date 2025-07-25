@@ -3,8 +3,8 @@ package io.github.xrickastley.originsgenshin.element;
 import java.util.UUID;
 
 import io.github.xrickastley.originsgenshin.element.ElementalApplication.Type;
-import io.github.xrickastley.originsgenshin.exception.ElementalApplicationOperationException;
 import io.github.xrickastley.originsgenshin.exception.ElementalApplicationOperationException.Operation;
+import io.github.xrickastley.originsgenshin.exception.ElementalApplicationOperationException;
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.nbt.NbtCompound;
@@ -60,10 +60,10 @@ public class ElementalApplications {
 
 	/**
 	 * Creates a new Elemental Application Builder. <br> <br>
-	 * 
+	 *
 	 * A builder is used for creating an Elemental Application without a {@code LivingEntity} to
 	 * "own" the Elemental Application as of the moment. <br> <br>
-	 * 
+	 *
 	 * Once an entity exists, an instance of {@code ElementalApplication} may be created through
 	 * {@link ElementalApplication.Builder#build(LivingEntity) Builder#build()}.
 	 */

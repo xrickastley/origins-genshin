@@ -5,6 +5,7 @@ import io.github.xrickastley.originsgenshin.factory.OriginsGenshinParticleFactor
 import io.github.xrickastley.originsgenshin.registry.OriginsGenshinRegistries;
 import io.github.xrickastley.originsgenshin.util.Color;
 import io.github.xrickastley.originsgenshin.util.Colors;
+
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
@@ -22,13 +23,13 @@ public class OriginsGenshinPacketsS2C {
 			ClientPlayNetworking.registerReceiver(ShowElementalDamageS2CPacket.TYPE, OriginsGenshinPacketsS2C::onElementalDamageShow);
 		}));
 	}
-	
+
 	@SuppressWarnings("resource")
 	protected static void onElementalReactionShow(ShowElementalReactionS2CPacket packet, ClientPlayerEntity player, PacketSender responseSender) {
 		final Vec3d pos = packet.pos();
- 
+
 		final ElementalReaction reaction = OriginsGenshinRegistries.ELEMENTAL_REACTION.get(packet.reaction());
- 
+
 		if (reaction == null || reaction.getParticle() == null) return;
 
 		MinecraftClient
@@ -37,7 +38,7 @@ public class OriginsGenshinPacketsS2C {
 			.getWorld()
 			.addImportantParticle(reaction.getParticle(), pos.x, pos.y, pos.z, 0.02, 0.02, 0.02);
 	}
-	
+
 	@SuppressWarnings("resource")
 	protected static void onElementalDamageShow(ShowElementalDamageS2CPacket packet, ClientPlayerEntity player, PacketSender responseSender) {
 		Entity entity = player.networkHandler.getWorld().getEntityById(packet.entityId());

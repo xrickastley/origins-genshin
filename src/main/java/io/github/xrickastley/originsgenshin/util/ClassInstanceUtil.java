@@ -12,5 +12,5 @@ public class ClassInstanceUtil {
 		return castClass.isInstance(instance)
 			? (T) instance
 			: null;
-	} 
+	}
 }

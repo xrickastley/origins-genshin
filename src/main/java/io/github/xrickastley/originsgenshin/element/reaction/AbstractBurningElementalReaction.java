@@ -1,14 +1,12 @@
 package io.github.xrickastley.originsgenshin.element.reaction;
 
+import com.google.common.base.Suppliers;
+
 import java.util.Comparator;
 import java.util.Optional;
 import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
-
-import javax.annotation.Nullable;
-
-import com.google.common.base.Suppliers;
 
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.component.ElementComponent;
@@ -24,11 +22,14 @@ import io.github.xrickastley.originsgenshin.events.ElementRemoved;
 import io.github.xrickastley.originsgenshin.events.ReactionTriggered;
 import io.github.xrickastley.originsgenshin.registry.OriginsGenshinDamageTypes;
 import io.github.xrickastley.originsgenshin.registry.OriginsGenshinRegistries;
+
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.registry.entry.RegistryEntry.Reference;
 
-public abstract sealed class AbstractBurningElementalReaction 
-	extends ElementalReaction 
+import javax.annotation.Nullable;
+
+public abstract sealed class AbstractBurningElementalReaction
+	extends ElementalReaction
 	permits BurningElementalReaction, QuickenBurningElementalReaction
 {
 	private static final InternalCooldownType BURNING_PYRO_ICD = InternalCooldownType.registered(OriginsGenshin.identifier("reactions/burning/pyro_icd"), 40, Integer.MAX_VALUE);
@@ -56,7 +57,7 @@ public abstract sealed class AbstractBurningElementalReaction
 		final ElementHolder holder = component.getElementHolder(Element.PYRO);
 
 		if (context.hasOrigin() && context.getInternalCooldown(holder).handleInternalCooldown()) {
-			final ElementalApplication application = ElementalApplications.gaugeUnits(entity, Element.PYRO, 1.0f, true);	
+			final ElementalApplication application = ElementalApplications.gaugeUnits(entity, Element.PYRO, 1.0f, true);
 
 			if (!holder.hasElementalApplication() || holder.getElementalApplication().isEmpty()) {
 				holder.setElementalApplication(application);
@@ -147,7 +148,7 @@ public abstract sealed class AbstractBurningElementalReaction
 		final ElementComponent component = ElementComponent.KEY.get(entity);
 
 		if (!component.hasElementalApplication(Element.BURNING) || component.isBurningOnCD() || entity.getWorld().isClient) return;
-		
+
 		if (!component.hasElementalApplication(Element.DENDRO) && !component.hasElementalApplication(Element.QUICKEN)) {
 			component
 				.getElementHolder(Element.BURNING)
@@ -168,8 +169,8 @@ public abstract sealed class AbstractBurningElementalReaction
 			final ElementalDamageSource source = new ElementalDamageSource(
 				entity
 					.getDamageSources()
-					.create(OriginsGenshinDamageTypes.BURNING, entity, component.getBurningOrigin()), 
-				ElementalApplications.gaugeUnits(target, Element.PYRO, 1), 
+					.create(OriginsGenshinDamageTypes.BURNING, entity, component.getBurningOrigin()),
+				ElementalApplications.gaugeUnits(target, Element.PYRO, 1),
 				InternalCooldownContext.ofType(entity, "origins-genshin:reactions/burning", BURNING_PYRO_ICD)
 			);
 
@@ -185,13 +186,13 @@ public abstract sealed class AbstractBurningElementalReaction
 
 	/**
 	 * Reapplies the Dendro element when the only "highest priority" element is Burning. <br> <br>
-	 * 
-	 * This method will <b>overwrite</b> the current Dendro aura with the provided Elemental 
+	 *
+	 * This method will <b>overwrite</b> the current Dendro aura with the provided Elemental
 	 * Application, as specified by the "Burning Refresh" mechanic by <a href="https://genshin-impact.fandom.com/wiki/Elemental_Gauge_Theory/Advanced_Mechanics#Burning">
 	 * Elemental Gauge Theory > Advanced Mechanics > Burning</a>.
-	 * 
+	 *
 	 * If the provided application is <i>not</i> the Dendro element, it is ignored.
-	 * 
+	 *
 	 * @param application The {@code ElementalApplication} to reapply.
 	 */
 	public static void mixin$forceReapplyDendroWhenBurning(ElementComponent component, ElementalApplication application) {
@@ -232,7 +233,7 @@ public abstract sealed class AbstractBurningElementalReaction
 	}
 
 	public static boolean mixin$allowDendroPassthrough(final boolean original, final ElementComponent component, ElementalApplication application) {
-		return original 
+		return original
 			&& !(component.hasElementalApplication(Element.BURNING) && (application.getElement() == Element.DENDRO || application.getElement() == Element.PYRO));
 	}
 
@@ -246,7 +247,7 @@ public abstract sealed class AbstractBurningElementalReaction
 
 	public static Optional<ElementalReaction> mixin$changeReaction(Optional<ElementalReaction> original, final ElementComponent component, final ElementalApplication application) {
 		if (!component.hasElementalApplication(Element.BURNING)) return original;
-		
+
 		return OriginsGenshinRegistries.ELEMENTAL_REACTION
 			.streamEntries()
 			.map(Reference::value)

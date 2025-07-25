@@ -1,10 +1,12 @@
 package io.github.xrickastley.originsgenshin.events;
 
-import blue.endless.jankson.annotation.Nullable;
 import io.github.xrickastley.originsgenshin.element.reaction.ElementalReaction;
+
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 import net.minecraft.entity.LivingEntity;
+
+import blue.endless.jankson.annotation.Nullable;
 
 @FunctionalInterface
 public interface ReactionTriggered {

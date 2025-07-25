@@ -10,6 +10,7 @@ import io.github.xrickastley.originsgenshin.events.ElementApplied;
 import io.github.xrickastley.originsgenshin.events.ElementRefreshed;
 import io.github.xrickastley.originsgenshin.events.ElementRemoved;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinGameRules;
+
 import net.minecraft.entity.LivingEntity;
 
 public final class ElementHolder {
@@ -58,10 +59,10 @@ public final class ElementHolder {
 
 		return this.application;
 	}
-	
+
 	public ElementalApplication getOrCreateElementalApplication(double duration, double gaugeUnits) {
 		if (!this.shouldDoElements()) throw new IllegalStateException("The Game Rule \"doElements\" is false! Check if you can apply elements through ElementHolder#shouldDoElements before calling this method!");
-		
+
 		if (this.application == null) this.setElementalApplication(ElementalApplications.duration(owner, element, gaugeUnits, duration));
 
 		return this.application;
@@ -97,7 +98,7 @@ public final class ElementHolder {
 	public boolean canApplyElement(Element element, InternalCooldownContext icdContext) {
 		return this.canApplyElement(element, icdContext, false);
 	}
-	
+
 	/**
 	 * Checks if the element can be applied.
 	 * @param element The element to test.
@@ -110,8 +111,8 @@ public final class ElementHolder {
 		if (element.bypassesInternalCooldown()) return true;
 
 		final InternalCooldown icdData = icdContext.getInternalCooldown(this);
-		
-		final boolean inICD = handleICD 
+
+		final boolean inICD = handleICD
 			? icdData.handleInternalCooldown()
 			: icdData.isInInternalCooldown();
 

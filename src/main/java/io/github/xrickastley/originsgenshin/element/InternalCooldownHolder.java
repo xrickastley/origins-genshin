@@ -16,7 +16,7 @@ public final class InternalCooldownHolder {
 		this.owner = owner;
 		this.ICD_NONE = InternalCooldown.none(this);
 	}
-	
+
 	public InternalCooldown getInternalCooldown(@Nullable String tag, InternalCooldownType type) {
 		return this.getInternalCooldown(InternalCooldownTag.of(tag), type);
 	}

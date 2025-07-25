@@ -22,7 +22,7 @@ public class DendroCoreEntityModel extends EntityModel<DendroCoreEntity> {
 	public static final EntityModelLayer MODEL_LAYER = new EntityModelLayer(OriginsGenshin.identifier("cube"), "all");
 
 	private final ModelPart base;
-	
+
 	public DendroCoreEntityModel(ModelPart root) {
 		this.base = root.getChild(EntityModelPartNames.ROOT);
 	}
@@ -37,11 +37,11 @@ public class DendroCoreEntityModel extends EntityModel<DendroCoreEntity> {
 		all.addChild("layer1", ModelPartBuilder.create().uv(0, 0).cuboid(-2.0F, -2.0F, -2.0F, 4.0F, 1.0F, 4.0F, new Dilation(0.0F)), ModelTransform.pivot(0.0F, 0.0F, 0.0F));
 
 		ModelPartData layer2 = all.addChild(
-			"layer2", 
+			"layer2",
 			ModelPartBuilder
 				.create()
 				.uv(0, 0).cuboid(2.0F, -4.0F, -2.0F, 1.0F, 2.0F, 4.0F, new Dilation(0.0F))
-				.uv(0, 0).cuboid(-3.0F, -4.0F, -2.0F, 1.0F, 2.0F, 4.0F, new Dilation(0.0F)), 
+				.uv(0, 0).cuboid(-3.0F, -4.0F, -2.0F, 1.0F, 2.0F, 4.0F, new Dilation(0.0F)),
 			ModelTransform.pivot(0.0F, 0.0F, 0.0F)
 		);
 
@@ -49,7 +49,7 @@ public class DendroCoreEntityModel extends EntityModel<DendroCoreEntity> {
 		layer2.addChild("cube_r2", ModelPartBuilder.create().uv(0, 0).cuboid(0.0F, -2.0F, -2.0F, 1.0F, 2.0F, 4.0F, new Dilation(0.0F)), ModelTransform.of(0.0F, -2.0F, 3.0F, 0.0F, 1.5708F, 0.0F));
 
 		ModelPartData layer3 = all.addChild(
-			"layer3", 
+			"layer3",
 			ModelPartBuilder
 				.create()
 				.uv(0, 0).cuboid(3.0F, -4.0F, -2.0F, 1.0F, 3.0F, 4.0F, new Dilation(0.0F))
@@ -57,7 +57,7 @@ public class DendroCoreEntityModel extends EntityModel<DendroCoreEntity> {
 				.uv(3, 3).cuboid(-3.0F, -4.0F, -3.0F, 1.0F, 3.0F, 1.0F, new Dilation(0.0F))
 				.uv(3, 3).cuboid(-3.0F, -4.0F, 2.0F, 1.0F, 3.0F, 1.0F, new Dilation(0.0F))
 				.uv(3, 3).cuboid(2.0F, -4.0F, 2.0F, 1.0F, 3.0F, 1.0F, new Dilation(0.0F))
-				.uv(3, 3).cuboid(2.0F, -4.0F, -3.0F, 1.0F, 3.0F, 1.0F, new Dilation(0.0F)), 
+				.uv(3, 3).cuboid(2.0F, -4.0F, -3.0F, 1.0F, 3.0F, 1.0F, new Dilation(0.0F)),
 			ModelTransform.pivot(0.0F, -3.0F, 0.0F)
 		);
 
@@ -65,7 +65,7 @@ public class DendroCoreEntityModel extends EntityModel<DendroCoreEntity> {
 		layer3.addChild("cube_r4", ModelPartBuilder.create().uv(0, 0).cuboid(0.0F, -3.0F, -2.0F, 1.0F, 3.0F, 4.0F, new Dilation(0.0F)), ModelTransform.of(0.0F, -1.0F, 4.0F, 0.0F, 1.5708F, 0.0F));
 
 		ModelPartData layer4 = all.addChild(
-			"layer4", 
+			"layer4",
 			ModelPartBuilder
 				.create()
 				.uv(0, 0).cuboid(2.0F, -3.0F, -2.0F, 1.0F, 1.0F, 4.0F, new Dilation(0.0F))
@@ -78,7 +78,7 @@ public class DendroCoreEntityModel extends EntityModel<DendroCoreEntity> {
 
 		all.addChild("layer5", ModelPartBuilder.create().uv(0, 0).cuboid(-2.0F, -2.0F, -2.0F, 4.0F, 1.0F, 4.0F, new Dilation(0.0F)), ModelTransform.pivot(0.0F, -7.0F, 0.0F));
 		all.addChild("layer6", ModelPartBuilder.create().uv(0, 0).cuboid(-1.0F, -3.0F, -1.0F, 2.0F, 2.0F, 2.0F, new Dilation(0.0F)), ModelTransform.pivot(0.0F, -8.0F, 0.0F));
-		
+
 		return TexturedModelData.of(modelData, 16, 16);
 	}
 

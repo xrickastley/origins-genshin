@@ -1,11 +1,12 @@
 package io.github.xrickastley.originsgenshin.element.reaction;
 
-import javax.annotation.Nullable;
-
 import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinStatusEffects;
+
 import net.minecraft.entity.LivingEntity;
+
+import javax.annotation.Nullable;
 
 public final class PyroFrozenMeltElementalReaction extends AbstractPyroMeltElementalReaction {
 	PyroFrozenMeltElementalReaction() {

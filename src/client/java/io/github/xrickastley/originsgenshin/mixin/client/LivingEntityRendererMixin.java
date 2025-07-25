@@ -3,26 +3,27 @@ package io.github.xrickastley.originsgenshin.mixin.client;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
-import io.github.xrickastley.originsgenshin.component.FrozenEffectComponent;
 
 import java.util.function.Function;
 
-import net.minecraft.client.render.VertexConsumerProvider;
-import net.minecraft.client.util.math.MatrixStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import io.github.xrickastley.originsgenshin.component.FrozenEffectComponent;
 
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
+import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.render.entity.EntityRendererFactory;
 import net.minecraft.client.render.entity.LivingEntityRenderer;
 import net.minecraft.client.render.entity.model.EntityModel;
+import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.Identifier;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Environment(EnvType.CLIENT)
 @Mixin(value = LivingEntityRenderer.class, priority = Integer.MAX_VALUE)
@@ -195,9 +196,9 @@ public abstract class LivingEntityRendererMixin<T extends LivingEntity, M extend
 
 	/*
 	@ModifyArgs(
-		method = "render", 
+		method = "render",
 		at = @At(
-			value = "INVOKE", 
+			value = "INVOKE",
 			target = "Lnet/minecraft/client/render/entity/model/EntityModel;render(Lnet/minecraft/client/util/math/MatrixStack;Lnet/minecraft/client/render/VertexConsumer;IIFFFF)V"
 		)
 	)
@@ -213,4 +214,3 @@ public abstract class LivingEntityRendererMixin<T extends LivingEntity, M extend
 	}
 		*/
 }
-	

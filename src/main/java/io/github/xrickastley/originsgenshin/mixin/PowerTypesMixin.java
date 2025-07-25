@@ -1,20 +1,20 @@
 package io.github.xrickastley.originsgenshin.mixin;
 
-import net.minecraft.util.Identifier;
-import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Pseudo;
-
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
-
-import io.github.apace100.apoli.power.PowerTypes;
-import io.github.xrickastley.originsgenshin.registry.OriginsGenshinReloadListener;
-
-import org.spongepowered.asm.mixin.injection.At;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Pseudo;
+import org.spongepowered.asm.mixin.injection.At;
+
+import io.github.apace100.apoli.power.PowerTypes;
+import io.github.xrickastley.originsgenshin.registry.OriginsGenshinReloadListener;
+
+import net.minecraft.util.Identifier;
 
 @Pseudo
 @Mixin(value = PowerTypes.class, remap = false)

@@ -4,8 +4,8 @@ import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinParticleFactory;
 
-public abstract sealed class AbstractPyroMeltElementalReaction 
-	extends AmplifyingElementalReaction 
+public abstract sealed class AbstractPyroMeltElementalReaction
+	extends AmplifyingElementalReaction
 	permits PyroCryoMeltElementalReaction, PyroFrozenMeltElementalReaction
 {
 	AbstractPyroMeltElementalReaction(String name, String idPath, Element auraElement) {

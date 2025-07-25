@@ -1,26 +1,28 @@
 package io.github.xrickastley.originsgenshin.mixin;
 
 import com.mojang.serialization.Lifecycle;
-import io.github.xrickastley.originsgenshin.interfaces.SimpleRegistryAccess;
-import io.github.xrickastley.originsgenshin.registry.OriginsGenshinReloadListener;
-import it.unimi.dsi.fastutil.objects.Object2IntMap;
-import it.unimi.dsi.fastutil.objects.ObjectList;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.RegistryKey;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.util.Identifier;
+
+import java.util.Map;
+
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-
-import net.minecraft.registry.SimpleRegistry;
-
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import java.util.Map;
+import io.github.xrickastley.originsgenshin.interfaces.SimpleRegistryAccess;
+import io.github.xrickastley.originsgenshin.registry.OriginsGenshinReloadListener;
+
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.RegistryKey;
+import net.minecraft.registry.SimpleRegistry;
+import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.util.Identifier;
+
+import it.unimi.dsi.fastutil.objects.Object2IntMap;
+import it.unimi.dsi.fastutil.objects.ObjectList;
 
 @Mixin(SimpleRegistry.class)
 public abstract class SimpleRegistryMixin<T> implements Registry<T>, SimpleRegistryAccess {

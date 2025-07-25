@@ -8,55 +8,56 @@ import io.github.apace100.calio.data.SerializableData;
 import io.github.apace100.calio.data.SerializableDataType;
 import io.github.xrickastley.originsgenshin.data.OriginsGenshinDataTypes;
 import io.github.xrickastley.originsgenshin.util.ClassInstanceUtil;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 
 /**
  * An {@code InternalCooldownContext} is a class used for holding the various {@code InternalCooldown}
- * components together in a single class. It also contains utility functions for getting the 
+ * components together in a single class. It also contains utility functions for getting the
  * {@code InternalCooldown} instance from an {@code InternalCooldownContext} instance.
- * 
- * <h2>Definitions</h2> 
- * 
- * <b>ICD</b> is the commonly used shorthand term for <b>Internal Cooldown</b>, a system that 
+ *
+ * <h2>Definitions</h2>
+ *
+ * <b>ICD</b> is the commonly used shorthand term for <b>Internal Cooldown</b>, a system that
  * handles how frequent elements (of the same type) are applied by the same attack. <br> <br>
- * 
+ *
  * The <b>origin</b> is the {@code LivingEntity} the elemental attack comes from. Each {@code LivingEntity}
  * has their own seperate Internal Cooldown, ensuring that same {@code tag} and {@code type}(s) that come
  * from different entities are handled respectively, allowing the Internal Cooldown of entity "A"
  * to not conflict with that of entity "B". <br> <br>
- * 
+ *
  * The <b>tag</b>, referred to as the {@link InternalCooldownTag} in this codebase, is internally a {@code String}
- * that identifes the attack. This tag can be shared or differ across different elemental attacks, 
- * and is one of the factors that dictate Whether two elemental attacks (with the same 
+ * that identifes the attack. This tag can be shared or differ across different elemental attacks,
+ * and is one of the factors that dictate Whether two elemental attacks (with the same
  * Element) share ICD. <br> <br>
- * 
+ *
  * The <b>type</b>, referred to as the {@link InternalCooldownType} in this codebase, is an instance of
  * {@code InternalCooldownType} that controls the "Reset Interval" and the "Gauge Sequence" for an attack.
- * Much like the tag, this type can be shared or differ across different elemental attacks, and is 
- * also one of the factors that dictate Whether two elemental attacks (with the same 
+ * Much like the tag, this type can be shared or differ across different elemental attacks, and is
+ * also one of the factors that dictate Whether two elemental attacks (with the same
  * Element) share ICD. <br> <br>
- * 
+ *
  * <h2>Sharing ICD</h2>
- * 
+ *
  * For ICD to be "shared", the two elemental attacks in question must:
- * 
+ *
  * <ul>
  * 	<li>Be applied from the same {@code origin}</li>
  * 	<li>Have the same {@code tag}</li>
  * 	<li>Have the same {@code type}</li>
  * </ul>
- * 
- * If all three conditions above are fulfilled, the two elemental attacks in question will share 
+ *
+ * If all three conditions above are fulfilled, the two elemental attacks in question will share
  * ICD.
- * 
+ *
  * <h2>"Removing" ICD</h2>
- * 
+ *
  * Internal Cooldown is <b>only</b> taken into account when an {@code origin} exists. If no {@code origin}
  * exists, the element is regarded to have been applied by <i>other</i> means, such as the environment.
  */
 public final class InternalCooldownContext {
-	private final @Nullable LivingEntity origin; 
+	private final @Nullable LivingEntity origin;
 	private final InternalCooldownTag tag;
 	private final InternalCooldownType type;
 

@@ -1,5 +1,7 @@
 package io.github.xrickastley.originsgenshin.util;
 
+import com.mojang.blaze3d.systems.RenderSystem;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
@@ -10,7 +12,17 @@ import java.util.Optional;
 import org.joml.Matrix4f;
 import org.lwjgl.opengl.GL11;
 
-import com.mojang.blaze3d.systems.RenderSystem;
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gl.VertexBuffer;
+import net.minecraft.client.render.BufferBuilder;
+import net.minecraft.client.render.GameRenderer;
+import net.minecraft.client.render.Tessellator;
+import net.minecraft.client.render.VertexFormat.DrawMode;
+import net.minecraft.client.render.VertexFormats;
+import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.resource.Resource;
+import net.minecraft.resource.ResourceManager;
+import net.minecraft.util.Identifier;
 
 import de.javagl.obj.FloatTuple;
 import de.javagl.obj.FloatTuples;
@@ -21,18 +33,6 @@ import de.javagl.obj.ObjFace;
 import de.javagl.obj.ObjReader;
 import de.javagl.obj.ObjSplitting;
 import de.javagl.obj.ObjUtils;
-
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gl.VertexBuffer;
-import net.minecraft.client.render.BufferBuilder;
-import net.minecraft.client.render.GameRenderer;
-import net.minecraft.client.render.Tessellator;
-import net.minecraft.client.render.VertexFormats;
-import net.minecraft.client.render.VertexFormat.DrawMode;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.resource.Resource;
-import net.minecraft.resource.ResourceManager;
-import net.minecraft.util.Identifier;
 
 public class ObjRenderer {
 	private final Identifier modelId;
@@ -56,7 +56,7 @@ public class ObjRenderer {
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();
 		RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
-		
+
 		this.mtlObjMap
 			.entrySet()
 			.forEach(entry -> this.renderObj(entry.getValue(), this.mtlMap.get(entry.getKey()), positionMatrix));
@@ -98,20 +98,20 @@ public class ObjRenderer {
 		vertexBuffer.bind();
 		vertexBuffer.upload(builtBuffer);
 		VertexBuffer.unbind();
-				
+
 		objBufferMap.put(obj, vertexBuffer);
 	}
 
 	private void fillBuffer(final Obj obj, final Mtl mtl, final BufferBuilder buffer) {
 		for (int i = 0; i < obj.getNumFaces(); i++) {
-			final ObjFace face = obj.getFace(i);				
-			
+			final ObjFace face = obj.getFace(i);
+
 			for (int j = 0; j < face.getNumVertices(); j++) {
 				final FloatTuple vertex = obj.getVertex(face.getVertexIndex(j));
 				final FloatTuple texture = obj.getTexCoord(face.getTexCoordIndex(j));
 				final FloatTuple normals = obj.getNormal(face.getNormalIndex(j));
 				final FloatTuple color = this.nullishCoalescing(mtl.getKd(), FloatTuples.create(1f, 1f, 1f));
-				
+
 				buffer
 					.vertex(vertex.getX(), vertex.getY(), vertex.getZ())
 					.texture(texture.getX(), 1 - texture.getY())
@@ -125,7 +125,7 @@ public class ObjRenderer {
 	private void load() throws IOException {
 		try (InputStream objStream = this.resolveInputStream(this.modelId)) {
 			final Obj obj = ObjUtils.convertToRenderable(ObjReader.read(objStream));
-			
+
 			for (String mtlFile : obj.getMtlFileNames()) {
 				try (InputStream mtlStream = this.resolveInputStream(mtlFile)) {
 					MtlReader
@@ -157,7 +157,7 @@ public class ObjRenderer {
 			return Identifier.tryParse(resolvablePath);
 		} else {
 			final String newPath = modelId.getPath().substring(0, modelId.getPath().lastIndexOf("/") + 1) + resolvablePath;
-			
+
 			return modelId.withPath(newPath);
 		}
 	}
@@ -165,7 +165,7 @@ public class ObjRenderer {
 	@SuppressWarnings("unchecked")
 	private <T> T nullishCoalescing(T... values) {
 		for (T value : values) if (value != null) return value;
-		
+
 		return null;
 	}
 }

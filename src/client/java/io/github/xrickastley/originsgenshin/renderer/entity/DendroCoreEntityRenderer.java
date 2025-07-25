@@ -19,7 +19,7 @@ import net.minecraft.util.math.RotationAxis;
 public class DendroCoreEntityRenderer extends LivingEntityRenderer<DendroCoreEntity, EntityModel<DendroCoreEntity>> {
 	public DendroCoreEntityRenderer(EntityRendererFactory.Context context) {
 		super(
-			context, 
+			context,
 			DendroCoreEntityRenderer.createModel(context),
 			0.5f
 		);
@@ -32,7 +32,7 @@ public class DendroCoreEntityRenderer extends LivingEntityRenderer<DendroCoreEnt
 			OriginsGenshin
 				.sublogger(DendroCoreEntityRenderer.class)
 				.info("An exception occured while trying to load ObjEntityModel, resorting to fallback...", e);
-			
+
 			return new DendroCoreEntityModel(context.getPart(DendroCoreEntityModel.MODEL_LAYER));
 		}
 	}
@@ -57,7 +57,7 @@ public class DendroCoreEntityRenderer extends LivingEntityRenderer<DendroCoreEnt
 			: 2f;
 
 		matrixStack.scale(scale, scale, scale);
-		matrixStack.translate(0, -1.480, 0);
+		matrixStack.translate(0, -1.501f, 0);
 		matrixStack.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(180.0f));
 	}
 

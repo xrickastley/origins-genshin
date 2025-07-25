@@ -1,11 +1,10 @@
 package io.github.xrickastley.originsgenshin.renderer.genshin;
 
-import org.joml.Matrix4f;
-
 import com.mojang.blaze3d.systems.RenderSystem;
 
-import io.github.apace100.apoli.power.ActiveCooldownPower;
+import org.joml.Matrix4f;
 
+import io.github.apace100.apoli.power.ActiveCooldownPower;
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.data.ElementalBurst;
 import io.github.xrickastley.originsgenshin.data.ElementalBurstIcon;
@@ -14,11 +13,11 @@ import io.github.xrickastley.originsgenshin.util.CircleRenderer;
 import io.github.xrickastley.originsgenshin.util.ClientConfig;
 import io.github.xrickastley.originsgenshin.util.Rescaler;
 
-import me.shedaniel.autoconfig.AutoConfig;
-
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
+
+import me.shedaniel.autoconfig.AutoConfig;
 
 public class ElementalBurstRenderer extends PowerRenderer {
 	public ElementalBurstRenderer(Rescaler rescaler) {
@@ -62,7 +61,7 @@ public class ElementalBurstRenderer extends PowerRenderer {
 			final ElementalBurstIcon burstIcon = elementalBurstData.getRenderedIcon(client.player);
 
 			if (elementalBurstData == null || !elementalBurstData.shouldRender() || burstIcon == null) return;
-			
+
 			final MatrixStack matrices = drawContext.getMatrices();
 			final CircleRenderer circleRenderer = new CircleRenderer(0, 0, 0);
 
@@ -80,9 +79,9 @@ public class ElementalBurstRenderer extends PowerRenderer {
 
 			this.renderFill(burstIcon, circleRenderer, drawContext, posMatrix);
 			this.renderIcon(elementalBurstData, burstIcon, circleRenderer, drawContext, posMatrix, rescaler, percentFilled);
-			
+
 			matrices.pop();
-			
+
 			this.renderCooldown(elementalBurstData, burstIcon, drawContext, rescaler, percentFilled);
 		} catch (Exception e) {
 			OriginsGenshin
@@ -97,13 +96,13 @@ public class ElementalBurstRenderer extends PowerRenderer {
 		circleRenderer
 			.add(radiusEB, 1, 0x64646464)
 			.draw(tessellator, posMatrix);
-		
+
 		if (icon.getColor() == null) return;
-		
+
 		final double resourceMultiplier = this.resolveFillResource(icon);
 
 		if (resourceMultiplier == -1) return;
-		
+
 		drawContext.enableScissor(
 			rescaler.rescaleX(1762),
 			rescaler.rescaleY(1028 - (112 * resourceMultiplier)),
@@ -131,7 +130,7 @@ public class ElementalBurstRenderer extends PowerRenderer {
 		final int scaleEB = (int) (112.0 * rescaler.getRescaleFactor());
 		final boolean disable = percentFilled > 0 || burstData.isDisabled(client.player) || icon.renderAsDisabled(client.player);
 
-		if (disable) {			
+		if (disable) {
 			renderExtraFill(icon, percentFilled, circleRenderer, drawContext, posMatrix);
 
 			RenderSystem.setShaderColor(1, 1, 1, 0.375f);
@@ -156,7 +155,7 @@ public class ElementalBurstRenderer extends PowerRenderer {
 		matrices.push();
 		matrices.translate(rescaler.rescaleX(1820 - 1), rescaler.rescaleY(976), 0);
 		matrices.scale(scale, scale, 1F);
-		
+
 		PowerRenderer.drawCenteredText(
 			drawContext,
 			client.textRenderer,

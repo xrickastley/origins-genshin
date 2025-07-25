@@ -5,6 +5,7 @@ import java.util.function.Supplier;
 import io.github.apace100.apoli.power.factory.PowerFactory;
 import io.github.apace100.apoli.registry.ApoliRegistries;
 import io.github.xrickastley.originsgenshin.power.ElementalInfusionPower;
+
 import net.minecraft.registry.Registry;
 
 public class OriginsGenshinPowers {

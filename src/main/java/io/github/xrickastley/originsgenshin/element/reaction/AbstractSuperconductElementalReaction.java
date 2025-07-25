@@ -1,7 +1,5 @@
 package io.github.xrickastley.originsgenshin.element.reaction;
 
-import javax.annotation.Nullable;
-
 import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
 import io.github.xrickastley.originsgenshin.element.ElementalApplications;
@@ -9,10 +7,13 @@ import io.github.xrickastley.originsgenshin.element.ElementalDamageSource;
 import io.github.xrickastley.originsgenshin.element.InternalCooldownContext;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinStatusEffects;
 import io.github.xrickastley.originsgenshin.registry.OriginsGenshinDamageTypes;
+
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 
-public abstract sealed class AbstractSuperconductElementalReaction 
+import javax.annotation.Nullable;
+
+public abstract sealed class AbstractSuperconductElementalReaction
 	extends ElementalReaction
 	permits SuperconductElementalReaction, FrozenSuperconductElementalReaction
 {

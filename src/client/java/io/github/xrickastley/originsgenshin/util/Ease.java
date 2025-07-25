@@ -28,7 +28,7 @@ public enum Ease {
 	public double apply(double range) {
 		return easeFunction.apply(range);
 	}
-	
+
 	public double applyLerp(double delta, double start, double end) {
 		return easeFunction.apply(
 			MathHelper.clamp(MathHelper.lerp(MathHelper.clamp(delta, 0, 1), start, end), start, end)

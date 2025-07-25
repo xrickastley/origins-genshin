@@ -8,7 +8,6 @@ import io.github.apace100.apoli.power.CooldownPower;
 import io.github.apace100.apoli.power.Power;
 import io.github.apace100.apoli.power.PowerType;
 import io.github.apace100.apoli.power.VariableIntPower;
-
 import io.github.xrickastley.originsgenshin.data.RenderableIcon;
 import io.github.xrickastley.originsgenshin.util.Rescaler;
 
@@ -66,10 +65,10 @@ public abstract class PowerRenderer {
 
 		return Math.min(Math.max(0, 1 - (((double) pair.getLeft() + tickDeltaManager) / pair.getRight())), 1);
 	}
-	
+
 	/**
 	 * Resolves the cooldown of the provided {@code RenderableIcon} in ticks.
-	 * @param icon The icon to resolve cooldown for. 
+	 * @param icon The icon to resolve cooldown for.
 	 * @return The resulting cooldown, in ticks.
 	 */
 	protected int resolveCooldown(RenderableIcon icon) {
@@ -87,7 +86,7 @@ public abstract class PowerRenderer {
 			.orElse(null);
 	}
 
-	
+
 	public static Optional<Pair<Integer, Integer>> resolveResourceAsOptional(PowerType<?> resource, PlayerEntity player) {
 		return PowerRenderer.resolveResourceAsOptional(resource, player, false);
 	}
@@ -103,7 +102,7 @@ public abstract class PowerRenderer {
 				else if (power instanceof CooldownPower cp) pair = new Pair<Integer, Integer>(cp.getRemainingTicks(), cp.cooldownDuration);
 
 				return reverse
-					? pair != null 
+					? pair != null
 						? new Pair<Integer, Integer>(pair.getRight() - pair.getLeft(), pair.getRight())
 						: null
 					: pair;
@@ -118,7 +117,7 @@ public abstract class PowerRenderer {
 	 * @param tickDeltaManager The {@code tickDeltaManager} given in the {@code HudRenderCallback} event.
 	 */
 	public abstract void render(DrawContext context, float tickDeltaManager);
-	
+
 	public static int drawCenteredText(DrawContext drawContext, TextRenderer textRenderer, Text text, double x, double y, int color, boolean shadow) {
 		return drawContext.drawText(textRenderer, text, (int) (x - (textRenderer.getWidth(text) / 2)), (int) y - (textRenderer.fontHeight / 2), color, shadow);
 	}

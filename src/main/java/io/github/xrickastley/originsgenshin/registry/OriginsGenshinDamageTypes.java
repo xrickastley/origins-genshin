@@ -1,6 +1,7 @@
 package io.github.xrickastley.originsgenshin.registry;
 
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
+
 import net.minecraft.entity.damage.DamageType;
 import net.minecraft.registry.RegistryKey;
 import net.minecraft.registry.RegistryKeys;

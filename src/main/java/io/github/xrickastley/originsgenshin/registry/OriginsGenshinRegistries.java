@@ -5,6 +5,7 @@ import com.mojang.serialization.Lifecycle;
 import io.github.xrickastley.originsgenshin.element.InternalCooldownType;
 import io.github.xrickastley.originsgenshin.element.reaction.ElementalReaction;
 import io.github.xrickastley.originsgenshin.registry.OriginsGenshinReloadListener.ReloadableRegistry;
+
 import net.fabricmc.fabric.api.event.registry.FabricRegistryBuilder;
 import net.fabricmc.fabric.api.event.registry.RegistryAttribute;
 import net.minecraft.registry.Registry;
@@ -14,7 +15,7 @@ import net.minecraft.registry.SimpleRegistry;
 public class OriginsGenshinRegistries {
 	public static final Registry<ElementalReaction> ELEMENTAL_REACTION = createIntrusiveRegistry(OriginsGenshinRegistryKeys.ELEMENTAL_REACTION);
 	public static final Registry<InternalCooldownType> INTERNAL_COOLDOWN_TYPE = createRegistry(OriginsGenshinRegistryKeys.INTERNAL_COOLDOWN_TYPE);
-	
+
 	public static void load() {};
 
 	private static <T> Registry<T> createIntrusiveRegistry(RegistryKey<Registry<T>> registryKey) {

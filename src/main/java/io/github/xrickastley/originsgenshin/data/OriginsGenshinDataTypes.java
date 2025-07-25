@@ -104,7 +104,7 @@ public class OriginsGenshinDataTypes {
 			ElementalSkillIcon.class,
 			new SerializableData()
 				.add("icon", SerializableDataTypes.IDENTIFIER) // The icon to render, if condition is true.
-				.add("cooldown", ApoliDataTypes.POWER_TYPE, null) // The cooldown value to use. If not supplied, uses the cooldown of the Power this Elemental Skill is attached to. 
+				.add("cooldown", ApoliDataTypes.POWER_TYPE, null) // The cooldown value to use. If not supplied, uses the cooldown of the Power this Elemental Skill is attached to.
 				.add("reverse", SerializableDataTypes.BOOLEAN, false)
 				.add("charges", SerializableDataTypes.INT, 1)
 				.add("charge_render", OriginsGenshinDataTypes.CHARGE_RENDER, ChargeRender.DEFAULT)

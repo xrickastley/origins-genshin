@@ -2,8 +2,6 @@ package io.github.xrickastley.originsgenshin.element.reaction;
 
 import java.util.function.Predicate;
 
-import javax.annotation.Nullable;
-
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.component.ElementComponent;
 import io.github.xrickastley.originsgenshin.element.Element;
@@ -14,7 +12,10 @@ import io.github.xrickastley.originsgenshin.element.InternalCooldownContext;
 import io.github.xrickastley.originsgenshin.events.ReactionTriggered;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinParticleFactory;
 import io.github.xrickastley.originsgenshin.registry.OriginsGenshinDamageTypes;
+
 import net.minecraft.entity.LivingEntity;
+
+import javax.annotation.Nullable;
 
 public class ElectroChargedElementalReaction extends ElementalReaction {
 	ElectroChargedElementalReaction() {
@@ -79,13 +80,13 @@ public class ElectroChargedElementalReaction extends ElementalReaction {
 			final ElementalDamageSource source = new ElementalDamageSource(
 				entity
 					.getDamageSources()
-					.create(OriginsGenshinDamageTypes.ELECTRO_CHARGED, entity, origin), 
-				ElementalApplications.gaugeUnits(target, Element.ELECTRO, 0), 
+					.create(OriginsGenshinDamageTypes.ELECTRO_CHARGED, entity, origin),
+				ElementalApplications.gaugeUnits(target, Element.ELECTRO, 0),
 				InternalCooldownContext.ofNone(origin)
 			);
 
 			target.damage(source, damage);
-				
+
 			ElementComponent.KEY
 				.get(target)
 				.resetElectroChargedCD();
@@ -101,7 +102,7 @@ public class ElectroChargedElementalReaction extends ElementalReaction {
 			.info("Electro-Charged - isTriggerable: {} | Hydro: {} | Electro: {}", ElementalReactions.ELECTRO_CHARGED.isTriggerable(entity), ElementComponent.KEY.get(entity).getElementalApplication(Element.HYDRO), ElementComponent.KEY.get(entity).getElementalApplication(Element.ELECTRO));
 
 		ElementalReactions.ELECTRO_CHARGED.trigger(entity);
-		
+
 		ElementComponent.sync(entity);
 	}
 

@@ -6,7 +6,7 @@ import io.github.xrickastley.originsgenshin.element.ElementalApplication;
 
 public class ElementalApplicationOperationException extends RuntimeException {
 	public ElementalApplicationOperationException(Operation operation, ElementalApplication target, ElementalApplication cause) {
-		super();		
+		super();
 	}
 
 	public static enum Operation {
@@ -24,5 +24,5 @@ public class ElementalApplicationOperationException extends RuntimeException {
 		public String getMessage(ElementalApplication target, ElementalApplication cause) {
 			return messageSupplier.apply(target, cause);
 		}
-	} 
+	}
 }

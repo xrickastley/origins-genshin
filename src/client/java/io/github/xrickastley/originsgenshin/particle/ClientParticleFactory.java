@@ -2,11 +2,11 @@ package io.github.xrickastley.originsgenshin.particle;
 
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinParticleFactory;
+
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
-import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry.PendingParticleFactory;
-
+import net.fabricmc.fabric.api.client.particle.v1.ParticleFactoryRegistry;
 import net.minecraft.particle.ParticleEffect;
 import net.minecraft.particle.ParticleType;
 
@@ -41,7 +41,7 @@ public class ClientParticleFactory {
 			register(OriginsGenshinParticleFactory.CRYSTALLIZE, CrystallizeParticleFactory::new);
 			register(OriginsGenshinParticleFactory.HYPERBLOOM, HyperbloomParticleFactory::new);
 			register(OriginsGenshinParticleFactory.BURGEON, BurgeonParticleFactory::new);
-			
+
 			register(OriginsGenshinParticleFactory.DAMAGE_TEXT, DamageTextParticle.Factory::new);
 			register(OriginsGenshinParticleFactory.TEST, TestParticleFactory::new);
 		} catch (Exception e) {

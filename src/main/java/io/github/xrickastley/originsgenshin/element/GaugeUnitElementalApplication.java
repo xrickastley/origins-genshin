@@ -6,8 +6,8 @@ import java.util.function.Function;
 import org.jetbrains.annotations.Nullable;
 
 import io.github.xrickastley.originsgenshin.component.ElementComponent;
-import io.github.xrickastley.originsgenshin.exception.ElementalApplicationOperationException;
 import io.github.xrickastley.originsgenshin.exception.ElementalApplicationOperationException.Operation;
+import io.github.xrickastley.originsgenshin.exception.ElementalApplicationOperationException;
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.nbt.NbtCompound;
@@ -80,9 +80,9 @@ public final class GaugeUnitElementalApplication extends ElementalApplication {
 
 	/**
 	 * {@inheritDoc} <br> <br>
-	 * 
-	 * This implementation guarantees this to be {@code true} when {@code currentGauge} reaches 
-	 * {@code 0}.  
+	 *
+	 * This implementation guarantees this to be {@code true} when {@code currentGauge} reaches
+	 * {@code 0}.
 	 */
 	@Override
 	public boolean isEmpty() {

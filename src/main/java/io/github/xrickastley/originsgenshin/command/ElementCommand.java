@@ -1,19 +1,16 @@
 package io.github.xrickastley.originsgenshin.command;
 
-import static net.minecraft.server.command.CommandManager.argument;
-import static net.minecraft.server.command.CommandManager.literal;
-
-import java.util.List;
-import java.util.function.Function;
-
-import org.jetbrains.annotations.Nullable;
-
 import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
+
+import java.util.List;
+import java.util.function.Function;
+
+import org.jetbrains.annotations.Nullable;
 
 import io.github.xrickastley.originsgenshin.component.ElementComponent;
 import io.github.xrickastley.originsgenshin.element.Element;
@@ -23,6 +20,7 @@ import io.github.xrickastley.originsgenshin.element.ElementalApplications;
 import io.github.xrickastley.originsgenshin.element.InternalCooldownContext;
 import io.github.xrickastley.originsgenshin.element.reaction.ElementalReaction;
 import io.github.xrickastley.originsgenshin.util.Array;
+
 import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -31,6 +29,9 @@ import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
+
+import static net.minecraft.server.command.CommandManager.argument;
+import static net.minecraft.server.command.CommandManager.literal;
 
 public class ElementCommand {
 	private static final Function<ElementalApplication, String> TO_FRIENDLY_STRING = a -> {
@@ -134,7 +135,7 @@ public class ElementCommand {
 
 		context
 			.getSource()
-			.sendFeedback(() -> 
+			.sendFeedback(() ->
 				Text.literal(String.format("Applied element: %s, Triggered reactions: %s", element, reactions.toString())),
 				false
 			);
@@ -166,7 +167,7 @@ public class ElementCommand {
 
 		context
 			.getSource()
-			.sendFeedback(() -> 
+			.sendFeedback(() ->
 				Text.literal(String.format("Applied element: %s, Triggered reactions: %s", element, reactions.toString())),
 				false
 			);
@@ -199,14 +200,14 @@ public class ElementCommand {
 
 		context
 			.getSource()
-			.sendFeedback(() -> 
+			.sendFeedback(() ->
 				Text.literal(String.format("Removed element: %s", element)),
 				false
 			);
 
 		return 1;
 	}
-	
+
 	private static int reduceElement(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
 		final Entity entity = EntityArgumentType.getEntity(context, "target");
 		final Element element = ElementArgumentType.getElement(context, "element");
@@ -235,7 +236,7 @@ public class ElementCommand {
 
 		context
 			.getSource()
-			.sendFeedback(() -> 
+			.sendFeedback(() ->
 				Text.literal(String.format("Reduced \"%s\" gauge by: %f", element, reducedGauge)),
 				false
 			);

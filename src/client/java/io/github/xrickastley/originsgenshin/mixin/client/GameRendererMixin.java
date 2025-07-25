@@ -13,9 +13,9 @@ import net.minecraft.client.util.math.MatrixStack;
 @Mixin(GameRenderer.class)
 public class GameRendererMixin {
 	@Inject(
-		method = "renderWorld", 
+		method = "renderWorld",
 		at = @At(
-			value = "INVOKE", 
+			value = "INVOKE",
 			target = "Lcom/mojang/blaze3d/systems/RenderSystem;clear(IZ)V"
 		)
 	)

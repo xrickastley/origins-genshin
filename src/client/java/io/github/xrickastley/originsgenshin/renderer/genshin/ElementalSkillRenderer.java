@@ -1,14 +1,13 @@
 package io.github.xrickastley.originsgenshin.renderer.genshin;
 
+import com.mojang.blaze3d.systems.RenderSystem;
+
 import java.util.ArrayList;
 
 import org.joml.Matrix4f;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-
 import io.github.apace100.apoli.power.ActiveCooldownPower;
 import io.github.apace100.apoli.power.PowerType;
-
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.data.ChargeRender;
 import io.github.xrickastley.originsgenshin.data.ElementalSkill;
@@ -18,13 +17,13 @@ import io.github.xrickastley.originsgenshin.util.CircleRenderer;
 import io.github.xrickastley.originsgenshin.util.ClientConfig;
 import io.github.xrickastley.originsgenshin.util.Rescaler;
 
-import me.shedaniel.autoconfig.AutoConfig;
-
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
+
+import me.shedaniel.autoconfig.AutoConfig;
 
 public class ElementalSkillRenderer extends PowerRenderer {
 	public ElementalSkillRenderer(Rescaler rescaler) {
@@ -37,7 +36,7 @@ public class ElementalSkillRenderer extends PowerRenderer {
 
 	/**
 	 * Resolves the cooldown of the provided {@code ElementalSkillIcon} in ticks, taking charges into account.
-	 * @param icon The icon to resolve cooldown for. 
+	 * @param icon The icon to resolve cooldown for.
 	 * @return The resulting cooldown, in ticks.
 	 */
 	protected int resolveCooldown(ElementalSkillIcon icon) {
@@ -88,9 +87,9 @@ public class ElementalSkillRenderer extends PowerRenderer {
 
 			final MatrixStack matrices = drawContext.getMatrices();
 			final CircleRenderer circleRenderer = new CircleRenderer(0, 0, 0);
-			
+
 			final double percentFilled = resolvePercentFilled(skillIcon, tickDeltaManager);
-			
+
 			RenderSystem.enableBlend();
 			RenderSystem.defaultBlendFunc();
 			RenderSystem.enableCull();
@@ -98,14 +97,14 @@ public class ElementalSkillRenderer extends PowerRenderer {
 			matrices.push();
 			matrices.translate(rescaler.rescaleX(1700), rescaler.rescaleY(992), 0);
 			matrices.scale(1, 1, 1);
-			
+
 			final Matrix4f posMatrix = matrices.peek().getPositionMatrix();
 
 			this.renderIcon(skillIcon, circleRenderer, drawContext, posMatrix, rescaler, percentFilled);
 			this.renderCharges(skillIcon, circleRenderer, drawContext, tickDeltaManager, posMatrix);
-			
+
 			matrices.pop();
-			
+
 			this.renderCooldown(elementalSkillData, skillIcon, drawContext, percentFilled);
 		} catch (Exception e) {
 			OriginsGenshin
@@ -126,7 +125,7 @@ public class ElementalSkillRenderer extends PowerRenderer {
 		Pair<Integer, Integer> pair = skillIcon.resolveCooldownResource(client.player);
 
 		double newMaximum = pair.getRight() / skillIcon.getCharges();
-		
+
 		// pair.getLeft() should be a multiple of newMaximum (that isn't 0) for this to return 0 (no cooldown).
 		if ((pair.getLeft() % newMaximum) == 0 && pair.getLeft() > 0) return 0;
 
@@ -135,8 +134,8 @@ public class ElementalSkillRenderer extends PowerRenderer {
 
 	private void renderIcon(ElementalSkillIcon icon, CircleRenderer circleRenderer, DrawContext drawContext, Matrix4f posMatrix, Rescaler rescaler, double percentFilled) {
 		final int scaleES = (int) (76.0 * rescaler.getRescaleFactor());
-		final boolean disable = (percentFilled > 0 && icon.getChargeRender().getCurrentCharges(client.player) == 0) 
-			|| icon.getSkill().isDisabled(client.player) 
+		final boolean disable = (percentFilled > 0 && icon.getChargeRender().getCurrentCharges(client.player) == 0)
+			|| icon.getSkill().isDisabled(client.player)
 			|| icon.renderAsDisabled(client.player);
 
 		circleRenderer

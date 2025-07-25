@@ -5,12 +5,12 @@ import io.github.xrickastley.originsgenshin.OriginsGenshin;
 /**
  * An {@code InternalCooldown} is a class used for holding the various {@code InternalCooldown}
  * components together in a single class. <br> <br>
- * 
+ *
  * In addition to this, this class is also the handler for the Internal Cooldown system. <br> <br>
- * 
+ *
  * When the Internal Cooldown is considered active through {@link InternalCooldown#isInInternalCooldown()},
  * elements should <b>not</b> be applied or refreshed. <br> <br>
- * 
+ *
  * To read more about the {@code InternalCooldown}, refer to the {@link InternalCooldownContext} class.
  */
 public final class InternalCooldown {
@@ -40,10 +40,10 @@ public final class InternalCooldown {
 
 	/**
 	 * Checks if an element can be applied based on this Internal Cooldown. <br> <br>
-	 * 
+	 *
 	 * For registering a hit and checking the Internal Cooldown after, use
 	 * {@link InternalCooldown#handleInternalCooldown} instead.
-	 * 
+	 *
 	 * @see InternalCooldown#handleInternalCooldown
 	 */
 	public boolean isInInternalCooldown() {
@@ -52,24 +52,24 @@ public final class InternalCooldown {
 
 	/**
 	 * Handles the Internal Cooldown. <br> <br>
-	 * 
+	 *
 	 * Upon using this method, a hit is registered, and it returns Whether the element can
 	 * be applied. <br> <br>
-	 * 
+	 *
 	 * For only checking the Internal Cooldown without registering a hit, use
 	 * {@link InternalCooldown#isInInternalCooldown} instead.
-	 * 
+	 *
 	 * @see InternalCooldown#isInInternalCooldown
 	 */
 	public boolean handleInternalCooldown() {
 		if (tag.getTag() == null) return true;
-		
+
 		/*
 		OriginsGenshin
 			.sublogger(this)
 			.info("InternalCooldown@{} => Reset Interval ({} ticks): {} ({} ≥ {}) | Gauge Sequence ({}-hit rule): {} ({} ≥ 3)", Integer.toHexString(this.hashCode()), type.getResetInterval(), holder.getOwner().age >= cooldown, holder.getOwner().age, cooldown, type.getGaugeSequence(), totalHits >= type.getGaugeSequence(), totalHits, type.getGaugeSequence());
 		*/
-		
+
 		if (holder.getOwner().age >= cooldown) {
 			cooldown = holder.getOwner().age + type.getResetInterval();
 			totalHits = 1;
@@ -77,7 +77,7 @@ public final class InternalCooldown {
 			return true;
 		} else if (totalHits >= type.getGaugeSequence()) {
 			totalHits = 1;
-			
+
 			return true;
 		} else {
 			totalHits += 1;

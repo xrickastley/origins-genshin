@@ -1,13 +1,13 @@
 package io.github.xrickastley.originsgenshin.element.reaction;
 
-import javax.annotation.Nullable;
-
 import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication.Type;
 
 import net.minecraft.particle.DefaultParticleType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
+
+import javax.annotation.Nullable;
 
 public final class ElementalReactionSettings {
 	protected final String name;
@@ -44,18 +44,18 @@ public final class ElementalReactionSettings {
 
 	/**
 	 * Sets the Aura Element of the Elemental Reaction. <br> <br>
-	 * 
+	 *
 	 * This is the element that <b>must</b> be applied onto the entity in order for the reaction to
 	 * be triggered by applying the Triggering Element onto the entity. <br> <br>
-	 * 
-	 * However, when the Elemental Reaction is considered "reversable" through 
+	 *
+	 * However, when the Elemental Reaction is considered "reversable" through
 	 * {@link ElementalReactionSettings#reversable(boolean) ElementalReactionSettings#reversable()},
-	 * the Aura Element may be considered as the Triggering Element, and the Triggering Element 
+	 * the Aura Element may be considered as the Triggering Element, and the Triggering Element
 	 * may be considered as the Aura Element.
-	 * 
+	 *
 	 * @param element The Aura Element of the Elemental Reaction.
 	 * @param priority The priority of this reaction triggering when {@code auraElement} is currently
-	 * the triggering element. {@code priority} will only be applied when {@code reversable} is 
+	 * the triggering element. {@code priority} will only be applied when {@code reversable} is
 	 * {@code true}, as that is the only instance the {@code auraElement} can be considered a
 	 * triggering element.
 	 */
@@ -71,15 +71,15 @@ public final class ElementalReactionSettings {
 
 	/**
 	 * Sets the Triggering Element of the Elemental Reaction. <br> <br>
-	 * 
+	 *
 	 * This is the element that <b>must</b> be applied onto the entity with the specified Aura
 	 * Element in order for the reaction to be triggered. <br> <br>
-	 * 
-	 * However, when the Elemental Reaction is considered "reversable" through 
+	 *
+	 * However, when the Elemental Reaction is considered "reversable" through
 	 * {@link ElementalReactionSettings#reversable(boolean) ElementalReactionSettings#reversable()},
 	 * the Triggering Element may be considered as the Aura Element, and the Aura Element may be
 	 * considered as the Triggering Element.
-	 * 
+	 *
 	 * @param element The Triggering Element of the Elemental Reaction.
 	 * @param priority The priority of this reaction triggering when {@code triggeringElement} is the triggering element.
 	 */
@@ -90,11 +90,11 @@ public final class ElementalReactionSettings {
 	}
 
 	/**
-	 * Sets the Elemental Reaction as reversable. <br> <br> 
-	 * 
+	 * Sets the Elemental Reaction as reversable. <br> <br>
+	 *
 	 * When this is {@code true}, the <b>Triggering Element</b> can be considered as an <b>Aura
 	 * Element</b>.
-	 * 
+	 *
 	 * @param reversable Whether the Elemental Reaction is reversable.
 	 */
 	public ElementalReactionSettings reversable(boolean reversable) {
@@ -105,19 +105,19 @@ public final class ElementalReactionSettings {
 
 	/**
 	 * Whether the triggering Element is applied as an aura. <br> <br>
-	 * 
+	 *
 	 * Once all possible Elemental Reactions have been triggered, the triggering element
 	 * may have some Gauge Units left. This setting allows for the remaining Gauge Units
 	 * to be applied as an Elemental Aura. <br> <br>
-	 * 
-	 * If multiple Elemental Reactions are triggered, all triggered Elemental Reactions 
+	 *
+	 * If multiple Elemental Reactions are triggered, all triggered Elemental Reactions
 	 * must have this setting set to {@code true} for the Gauge Units from the triggering
 	 * element to be applied as an Elemental Aura. <br> <br>
-	 * 
+	 *
 	 * Do note that this setting will not affect Elemental Applications with {@link Type#DURATION},
 	 * as those are always applied as an Aura Element after possible reactions.
-	 * 
-	 * @param applyResultAsAura Whether the remaining Gauge Units from the triggering 
+	 *
+	 * @param applyResultAsAura Whether the remaining Gauge Units from the triggering
 	 * element are applied as an Elemental Aura.
 	 */
 	public ElementalReactionSettings applyResultAsAura(boolean applyResultAsAura) {
@@ -128,10 +128,10 @@ public final class ElementalReactionSettings {
 
 	/**
 	 * Whether this reaction ends all future reactions from triggering. <br> <br>
-	 * 
+	 *
 	 * Once a reaction is triggered, an attempt to trigger another is made. This setting denies
 	 * other reactions to be triggered after triggering this reaction.
-	 * 
+	 *
 	 * @param endsReactionTrigger Whether reactions can be triggered after this reaction.
 	 */
 	public ElementalReactionSettings endsReactionTrigger(boolean endsReactionTrigger) {
@@ -142,16 +142,16 @@ public final class ElementalReactionSettings {
 
 	/**
 	 * Whether this reaction prevents the priority upgrade. <br> <br>
-	 * 
+	 *
 	 * Once a reaction is triggered, an attempt to trigger another is made. If no reactions were
-	 * found, an attempt to upgrade the "element priority" is done. This setting denies that 
+	 * found, an attempt to upgrade the "element priority" is done. This setting denies that
 	 * attempt after triggering this reaction. <br> <br>
-	 * 
+	 *
 	 * However, the attempt to upgrade the priority will only be denied <b>once</b> after this
 	 * reaction. Suceeding reactions <b>must</b> also have this property enabled in order for the
 	 * upgrade to be <i>fully</i> denied.
-	 * 
-	 * @param preventsPriorityUpgrade Whether the element priority can be upgraded after 
+	 *
+	 * @param preventsPriorityUpgrade Whether the element priority can be upgraded after
 	 * this reaction.
 	 */
 	public ElementalReactionSettings preventsPriorityUpgrade(boolean preventsPriorityUpgrade) {

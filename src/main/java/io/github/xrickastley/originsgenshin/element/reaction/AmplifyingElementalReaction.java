@@ -1,9 +1,10 @@
 package io.github.xrickastley.originsgenshin.element.reaction;
 
-import javax.annotation.Nullable;
-
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
+
 import net.minecraft.entity.LivingEntity;
+
+import javax.annotation.Nullable;
 
 public abstract class AmplifyingElementalReaction extends ElementalReaction {
 	final double amplifier;
@@ -21,7 +22,7 @@ public abstract class AmplifyingElementalReaction extends ElementalReaction {
 	public double applyAmplifier(double damage) {
 		return damage * amplifier;
 	}
-	
+
 	public double getAmplifier() {
 		return this.amplifier;
 	}

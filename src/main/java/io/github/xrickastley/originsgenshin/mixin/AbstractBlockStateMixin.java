@@ -7,10 +7,11 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinStatusEffects;
+
 import net.minecraft.block.AbstractBlock.AbstractBlockState;
-import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.block.EntityShapeContext;
 import net.minecraft.block.ShapeContext;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.shape.VoxelShape;
 import net.minecraft.util.shape.VoxelShapes;
@@ -27,8 +28,8 @@ public class AbstractBlockStateMixin {
 	)
 	private void frozen_PreventBlockPlace(BlockView world, BlockPos pos, ShapeContext context, CallbackInfoReturnable<VoxelShape> cir) {
 		if (!(
-			context instanceof final EntityShapeContext esc 
-			&& esc.getEntity() != null 
+			context instanceof final EntityShapeContext esc
+			&& esc.getEntity() != null
 			&& esc.getEntity() instanceof final PlayerEntity player
 		)) return;
 

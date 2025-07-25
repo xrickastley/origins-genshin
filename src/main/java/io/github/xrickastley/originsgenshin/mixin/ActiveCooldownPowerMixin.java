@@ -15,11 +15,10 @@ import io.github.apace100.apoli.power.Power;
 import io.github.apace100.apoli.power.PowerType;
 import io.github.apace100.apoli.util.HudRender;
 import io.github.apace100.calio.data.SerializableData;
-
-import io.github.xrickastley.originsgenshin.data.OriginsGenshinDataTypes;
-import io.github.xrickastley.originsgenshin.interfaces.IActiveCooldownPower;
 import io.github.xrickastley.originsgenshin.data.ElementalBurst;
 import io.github.xrickastley.originsgenshin.data.ElementalSkill;
+import io.github.xrickastley.originsgenshin.data.OriginsGenshinDataTypes;
+import io.github.xrickastley.originsgenshin.interfaces.IActiveCooldownPower;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -27,7 +26,7 @@ import net.minecraft.entity.LivingEntity;
 @Pseudo
 @Mixin(ActiveCooldownPower.class)
 public abstract class ActiveCooldownPowerMixin
-	extends CooldownPower 
+	extends CooldownPower
 	implements IActiveCooldownPower
 {
 	public ActiveCooldownPowerMixin(PowerType<?> type, LivingEntity entity, int cooldownDuration, HudRender hudRender, Consumer<Entity> activeFunction) {
@@ -86,8 +85,8 @@ public abstract class ActiveCooldownPowerMixin
 		return data ->
 			(type, player) -> {
 				ActiveCooldownPower power = new ActiveCooldownPower(
-					type, 
-					player, 
+					type,
+					player,
 					data.getInt("cooldown"),
 					data.get("hud_render"),
 					data.get("entity_action")

@@ -21,7 +21,7 @@ public class OriginsGenshinEntities {
 		.dimensions(EntityDimensions.fixed(0.3125f, 0.4296875f))
 		.trackRangeBlocks(24)
 		.build();
-	
+
 	public static void register() {
 		register("dendro_core", OriginsGenshinEntities.DENDRO_CORE, DendroCoreEntity::getAttributeBuilder);
 	}
@@ -32,7 +32,7 @@ public class OriginsGenshinEntities {
 
 	private static <T extends LivingEntity> EntityType<T> register(String id, EntityType<T> entityType, DefaultAttributeContainer.Builder builder) {
 		FabricDefaultAttributeRegistry.register(entityType, builder);
-		
+
 		return Registry.register(Registries.ENTITY_TYPE, OriginsGenshin.identifier(id), entityType);
 	}
 }

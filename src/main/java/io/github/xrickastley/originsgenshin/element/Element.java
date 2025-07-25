@@ -139,7 +139,7 @@ public enum Element {
 	public boolean hasTexture() {
 		return settings.texture != null || (settings.parentElement != null && settings.parentElement.hasTexture());
 	}
-	
+
 	public Identifier getTexture() {
 		return settings.texture != null
 			? settings.texture
@@ -163,11 +163,11 @@ public enum Element {
 	public boolean canBeAura() {
 		return settings.canBeAura;
 	}
-	
+
 	// TODO: fix
 	/**
 	 * Controls reapplication of elements <br> <br>
-	 * 
+	 *
 	 * For an element to be reapplied, this element's priority must *match* the <i>current highest priority</i>.
 	 * Note that it *also* doesn't have to be greater than, as
 	 * 	- The greater than element should've already been applied (sees that priority, match.)
@@ -191,10 +191,10 @@ public enum Element {
 
 	/**
 	 * Checks if the provided {@code element} is a first-child of this {@link Element}. <br> <br>
-	 * 
+	 *
 	 * This does not work recursively, meaning that a child-of-child element will not be considered
 	 * as a child of this element.
-	 * 
+	 *
 	 * @param element The element to check.
 	 * @return Whether {@code element} is a first-child of this {@link Element}.
 	 */
@@ -242,66 +242,66 @@ public enum Element {
 		 */
 		public ElementSettings setTexture(Identifier texture) {
 			this.texture = texture;
-	
+
 			return this;
 		}
-	
+
 		/**
 		 * Sets the damage color of the element.
 		 * @param texture The damage color of the element.
 		 */
 		public ElementSettings setDamageColor(Color damageColor) {
 			this.damageColor = damageColor;
-	
+
 			return this;
 		}
 
 		// TODO: change from just "rendering priority".
 		/**
 		 * Sets the rendering priority of this element. Most useful for co-existing auras. <br> <br>
-		 * 
+		 *
 		 * This settings controls how multiple elements are rendered. If all currently applied
 		 * Elements are of the same priority, they are all rendered. However, if an Element of
 		 * higher priority exists, then only that Element and Elements with a similar priority
 		 * will be rendered. <br> <br>
-		 * 
+		 *
 		 * <b>Lower</b> numbers have higher priorities than numbers higher than them.
-		 * 
+		 *
 		 * @param priority The rendering priority of this element.
 		 */
 		public ElementSettings setPriority(int priority) {
 			this.priority = priority;
-	
+
 			return this;
 		}
-		
+
 		/**
 		 * Sets the element as a child of {@code parentElement}. <br> <br>
-		 * 
+		 *
 		 * A child element is able to be used in-place of it's parent element in an Elemental
 		 * Reaction if it has {@code allowChildElements} set to {@code true}.
-		 *  
+		 *
 		 * @param parentElement The parent element of the element.
 		 * @deprecated This setting does nothing.
 		 */
 		@Deprecated
 		public ElementSettings setParentElement(Element parentElement) {
 			this.parentElement = parentElement;
-	
+
 			return this;
 		}
-	
+
 		/**
 		 * Sets the function controlling the decay rate of this element. <br> <br>
-		 * 
+		 *
 		 * This function must output a number {@code x} such that {@code x} is the amount of Gauge
 		 * Units deducted per tick.
-		 * 
+		 *
 		 * @param texture The damage color of the element.
 		 */
 		public ElementSettings setDecayRate(@NotNull Function<ElementalApplication, Number> decayRate) {
 			this.decayRate = decayRate;
-	
+
 			return this;
 		}
 
@@ -311,21 +311,21 @@ public enum Element {
 		 */
 		public ElementSettings canBeAura(boolean aura) {
 			this.canBeAura = aura;
-	
+
 			return this;
 		}
 
 		/**
 		 * Sets if the element, when applied as an Aura Element, would have its Gauge Units
 		 * deducted by the <a href="https://genshin-impact.fandom.com/wiki/Elemental_Gauge_Theory#Aura_Tax">Aura Tax</a>.
-		 * @param auraTax If the element's Gauge Units should be deducted by the Aura Tax. 
+		 * @param auraTax If the element's Gauge Units should be deducted by the Aura Tax.
 		 */
 		public ElementSettings hasAuraTax(boolean auraTax) {
 			this.hasAuraTax = auraTax;
 
 			return this;
 		}
-	
+
 		/**
 		 * Sets if the Elemental Application tied to this element is tied to can bypass <a href="https://genshin-impact.fandom.com/wiki/Internal_Cooldown">Internal Cooldown</a>.
 		 * @param bypassesCooldown If the Elemental Application tied to this element can bypass Internal Cooldown.
@@ -342,21 +342,21 @@ public enum Element {
 		 */
 		public ElementSettings decayInheritance(boolean decayInheritance) {
 			this.decayInheritance = decayInheritance;
-	
+
 			return this;
 		}
 
 		/**
 		 * Sets if the element excludes itself from the priority check. <br> <br>
-		 * 
+		 *
 		 * When elements are applied and no reactions are triggered, an attempt is made to make
 		 * the element an Aura element, allowing for "double auras" to exist. <br> <br>
-		 * 
+		 *
 		 * If an element with a <b>higher</b> priority exists as an Aura Element, elements with
 		 * lower priorities may <b>not</b> be applied while that element is currently applied as
 		 * an Aura Element. <br> <br>
-		 * 
-		 * This setting changes Whether the element is included as a "higher priority" 
+		 *
+		 * This setting changes Whether the element is included as a "higher priority"
 		 * element upon checking. If <b>all</b> currently applied Aura elements with the "higher
 		 * priority" are excluded, the next highest priority elements will be considered.
 		 */
@@ -368,13 +368,13 @@ public enum Element {
 	}
 
 	private static class Decays {
-		private static final Function<ElementalApplication, Number> NO_DECAY_RATE = a -> {			
+		private static final Function<ElementalApplication, Number> NO_DECAY_RATE = a -> {
 			return 0;
 		};
 
 		private static final Function<ElementalApplication, Number> DENDRO_DECAY_RATE = application -> {
 			final ElementComponent component = ElementComponent.KEY.get(application.getEntity());
-				
+
 			return component.hasElementalApplication(Element.valueOf("BURNING"))
 				// max(0.4, Natural Decay Rate_Dendro Aura × 2)
 				// 0.04 is in GU/s, convert to GU/tick

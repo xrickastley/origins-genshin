@@ -8,7 +8,7 @@ import me.shedaniel.autoconfig.annotation.ConfigEntry;
 public class ClientConfig implements ConfigData {
 	@ConfigEntry.Gui.CollapsibleObject
 	public Renderers renderers = new Renderers();
-	
+
 	@ConfigEntry.Gui.CollapsibleObject
 	public Developer developer = new Developer();
 

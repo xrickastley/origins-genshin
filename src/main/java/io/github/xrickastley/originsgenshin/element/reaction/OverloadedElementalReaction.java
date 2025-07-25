@@ -1,7 +1,5 @@
 package io.github.xrickastley.originsgenshin.element.reaction;
 
-import javax.annotation.Nullable;
-
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
@@ -22,6 +20,8 @@ import net.minecraft.world.World;
 import net.minecraft.world.explosion.Explosion.DestructionType;
 import net.minecraft.world.explosion.ExplosionBehavior;
 
+import javax.annotation.Nullable;
+
 public class OverloadedElementalReaction extends ElementalReaction {
 	OverloadedElementalReaction() {
 		super(
@@ -36,14 +36,14 @@ public class OverloadedElementalReaction extends ElementalReaction {
 	@Override
 	protected void onReaction(LivingEntity entity, ElementalApplication auraElement, ElementalApplication triggeringElement, double reducedGauge, @Nullable LivingEntity origin) {
 		final World world = entity.getWorld();
-	
+
 		if (world.isClient) return;
 
 		final double x = entity.getX();
 		final double y = entity.getY();
 		final double z = entity.getZ();
 		final float power = 3;
-	
+
 		final NonEntityDamagingExplosion explosion = new NonEntityDamagingExplosion(
 			world,
 			null,
@@ -57,7 +57,7 @@ public class OverloadedElementalReaction extends ElementalReaction {
 				? DestructionType.DESTROY
 				: DestructionType.KEEP
 		);
-		
+
 		explosion.collectBlocksAndPushEntities();
 		explosion.affectWorld(world.isClient);
 		explosion
@@ -74,11 +74,11 @@ public class OverloadedElementalReaction extends ElementalReaction {
 
 			serverPlayerEntity.networkHandler.sendPacket(
 				new ExplosionS2CPacket(
-					x, 
-					y, 
-					z, 
-					power, 
-					explosion.getAffectedBlocks(), 
+					x,
+					y,
+					z,
+					power,
+					explosion.getAffectedBlocks(),
 					explosion
 						.getAffectedPlayers()
 						.get(serverPlayerEntity)
@@ -94,13 +94,13 @@ public class OverloadedElementalReaction extends ElementalReaction {
 		final ElementalDamageSource source = new ElementalDamageSource(
 			entity
 				.getDamageSources()
-				.create(OriginsGenshinDamageTypes.OVERLOADED, origin), 
-			application, 
+				.create(OriginsGenshinDamageTypes.OVERLOADED, origin),
+			application,
 			InternalCooldownContext.ofNone(entity)
 		);
 
 		float amount = ElementalReaction.getReactionDamage(entity, 2.75);
-		
+
 		if (entity == origin) amount = 0;
 
 		entity.damage(source, amount);

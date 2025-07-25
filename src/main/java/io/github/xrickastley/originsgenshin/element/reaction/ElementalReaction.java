@@ -5,11 +5,8 @@ import java.util.List;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
-import javax.annotation.Nullable;
-
 import org.slf4j.Logger;
 
-import io.github.xrickastley.originsgenshin.util.Array;
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.component.ElementComponent;
 import io.github.xrickastley.originsgenshin.element.Element;
@@ -18,6 +15,7 @@ import io.github.xrickastley.originsgenshin.events.ReactionTriggered;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinSoundEvents;
 import io.github.xrickastley.originsgenshin.networking.ShowElementalReactionS2CPacket;
 import io.github.xrickastley.originsgenshin.registry.OriginsGenshinRegistries;
+import io.github.xrickastley.originsgenshin.util.Array;
 
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
@@ -31,6 +29,8 @@ import net.minecraft.util.Pair;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+
+import javax.annotation.Nullable;
 
 public abstract class ElementalReaction {
 	private static final Logger LOGGER = OriginsGenshin.sublogger(ElementalReaction.class);
@@ -47,7 +47,7 @@ public abstract class ElementalReaction {
 	protected final boolean applyResultAsAura;
 	protected final boolean endsReactionTrigger;
 	protected final boolean preventsPriorityUpgrade;
-	
+
 	protected ElementalReaction(ElementalReactionSettings settings) {
 		this.name = settings.name;
 		this.id = settings.id;
@@ -212,7 +212,7 @@ public abstract class ElementalReaction {
 			LOGGER.info("Aura element: {} | Triggering element: {} | Result: {}", auraElement, trigElement, result);
 			LOGGER.info("auraElement != null ({}) && trigElement != null ({}) && !auraElement.isEmpty() ({}) && !trigElement.isEmpty() ({}) -> {}", auraElement != null, trigElement != null, auraElement == null ? "NullPointerException" : !auraElement.isEmpty(), trigElement == null ? "NullPointerException" : !trigElement.isEmpty(), result);
 		}
-			
+
 
 		return result;
 	}
@@ -235,7 +235,7 @@ public abstract class ElementalReaction {
 		}
 
 		final DecimalFormat df = new DecimalFormat("0.0");
-		
+
 		LOGGER.info("Phase: BEFORE - Aura element: {} GU {}; Triggering elements: {} GU {}; Reaction coefficient: {}", df.format(applicationAE.getCurrentGauge()), applicationAE.getElement(), df.format(applicationTE.getCurrentGauge()), applicationTE.getElement(), reactionCoefficient);
 
 		final double reducedGauge = applicationAE.reduceGauge(reactionCoefficient * applicationTE.getCurrentGauge());
@@ -243,7 +243,7 @@ public abstract class ElementalReaction {
 		LOGGER.info("Phase: CALCULATE - Reaction coefficient: {} | Reduced Gauge (AE): {}", reactionCoefficient, reducedGauge);
 
 		applicationTE.reduceGauge(reducedGauge);
-		
+
 		LOGGER.info("Phase: AFTER - Aura element: {} GU {}; Triggering elements: {} GU {}; Reaction coefficient: {}", df.format(applicationAE.getCurrentGauge()), applicationAE.getElement(), df.format(applicationTE.getCurrentGauge()), applicationTE.getElement(), reactionCoefficient);
 
 		AbstractBurningElementalReaction.mixin$reduceBurningGauge(applicationAE, applicationTE, entity, reducedGauge);
@@ -269,7 +269,7 @@ public abstract class ElementalReaction {
 		if (target.getWorld().isClient()) return;
 
 		final Box boundingBox = target.getBoundingBox();
-		
+
 		final double x = target.getX() + (boundingBox.getLengthX() * 1.25 * Math.random());
 		final double y = target.getY() + (boundingBox.getLengthY() * 0.50);
 		final double z = target.getZ() + (boundingBox.getLengthZ() * 1.25 * Math.random());
@@ -279,10 +279,10 @@ public abstract class ElementalReaction {
 		final ShowElementalReactionS2CPacket packet = new ShowElementalReactionS2CPacket(pos, this.getId());
 
 		if (target instanceof final ServerPlayerEntity serverPlayer) ServerPlayNetworking.send(serverPlayer, packet);
-		
+
 		for (final ServerPlayerEntity otherPlayer : PlayerLookup.tracking(target)) {
 			if (otherPlayer.getId() == target.getId()) continue;
-			
+
 			ServerPlayNetworking.send(otherPlayer, packet);
 		}
 	}

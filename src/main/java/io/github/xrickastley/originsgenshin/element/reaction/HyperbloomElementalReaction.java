@@ -1,11 +1,12 @@
 package io.github.xrickastley.originsgenshin.element.reaction;
 
-import javax.annotation.Nullable;
-
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.entity.DendroCoreEntity;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinParticleFactory;
+
 import net.minecraft.entity.LivingEntity;
+
+import javax.annotation.Nullable;
 
 public final class HyperbloomElementalReaction extends AbstractDendroCoreElementalReaction {
 	HyperbloomElementalReaction() {

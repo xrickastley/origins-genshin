@@ -1,6 +1,7 @@
 package io.github.xrickastley.originsgenshin.element.reaction;
 
 import io.github.xrickastley.originsgenshin.registry.OriginsGenshinRegistries;
+
 import net.minecraft.registry.Registry;
 
 public class ElementalReactions {
@@ -51,10 +52,10 @@ public class ElementalReactions {
 	public static final ElementalReaction ELECTRO_CRYSTALLIZE = new ElectroCrystallizeElementalReaction();
 	public static final ElementalReaction CRYO_CRYSTALLIZE = new CryoCrystallizeElementalReaction();
 	public static final ElementalReaction FROZEN_CRYSTALLIZE = new FrozenCrystallizeElementalReaction();
-	// TODO: Reaction: Hyperbloom + Burgeon
+	// Dendro Core Reaction: Creates a Sprawling Shot that homes in on the nearest enemy.
 	public static final ElementalReaction HYPERBLOOM = new HyperbloomElementalReaction();
+	// Dendro Core Reaction: Explodes the Dendro Core and deals increased AoE Dendro DMG.
 	public static final ElementalReaction BURGEON = new BurgeonElementalReaction();
-	// TODO: Reaction display.
 
 	public static void register() {
 		register(ElementalReactions.CRYO_MELT);
