@@ -3,6 +3,7 @@ package io.github.xrickastley.originsgenshin.mixin.client;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
@@ -21,7 +22,9 @@ import com.mojang.blaze3d.systems.RenderSystem;
 
 import io.github.xrickastley.originsgenshin.component.ElementComponent;
 import io.github.xrickastley.originsgenshin.element.DurationElementalApplication;
+import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
+import io.github.xrickastley.originsgenshin.element.reaction.ElementalReaction;
 import io.github.xrickastley.originsgenshin.util.ClientConfig;
 import io.github.xrickastley.originsgenshin.util.Color;
 import me.shedaniel.autoconfig.AutoConfig;
@@ -39,6 +42,7 @@ import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Pair;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 
@@ -63,8 +67,6 @@ public abstract class EntityRendererMixin {
 		at = @At("HEAD")
 	)
 	protected void addElementRenderer(final Entity entity, final float yaw, final float tickDelta, final MatrixStack matrixStack, final VertexConsumerProvider vertexConsumers, final int light, CallbackInfo ci) {
-		// TODO: Reaction rendering: if MULTIPLE reactions are triggered, the FIRST reaction triggered will be shown, for 0.5s.
-		
 		if (!(entity instanceof final LivingEntity livingEntity)) return;
 
 		this.renderElementsIfPresent(livingEntity, matrixStack, tickDelta);
@@ -78,32 +80,40 @@ public abstract class EntityRendererMixin {
 		if (!livingEntity.isAlive()) return;
 
 		final ElementComponent component = ElementComponent.KEY.get(livingEntity);
+		final List<Pair<Element, Double>> elementArray = new ArrayList<>();
 
-		if (component.getAppliedElements().length() == 0) return;
+		if (component.hasValidLastReaction()) {
+			final ElementalReaction reaction = component.getLastReaction().getLeft();
 
-		final Optional<Integer> priority = component.getHighestElementPriority();
-		
-		if (!priority.isPresent()) return;
-		
-		final ArrayList<ElementalApplication> elementArray = new ArrayList<>();
-		
-		component
-			.getAppliedElements()
-			.filter(application -> application.getElement().getPriority() == priority.get())
-			.forEach(elementArray::add);
+			elementArray.add(new Pair<>(reaction.getAuraElement(), 60.0));
+			elementArray.add(new Pair<>(reaction.getTriggeringElement(), 60.0));
+		} else {
+			if (component.getAppliedElements().length() == 0) return;
+
+			final Optional<Integer> priority = component.getHighestElementPriority();
+			
+			if (!priority.isPresent()) return;
+			
+			elementArray.addAll(
+				component
+					.getAppliedElements()
+					.filter(application -> application.getElement().getPriority() == priority.get())
+					.map(application -> new Pair<>(application.getElement(), (application.getRemainingTicks() - tickDelta) / 20.0))
+			);
+		}
 
 		final int elementCount = elementArray.size();
 		final Iterator<Vec3d> coords = this.generateTexturesUsingCenter(new Vec3d(0, 0, 0), 1, elementCount).iterator();
 		
 		RenderSystem.enableCull();
 
-		elementArray.forEach(application -> 
+		elementArray.forEach(pair -> 
 			this.renderElement(
 				livingEntity,
 				matrixStack, 
 				(float) coords.next().getZ(), 
-				application.getElement().getTexture(), 
-				(application.getRemainingTicks() - tickDelta) / 20.0f
+				pair.getLeft().getTexture(), 
+				pair.getRight()
 			)
 		);
 

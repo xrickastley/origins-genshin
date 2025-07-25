@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
@@ -17,6 +18,7 @@ import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 
 import io.github.xrickastley.originsgenshin.util.Array;
+import io.github.xrickastley.originsgenshin.util.ImmutablePair;
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementHolder;
@@ -34,13 +36,15 @@ import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.registry.entry.RegistryEntry.Reference;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.Pair;
 
 public final class ElementComponentImpl implements ElementComponent {
 	protected static final Set<Class<LivingEntity>> DENIED_ENTITIES = new HashSet<>();
 	private final LivingEntity owner;
 	private final Map<Element, ElementHolder> elementHolders = new ConcurrentHashMap<>();
 	private final Logger LOGGER = OriginsGenshin.sublogger(ElementComponent.class);
-	private int triggeredReactionsAtAge = -1;
+	private Pair<ElementalReaction, Long> lastReaction = new Pair<>(null, -1L);
 	private int electroChargedCooldown = -1;
 	private @Nullable LivingEntity electroChargedOrigin = null;
 	private int burningCooldown = -1;
@@ -99,6 +103,11 @@ public final class ElementComponentImpl implements ElementComponent {
 	@Override
 	public ElementHolder getElementHolder(Element element) {
 		return this.elementHolders.computeIfAbsent(element, e -> ElementHolder.of(owner, e));
+	}
+
+	@Override
+	public Pair<ElementalReaction, Long> getLastReaction() {
+		return ImmutablePair.of(this.lastReaction);
 	}
 	
 	@Override
@@ -173,6 +182,15 @@ public final class ElementComponentImpl implements ElementComponent {
 		tag.putInt("ElectroChargedCooldown", electroChargedCooldown);
 		tag.putInt("BurningCooldown", burningCooldown);
 
+		if (this.lastReaction.getLeft() != null) {
+			final NbtCompound lastReaction = new NbtCompound();
+
+			lastReaction.putString("Id", this.lastReaction.getLeft().getId().toString());
+			lastReaction.putLong("Time", this.lastReaction.getRight());
+
+			tag.put("LastReaction", lastReaction);
+		}
+
 		// LOGGER.info("Wrote NBT for {} at: {} ({})", owner, owner.getWorld().getTime(), Util.getMeasuringTimeMs());
 	}
 
@@ -180,6 +198,15 @@ public final class ElementComponentImpl implements ElementComponent {
 	public void readFromNbt(@Nonnull NbtCompound tag) {
 		this.electroChargedCooldown = tag.getInt("ElectroChargedCooldown");
 		this.burningCooldown = tag.getInt("BurningCooldown");
+
+		if (tag.contains("LastReaction")) {
+			final NbtCompound lastReaction = tag.getCompound("LastReaction");
+
+			this.lastReaction = new Pair<>(
+				OriginsGenshinRegistries.ELEMENTAL_REACTION.get(Identifier.tryParse(lastReaction.getString("Id"))),
+				lastReaction.getLong("Time")
+			);
+		}
 
 		final NbtList list = tag.getList("AppliedElements", NbtElement.COMPOUND_TYPE);
 		final long syncedAt = tag.getLong("SyncedAt");
@@ -319,7 +346,7 @@ public final class ElementComponentImpl implements ElementComponent {
 		final Optional<Integer> optionalPriority = this.getHighestElementPriority();
 		final ElementHolder context = this.getElementHolder(application.getElement());
 
-		LOGGER.info("Triggered reactions at age: {}, Current age: {}, Current Priority: {}, Applied elements:", triggeredReactionsAtAge, this.owner.age, optionalPriority.orElse(-1));
+		LOGGER.info("Triggered reactions at age: {}, Current age: {}, Current Priority: {}, Applied elements:", lastReaction, this.owner.age, optionalPriority.orElse(-1));
 		
 		context.setElementalApplication(application);
 
@@ -342,11 +369,10 @@ public final class ElementComponentImpl implements ElementComponent {
 		optional = AbstractBurningElementalReaction.mixin$changeReaction(optional, this, application);
 
 		boolean applyElementAsAura = true;
-		final Set<ElementalReaction> triggeredReactions = new HashSet<>();
+		final Set<ElementalReaction> triggeredReactions = new LinkedHashSet<>();
 
 		LOGGER.info("Target elemental priority: {}", priority);
 		LOGGER.info("Set triggered reactions at age to: {}", this.owner.age);
-		triggeredReactionsAtAge = this.owner.age;
 
 		while (optional.isPresent() && (application.getCurrentGauge() > 0 || optional.get().isTriggerable(owner))) {
 			final ElementalReaction reaction = optional.get();
@@ -382,6 +408,11 @@ public final class ElementComponentImpl implements ElementComponent {
 					LOGGER.info("Found reaction after priority upgrade: {}, Current Gauge ({}): {}", optional.get().getId(), application.getElement(), application.getCurrentGauge());
 			}
 		}
+
+		final Optional<ElementalReaction> firstReaction = triggeredReactions.stream().findFirst();
+
+		if (firstReaction.isPresent())
+			this.lastReaction = new Pair<>(firstReaction.get(), this.owner.getWorld().getTime());
 		
 		LOGGER.info("No more reactions may be triggered! | Current Gauge ({}): {}", application.getElement(), application.getCurrentGauge());
 		LOGGER.info("Element: {} | CanBeAura: {} | Triggered reactions: {} | Apply Element as Aura: {} | Is Gauge Units: {}", context.getElement(), context.getElement().canBeAura(), triggeredReactions.size(), applyElementAsAura, application.isGaugeUnits());

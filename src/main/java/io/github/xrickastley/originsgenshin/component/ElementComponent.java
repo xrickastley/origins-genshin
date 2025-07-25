@@ -27,6 +27,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.registry.tag.DamageTypeTags;
+import net.minecraft.util.Pair;
 
 public interface ElementComponent extends AutoSyncedComponent, CommonTickingComponent {
 	public static final ComponentKey<ElementComponent> KEY = ComponentRegistry.getOrCreate(OriginsGenshin.identifier("elements"), ElementComponent.class);
@@ -68,6 +69,16 @@ public interface ElementComponent extends AutoSyncedComponent, CommonTickingComp
 	public LivingEntity getOwner();
 
 	public ElementHolder getElementHolder(Element element);
+
+	public Pair<ElementalReaction, Long> getLastReaction();
+
+	default boolean hasLastReaction() {
+		return this.getLastReaction().getLeft() != null;
+	}
+
+	default boolean hasValidLastReaction() {
+		return this.hasLastReaction() && this.getLastReaction().getRight() + 10 >= this.getOwner().getWorld().getTime();
+	}
 	
 	public boolean isElectroChargedOnCD();
 
