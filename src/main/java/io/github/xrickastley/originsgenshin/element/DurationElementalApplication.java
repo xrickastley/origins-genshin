@@ -12,13 +12,11 @@ import net.minecraft.world.World;
 
 public final class DurationElementalApplication extends ElementalApplication {
 	private double duration;
-	private long appliedAt;
 
 	DurationElementalApplication(LivingEntity entity, Element element, UUID uuid, double gaugeUnits, double duration) {
 		super(Type.DURATION, entity, element, uuid, gaugeUnits, true);
 
 		this.duration = duration;
-		this.appliedAt = entity.getWorld().getTime();
 	}
 	
 	static ElementalApplication fromNbt(LivingEntity entity, NbtCompound nbt, long syncedAt) {
@@ -67,10 +65,9 @@ public final class DurationElementalApplication extends ElementalApplication {
 
 		if (application.type != this.type || !(application instanceof final DurationElementalApplication durationApp)) throw new ElementalApplicationOperationException(Operation.REAPPLICATION_INVALID_TYPES, this, application);
 		
-		this.appliedAt = durationApp.appliedAt;
-		this.duration = durationApp.duration;
-		this.gaugeUnits = Math.max(this.gaugeUnits, durationApp.gaugeUnits);
+		this.gaugeUnits = Math.max(this.gaugeUnits, application.gaugeUnits);
 		this.currentGauge = gaugeUnits;
+		this.duration = durationApp.duration;
 
 		ElementComponent.sync(this.entity);
 	}
@@ -87,16 +84,9 @@ public final class DurationElementalApplication extends ElementalApplication {
 
 	@Override
 	public NbtCompound asNbt()	{
-		final NbtCompound nbt = new NbtCompound();
+		final NbtCompound nbt = super.asNbt();
 
-		nbt.putString("Type", this.type.toString());
-		nbt.putString("Element", this.element.toString());
-		nbt.putUuid("UUID", uuid);
-		nbt.putBoolean("IsAura", this.isAura);
-		nbt.putDouble("GaugeUnits", this.gaugeUnits);
-		nbt.putDouble("CurrentGauge", this.currentGauge);
 		nbt.putDouble("Duration", this.duration);
-		nbt.putLong("AppliedAt", this.appliedAt);
 
 		return nbt;
 	}

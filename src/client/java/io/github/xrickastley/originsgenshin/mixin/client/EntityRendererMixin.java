@@ -1,11 +1,9 @@
 package io.github.xrickastley.originsgenshin.mixin.client;
 
-import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.stream.Stream;
 
 import org.joml.Matrix4f;
@@ -22,9 +20,9 @@ import com.mojang.blaze3d.systems.RenderSystem;
 
 import io.github.xrickastley.originsgenshin.component.ElementComponent;
 import io.github.xrickastley.originsgenshin.element.DurationElementalApplication;
-import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
 import io.github.xrickastley.originsgenshin.element.reaction.ElementalReaction;
+import io.github.xrickastley.originsgenshin.renderer.genshin.ElementEntry;
 import io.github.xrickastley.originsgenshin.util.ClientConfig;
 import io.github.xrickastley.originsgenshin.util.Color;
 import me.shedaniel.autoconfig.AutoConfig;
@@ -38,23 +36,13 @@ import net.minecraft.client.render.VertexFormats;
 import net.minecraft.client.render.entity.EntityRenderDispatcher;
 import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.client.world.ClientWorld;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.Pair;
-import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec3d;
 
 @Debug(export = true)
 @Mixin(EntityRenderer.class)
 public abstract class EntityRendererMixin {
-	@Unique
-	protected ConcurrentHashMap<String, Long> logCooldowns = new ConcurrentHashMap<>();
-
-	@Unique
-	private final DecimalFormat df = new DecimalFormat("0.0");
-
 	@Shadow
 	@Final
 	protected EntityRenderDispatcher dispatcher;
@@ -75,18 +63,17 @@ public abstract class EntityRendererMixin {
 
 	@Unique
 	protected void renderElementsIfPresent(final LivingEntity livingEntity, final MatrixStack matrixStack, final float tickDelta) {
-		if (!(livingEntity.getWorld() instanceof ClientWorld)) return;
-
 		if (!livingEntity.isAlive()) return;
 
 		final ElementComponent component = ElementComponent.KEY.get(livingEntity);
-		final List<Pair<Element, Double>> elementArray = new ArrayList<>();
+		final List<ElementEntry> elementArray = new ArrayList<>();
 
 		if (component.hasValidLastReaction()) {
 			final ElementalReaction reaction = component.getLastReaction().getLeft();
+			final long reactionAt = component.getLastReaction().getRight();
 
-			elementArray.add(new Pair<>(reaction.getAuraElement(), 60.0));
-			elementArray.add(new Pair<>(reaction.getTriggeringElement(), 60.0));
+			elementArray.add(new ElementEntry(reaction.getAuraElement(), 60.0, reactionAt, tickDelta));
+			elementArray.add(new ElementEntry(reaction.getTriggeringElement(), 60.0, reactionAt, tickDelta));
 		} else {
 			if (component.getAppliedElements().length() == 0) return;
 
@@ -98,74 +85,16 @@ public abstract class EntityRendererMixin {
 				component
 					.getAppliedElements()
 					.filter(application -> application.getElement().getPriority() == priority.get())
-					.map(application -> new Pair<>(application.getElement(), (application.getRemainingTicks() - tickDelta) / 20.0))
+					.map(a -> ElementEntry.of(a, tickDelta))
 			);
 		}
 
-		final int elementCount = elementArray.size();
-		final Iterator<Vec3d> coords = this.generateTexturesUsingCenter(new Vec3d(0, 0, 0), 1, elementCount).iterator();
+		final Iterator<Vec3d> coords = this
+			.generateTexturesUsingCenter(new Vec3d(0, 0, 0), 1, elementArray.size())
+			.iterator();
 		
-		RenderSystem.enableCull();
-
-		elementArray.forEach(pair -> 
-			this.renderElement(
-				livingEntity,
-				matrixStack, 
-				(float) coords.next().getZ(), 
-				pair.getLeft().getTexture(), 
-				pair.getRight()
-			)
-		);
-
-		RenderSystem.disableCull();
-	}
-
-	@Unique
-	protected void renderElement(final LivingEntity livingEntity, final MatrixStack matrixStack, float xOffset, Identifier texture, double secondsLeft) {
-		final Tessellator tessellator = Tessellator.getInstance();
-		final BufferBuilder buffer = tessellator.getBuffer();
-
-		final float BLINK_SECONDS = 1.5f;
-		final float BLINK_COUNT = 3;
-		
-		final float blinkInterval = BLINK_SECONDS / BLINK_COUNT;
-		final float intervalSplit = blinkInterval / 2f;
-
-		matrixStack.push();
-		matrixStack.translate(0, livingEntity.getBoundingBox().getLengthY(), 0);
-		matrixStack.multiplyPositionMatrix(new Matrix4f().rotation(dispatcher.camera.getRotation()));
-		matrixStack.scale(-0.50F, 0.50F, 0.50F);
-
-		final float finalXOffset = -0.5f + xOffset;
-		final float yOffset = 0.5f;
-
-		Matrix4f positionMatrix = matrixStack.peek().getPositionMatrix();
-
-		buffer.begin(VertexFormat.DrawMode.QUADS, VertexFormats.POSITION_TEXTURE);
-		buffer.vertex(positionMatrix, 0 + finalXOffset, 0 + yOffset, 0).texture(0f, 1f).next();
-		buffer.vertex(positionMatrix, 1 + finalXOffset, 0 + yOffset, 0).texture(1f, 1f).next();
-		buffer.vertex(positionMatrix, 1 + finalXOffset, 1 + yOffset, 0).texture(1f, 0f).next();
-		buffer.vertex(positionMatrix, 0 + finalXOffset, 1 + yOffset, 0).texture(0f, 0f).next();
-
-		float alpha = (double) secondsLeft <= (BLINK_SECONDS + intervalSplit)
-			? secondsLeft % blinkInterval <= intervalSplit
-				? (float) MathHelper.lerp((secondsLeft % blinkInterval) / intervalSplit, 0f, 1f)
-				: (float) MathHelper.lerp(((secondsLeft % blinkInterval) - 0.25) / intervalSplit, 1f, 0f)
-			: 1f;
-
-		RenderSystem.setShader(GameRenderer::getPositionTexProgram);
-		RenderSystem.setShaderTexture(0, texture);
-		RenderSystem.setShaderColor(1f, 1f, 1f, alpha);
-
-		RenderSystem.enableBlend();
-		RenderSystem.defaultBlendFunc();
-		RenderSystem.enableCull();
-
-		tessellator.draw();
-
-		RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
-
-		matrixStack.pop();
+		elementArray
+			.forEach(entry -> entry.render(livingEntity, matrixStack, dispatcher.camera, (float) coords.next().getZ()));
 	}
 
 	@Unique
@@ -318,7 +247,7 @@ public abstract class EntityRendererMixin {
 	}
 
 	@Unique
-	protected float getProgress(ElementalApplication application, float tickDelta) {
+	private float getProgress(ElementalApplication application, float tickDelta) {
 		return application instanceof final DurationElementalApplication durationApp
 			? (float) ((application.getRemainingTicks() - tickDelta) / durationApp.getDuration())
 			: (float) (application.getCurrentGauge() / application.getGaugeUnits());

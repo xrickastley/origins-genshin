@@ -26,6 +26,7 @@ public abstract sealed class ElementalApplication permits DurationElementalAppli
 	protected final UUID uuid;
 	protected double gaugeUnits;
 	protected double currentGauge;
+	protected long appliedAt;
 
 	ElementalApplication(Type type, LivingEntity entity, Element element, UUID uuid, double gaugeUnits, boolean isAura) {
 		this.type = type;
@@ -36,6 +37,7 @@ public abstract sealed class ElementalApplication permits DurationElementalAppli
 
 		this.gaugeUnits = gaugeUnits;
 		this.currentGauge = gaugeUnits;
+		this.appliedAt = entity.getWorld().getTime();
 	}
 
 	/**
@@ -66,6 +68,17 @@ public abstract sealed class ElementalApplication permits DurationElementalAppli
 
 	public double getCurrentGauge() {
 		return this.currentGauge;
+	}
+
+	public long getAppliedAt() {
+		return this.appliedAt;
+	}
+
+	/**
+	 * Gets the number of ticks this Elemental Application has been applied for.
+	 */
+	public long getAppliedTicks() {
+		return this.entity.getWorld().getTime() - this.appliedAt;
 	}
 
 	/**
@@ -146,7 +159,19 @@ public abstract sealed class ElementalApplication permits DurationElementalAppli
 
 	public abstract ElementalApplication asNonAura();
 	
-	public abstract NbtCompound asNbt();
+	public NbtCompound asNbt() {
+		final NbtCompound nbt = new NbtCompound();
+
+		nbt.putString("Type", this.type.toString());
+		nbt.putString("Element", this.element.toString());
+		nbt.putUuid("UUID", uuid);
+		nbt.putBoolean("IsAura", this.isAura);
+		nbt.putDouble("GaugeUnits", this.gaugeUnits);
+		nbt.putDouble("CurrentGauge", this.currentGauge);
+		nbt.putLong("AppliedAt", this.appliedAt);
+
+		return nbt;
+	}
 
 	public void updateFromNbt(NbtElement nbt, long syncedAt) {
 		if (!(nbt instanceof final NbtCompound compound)) throw new ElementalApplicationOperationException(Operation.INVALID_NBT_DATA, null, null);
@@ -161,6 +186,7 @@ public abstract sealed class ElementalApplication permits DurationElementalAppli
 
 		this.currentGauge = application.currentGauge;
 		this.gaugeUnits = application.gaugeUnits;
+		this.appliedAt = application.appliedAt;
 	}
 
 	public static enum Type {

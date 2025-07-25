@@ -36,6 +36,7 @@ public final class GaugeUnitElementalApplication extends ElementalApplication {
 
 		final double syncedGaugeDeduction = Math.max(entity.getWorld().getTime() - syncedAt, 0) * application.getDecayRate();
 		application.currentGauge = MathHelper.clamp(currentGauge - syncedGaugeDeduction, 0, application.gaugeUnits);
+		application.appliedAt = nbt.getLong("AppliedAt");
 
 		return application;
 	}
@@ -123,20 +124,6 @@ public final class GaugeUnitElementalApplication extends ElementalApplication {
 	@Override
 	public ElementalApplication asNonAura() {
 		return new GaugeUnitElementalApplication(entity, element, UUID.randomUUID(), gaugeUnits, false);
-	}
-
-	@Override
-	public NbtCompound asNbt()	{
-		final NbtCompound nbt = new NbtCompound();
-
-		nbt.putString("Type", this.type.toString());
-		nbt.putString("Element", this.element.toString());
-		nbt.putUuid("UUID", uuid);
-		nbt.putBoolean("IsAura", this.isAura);
-		nbt.putDouble("GaugeUnits", this.gaugeUnits);
-		nbt.putDouble("CurrentGauge", this.currentGauge);
-
-		return nbt;
 	}
 
 	@Override
