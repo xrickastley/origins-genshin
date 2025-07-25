@@ -27,8 +27,7 @@ public class DendroCoreEntityRenderer extends LivingEntityRenderer<DendroCoreEnt
 
 	private static EntityModel<DendroCoreEntity> createModel(EntityRendererFactory.Context context) {
 		try {
-			return new ObjEntityModel<DendroCoreEntity>(OriginsGenshin.identifier("models/entity/dendro_core"))
-				.loadModel();
+			return new ObjEntityModel<DendroCoreEntity>(OriginsGenshin.identifier("models/entity/dendro_core"));
 		} catch (Exception e) {
 			OriginsGenshin
 				.sublogger(DendroCoreEntityRenderer.class)

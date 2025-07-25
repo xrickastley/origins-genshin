@@ -1,244 +1,171 @@
 package io.github.xrickastley.originsgenshin.util;
 
-import de.javagl.obj.FloatTuple;
-import de.javagl.obj.Mtl;
-import de.javagl.obj.MtlReader;
-import de.javagl.obj.Obj;
-import de.javagl.obj.ObjReader;
-import de.javagl.obj.ObjUtils;
-
-import net.minecraft.client.render.VertexConsumer;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.math.RotationAxis;
-
-import org.joml.Matrix3f;
-import org.joml.Matrix4f;
-
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
+import java.util.Optional;
+
+import org.joml.Matrix4f;
+import org.lwjgl.opengl.GL11;
+
+import com.mojang.blaze3d.systems.RenderSystem;
+
+import de.javagl.obj.FloatTuple;
+import de.javagl.obj.FloatTuples;
+import de.javagl.obj.Mtl;
+import de.javagl.obj.MtlReader;
+import de.javagl.obj.Obj;
+import de.javagl.obj.ObjFace;
+import de.javagl.obj.ObjReader;
+import de.javagl.obj.ObjSplitting;
+import de.javagl.obj.ObjUtils;
+
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gl.VertexBuffer;
+import net.minecraft.client.render.BufferBuilder;
+import net.minecraft.client.render.GameRenderer;
+import net.minecraft.client.render.Tessellator;
+import net.minecraft.client.render.VertexFormats;
+import net.minecraft.client.render.VertexFormat.DrawMode;
+import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.resource.Resource;
+import net.minecraft.resource.ResourceManager;
+import net.minecraft.util.Identifier;
 
 public class ObjRenderer {
-	private Obj obj;
-	private Map<String, Mtl> materials;
-	private boolean isLoaded = false;
+	private final Identifier modelId;
+	private final Map<String, Mtl> mtlMap = new HashMap<>();
+	private Map<String, Obj> mtlObjMap;
+	private final Map<Obj, VertexBuffer> objBufferMap = new HashMap<>();
+	private boolean baked;
 
-	public ObjRenderer() {
-		this.materials = new HashMap<>();
+	public ObjRenderer(final Identifier modelId) throws IOException {
+		this.modelId = modelId;
+
+		this.load();
 	}
 
-	/**
-	 * Loads an OBJ file from an InputStream
-	 * @param objStream InputStream for the .obj file
-	 * @param mtlStream InputStream for the .mtl file (can be null)
-	 * @throws Exception if loading fails
-	 */
-	public void loadObj(InputStream objStream, InputStream mtlStream) throws IOException {
-		// Load the OBJ file
-		Obj rawObj = ObjReader.read(objStream);
-		
-		// Convert to renderable format (triangulated with normals and texture coordinates)
-		this.obj = ObjUtils.convertToRenderable(rawObj);
-		
-		// Load materials if MTL stream is provided
-		if (mtlStream != null) {
-			List<Mtl> mtlList = MtlReader.read(mtlStream);
+	public void render(final MatrixStack matrixStack) {
+		if (!this.baked) this.bake();
 
-			for (Mtl mtl : mtlList) materials.put(mtl.getName(), mtl);
-		}
+		final Matrix4f positionMatrix = matrixStack.peek().getPositionMatrix();
+
+		RenderSystem.enableCull();
+		RenderSystem.enableBlend();
+		RenderSystem.defaultBlendFunc();
+		RenderSystem.setShaderColor(1f, 1f, 1f, 1f);
 		
-		this.isLoaded = true;
+		this.mtlObjMap
+			.entrySet()
+			.forEach(entry -> this.renderObj(entry.getValue(), this.mtlMap.get(entry.getKey()), positionMatrix));
+
+		VertexBuffer.unbind();
+		RenderSystem.disableBlend();
+		RenderSystem.enableCull();
+		RenderSystem.depthFunc(GL11.GL_LEQUAL);
 	}
 
-	/**
-	 * Renders the OBJ model into the world
-	 * @param matrices The matrix stack for transformations
-	 * @param vertexConsumer The vertex consumer to write vertices to
-	 * @param light The light value (packed light coordinates)
-	 * @param overlay The overlay value for effects
-	 * @param red Red color component (0.0-1.0)
-	 * @param green Green color component (0.0-1.0)
-	 * @param blue Blue color component (0.0-1.0)
-	 * @param alpha Alpha component (0.0-1.0)
-	 */
-	public void render(MatrixStack matrices, VertexConsumer vertexConsumer, int light, int overlay, float red, float green, float blue, float alpha) {
-		if (!isLoaded || obj == null) {
-			return;
-		}
+	private void renderObj(final Obj obj, final Mtl mtl, final Matrix4f positionMatrix) {
+		if (mtl != null && mtl.getMapKd() != null)
+			RenderSystem.setShaderTexture(0, this.resolveId(mtl.getMapKd()));
 
-		Matrix4f positionMatrix = matrices.peek().getPositionMatrix();
-		Matrix3f normalMatrix = matrices.peek().getNormalMatrix();
+		VertexBuffer vertexBuffer = this.objBufferMap.get(obj);
+		vertexBuffer.bind();
+		vertexBuffer.draw(positionMatrix, RenderSystem.getProjectionMatrix(), GameRenderer.getPositionTexColorNormalProgram());
+	}
 
-		int numFaces = obj.getNumFaces();
+	private void bake() {
+		if (this.baked) return;
 
-		// Process each face (triangle)
-		for (int faceIndex = 0; faceIndex < numFaces; faceIndex++) {
-			// Get material for this face group (simplified - using first material or default)
-			String materialName = this.getMaterialForFace(faceIndex);
-			float[] materialColor = this.getMaterialColor(materialName, red, green, blue);
+		this.mtlObjMap
+			.entrySet()
+			.forEach(entry -> this.bakeObj(entry.getValue(), this.mtlMap.get(entry.getKey())));
 
-			// Each face has 3 vertices (since we triangulated)
-			for (int vertexInFace = 0; vertexInFace < 3; vertexInFace++) {
-				int vertexIndex = obj.getFace(faceIndex).getVertexIndex(vertexInFace);
-				int normalIndex = obj.getFace(faceIndex).getNormalIndex(vertexInFace);
-				int texCoordIndex = obj.getFace(faceIndex).getTexCoordIndex(vertexInFace);
+		this.baked = true;
+	}
 
-				// Get vertex position
-				float x = obj.getVertex(vertexIndex).getX();
-				float y = obj.getVertex(vertexIndex).getY();
-				float z = obj.getVertex(vertexIndex).getZ();
+	private void bakeObj(final Obj obj, final Mtl mtl) {
+		final BufferBuilder buffer = Tessellator.getInstance().getBuffer();
 
-				// Get normal (default to up if not available)
-				float nx = 0.0f, ny = 1.0f, nz = 0.0f;
-				if (normalIndex >= 0 && normalIndex < obj.getNumNormals()) {
-					nx = obj.getNormal(normalIndex).getX();
-					ny = obj.getNormal(normalIndex).getY();
-					nz = obj.getNormal(normalIndex).getZ();
-				}
+		buffer.begin(DrawMode.TRIANGLES, VertexFormats.POSITION_TEXTURE_COLOR_NORMAL);
 
-				// Get texture coordinates (default to 0,0 if not available)
-				float u = 0.0f, v = 0.0f;
-				if (texCoordIndex >= 0 && texCoordIndex < obj.getNumTexCoords()) {
-					u = obj.getTexCoord(texCoordIndex).getX();
-					v = 1.0f - obj.getTexCoord(texCoordIndex).getY(); // Flip V coordinate for Minecraft
-				}
+		this.fillBuffer(obj, mtl, buffer);
 
-				// Add vertex to the buffer
-				vertexConsumer
-					.vertex(positionMatrix, x, y, z)
-					.color(materialColor[0], materialColor[1], materialColor[2], alpha)
-					.texture(u, v)
-					.overlay(overlay)
-					.light(light)
-					.normal(normalMatrix, nx, ny, nz)
+		final BufferBuilder.BuiltBuffer builtBuffer = buffer.end();
+		final VertexBuffer vertexBuffer = new VertexBuffer(VertexBuffer.Usage.STATIC);
+		vertexBuffer.bind();
+		vertexBuffer.upload(builtBuffer);
+		VertexBuffer.unbind();
+				
+		objBufferMap.put(obj, vertexBuffer);
+	}
+
+	private void fillBuffer(final Obj obj, final Mtl mtl, final BufferBuilder buffer) {
+		for (int i = 0; i < obj.getNumFaces(); i++) {
+			final ObjFace face = obj.getFace(i);				
+			
+			for (int j = 0; j < face.getNumVertices(); j++) {
+				final FloatTuple vertex = obj.getVertex(face.getVertexIndex(j));
+				final FloatTuple texture = obj.getTexCoord(face.getTexCoordIndex(j));
+				final FloatTuple normals = obj.getNormal(face.getNormalIndex(j));
+				final FloatTuple color = this.nullishCoalescing(mtl.getKd(), FloatTuples.create(1f, 1f, 1f));
+				
+				buffer
+					.vertex(vertex.getX(), vertex.getY(), vertex.getZ())
+					.texture(texture.getX(), 1 - texture.getY())
+					.color(color.getX(), color.getY(), color.getZ(), 1f)
+					.normal(normals.getX(), normals.getY(), normals.getZ())
 					.next();
 			}
 		}
 	}
 
-	/**
-	 * Overloaded render method with default white color
-	 */
-	public void render(MatrixStack matrices, VertexConsumer vertexConsumer, int light, int overlay) {
-		render(matrices, vertexConsumer, light, overlay, 1.0f, 1.0f, 1.0f, 1.0f);
+	private void load() throws IOException {
+		try (InputStream objStream = this.resolveInputStream(this.modelId)) {
+			final Obj obj = ObjUtils.convertToRenderable(ObjReader.read(objStream));
+			
+			for (String mtlFile : obj.getMtlFileNames()) {
+				try (InputStream mtlStream = this.resolveInputStream(mtlFile)) {
+					MtlReader
+						.read(mtlStream)
+						.forEach(mtl -> this.mtlMap.put(mtl.getName(), mtl));
+				}
+			}
+
+			this.mtlObjMap = ObjSplitting.splitByMaterialGroups(obj);
+		}
 	}
 
-	/**
-	 * Gets the material name for a specific face
-	 * This is a simplified implementation - in practice, you might want to track material groups
-	 */
-	private String getMaterialForFace(int faceIndex) {
-		// For now, return the first available material or null
-		if (!materials.isEmpty()) {
-			return materials.keySet().iterator().next();
+	private InputStream resolveInputStream(String resolvablePath) throws IOException {
+		return this.resolveInputStream(this.resolveId(resolvablePath));
+	}
+
+	private InputStream resolveInputStream(Identifier id) throws IOException {
+		final ResourceManager manager = MinecraftClient.getInstance().getResourceManager();
+		final Optional<Resource> resource = manager.getResource(id);
+
+		if (resource.isEmpty())
+			throw new FileNotFoundException(String.format("The provided path cannot be found in %s", id));
+
+		return resource.get().getInputStream();
+	}
+
+	private Identifier resolveId(String resolvablePath) {
+		if (resolvablePath.split(":").length > 1) {
+			return Identifier.tryParse(resolvablePath);
+		} else {
+			final String newPath = modelId.getPath().substring(0, modelId.getPath().lastIndexOf("/") + 1) + resolvablePath;
+			
+			return modelId.withPath(newPath);
 		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private <T> T nullishCoalescing(T... values) {
+		for (T value : values) if (value != null) return value;
+		
 		return null;
-	}
-
-	/**
-	 * Gets the color for a material, with fallback to provided defaults
-	 */
-	private float[] getMaterialColor(String materialName, float defaultR, float defaultG, float defaultB) {
-		if (materialName != null && materials.containsKey(materialName)) {
-			Mtl material = materials.get(materialName);
-			
-			// Try to get diffuse color (Kd)
-			FloatTuple kd = material.getKd();
-			if (kd != null && kd.getDimensions() >= 3)
-				return new float[]{kd.getX(), kd.getY(), kd.getZ()};
-			
-			// Fallback to ambient color (Ka)
-			FloatTuple ka = material.getKa();
-			if (ka != null && ka.getDimensions() >= 3)
-				return new float[]{ka.getX(), ka.getY(), ka.getZ()};
-		}
-		
-		// Return default color
-		return new float[]{defaultR, defaultG, defaultB};
-	}
-
-	/**
-	 * Scales the model by the given factor
-	 */
-	public void scale(MatrixStack matrices, float scale) {
-		matrices.scale(scale, scale, scale);
-	}
-
-	/**
-	 * Rotates the model
-	 */
-	public void rotate(MatrixStack matrices, float angleX, float angleY, float angleZ) {
-		matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(angleX));
-		matrices.multiply(RotationAxis.POSITIVE_Y.rotationDegrees(angleY));
-		matrices.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(angleZ));
-	}
-
-	/**
-	 * Translates the model
-	 */
-	public void translate(MatrixStack matrices, float x, float y, float z) {
-		matrices.translate(x, y, z);
-	}
-
-	/**
-	 * Returns whether the OBJ is loaded and ready to render
-	 */
-	public boolean isLoaded() {
-		return isLoaded;
-	}
-
-	/**
-	 * Gets the bounding box information of the loaded model
-	 */
-	public float[] getBounds() {
-		if (!isLoaded || obj == null) {
-			return new float[]{0, 0, 0, 0, 0, 0}; // minX, minY, minZ, maxX, maxY, maxZ
-		}
-
-		float minX = Float.MAX_VALUE, minY = Float.MAX_VALUE, minZ = Float.MAX_VALUE;
-		float maxX = Float.MIN_VALUE, maxY = Float.MIN_VALUE, maxZ = Float.MIN_VALUE;
-
-		for (int i = 0; i < obj.getNumVertices(); i++) {
-			float x = obj.getVertex(i).getX();
-			float y = obj.getVertex(i).getY();
-			float z = obj.getVertex(i).getZ();
-
-			minX = Math.min(minX, x);
-			minY = Math.min(minY, y);
-			minZ = Math.min(minZ, z);
-			maxX = Math.max(maxX, x);
-			maxY = Math.max(maxY, y);
-			maxZ = Math.max(maxZ, z);
-		}
-
-		return new float[]{minX, minY, minZ, maxX, maxY, maxZ};
-	}
-
-	/**
-	 * Centers the model around the origin
-	 */
-	public void center(MatrixStack matrices) {
-		final float[] bounds = getBounds();
-		final float centerX = (bounds[0] + bounds[3]) / 2.0f;
-		final float centerY = (bounds[1] + bounds[4]) / 2.0f;
-		final float centerZ = (bounds[2] + bounds[5]) / 2.0f;
-		
-		matrices.translate(-centerX, -centerY, -centerZ);
-	}
-
-	/**
-	 * Gets the number of vertices in the loaded model
-	 */
-	public int getVertexCount() {
-		return isLoaded && obj != null ? obj.getNumVertices() : 0;
-	}
-
-	/**
-	 * Gets the number of faces in the loaded model
-	 */
-	public int getFaceCount() {
-		return isLoaded && obj != null ? obj.getNumFaces() : 0;
 	}
 }
