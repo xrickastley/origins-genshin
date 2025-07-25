@@ -2,7 +2,6 @@ package io.github.xrickastley.originsgenshin.particle;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 
-import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.util.Color;
 import io.github.xrickastley.originsgenshin.util.DelayedRenderer;
 import io.github.xrickastley.originsgenshin.util.Ease;
