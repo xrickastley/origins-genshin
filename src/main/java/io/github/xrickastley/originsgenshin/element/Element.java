@@ -8,6 +8,7 @@ import org.jetbrains.annotations.Nullable;
 
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.component.ElementComponent;
+import io.github.xrickastley.originsgenshin.component.ElementComponentImpl;
 import io.github.xrickastley.originsgenshin.util.Color;
 import io.github.xrickastley.originsgenshin.util.Colors;
 
@@ -164,14 +165,6 @@ public enum Element {
 		return settings.canBeAura;
 	}
 
-	// TODO: fix
-	/**
-	 * Controls reapplication of elements <br> <br>
-	 *
-	 * For an element to be reapplied, this element's priority must *match* the <i>current highest priority</i>.
-	 * Note that it *also* doesn't have to be greater than, as
-	 * 	- The greater than element should've already been applied (sees that priority, match.)
-	 */
 	public int getPriority() {
 		return this.settings.priority;
 	}
@@ -255,19 +248,20 @@ public enum Element {
 
 			return this;
 		}
-
-		// TODO: change from just "rendering priority".
+		
 		/**
-		 * Sets the rendering priority of this element. Most useful for co-existing auras. <br> <br>
+		 * Controls the priority of this element over the others. <br> <br>
+		 * 
+		 * An element's <b>priority</b> dictates when it can be applied, reapplied, reacted 
+		 * with or when it is rendered on top of the entity. Element priority uses natural 
+		 * ordering, also known as ascending order or "least to greatest". <br> <br>
+		 * 
+		 * For more information, you may refer to the methods that use Element priority.
 		 *
-		 * This settings controls how multiple elements are rendered. If all currently applied
-		 * Elements are of the same priority, they are all rendered. However, if an Element of
-		 * higher priority exists, then only that Element and Elements with a similar priority
-		 * will be rendered. <br> <br>
-		 *
-		 * <b>Lower</b> numbers have higher priorities than numbers higher than them.
-		 *
-		 * @param priority The rendering priority of this element.
+		 * @param priority The priority of this element.
+		 * @see ElementComponent#getPrioritizedElements() ElementComponent#getPrioritizedElements
+		 * @see ElementComponentImpl#triggerReactions(ElementalApplication, net.minecraft.entity.LivingEntity) ElementComponentImpl#triggerReactions
+		 * @see ElementComponentImpl#attemptReapply(ElementalApplication) ElementComponentImpl#attemptReapply
 		 */
 		public ElementSettings setPriority(int priority) {
 			this.priority = priority;
@@ -356,7 +350,7 @@ public enum Element {
 		 * lower priorities may <b>not</b> be applied while that element is currently applied as
 		 * an Aura Element. <br> <br>
 		 *
-		 * This setting changes Whether the element is included as a "higher priority"
+		 * This setting changes whether the element is included as a "higher priority"
 		 * element upon checking. If <b>all</b> currently applied Aura elements with the "higher
 		 * priority" are excluded, the next highest priority elements will be considered.
 		 */

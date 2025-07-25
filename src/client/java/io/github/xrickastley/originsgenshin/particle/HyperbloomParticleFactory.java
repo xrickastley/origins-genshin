@@ -13,7 +13,6 @@ public class HyperbloomParticleFactory implements ParticleFactory<DefaultParticl
 	public HyperbloomParticleFactory(SpriteProvider sp) {}
 
 	public Particle createParticle(DefaultParticleType defaultParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
-		// TODO: check for accuracy in-game
 		return new ReactionParticle(clientWorld, d, e, f, Colors.ELECTRO.asARGB())
 			.setText(TextHelper.withFont("Hyperbloom", TextBillboardParticle.GENSHIN_FONT));
 	}

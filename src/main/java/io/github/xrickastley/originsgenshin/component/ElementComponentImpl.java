@@ -294,7 +294,10 @@ public final class ElementComponentImpl implements ElementComponent {
 	 *
 	 * This method also does <b>not</b> guarantee that all Elemental Applications provided are
 	 * indeed reapplied to their respective Elements, as they can be discarded due to the current
-	 * Element priority.
+	 * Element priority. <br> <br>
+	 * 
+	 * Elements will <b>only</b> be reapplied if the Element in question has the same priority as
+	 * the current "highest element priority".
 	 *
 	 * @param application The {@code ElementalApplication} to reapply.
 	 *
@@ -317,18 +320,54 @@ public final class ElementComponentImpl implements ElementComponent {
 	}
 
 	/**
-	 * Triggers all possible Elemental Reactions.
+	 * Triggers all possible Elemental Reactions. <br> <br>
+	 * 
+	 * Elemental Reactions adhere to the rules of Element priority, where only triggerable 
+	 * reactions containing elements with the highest priority are considered. <br> <br>
+	 * 
+	 * <h3>Triggering a Reaction</h3>
+	 * 
+	 * When an element is already applied to this entity and another element is applied, an
+	 * Elemental Reaction may be triggered. <br> <br>
+	 * 
+	 * Each registered Elemental Reaction is filtered based on the priorities of the elements
+	 * participating in that reaction, where reactions only containing elements with the same
+	 * priority are considered. <br> <br>
+	 * 
+	 * After that, the candidate reactions are once again sorted based on the currently applied
+	 * element's priority. The reaction with the highest priority for the currently applied
+	 * element will be the triggered reaction.
+	 * 
+	 * <h3>Triggering Multiple Reactions</h3>
+	 * 
+	 * After a reaction is triggered, so long as the currently applied element still contains 
+	 * leftover Gauge Units, an attempt to find another reaction that can be triggered is made.
+	 * If a reaction is found, it is then triggered and the cycle repeats again. <br> <br>
+	 * 
+	 * <h3>Priority Upgrade</h3>
+	 * 
+	 * If no reactions can be triggered, an attempt to upgrade the priority is made first, so
+	 * long as the previous reaction allows it, where the newer priority must be greater than the
+	 * previous one. <br> <br>
+	 * 
+	 * Once the priority upgrade succeeds, an attempt is made again to find a triggerable reaction.
+	 * If a reaction is found, it is then triggered and the cycle repeats again with the higher
+	 * priority. Otherwise, no more attempts are made to trigger reactions afterwards.
+	 * 
+	 * <h3>Applying as an Aura Element</h3>
+	 * 
+	 * Normally, the triggering element is removed when at least one reaction has been triggered.
+	 * However, the triggering element can be applied as an aura element afterwards if all 
+	 * participating reactions have {@link ElementalReaction#shouldApplyResultAsAura() ElementalReaction#shouldApplyResultAsAura}
+	 * enabled. <br> <br>
+	 * 
+	 * Do note that only {@code GAUGE_UNIT} Elemental Applications are subject to removal.
+	 * {@code DURATION} Elemental Applications are not removed or accounted for by this method.
+	 * 
 	 * @param application The {@link ElementalApplication} to apply to this entity.
 	 * @param origin The origin of the {@link ElementalApplication}.
 	 */
 	private Set<ElementalReaction> triggerReactions(ElementalApplication application, @Nullable LivingEntity origin) {
-		/**
-		 * Get the current element priority to keep track.
-		 *
-		 * For instance, if an element of priority 1 (p1) is added, and the current priority before
-		 * that was 2, Element p1 SHOULD, in theory, "lock" the higher gauges from being reacted
-		 * with.
-		 */
 		final Optional<Integer> optionalPriority = this.getHighestElementPriority();
 		final ElementHolder context = this.getElementHolder(application.getElement());
 

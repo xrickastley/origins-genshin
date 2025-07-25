@@ -197,7 +197,7 @@ public interface ElementComponent extends AutoSyncedComponent, CommonTickingComp
 	public Optional<Integer> getHighestElementPriority();
 
 	/**
-	 * Gets all currently prioritized applied elements as a {@link Stream}. <br> <br>
+	 * Gets all currently prioritized applied elements as an {@link Array}. <br> <br>
 	 *
 	 * If there are applied Elements with multiple priority values, the most
 	 * prioritized one has to be consumed first before the others can be consumed. <br> <br>
