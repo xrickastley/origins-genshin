@@ -180,7 +180,7 @@ public abstract class LivingEntityMixin extends Entity {
 		if (world.isClient || !(world instanceof ServerWorld)) return;
 
 		final Element element = eds.getElementalApplication().getElement();
-		final ShowElementalDamageS2CPacket showElementalDMGPacket = new ShowElementalDamageS2CPacket(this.getId(), element, amount);
+		final ShowElementalDamageS2CPacket showElementalDMGPacket = new ShowElementalDamageS2CPacket(this.getPos(), element, amount);
 
 		for (final ServerPlayerEntity player : PlayerLookup.tracking(this)) {
 			if (player.getId() == this.getId()) return;

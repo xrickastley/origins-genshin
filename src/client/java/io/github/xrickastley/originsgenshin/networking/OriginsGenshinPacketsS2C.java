@@ -11,9 +11,6 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 
 public class OriginsGenshinPacketsS2C {
@@ -41,24 +38,15 @@ public class OriginsGenshinPacketsS2C {
 
 	@SuppressWarnings("resource")
 	protected static void onElementalDamageShow(ShowElementalDamageS2CPacket packet, ClientPlayerEntity player, PacketSender responseSender) {
-		Entity entity = player.networkHandler.getWorld().getEntityById(packet.entityId());
-
-		if (!(entity instanceof LivingEntity)) return;
-
+		final Vec3d pos = packet.pos();
 		final Color color = packet.element() != null && packet.element().hasDamageColor()
 			? packet.element().getDamageColor()
 			: Colors.PHYSICAL;
-
-		final Box boundingBox = entity.getBoundingBox();
-
-		final double x = entity.getX() + (boundingBox.getLengthX() * 1.25 * Math.random());
-		final double y = entity.getY() + (boundingBox.getLengthY() * 0.50 * Math.random()) + 0.50;
-		final double z = entity.getZ() + (boundingBox.getLengthZ() * 1.25 * Math.random());
 
 		MinecraftClient
 			.getInstance()
 			.player
 			.getWorld()
-			.addImportantParticle(OriginsGenshinParticleFactory.DAMAGE_TEXT, x, y, z, packet.amount(), color.asARGB(), 1.0f);
+			.addImportantParticle(OriginsGenshinParticleFactory.DAMAGE_TEXT, pos.x, pos.y, pos.z, packet.amount(), color.asARGB(), 1.0f);
 	}
 }
