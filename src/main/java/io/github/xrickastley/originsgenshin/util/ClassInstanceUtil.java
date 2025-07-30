@@ -8,6 +8,7 @@ public class ClassInstanceUtil {
 		return (T) instance;
 	}
 
+	@SuppressWarnings("unchecked")
 	public static <T> @Nullable T castOrNull(Object instance, Class<T> castClass) {
 		return castClass.isInstance(instance)
 			? (T) instance
