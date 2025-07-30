@@ -14,12 +14,12 @@ import net.minecraft.entity.mob.MobEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvent;
 
-public class FrozenStatusEffect extends StatusEffect {
+public final class FrozenStatusEffect extends StatusEffect {
 	public FrozenStatusEffect() {
 		super(StatusEffectCategory.HARMFUL, 0x84e8f9);
 
 		this.addAttributeModifier(EntityAttributes.GENERIC_MOVEMENT_SPEED, "34683f1b-1465-4aba-92c3-780f4c96cac6", -1, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
-		this.addAttributeModifier(EntityAttributes.GENERIC_ATTACK_DAMAGE, "51374b89-5cd5-4869-97e0-5da041957f52", -1, EntityAttributeModifier.Operation.MULTIPLY_TOTAL);
+		this.addAttributeModifier(EntityAttributes.GENERIC_ATTACK_DAMAGE, "51374b89-5cd5-4869-97e0-5da041957f52", Integer.MIN_VALUE, EntityAttributeModifier.Operation.ADDITION);
 	}
 
 	@Override
@@ -54,8 +54,6 @@ public class FrozenStatusEffect extends StatusEffect {
 
 		if (entity.getStatusEffect(this).getDuration() == 1 && entity instanceof final MobEntity mob)
 			mob.setAiDisabled(false);
-
-		// if (entity.getStatusEffect(this).getDuration() == 1) entity.getWorld().playSound(null, entity.getBlockPos(), SoundEvent.of(Aery.identifier("frozen")), SoundCategory.PLAYERS, 1.0F, 1.0F);
 	}
 
 	@Override

@@ -109,6 +109,21 @@ public interface ElementComponent extends AutoSyncedComponent, CommonTickingComp
 	}
 
 	/**
+	 * Grants this entity a Crystallize shield.
+	 * @param element The element of this Crystallize shield.
+	 * @param amount The amount of HP this shield has.
+	 */
+	public void setCrystallizeShield(Element element, double amount);
+
+	/**
+	 * Reduces the Crystallize shield and returns the effective amount of DMG reduced.
+	 * 
+	 * @param source The {@code DamageSource}. If this isn't an instance of {@code ElementalDamageSource}, {@code 0} is returned.
+	 * @param amount The amount of damage to be dealt to the entity.
+	 */
+	public float reduceCrystallizeShield(DamageSource source, float amount);
+
+	/**
 	 * Checks if the element can be applied.
 	 * @param element The element to check.
 	 * @param icdContext The {@link InternalCooldownContext} of the Element to be applied.

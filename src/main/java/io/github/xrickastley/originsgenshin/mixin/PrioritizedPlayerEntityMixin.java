@@ -2,7 +2,6 @@ package io.github.xrickastley.originsgenshin.mixin;
 
 import com.mojang.authlib.GameProfile;
 
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
@@ -25,11 +24,11 @@ public abstract class PrioritizedPlayerEntityMixin extends LivingEntity {
 		throw new AssertionError();
 	}
 
-	@Final
 	@Inject(
 		method = "isBlockBreakingRestricted",
 		at = @At("HEAD"),
-		cancellable = true
+		cancellable = true,
+		order = Integer.MAX_VALUE
 	)
 	protected void frozen_CantBreakBlocks(CallbackInfoReturnable<Boolean> info) {
 		final PlayerEntity player = ((PlayerEntity)(LivingEntity) this);

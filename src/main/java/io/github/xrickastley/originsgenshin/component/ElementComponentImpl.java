@@ -30,6 +30,7 @@ import io.github.xrickastley.originsgenshin.util.Array;
 import io.github.xrickastley.originsgenshin.util.ImmutablePair;
 
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
@@ -50,6 +51,7 @@ public final class ElementComponentImpl implements ElementComponent {
 	private @Nullable LivingEntity electroChargedOrigin = null;
 	private int burningCooldown = -1;
 	private @Nullable LivingEntity burningOrigin = null;
+	private CrystallizeShield crystallizeShield = null;
 
 	public ElementComponentImpl(LivingEntity owner) {
 		this.owner = owner;
@@ -94,6 +96,20 @@ public final class ElementComponentImpl implements ElementComponent {
 
 	public @Nullable LivingEntity getBurningOrigin() {
 		return this.burningOrigin;
+	}
+
+	@Override
+	public void setCrystallizeShield(Element element, double amount) {
+		this.crystallizeShield = new CrystallizeShield(element, amount, this.owner.getWorld().getTime());
+
+		ElementComponent.sync(owner);
+	}
+
+	@Override
+	public float reduceCrystallizeShield(DamageSource source, float amount) {
+		if (!(source instanceof final ElementalDamageSource eds) || this.crystallizeShield == null) return 0;
+
+		return this.crystallizeShield.reduce(eds, amount);
 	}
 
 	@Override
@@ -191,6 +207,9 @@ public final class ElementComponentImpl implements ElementComponent {
 
 			tag.put("LastReaction", lastReaction);
 		}
+
+		if (this.crystallizeShield != null && !this.crystallizeShield.isEmpty())
+			crystallizeShield.writeToNbt(tag);
 	}
 
 	@Override
@@ -206,6 +225,9 @@ public final class ElementComponentImpl implements ElementComponent {
 				lastReaction.getLong("Time")
 			);
 		}
+
+		if (tag.contains("CrystallizeShield"))
+			this.crystallizeShield = CrystallizeShield.ofNbt(tag.getCompound("CrystallizeShield"));
 
 		final NbtList list = tag.getList("AppliedElements", NbtElement.COMPOUND_TYPE);
 		final long syncedAt = tag.getLong("SyncedAt");
@@ -237,6 +259,8 @@ public final class ElementComponentImpl implements ElementComponent {
 			.length();
 
 		if (tickedElements > 0) this.removeConsumedElements();
+
+		if (this.crystallizeShield != null) crystallizeShield.tick(this);
 	}
 
 	private void removeConsumedElements() {
@@ -450,5 +474,57 @@ public final class ElementComponentImpl implements ElementComponent {
 		}
 
 		return triggeredReactions;
+	}
+
+	private static class CrystallizeShield {
+		private final Element element;
+		private final long appliedAt;
+		private double amount;
+		
+		private CrystallizeShield(final Element element, final double amount, final long appliedAt) {
+			this.element = element;
+			this.appliedAt = appliedAt;
+			this.amount = amount;
+		}
+
+		private static CrystallizeShield ofNbt(final NbtCompound tag) {
+			return new CrystallizeShield(Element.valueOf(tag.getString("Element")), tag.getDouble("Amount"), tag.getLong("AppliedAt"));
+		}
+
+		private float reduce(ElementalDamageSource source, float amount) {
+			final double elementBonus = this.element == Element.GEO
+				? 1.5 // 150% "effectiveness"
+				: source.getElementalApplication().getElement() == this.element
+					? 2.5 // 250% "effectiveness"
+					: 1; // No "effectiveness"
+
+			if (elementBonus == 1) return 0;
+
+			final double dmgReduced = Math.min(amount * (1 / elementBonus), this.amount);
+			// Use Math.max to guarantee >= 0 in case of FP errors.
+			this.amount = Math.max(dmgReduced - this.amount, 0);
+
+			return (float) dmgReduced;
+		}
+
+		private void writeToNbt(@Nonnull NbtCompound tag) {
+			final NbtCompound crystallizeShield = new NbtCompound();
+
+			crystallizeShield.putString("Element", this.element.toString());
+			crystallizeShield.putDouble("Amount", this.amount);
+			crystallizeShield.putLong("AppliedAt", this.appliedAt);
+
+			tag.put("CrystallizeShield", crystallizeShield);
+		}
+
+		private boolean isEmpty() {
+			return this.amount <= 0 || this.element == null;
+		}
+
+		private void tick(ElementComponentImpl impl) {
+			if (this.appliedAt + 300 >= impl.owner.getWorld().getTime()) return;
+
+			impl.crystallizeShield = null;
+		}
 	}
 }

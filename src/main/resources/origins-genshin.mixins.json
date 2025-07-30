@@ -13,6 +13,7 @@
     "LivingEntityMixin",
     "OriginMixin",
     "PowerTypesMixin",
+    "PrioritizedLivingEntityMixin",
     "PrioritizedPlayerEntityMixin",
     "SimpleRegistryMixin"
   ],

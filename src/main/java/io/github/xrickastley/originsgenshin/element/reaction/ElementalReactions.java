@@ -47,6 +47,8 @@ public class ElementalReactions {
 	public static final ElementalReaction FROZEN_SWIRL = new FrozenSwirlElementalReaction();
 	// TODO: Crystallize Shards
 	// Creates a Crystallize Shard at the location, providing a shield upon picking it up.
+	// Since the strength of Crystallize Shards is based *per level*, it shall statically be 3 hearts (6 HP).
+	// Crystallize will also spawn a Crystal in front of the enemy (Enemy PoV) 
 	public static final ElementalReaction PYRO_CRYSTALLIZE = new PyroCrystallizeElementalReaction();
 	public static final ElementalReaction HYDRO_CRYSTALLIZE = new HydroCrystallizeElementalReaction();
 	public static final ElementalReaction ELECTRO_CRYSTALLIZE = new ElectroCrystallizeElementalReaction();

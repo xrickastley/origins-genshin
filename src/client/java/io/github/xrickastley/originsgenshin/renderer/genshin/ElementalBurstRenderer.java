@@ -16,7 +16,7 @@ import io.github.xrickastley.originsgenshin.util.Rescaler;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
-
+import net.minecraft.util.math.Vec3d;
 import me.shedaniel.autoconfig.AutoConfig;
 
 public class ElementalBurstRenderer extends PowerRenderer {
@@ -79,10 +79,9 @@ public class ElementalBurstRenderer extends PowerRenderer {
 
 			this.renderFill(burstIcon, circleRenderer, drawContext, posMatrix);
 			this.renderIcon(elementalBurstData, burstIcon, circleRenderer, drawContext, posMatrix, rescaler, percentFilled);
+			this.renderCooldown(elementalBurstData, burstIcon, drawContext, rescaler, percentFilled);
 
 			matrices.pop();
-
-			this.renderCooldown(elementalBurstData, burstIcon, drawContext, rescaler, percentFilled);
 		} catch (Exception e) {
 			OriginsGenshin
 				.sublogger(ElementalBurstRenderer.class)
@@ -153,7 +152,6 @@ public class ElementalBurstRenderer extends PowerRenderer {
 		float scale = (float) (1.35 * rescaler.getRescaleFactorWindow());
 
 		matrices.push();
-		matrices.translate(rescaler.rescaleX(1820 - 1), rescaler.rescaleY(976), 0);
 		matrices.scale(scale, scale, 1F);
 
 		PowerRenderer.drawCenteredText(

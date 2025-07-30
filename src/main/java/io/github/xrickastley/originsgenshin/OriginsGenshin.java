@@ -33,6 +33,8 @@ import io.github.xrickastley.originsgenshin.registry.OriginsGenshinRegistryKeys;
 import io.github.xrickastley.originsgenshin.registry.OriginsGenshinReloadListener;
 
 public class OriginsGenshin implements ModInitializer {
+	// TODO: make mod client/server, not client AND server
+
 	public static final String MOD_ID = "origins-genshin";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 	public static final Scheduler SCHEDULER = new Scheduler();

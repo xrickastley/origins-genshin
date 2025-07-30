@@ -6,7 +6,7 @@ import net.minecraft.entity.attribute.EntityAttributeModifier.Operation;
 import net.minecraft.entity.effect.StatusEffect;
 import net.minecraft.entity.effect.StatusEffectCategory;
 
-public class SuperconductStatusEffect extends StatusEffect {
+public final class SuperconductStatusEffect extends StatusEffect {
 	public SuperconductStatusEffect() {
 		super(StatusEffectCategory.HARMFUL, 0xbcb0ff);
 

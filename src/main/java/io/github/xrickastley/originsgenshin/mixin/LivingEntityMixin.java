@@ -1,30 +1,24 @@
 package io.github.xrickastley.originsgenshin.mixin;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
-
-import java.util.ArrayList;
-import java.util.List;
+import com.llamalad7.mixinextras.sugar.Share;
+import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 
 import org.spongepowered.asm.mixin.Debug;
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
-import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.component.ElementComponent;
 import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementalApplications;
 import io.github.xrickastley.originsgenshin.element.ElementalDamageSource;
 import io.github.xrickastley.originsgenshin.element.InternalCooldownContext;
 import io.github.xrickastley.originsgenshin.element.InternalCooldownType;
-import io.github.xrickastley.originsgenshin.element.reaction.AdditiveElementalReaction;
-import io.github.xrickastley.originsgenshin.element.reaction.AmplifyingElementalReaction;
-import io.github.xrickastley.originsgenshin.element.reaction.ElementalReaction;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinAttributes;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinGameRules;
 import io.github.xrickastley.originsgenshin.networking.ShowElementalDamageS2CPacket;
@@ -40,86 +34,16 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.math.Box;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 @Mixin(LivingEntity.class)
 @Debug(export = true)
 public abstract class LivingEntityMixin extends Entity {
-	@Unique
-	private List<ElementalReaction> originsgenshin$reactions = new ArrayList<>();
-
 	public LivingEntityMixin(final EntityType<? extends LivingEntity> entityType, final World world) {
 		super(entityType, world);
 		throw new AssertionError();
-	}
-
-	// Is final since infusions need to be considered before the others.
-	@Final
-	@ModifyVariable(
-		method = "damage",
-		at = @At("HEAD"),
-		argsOnly = true
-	)
-	private DamageSource applyElementalInfusions(DamageSource source) {
-		return ElementComponent.applyElementalInfusions(source, (LivingEntity)(Entity) this);
-	}
-
-	// Is final since Additive DMG Bonus should be a Base DMG multiplier.
-	@Final
-	@ModifyVariable(
-		method = "damage",
-		at = @At("HEAD"),
-		argsOnly = true
-	)
-	private float applyDMGModifiers(float amount, @Local(argsOnly = true) DamageSource source) {
-		if (!(source instanceof final ElementalDamageSource eds)) return OriginsGenshinAttributes.modifyDamage((LivingEntity)(Entity) this, new ElementalDamageSource(source, ElementalApplications.gaugeUnits((LivingEntity)(Entity) this, Element.PHYSICAL, 0), InternalCooldownContext.ofNone(source.getAttacker())), amount);
-
-		final ElementComponent component = ElementComponent.KEY.get(this);
-		this.originsgenshin$reactions = component.applyFromDamageSource(eds);
-
-		float additive = this.originsgenshin$reactions != null && !this.originsgenshin$reactions.isEmpty()
-			? Math.max(
-				this.originsgenshin$reactions
-					.stream()
-					.filter(reaction -> reaction instanceof AdditiveElementalReaction)
-					.map(reaction -> ((AdditiveElementalReaction) reaction))
-					.reduce(0.0f, (acc, reaction) -> acc + (float) reaction.getDamageBonus(this.getWorld()), Float::sum),
-				0.0f
-			)
-			: 0.0f;
-
-		OriginsGenshin
-			.sublogger("LivingEntityMixin")
-			.debug("Damage Phase: ADDITIVE - Damage: {}, Additive: {}, Final Base DMG: {}", amount, additive, amount + additive);
-
-		return OriginsGenshinAttributes.modifyDamage((LivingEntity)(Entity) this, eds, amount + additive);
-	}
-
-	@ModifyVariable(
-		method = "modifyAppliedDamage",
-		at = @At(
-			value = "TAIL",
-			shift = At.Shift.BEFORE
-		),
-		argsOnly = true
-	)
-	private float applyReactionAmplifiers(float amount, @Local(argsOnly = true) DamageSource source) {
-		double amplifier = this.originsgenshin$reactions != null && !this.originsgenshin$reactions.isEmpty()
-			? Math.max(
-				this.originsgenshin$reactions
-					.stream()
-					.filter(reaction -> reaction instanceof AmplifyingElementalReaction)
-					.map(reaction -> ((AmplifyingElementalReaction) reaction))
-					.reduce(0.0, (acc, reaction) -> acc + reaction.getAmplifier(), Double::sum),
-				1.0
-			)
-			: 1.0;
-
-		OriginsGenshin
-			.sublogger("LivingEntityMixin")
-			.debug("Damage Phase: AMPLIFY - Damage: {}, Multiplier: {}, Final DMG: {}", amount, amplifier, amount * amplifier);
-
-		return amount * (float) amplifier;
 	}
 
 	@ModifyReturnValue(
@@ -166,6 +90,38 @@ public abstract class LivingEntityMixin extends Entity {
 		}
 	}
 
+	@ModifyVariable(
+		method = "applyDamage",
+		at = @At(
+			value = "INVOKE",
+			target = "Lnet/minecraft/entity/LivingEntity;setAbsorptionAmount(F)V",
+			ordinal = 0,
+			shift = At.Shift.AFTER
+		),
+		ordinal = 0,
+		argsOnly = true
+	)
+	private float applyCrystallizeShield(float amount, @Local(argsOnly = true) DamageSource source, @Share("originsgenshin$hasCrystallizeShield") LocalBooleanRef hasCrystallizeShield) {
+		final ElementComponent component = ElementComponent.KEY.get(this);
+		final float reduced = component.reduceCrystallizeShield(source, amount);
+
+		hasCrystallizeShield.set(reduced >= 0);
+
+		return amount - reduced;
+	}
+
+	@ModifyExpressionValue(
+		method = "damage",
+		at = @At(
+			value = "INVOKE",
+			target = "Lnet/minecraft/entity/damage/DamageSource;isIn(Lnet/minecraft/registry/tag/TagKey;)Z",
+			ordinal = 7
+		)
+	)
+	private boolean preventKnockbackIfCrystallize(boolean original, @Local(argsOnly = true) DamageSource source, @Share("originsgenshin$hasCrystallizeShield") LocalBooleanRef hasCrystallizeShield) {
+		return original || hasCrystallizeShield.get();
+	}
+
 	@Inject(
 		method = "applyDamage",
 		at = @At("TAIL")
@@ -179,8 +135,15 @@ public abstract class LivingEntityMixin extends Entity {
 
 		if (world.isClient || !(world instanceof ServerWorld)) return;
 
+		final Box boundingBox = this.getBoundingBox();
+
+		final double x = this.getX() + (boundingBox.getLengthX() * 1.25 * Math.random());
+		final double y = this.getY() + (boundingBox.getLengthY() * 0.50 * Math.random()) + 0.50;
+		final double z = this.getZ() + (boundingBox.getLengthZ() * 1.25 * Math.random());
+		final Vec3d pos = new Vec3d(x, y, z);
+
 		final Element element = eds.getElementalApplication().getElement();
-		final ShowElementalDamageS2CPacket showElementalDMGPacket = new ShowElementalDamageS2CPacket(this.getPos(), element, amount);
+		final ShowElementalDamageS2CPacket showElementalDMGPacket = new ShowElementalDamageS2CPacket(pos, element, amount);
 
 		for (final ServerPlayerEntity player : PlayerLookup.tracking(this)) {
 			if (player.getId() == this.getId()) return;

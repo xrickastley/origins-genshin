@@ -21,7 +21,6 @@ public class OriginsGenshinPacketsS2C {
 		}));
 	}
 
-	@SuppressWarnings("resource")
 	protected static void onElementalReactionShow(ShowElementalReactionS2CPacket packet, ClientPlayerEntity player, PacketSender responseSender) {
 		final Vec3d pos = packet.pos();
 
@@ -36,7 +35,6 @@ public class OriginsGenshinPacketsS2C {
 			.addImportantParticle(reaction.getParticle(), pos.x, pos.y, pos.z, 0.02, 0.02, 0.02);
 	}
 
-	@SuppressWarnings("resource")
 	protected static void onElementalDamageShow(ShowElementalDamageS2CPacket packet, ClientPlayerEntity player, PacketSender responseSender) {
 		final Vec3d pos = packet.pos();
 		final Color color = packet.element() != null && packet.element().hasDamageColor()

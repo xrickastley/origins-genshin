@@ -6,6 +6,7 @@
     "AbstractInventoryScreenMixin",
     "EntityRendererMixin",
     "GameRendererMixin",
+    "InGameHudMixin",
     "LivingEntityRendererMixin",
     "WorldRendererAccessor"
   ],

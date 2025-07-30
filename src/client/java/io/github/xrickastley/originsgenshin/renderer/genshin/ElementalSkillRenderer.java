@@ -102,10 +102,9 @@ public class ElementalSkillRenderer extends PowerRenderer {
 
 			this.renderIcon(skillIcon, circleRenderer, drawContext, posMatrix, rescaler, percentFilled);
 			this.renderCharges(skillIcon, circleRenderer, drawContext, tickDeltaManager, posMatrix);
+			this.renderCooldown(elementalSkillData, skillIcon, drawContext, percentFilled);
 
 			matrices.pop();
-
-			this.renderCooldown(elementalSkillData, skillIcon, drawContext, percentFilled);
 		} catch (Exception e) {
 			OriginsGenshin
 				.sublogger(ElementalSkillRenderer.class)
@@ -198,11 +197,10 @@ public class ElementalSkillRenderer extends PowerRenderer {
 	private void renderCooldown(ElementalSkill skillData, ElementalSkillIcon skillIcon, DrawContext drawContext, double percentFilled) {
 		if (skillIcon.getChargeRender().getMethod() == ChargeRender.Method.CONDITIONAL || !skillData.shouldShowCooldown() || percentFilled == 0) return;
 
-		MatrixStack matrices = drawContext.getMatrices();
-		float scale = (float) (1f * rescaler.getRescaleFactorWindow());
+		final MatrixStack matrices = drawContext.getMatrices();
+		final float scale = (float) (1f * rescaler.getRescaleFactorWindow());
 
 		matrices.push();
-		matrices.translate(rescaler.rescaleX(1692), rescaler.rescaleY(992), 0);
 		matrices.scale(scale, scale, 1F);
 
 		PowerRenderer.drawCenteredText(
