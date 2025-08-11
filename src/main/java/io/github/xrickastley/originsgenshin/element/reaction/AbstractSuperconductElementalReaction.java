@@ -34,7 +34,7 @@ public abstract sealed class AbstractSuperconductElementalReaction
 			);
 
 			target.damage(source, damage);
-			target.addStatusEffect(new StatusEffectInstance(OriginsGenshinStatusEffects.SUPERCONDUCT, 240, 1), origin);
+			target.addStatusEffect(new StatusEffectInstance(OriginsGenshinStatusEffects.SUPERCONDUCT, 240, 0), origin);
 		}
 	}
 }

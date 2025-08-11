@@ -10,6 +10,6 @@ public final class SuperconductStatusEffect extends StatusEffect {
 	public SuperconductStatusEffect() {
 		super(StatusEffectCategory.HARMFUL, 0xbcb0ff);
 
-		this.addAttributeModifier(OriginsGenshinAttributes.PHYSICAL_RES, "286e4184-4441-4be1-92ba-26464b79a8bc", -0.4, Operation.ADDITION);
+		this.addAttributeModifier(OriginsGenshinAttributes.PHYSICAL_RES, "286e4184-4441-4be1-92ba-26464b79a8bc", -40, Operation.ADDITION);
 	}
 }

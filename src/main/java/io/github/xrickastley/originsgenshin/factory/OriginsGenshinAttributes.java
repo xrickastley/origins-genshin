@@ -4,14 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
-import java.util.function.Consumer;
-
-import org.slf4j.Logger;
 
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementalDamageSource;
-
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.ClampedEntityAttribute;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
@@ -22,6 +18,7 @@ import net.minecraft.registry.Registry;
 public class OriginsGenshinAttributes {
 	private static final List<EntityAttribute> ADDED_ATTRIBUTES = new ArrayList<>();
 	private static final Map<Element, ConcurrentHashMap<ModifierType, EntityAttribute>> LINKS = new ConcurrentHashMap<>();
+	private static boolean registered = false;
 
 	public static final EntityAttribute PHYSICAL_DMG_BONUS = createAttribute("Physical DMG Bonus%", 0, 0, 400);
 	public static final EntityAttribute PYRO_DMG_BONUS = createAttribute("Pyro DMG Bonus%", 0, 0, 400);
@@ -42,6 +39,8 @@ public class OriginsGenshinAttributes {
 	public static final EntityAttribute GEO_RES = createAttribute("Geo RES%", 0, -200, 100);
 
 	public static void register() {
+		if (registered) return;
+
 		registerAndLink("generic.physical_dmg_bonus", PHYSICAL_DMG_BONUS, Element.PHYSICAL, ModifierType.DMG_BONUS);
 		registerAndLink("generic.pyro_dmg_bonus", PYRO_DMG_BONUS, Element.PYRO, ModifierType.DMG_BONUS);
 		registerAndLink("generic.hydro_dmg_bonus", HYDRO_DMG_BONUS, Element.HYDRO, ModifierType.DMG_BONUS);
@@ -59,6 +58,8 @@ public class OriginsGenshinAttributes {
 		registerAndLink("generic.dendro_res", DENDRO_RES, Element.DENDRO, ModifierType.RES);
 		registerAndLink("generic.cryo_res", CRYO_RES, Element.CRYO, ModifierType.RES);
 		registerAndLink("generic.geo_res", GEO_RES, Element.GEO, ModifierType.RES);
+
+		registered = true;
 	}
 
 	/**
@@ -75,30 +76,21 @@ public class OriginsGenshinAttributes {
 		final EntityAttribute dmgBonusAttribute = modifierMap.get(ModifierType.DMG_BONUS);
 		final EntityAttribute resAttribute = modifierMap.get(ModifierType.RES);
 
-		OriginsGenshin
-			.sublogger("DamageModifier")
-			.info("DMG Bonus Attribute: {} | RES Attribute: {}", dmgBonusAttribute.getTranslationKey(), resAttribute.getTranslationKey());
-
-		final float dmgBonusMultiplier = target.getAttributes().hasAttribute(dmgBonusAttribute)
+		final float dmgBonusMultiplier = 1 + (target.getAttributes().hasAttribute(dmgBonusAttribute)
 			? (float) (target.getAttributes().getValue(dmgBonusAttribute) / 100)
-			: 1;
+			: 1);
 
 		final float resMultiplier = target.getAttributes().hasAttribute(resAttribute)
 			? (float) getRESMultiplier(target, resAttribute)
 			: 1;
 
-		OriginsGenshin
-			.sublogger("DamageModifier")
-			.info("DMG Bonus Amplifier: {} | RES Amplifier: {}", dmgBonusMultiplier, resMultiplier);
-
 		return amount * dmgBonusMultiplier * resMultiplier;
 	}
 
 	public static DefaultAttributeContainer.Builder apply(DefaultAttributeContainer.Builder builder) {
-		final Logger LOGGER = OriginsGenshin.sublogger(OriginsGenshinAttributes.class);
-		final Consumer<EntityAttribute> consumer = ea -> LOGGER.info("Registering {}", ea.getTranslationKey());
-
-		OriginsGenshinAttributes.ADDED_ATTRIBUTES.forEach(consumer.andThen(builder::add));
+		// do this since Mod Load (registering) is delayed.
+		OriginsGenshinAttributes.register();
+		OriginsGenshinAttributes.ADDED_ATTRIBUTES.forEach(builder::add);
 
 		return builder;
 	}
