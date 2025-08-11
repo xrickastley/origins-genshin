@@ -47,9 +47,9 @@ public final class ElementComponentImpl implements ElementComponent {
 	private final Map<Element, ElementHolder> elementHolders = new ConcurrentHashMap<>();
 	private final Logger LOGGER = OriginsGenshin.sublogger(ElementComponent.class);
 	private Pair<ElementalReaction, Long> lastReaction = new Pair<>(null, -1L);
-	private int electroChargedCooldown = -1;
+	private long electroChargedCooldown = -1;
 	private @Nullable LivingEntity electroChargedOrigin = null;
-	private int burningCooldown = -1;
+	private long burningCooldown = -1;
 	private @Nullable LivingEntity burningOrigin = null;
 	private CrystallizeShield crystallizeShield = null;
 	private int crystallizeShieldReducedAt = -1;
@@ -62,22 +62,22 @@ public final class ElementComponentImpl implements ElementComponent {
 
 	@Override
 	public boolean isElectroChargedOnCD() {
-		return this.owner.age < this.electroChargedCooldown;
+		return this.owner.getWorld().getTime() < this.electroChargedCooldown;
 	}
 
 	@Override
 	public boolean isBurningOnCD() {
-		return this.owner.age < this.burningCooldown;
+		return this.owner.getWorld().getTime() < this.burningCooldown;
 	}
 
 	@Override
 	public void resetElectroChargedCD() {
-		this.electroChargedCooldown = this.owner.age + 20;
+		this.electroChargedCooldown = this.owner.getWorld().getTime() + 20;
 	}
 
 	@Override
 	public void resetBurningCD() {
-		this.burningCooldown = this.owner.age + 5;
+		this.burningCooldown = this.owner.getWorld().getTime() + 5;
 	}
 
 	@Override
@@ -213,8 +213,8 @@ public final class ElementComponentImpl implements ElementComponent {
 
 		tag.put("AppliedElements", list);
 		tag.putLong("SyncedAt", owner.getWorld().getTime());
-		tag.putInt("ElectroChargedCooldown", electroChargedCooldown);
-		tag.putInt("BurningCooldown", burningCooldown);
+		tag.putLong("ElectroChargedCooldown", electroChargedCooldown);
+		tag.putLong("BurningCooldown", burningCooldown);
 
 		if (this.lastReaction.getLeft() != null) {
 			final NbtCompound lastReaction = new NbtCompound();
@@ -231,8 +231,8 @@ public final class ElementComponentImpl implements ElementComponent {
 
 	@Override
 	public void readFromNbt(@Nonnull NbtCompound tag) {
-		this.electroChargedCooldown = tag.getInt("ElectroChargedCooldown");
-		this.burningCooldown = tag.getInt("BurningCooldown");
+		this.electroChargedCooldown = tag.getLong("ElectroChargedCooldown");
+		this.burningCooldown = tag.getLong("BurningCooldown");
 
 		if (tag.contains("LastReaction")) {
 			final NbtCompound lastReaction = tag.getCompound("LastReaction");

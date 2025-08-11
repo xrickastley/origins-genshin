@@ -2,7 +2,6 @@ package io.github.xrickastley.originsgenshin.component;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Stream;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -202,7 +201,7 @@ public interface ElementComponent extends AutoSyncedComponent, CommonTickingComp
 	}
 
 	/**
-	 * Gets all currently applied elements as a {@link Stream}.
+	 * Gets all currently applied elements as a {@link Array}.
 	 */
 	public Array<ElementalApplication> getAppliedElements();
 

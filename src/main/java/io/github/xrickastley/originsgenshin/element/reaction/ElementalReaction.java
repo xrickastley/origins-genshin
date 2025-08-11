@@ -260,7 +260,7 @@ public abstract class ElementalReaction {
 	}
 
 	protected void displayReaction(LivingEntity target) {
-		if (target.getWorld().isClient()) return;
+		if (target.getWorld().isClient) return;
 
 		final Box boundingBox = target.getBoundingBox();
 

@@ -44,7 +44,7 @@ public class ElectroChargedElementalReaction extends ElementalReaction {
 
 	@Override
 	public boolean trigger(LivingEntity entity, @Nullable LivingEntity origin) {
-		if (!isTriggerable(entity)) return false;
+		if (!isTriggerable(entity) || entity.getWorld().isClient) return false;
 
 		final ElementComponent component = ElementComponent.KEY.get(entity);
 		final ElementalApplication auraElement = component.getElementalApplication(this.auraElement.getLeft());
@@ -72,10 +72,10 @@ public class ElectroChargedElementalReaction extends ElementalReaction {
 		final Predicate<LivingEntity> predicate = e -> {
 			final ElementComponent c = ElementComponent.KEY.get(e);
 
-			return c.hasElementalApplication(Element.HYDRO) && !c.isElectroChargedOnCD();
+			return (e == entity || c.hasElementalApplication(Element.HYDRO)) && !c.isElectroChargedOnCD();
 		};
 
-		for (LivingEntity target : ElementalReaction.getEntitiesInAoE(entity, 2.5, predicate)) {
+		for (final LivingEntity target : ElementalReaction.getEntitiesInAoE(entity, 2.5, predicate)) {
 			final float damage = ElementalReaction.getReactionDamage(entity, 2.0);
 			final ElementalDamageSource source = new ElementalDamageSource(
 				entity
