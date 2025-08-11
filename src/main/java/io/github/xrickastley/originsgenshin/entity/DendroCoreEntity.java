@@ -311,7 +311,7 @@ public final class DendroCoreEntity extends LivingEntity {
 				.create(OriginsGenshinDamageTypes.DENDRO_CORE, this, recentOwner),
 			ElementalApplications.gaugeUnits(target, Element.DENDRO, 0.0),
 			InternalCooldownContext.ofNone(recentOwner)
-		);
+		).shouldApplyDMGBonus(false);
 	}
 
 	static {

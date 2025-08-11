@@ -97,7 +97,7 @@ public class OverloadedElementalReaction extends ElementalReaction {
 				.create(OriginsGenshinDamageTypes.OVERLOADED, origin),
 			application,
 			InternalCooldownContext.ofNone(entity)
-		);
+		).shouldApplyDMGBonus(false);
 
 		float amount = ElementalReaction.getReactionDamage(entity, 2.75);
 

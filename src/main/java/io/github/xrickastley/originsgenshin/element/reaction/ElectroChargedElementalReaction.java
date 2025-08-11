@@ -83,7 +83,7 @@ public class ElectroChargedElementalReaction extends ElementalReaction {
 					.create(OriginsGenshinDamageTypes.ELECTRO_CHARGED, entity, origin),
 				ElementalApplications.gaugeUnits(target, Element.ELECTRO, 0),
 				InternalCooldownContext.ofNone(origin)
-			);
+			).shouldApplyDMGBonus(false);
 
 			target.damage(source, damage);
 

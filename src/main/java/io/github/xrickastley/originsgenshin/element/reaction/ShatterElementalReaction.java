@@ -41,7 +41,7 @@ public final class ShatterElementalReaction extends ElementalReaction {
 				.create(OriginsGenshinDamageTypes.SHATTER, origin),
 			ElementalApplications.gaugeUnits(entity, Element.PHYSICAL, 0.0, false),
 			InternalCooldownContext.ofNone(entity)
-		);
+		).shouldApplyDMGBonus(false);
 
 		entity.damage(source, damage);
 		entity.removeStatusEffect(OriginsGenshinStatusEffects.FROZEN);

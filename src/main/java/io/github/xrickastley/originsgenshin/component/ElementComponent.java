@@ -119,7 +119,6 @@ public interface ElementComponent extends AutoSyncedComponent, CommonTickingComp
 	 */
 	public @Nullable Pair<Element, Double> getCrystallizeShield();
 
-	// TODO: "returns the effective amount of DMG reduced"
 	/**
 	 * Reduces the Crystallize shield and returns the effective amount of DMG reduced.
 	 * 

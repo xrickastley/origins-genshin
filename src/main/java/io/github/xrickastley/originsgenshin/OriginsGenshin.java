@@ -39,6 +39,7 @@ import io.github.xrickastley.originsgenshin.registry.OriginsGenshinReloadListene
 
 public class OriginsGenshin implements ModInitializer {
 	// TODO: make mod client/server, not client AND server
+	// elements???
 
 	public static final String MOD_ID = "origins-genshin";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);

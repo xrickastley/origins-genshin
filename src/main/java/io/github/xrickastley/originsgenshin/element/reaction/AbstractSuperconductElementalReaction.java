@@ -31,7 +31,7 @@ public abstract sealed class AbstractSuperconductElementalReaction
 					.create(OriginsGenshinDamageTypes.SUPERCONDUCT, origin),
 				ElementalApplications.gaugeUnits(target, Element.CRYO, 0),
 				InternalCooldownContext.ofNone(origin)
-			);
+			).shouldApplyDMGBonus(false);
 
 			target.damage(source, damage);
 			target.addStatusEffect(new StatusEffectInstance(OriginsGenshinStatusEffects.SUPERCONDUCT, 240, 0), origin);

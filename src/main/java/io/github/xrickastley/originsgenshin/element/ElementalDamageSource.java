@@ -8,9 +8,11 @@ import net.minecraft.util.math.Vec3d;
 
 import blue.endless.jankson.annotation.Nullable;
 
-public class ElementalDamageSource extends DamageSource {
+public final class ElementalDamageSource extends DamageSource {
 	private final ElementalApplication application;
 	private final InternalCooldownContext icdContext;
+	private boolean applyDMGBonus = true;
+	private boolean applyRES = true;
 
 	/**
 	 * Creates an {@link ElementalDamageSource} from an already existing {@link DamageSource}.
@@ -100,6 +102,25 @@ public class ElementalDamageSource extends DamageSource {
 		this.icdContext = icdContext;
 	}
 
+	/**
+	 * Sets whether the Elemental DMG Bonus% should be included in the DMG calculation for this 
+	 * {@code ElementalDamageSource}.
+	 */
+	public ElementalDamageSource shouldApplyDMGBonus(boolean dmgBonus) {
+		this.applyDMGBonus = dmgBonus;
+
+		return this;
+	}
+
+	/**
+	 * Sets whether the Elemental RES% should be included in the DMG calculation for this 
+	 * {@code ElementalDamageSource}.
+	 */
+	public ElementalDamageSource shouldApplyRES(boolean res) {
+		this.applyRES = res;
+
+		return this;
+	}
 
 	public ElementalApplication getElementalApplication() {
 		return this.application;
@@ -107,5 +128,13 @@ public class ElementalDamageSource extends DamageSource {
 
 	public InternalCooldownContext getIcdContext() {
 		return this.icdContext;
+	}
+
+	public boolean applyDMGBonus() {
+		return this.applyDMGBonus;
+	}
+
+	public boolean applyRES() {
+		return this.applyRES;
 	}
 }

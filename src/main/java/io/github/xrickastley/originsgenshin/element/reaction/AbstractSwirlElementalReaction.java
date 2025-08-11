@@ -105,7 +105,7 @@ public abstract sealed class AbstractSwirlElementalReaction
 					.create(OriginsGenshinDamageTypes.SWIRL, origin),
 				ElementalApplications.gaugeUnits(target, swirlElement, target == entity ? 0f : gaugeSwirlAttack, true),
 				InternalCooldownContext.ofNone(origin)
-			);
+			).shouldApplyDMGBonus(false);
 
 			target.damage(source, damage);
 		}
