@@ -15,10 +15,15 @@ public class ClientConfig implements ConfigData {
 	public static class Renderers {
 		public boolean showElementalSkill = true;
 		public boolean showElementalBurst = true;
+		@ConfigEntry.Gui.Tooltip
+		@ConfigEntry.BoundedDiscrete(min = 4, max = 48)
+		public int sphereResolution = 4;
 	}
 
 	public static class Developer {
+		@ConfigEntry.Gui.Tooltip
 		public boolean displayElementalGauges = false;
+		@ConfigEntry.Gui.Tooltip
 		public boolean displayGaugeRuler = false;
 	}
 }

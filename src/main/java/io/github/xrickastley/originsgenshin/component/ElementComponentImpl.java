@@ -52,6 +52,7 @@ public final class ElementComponentImpl implements ElementComponent {
 	private int burningCooldown = -1;
 	private @Nullable LivingEntity burningOrigin = null;
 	private CrystallizeShield crystallizeShield = null;
+	private int crystallizeShieldReducedAt = -1;
 
 	public ElementComponentImpl(LivingEntity owner) {
 		this.owner = owner;
@@ -106,10 +107,26 @@ public final class ElementComponentImpl implements ElementComponent {
 	}
 
 	@Override
+	public @Nullable Pair<Element, Double> getCrystallizeShield() {
+		return this.crystallizeShield == null
+			? null
+			: new Pair<Element,Double>(this.crystallizeShield.element, this.crystallizeShield.amount);
+	}
+
+	@Override
 	public float reduceCrystallizeShield(DamageSource source, float amount) {
 		if (!(source instanceof final ElementalDamageSource eds) || this.crystallizeShield == null) return 0;
 
-		return this.crystallizeShield.reduce(eds, amount);
+		final float reduced = this.crystallizeShield.reduce(eds, amount);
+
+		if (reduced > 0) this.crystallizeShieldReducedAt = this.owner.age;
+
+		return reduced;
+	}
+
+	@Override
+	public boolean reducedCrystallizeShield() {
+		return this.crystallizeShieldReducedAt == this.owner.age;
 	}
 
 	@Override
@@ -226,8 +243,9 @@ public final class ElementComponentImpl implements ElementComponent {
 			);
 		}
 
-		if (tag.contains("CrystallizeShield"))
-			this.crystallizeShield = CrystallizeShield.ofNbt(tag.getCompound("CrystallizeShield"));
+		this.crystallizeShield = tag.contains("CrystallizeShield")
+			? CrystallizeShield.ofNbt(tag.getCompound("CrystallizeShield"))
+			: null;
 
 		final NbtList list = tag.getList("AppliedElements", NbtElement.COMPOUND_TYPE);
 		final long syncedAt = tag.getLong("SyncedAt");
@@ -498,13 +516,13 @@ public final class ElementComponentImpl implements ElementComponent {
 					? 2.5 // 250% "effectiveness"
 					: 1; // No "effectiveness"
 
-			if (elementBonus == 1) return 0;
-
-			final double dmgReduced = Math.min(amount * (1 / elementBonus), this.amount);
+			final double dmgTakenByShield = Math.min(this.amount * elementBonus, amount);
+			System.out.println("Shield amount: " + this.amount);
+			System.out.println("DMG Taken by Shield: " + dmgTakenByShield / elementBonus);
 			// Use Math.max to guarantee >= 0 in case of FP errors.
-			this.amount = Math.max(dmgReduced - this.amount, 0);
+			this.amount = Math.max(this.amount - (dmgTakenByShield / elementBonus), 0);
 
-			return (float) dmgReduced;
+			return (float) dmgTakenByShield;
 		}
 
 		private void writeToNbt(@Nonnull NbtCompound tag) {
@@ -522,9 +540,13 @@ public final class ElementComponentImpl implements ElementComponent {
 		}
 
 		private void tick(ElementComponentImpl impl) {
-			if (this.appliedAt + 300 >= impl.owner.getWorld().getTime()) return;
+			// System.out.println(String.format("age: %b | !empty: %b | result: %b", this.appliedAt + 300 >= impl.owner.getWorld().getTime(), !this.isEmpty(), this.appliedAt + 300 >= impl.owner.getWorld().getTime() && !this.isEmpty()));
+
+			if ((this.appliedAt + 300 >= impl.owner.getWorld().getTime() && !this.isEmpty()) || impl.crystallizeShield == null) return;
 
 			impl.crystallizeShield = null;
+
+			ElementComponent.sync(impl.owner);
 		}
 	}
 }

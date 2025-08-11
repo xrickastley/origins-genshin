@@ -18,6 +18,7 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.RotationAxis;
 
 public class ElementEntry {
 	private static final float BLINK_SECONDS = 1.5f;
@@ -43,12 +44,12 @@ public class ElementEntry {
 		return entity.getWorld().getTime() - this.appliedAt;
 	}
 
-	public void render(final LivingEntity livingEntity, final MatrixStack matrixStack, final Camera camera, final float offset) {
+	public void render(final LivingEntity entity, final MatrixStack matrixStack, final Camera camera, final float offset) {
 		final float blinkInterval = ElementEntry.BLINK_SECONDS / ElementEntry.BLINK_COUNT;
 		final float intervalSplit = blinkInterval / 2f;
 
 		matrixStack.push();
-		matrixStack.translate(0, livingEntity.getBoundingBox().getLengthY() * 1.1, 0);
+		matrixStack.translate(0, entity.getBoundingBox().getLengthY() * 1.1, 0);
 		matrixStack.multiplyPositionMatrix(new Matrix4f().rotation(camera.getRotation()));
 		matrixStack.scale(-0.50F, 0.50F, 0.50F);
 
@@ -68,8 +69,8 @@ public class ElementEntry {
 
 		this.draw(matrixStack, camera, offset);
 
-		if (this.getAppliedTicks(livingEntity) <= 5) {
-			final double animationProgress = Ease.LINEAR.applyLerpProgress(this.getAppliedTicks(livingEntity) + tickDelta, 1, 6);
+		if (this.getAppliedTicks(entity) <= 5) {
+			final double animationProgress = Ease.LINEAR.applyLerpProgress(this.getAppliedTicks(entity) + tickDelta, 1, 6);
 			final float scale2 = (float) (animationProgress * 2);
 			final float alpha2 = (float) (1 - (animationProgress * 0.5));
 

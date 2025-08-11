@@ -1,7 +1,12 @@
 package io.github.xrickastley.originsgenshin.factory;
 
 import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Consumer;
+
+import org.slf4j.Logger;
 
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.element.Element;
@@ -15,26 +20,26 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 
 public class OriginsGenshinAttributes {
-	private static final ArrayList<EntityAttribute> ADDED_ATTRIBUTES = new ArrayList<>();
-	private static final ConcurrentHashMap<Element, ConcurrentHashMap<ModifierType, EntityAttribute>> LINKS = new ConcurrentHashMap<>();
+	private static final List<EntityAttribute> ADDED_ATTRIBUTES = new ArrayList<>();
+	private static final Map<Element, ConcurrentHashMap<ModifierType, EntityAttribute>> LINKS = new ConcurrentHashMap<>();
 
-	public static final EntityAttribute PHYSICAL_DMG_BONUS = createAttribute("physical_dmg_bonus", 0, 0, 400);
-	public static final EntityAttribute PYRO_DMG_BONUS = createAttribute("pyro_dmg_bonus", 0, 0, 400);
-	public static final EntityAttribute HYDRO_DMG_BONUS = createAttribute("hydro_dmg_bonus", 0, 0, 400);
-	public static final EntityAttribute ANEMO_DMG_BONUS = createAttribute("anemo_dmg_bonus", 0, 0, 400);
-	public static final EntityAttribute ELECTRO_DMG_BONUS = createAttribute("electro_dmg_bonus", 0, 0, 400);
-	public static final EntityAttribute DENDRO_DMG_BONUS = createAttribute("dendro_dmg_bonus", 0, 0, 400);
-	public static final EntityAttribute CRYO_DMG_BONUS = createAttribute("cryo_dmg_bonus", 0, 0, 400);
-	public static final EntityAttribute GEO_DMG_BONUS = createAttribute("geo_dmg_bonus", 0, 0, 400);
+	public static final EntityAttribute PHYSICAL_DMG_BONUS = createAttribute("Physical DMG Bonus%", 0, 0, 400);
+	public static final EntityAttribute PYRO_DMG_BONUS = createAttribute("Pyro DMG Bonus%", 0, 0, 400);
+	public static final EntityAttribute HYDRO_DMG_BONUS = createAttribute("Hydro DMG Bonus%", 0, 0, 400);
+	public static final EntityAttribute ANEMO_DMG_BONUS = createAttribute("Anemo DMG Bonus%", 0, 0, 400);
+	public static final EntityAttribute ELECTRO_DMG_BONUS = createAttribute("Electro DMG Bonus%", 0, 0, 400);
+	public static final EntityAttribute DENDRO_DMG_BONUS = createAttribute("Dendro DMG Bonus%", 0, 0, 400);
+	public static final EntityAttribute CRYO_DMG_BONUS = createAttribute("Cryo DMG Bonus%", 0, 0, 400);
+	public static final EntityAttribute GEO_DMG_BONUS = createAttribute("Geo DMG Bonus%", 0, 0, 400);
 
-	public static final EntityAttribute PHYSICAL_RES = createAttribute("physical_res", 0, 0, 100);
-	public static final EntityAttribute PYRO_RES = createAttribute("pyro_res", 0, 0, 100);
-	public static final EntityAttribute HYDRO_RES = createAttribute("hydro_res", 0, 0, 100);
-	public static final EntityAttribute ANEMO_RES = createAttribute("anemo_res", 0, 0, 100);
-	public static final EntityAttribute ELECTRO_RES = createAttribute("electro_res", 0, 0, 100);
-	public static final EntityAttribute DENDRO_RES = createAttribute("dendro_res", 0, 0, 100);
-	public static final EntityAttribute CRYO_RES = createAttribute("cryo_res", 0, 0, 100);
-	public static final EntityAttribute GEO_RES = createAttribute("geo_res", 0, 0, 100);
+	public static final EntityAttribute PHYSICAL_RES = createAttribute("Physical RES%", 0, -200, 100);
+	public static final EntityAttribute PYRO_RES = createAttribute("Pyro RES%", 0, -200, 100);
+	public static final EntityAttribute HYDRO_RES = createAttribute("Hydro RES%", 0, -200, 100);
+	public static final EntityAttribute ANEMO_RES = createAttribute("Anemo RES%", 0, -200, 100);
+	public static final EntityAttribute ELECTRO_RES = createAttribute("Electro RES%", 0, -200, 100);
+	public static final EntityAttribute DENDRO_RES = createAttribute("Dendro RES%", 0, -200, 100);
+	public static final EntityAttribute CRYO_RES = createAttribute("Cryo RES%", 0, -200, 100);
+	public static final EntityAttribute GEO_RES = createAttribute("Geo RES%", 0, -200, 100);
 
 	public static void register() {
 		registerAndLink("generic.physical_dmg_bonus", PHYSICAL_DMG_BONUS, Element.PHYSICAL, ModifierType.DMG_BONUS);
@@ -70,6 +75,10 @@ public class OriginsGenshinAttributes {
 		final EntityAttribute dmgBonusAttribute = modifierMap.get(ModifierType.DMG_BONUS);
 		final EntityAttribute resAttribute = modifierMap.get(ModifierType.RES);
 
+		OriginsGenshin
+			.sublogger("DamageModifier")
+			.info("DMG Bonus Attribute: {} | RES Attribute: {}", dmgBonusAttribute.getTranslationKey(), resAttribute.getTranslationKey());
+
 		final float dmgBonusMultiplier = target.getAttributes().hasAttribute(dmgBonusAttribute)
 			? (float) (target.getAttributes().getValue(dmgBonusAttribute) / 100)
 			: 1;
@@ -78,11 +87,18 @@ public class OriginsGenshinAttributes {
 			? (float) getRESMultiplier(target, resAttribute)
 			: 1;
 
+		OriginsGenshin
+			.sublogger("DamageModifier")
+			.info("DMG Bonus Amplifier: {} | RES Amplifier: {}", dmgBonusMultiplier, resMultiplier);
+
 		return amount * dmgBonusMultiplier * resMultiplier;
 	}
 
 	public static DefaultAttributeContainer.Builder apply(DefaultAttributeContainer.Builder builder) {
-		ADDED_ATTRIBUTES.forEach(builder::add);
+		final Logger LOGGER = OriginsGenshin.sublogger(OriginsGenshinAttributes.class);
+		final Consumer<EntityAttribute> consumer = ea -> LOGGER.info("Registering {}", ea.getTranslationKey());
+
+		OriginsGenshinAttributes.ADDED_ATTRIBUTES.forEach(consumer.andThen(builder::add));
 
 		return builder;
 	}
@@ -114,9 +130,8 @@ public class OriginsGenshinAttributes {
 	}
 
 	private static EntityAttribute createAttribute(final String name, double base, double min, double max) {
-		return new ClampedEntityAttribute(
-			String.format("attribute.name.generic.%s.%s", OriginsGenshin.MOD_ID, name), base, min, max
-		).setTracked(true);
+		return new ClampedEntityAttribute(name, base, min, max)
+			.setTracked(true);
 	}
 
 	private static enum ModifierType {

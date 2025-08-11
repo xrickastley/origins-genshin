@@ -126,6 +126,8 @@ dependencies {
 	// include modImplementation("com.github.0x3C50:Renderer:c4faf83")
 
 	include implementation ("de.javagl:obj:0.4.0")
+
+	include implementation (annotationProcessor("io.github.llamalad7:mixinextras-fabric:0.5.0"))
 }
 
 processResources {

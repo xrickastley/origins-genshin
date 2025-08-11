@@ -2,12 +2,10 @@ package io.github.xrickastley.originsgenshin.mixin.client;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 import java.util.stream.Stream;
 
+import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
 import org.spongepowered.asm.mixin.Debug;
 import org.spongepowered.asm.mixin.Final;
@@ -20,11 +18,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import io.github.xrickastley.originsgenshin.component.ElementComponent;
 import io.github.xrickastley.originsgenshin.element.DurationElementalApplication;
+import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
 import io.github.xrickastley.originsgenshin.element.reaction.ElementalReaction;
 import io.github.xrickastley.originsgenshin.renderer.genshin.ElementEntry;
 import io.github.xrickastley.originsgenshin.util.ClientConfig;
 import io.github.xrickastley.originsgenshin.util.Color;
+import io.github.xrickastley.originsgenshin.util.SphereRenderer;
 
 import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.render.BufferBuilder;
@@ -38,6 +38,8 @@ import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.util.Pair;
+import net.minecraft.util.math.RotationAxis;
 import net.minecraft.util.math.Vec3d;
 
 import me.shedaniel.autoconfig.AutoConfig;
@@ -56,18 +58,19 @@ public abstract class EntityRendererMixin {
 		method = "render",
 		at = @At("HEAD")
 	)
-	protected void addElementRenderer(final Entity entity, final float yaw, final float tickDelta, final MatrixStack matrixStack, final VertexConsumerProvider vertexConsumers, final int light, CallbackInfo ci) {
+	private void addElementRenderer(final Entity entity, final float yaw, final float tickDelta, final MatrixStack matrixStack, final VertexConsumerProvider vertexConsumers, final int light, CallbackInfo ci) {
 		if (!(entity instanceof final LivingEntity livingEntity)) return;
 
 		this.renderElementsIfPresent(livingEntity, matrixStack, tickDelta);
 		this.renderElementalGauges(livingEntity, matrixStack, tickDelta);
+		this.renderCrystallizeShield(livingEntity, matrixStack);
 	}
 
 	@Unique
-	protected void renderElementsIfPresent(final LivingEntity livingEntity, final MatrixStack matrixStack, final float tickDelta) {
-		if (!livingEntity.isAlive()) return;
+	private void renderElementsIfPresent(final LivingEntity entity, final MatrixStack matrixStack, final float tickDelta) {
+		if (!entity.isAlive()) return;
 
-		final ElementComponent component = ElementComponent.KEY.get(livingEntity);
+		final ElementComponent component = ElementComponent.KEY.get(entity);
 		final List<ElementEntry> elementArray = new ArrayList<>();
 
 		if (component.hasValidLastReaction()) {
@@ -96,7 +99,7 @@ public abstract class EntityRendererMixin {
 			.iterator();
 
 		elementArray
-			.forEach(entry -> entry.render(livingEntity, matrixStack, dispatcher.camera, (float) coords.next().getZ()));
+			.forEach(entry -> entry.render(entity, matrixStack, dispatcher.camera, (float) coords.next().getZ()));
 	}
 
 	@Unique
@@ -116,16 +119,16 @@ public abstract class EntityRendererMixin {
 	}
 
 	@Unique
-	protected void renderElementalGauges(final LivingEntity livingEntity, final MatrixStack matrixStack, final float tickDelta) {
+	private void renderElementalGauges(final LivingEntity entity, final MatrixStack matrixStack, final float tickDelta) {
 		final ClientConfig config = AutoConfig
 			.getConfigHolder(ClientConfig.class)
 			.getConfig();
 
 		if (!config.developer.displayElementalGauges) return;
 
-		if (!livingEntity.isAlive()) return;
+		if (!entity.isAlive()) return;
 
-		final ElementComponent component = ElementComponent.KEY.get(livingEntity);
+		final ElementComponent component = ElementComponent.KEY.get(entity);
 		final ArrayList<ElementalApplication> appliedElements = new ArrayList<>();
 
 		component
@@ -139,12 +142,12 @@ public abstract class EntityRendererMixin {
 		Stream
 			.iterate(0.0f, n -> (n / 1.25f) < elementCount, n -> n + 1.25f)
 			.forEachOrdered(yOffset ->
-				renderElementalGauge(livingEntity, aeIterator.next(), yOffset - 0.5f, matrixStack, tickDelta)
+				renderElementalGauge(entity, aeIterator.next(), yOffset - 0.5f, matrixStack, tickDelta)
 			);
 	}
 
 	@Unique
-	protected void renderElementalGauge(final LivingEntity livingEntity, final ElementalApplication application, final float yOffset, final MatrixStack matrixStack, final float tickDelta) {
+	private void renderElementalGauge(final LivingEntity entity, final ElementalApplication application, final float yOffset, final MatrixStack matrixStack, final float tickDelta) {
 		if (application.isEmpty()) return;
 
 		final float GAUGE_SCALE = 0.35f;
@@ -157,11 +160,11 @@ public abstract class EntityRendererMixin {
 			.getConfig();
 
 		matrixStack.push();
-		matrixStack.translate(0f, livingEntity.getBoundingBox().getLengthY() * 1.15, 0f);
+		matrixStack.translate(0f, entity.getBoundingBox().getLengthY() * 1.15, 0f);
 		matrixStack.multiplyPositionMatrix(new Matrix4f().rotation(dispatcher.camera.getRotation()));
 		matrixStack.scale(-GAUGE_SCALE, GAUGE_SCALE * 0.5f, GAUGE_SCALE);
 
-		final float xOffset = (float) (livingEntity.getBoundingBox().getLengthX() * 1.5f) / GAUGE_SCALE;
+		final float xOffset = (float) (entity.getBoundingBox().getLengthX() * 1.5f) / GAUGE_SCALE;
 		final float gaugeWidth = application.isGaugeUnits()
 			? (float) Math.min(SCALE_PER_GU * application.getGaugeUnits(), SCALE_PER_GU * 4)
 			: 2 * SCALE_PER_GU;
@@ -253,5 +256,46 @@ public abstract class EntityRendererMixin {
 		return application instanceof final DurationElementalApplication durationApp
 			? (float) ((application.getRemainingTicks() - tickDelta) / durationApp.getDuration())
 			: (float) (application.getCurrentGauge() / application.getGaugeUnits());
+	}
+
+	@Unique
+	private void renderCrystallizeShield(final LivingEntity entity, final MatrixStack matrixStack) {
+		final ClientConfig config = AutoConfig
+			.getConfigHolder(ClientConfig.class)
+			.getConfig();
+
+		if (!entity.isAlive()) return;
+
+		final ElementComponent component = ElementComponent.KEY.get(entity);
+		final @Nullable Pair<Element, Double> crystallizeShield = component.getCrystallizeShield();
+
+		if (crystallizeShield == null) return;
+
+		final double lengthY = entity.getBoundingBox().getLengthY();
+
+		matrixStack.push();
+		matrixStack.multiply(RotationAxis.NEGATIVE_Y.rotationDegrees(dispatcher.camera.getYaw()));
+		matrixStack.translate(0, lengthY * 0.6, 0);
+
+		RenderSystem.disableCull();
+		RenderSystem.enableBlend();
+		RenderSystem.defaultBlendFunc();
+		RenderSystem.enableDepthTest();
+		RenderSystem.depthMask(false);
+
+		SphereRenderer.render(
+			matrixStack, 
+			new Vec3d(0, 0, 0), 
+			(float) (lengthY / 2 * 1.25),
+			config.renderers.sphereResolution,
+			config.renderers.sphereResolution * 2,
+			pos -> crystallizeShield.getLeft().getDamageColor().multiply(1, 1, 1, 0.75 * Math.pow(pos.x, 4)).asARGB()
+		);
+
+		RenderSystem.depthMask(true);
+		RenderSystem.enableCull();
+		RenderSystem.disableBlend();
+
+		matrixStack.pop();
 	}
 }

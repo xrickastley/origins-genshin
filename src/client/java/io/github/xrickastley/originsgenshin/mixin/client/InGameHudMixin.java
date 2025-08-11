@@ -36,8 +36,6 @@ public class InGameHudMixin {
 			final int x1 = x + (i * 10);
 
 			context.drawTexture(texture, x1, y, 9, 9, 0, 0, 9, 9, 9, 9);
-
-			// context.drawGuiTexture(texture, x1, y, 9, 9);
 		}
 	}
 }

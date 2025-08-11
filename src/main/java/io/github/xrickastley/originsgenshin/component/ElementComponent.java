@@ -116,12 +116,23 @@ public interface ElementComponent extends AutoSyncedComponent, CommonTickingComp
 	public void setCrystallizeShield(Element element, double amount);
 
 	/**
+	 * Gets the current Crystallize Shield of this entity.
+	 */
+	public @Nullable Pair<Element, Double> getCrystallizeShield();
+
+	// TODO: "returns the effective amount of DMG reduced"
+	/**
 	 * Reduces the Crystallize shield and returns the effective amount of DMG reduced.
 	 * 
 	 * @param source The {@code DamageSource}. If this isn't an instance of {@code ElementalDamageSource}, {@code 0} is returned.
 	 * @param amount The amount of damage to be dealt to the entity.
 	 */
 	public float reduceCrystallizeShield(DamageSource source, float amount);
+
+	/**
+	 * Returns whether the Crystallize Shield has been reduced in the current tick.
+	 */
+	public boolean reducedCrystallizeShield();
 
 	/**
 	 * Checks if the element can be applied.

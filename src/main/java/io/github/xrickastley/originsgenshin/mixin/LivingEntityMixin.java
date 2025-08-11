@@ -13,6 +13,7 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.component.ElementComponent;
 import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementalApplications;
@@ -101,13 +102,10 @@ public abstract class LivingEntityMixin extends Entity {
 		ordinal = 0,
 		argsOnly = true
 	)
-	private float applyCrystallizeShield(float amount, @Local(argsOnly = true) DamageSource source, @Share("originsgenshin$hasCrystallizeShield") LocalBooleanRef hasCrystallizeShield) {
+	private float applyCrystallizeShield(float amount, @Local(argsOnly = true) DamageSource source) {
 		final ElementComponent component = ElementComponent.KEY.get(this);
-		final float reduced = component.reduceCrystallizeShield(source, amount);
 
-		hasCrystallizeShield.set(reduced >= 0);
-
-		return amount - reduced;
+		return amount - component.reduceCrystallizeShield(source, amount);
 	}
 
 	@ModifyExpressionValue(
@@ -119,7 +117,9 @@ public abstract class LivingEntityMixin extends Entity {
 		)
 	)
 	private boolean preventKnockbackIfCrystallize(boolean original, @Local(argsOnly = true) DamageSource source, @Share("originsgenshin$hasCrystallizeShield") LocalBooleanRef hasCrystallizeShield) {
-		return original || hasCrystallizeShield.get();
+		final ElementComponent component = ElementComponent.KEY.get(this);
+
+		return original || component.reducedCrystallizeShield();
 	}
 
 	@Inject(
