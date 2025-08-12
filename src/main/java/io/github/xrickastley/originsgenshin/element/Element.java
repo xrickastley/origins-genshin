@@ -89,7 +89,7 @@ public enum Element {
 			.setTexture(OriginsGenshin.identifier("textures/element/frozen.png"))
 			.setDamageColor(Color.fromRGBAHex("#b4ffff"))
 			.setParentElement(Element.CRYO)
-			.setPriority(1)
+			.setPriority(2)
 			.bypassesCooldown(true)
 	),
 	QUICKEN(

@@ -17,8 +17,7 @@ public final class FrozenElementalReaction extends ElementalReaction {
 	FrozenElementalReaction() {
 		super(
 			new ElementalReactionSettings("Frozen", OriginsGenshin.identifier("frozen"), OriginsGenshinParticleFactory.FROZEN)
-				// Triggering Frozen should consume the entirety of both Cryo and Hydro aura.
-				.setReactionCoefficient(Double.MAX_VALUE)
+				.setReactionCoefficient(0)
 				.setAuraElement(Element.CRYO, 4)
 				.setTriggeringElement(Element.HYDRO, 3)
 				.reversable(true)
@@ -26,9 +25,18 @@ public final class FrozenElementalReaction extends ElementalReaction {
 	}
 
 	@Override
-	protected void onReaction(LivingEntity entity, ElementalApplication auraElement, ElementalApplication triggeringElement, double reducedGauge, @Nullable LivingEntity origin) {
-		// Gauge-FreezeAura = 2 * min(Gauge-OriginAura, Gauge-TriggerElement)
-		final double freezeAuraGauge = 2 * Math.min(auraElement.getCurrentGauge() + reducedGauge, triggeringElement.getCurrentGauge() + reducedGauge);
+	protected void onReaction(LivingEntity entity, ElementalApplication auraElement, ElementalApplication triggeringElement, double _reducedGauge, @Nullable LivingEntity origin) {
+		double reducedGauge;
+
+		if (auraElement.getElement() == Element.HYDRO) {
+			reducedGauge = auraElement.reduceGauge(reactionCoefficient * triggeringElement.getCurrentGauge());
+		} else {
+			reducedGauge = auraElement.reduceGauge(Double.MAX_VALUE * triggeringElement.getCurrentGauge());
+		}
+
+		// Gauge_FreezeAura = 2 * min(Gauge_OriginAura, Gauge_TriggerElement)
+		// Always the min of both.
+		final double freezeAuraGauge = 2 * triggeringElement.reduceGauge(reducedGauge);
 		// Freeze Duration (Seconds) = 2√(5 * freezeAuraGauge) + 4) - 4
 		final double freezeTickDuration = (2.0 * Math.sqrt((5 * freezeAuraGauge) + 4) - 4) * 20;
 
