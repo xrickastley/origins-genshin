@@ -20,7 +20,8 @@ public final class QuickenElementalReaction extends ElementalReaction {
 				.setTriggeringElement(Element.ELECTRO, 8)
 				.reversable(true)
 				.preventsPriorityUpgrade(true)
-		);
+				.preventsReactionsAfter(OriginsGenshin.identifier("spread"), OriginsGenshin.identifier("aggravate"))
+	);
 	}
 
 	@Override

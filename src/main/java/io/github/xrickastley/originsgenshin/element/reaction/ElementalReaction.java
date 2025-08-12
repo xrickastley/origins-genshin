@@ -2,6 +2,7 @@ package io.github.xrickastley.originsgenshin.element.reaction;
 
 import java.text.DecimalFormat;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Stream;
 
@@ -47,6 +48,7 @@ public abstract class ElementalReaction {
 	protected final boolean applyResultAsAura;
 	protected final boolean endsReactionTrigger;
 	protected final boolean preventsPriorityUpgrade;
+	protected final Set<Identifier> preventsReactionsAfter;
 
 	protected ElementalReaction(ElementalReactionSettings settings) {
 		this.name = settings.name;
@@ -60,6 +62,7 @@ public abstract class ElementalReaction {
 		this.applyResultAsAura = settings.applyResultAsAura;
 		this.endsReactionTrigger = settings.endsReactionTrigger;
 		this.preventsPriorityUpgrade = settings.preventsPriorityUpgrade;
+		this.preventsReactionsAfter = settings.preventsReactionsAfter;
 
 		OriginsGenshinRegistries.ELEMENTAL_REACTION.createEntry(this);
 	}
@@ -152,6 +155,14 @@ public abstract class ElementalReaction {
 
 	public boolean shouldPreventPriorityUpgrade() {
 		return this.preventsPriorityUpgrade;
+	}
+
+	public boolean preventsReaction(ElementalReaction reaction) {
+		return this.preventsReaction(reaction.getId());
+	}
+
+	public boolean preventsReaction(Identifier reactionId) {
+		return this.preventsReactionsAfter.contains(reactionId);
 	}
 
 	/**

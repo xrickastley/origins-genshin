@@ -3,7 +3,9 @@ package io.github.xrickastley.originsgenshin.element.reaction;
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.component.ElementComponent;
 import io.github.xrickastley.originsgenshin.element.Element;
+import io.github.xrickastley.originsgenshin.element.ElementHolder;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
+import io.github.xrickastley.originsgenshin.element.ElementalApplications;
 import io.github.xrickastley.originsgenshin.element.InternalCooldownContext;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinParticleFactory;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinStatusEffects;
@@ -40,9 +42,19 @@ public final class FrozenElementalReaction extends ElementalReaction {
 		// Freeze Duration (Seconds) = 2√(5 * freezeAuraGauge) + 4) - 4
 		final double freezeTickDuration = (2.0 * Math.sqrt((5 * freezeAuraGauge) + 4) - 4) * 20;
 
-		ElementComponent.KEY
+		final ElementalApplication application = ElementalApplications.duration(entity, Element.FROZEN, freezeAuraGauge, freezeTickDuration);
+		final ElementHolder holder = ElementComponent.KEY
 			.get(entity)
-			.addElementalApplication(Element.FROZEN, InternalCooldownContext.ofNone(origin), freezeAuraGauge, freezeTickDuration);
+			.getElementHolder(Element.FROZEN);
+
+
+		if (holder.hasElementalApplication()) {
+			holder
+				.getElementalApplication()
+				.reapply(application);
+		} else {
+			holder.setElementalApplication(application);
+		}
 
 		entity.addStatusEffect(
 			new StatusEffectInstance(OriginsGenshinStatusEffects.FROZEN, (int) Math.floor(freezeTickDuration * 1.025))

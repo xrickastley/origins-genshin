@@ -98,7 +98,7 @@ public enum Element {
 			.setTexture(OriginsGenshin.identifier("textures/element/quicken.png"))
 			.setDamageColor(Color.fromRGBAHex("#01e858"))
 			.setParentElement(Element.DENDRO)
-			.setPriority(1)
+			.setPriority(2)
 			.bypassesCooldown(true)
 	),
 	BURNING(

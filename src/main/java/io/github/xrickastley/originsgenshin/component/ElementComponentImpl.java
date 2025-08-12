@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.function.Predicate;
 import java.util.stream.Stream;
 
 import org.jetbrains.annotations.Nullable;
@@ -453,6 +454,7 @@ public final class ElementComponentImpl implements ElementComponent {
 			optional = this
 				.getTriggerableReactions(priority, application)
 				.filter(r -> AbstractBurningElementalReaction.mixin$onlyAllowPyroReactions(!triggeredReactions.stream().anyMatch(r2 -> r2.idEquals(r)), this, r))
+				.filter(Predicate.not(reaction::preventsReaction))
 				.findFirst();
 
 			if (optional.isEmpty() && !reaction.shouldPreventPriorityUpgrade()) {

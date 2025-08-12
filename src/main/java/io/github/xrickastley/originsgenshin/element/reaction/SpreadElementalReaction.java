@@ -8,10 +8,10 @@ public final class SpreadElementalReaction extends AdditiveElementalReaction {
 	SpreadElementalReaction() {
 		super(
 			new ElementalReactionSettings("Spread", OriginsGenshin.identifier("spread"), OriginsGenshinParticleFactory.SPREAD)
-				// Triggering Frozen should consume the entirety of both Cryo and Hydro aura.
 				.setReactionCoefficient(0)
 				.setAuraElement(Element.QUICKEN)
-				.setTriggeringElement(Element.DENDRO, 1),
+				.setTriggeringElement(Element.DENDRO, 1)
+				.applyResultAsAura(true),
 			1.25
 		);
 	}

@@ -7,19 +7,23 @@ import net.minecraft.particle.DefaultParticleType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
 
+import java.util.HashSet;
+import java.util.Set;
+
 import javax.annotation.Nullable;
 
 public final class ElementalReactionSettings {
-	protected final String name;
-	protected final Identifier id;
-	protected final @Nullable DefaultParticleType particle;
-	protected double reactionCoefficient = 1.0;
-	protected Pair<Element, Integer> auraElement;
-	protected Pair<Element, Integer> triggeringElement;
-	protected boolean reversable = false;
-	protected boolean applyResultAsAura = false;
-	protected boolean endsReactionTrigger = false;
-	protected boolean preventsPriorityUpgrade = false;
+	final String name;
+	final Identifier id;
+	final @Nullable DefaultParticleType particle;
+	double reactionCoefficient = 1.0;
+	Pair<Element, Integer> auraElement;
+	Pair<Element, Integer> triggeringElement;
+	boolean reversable = false;
+	boolean applyResultAsAura = false;
+	boolean endsReactionTrigger = false;
+	boolean preventsPriorityUpgrade = false;
+	Set<Identifier> preventsReactionsAfter = new HashSet<>();
 
 	public ElementalReactionSettings(String name, Identifier id, @Nullable DefaultParticleType particle) {
 		this.name = name;
@@ -148,7 +152,7 @@ public final class ElementalReactionSettings {
 	 * attempt after triggering this reaction. <br> <br>
 	 *
 	 * However, the attempt to upgrade the priority will only be denied <b>once</b> after this
-	 * reaction. Suceeding reactions <b>must</b> also have this property enabled in order for the
+	 * reaction. Succeeding reactions <b>must</b> also have this property enabled in order for the
 	 * upgrade to be <i>fully</i> denied.
 	 *
 	 * @param preventsPriorityUpgrade Whether the element priority can be upgraded after
@@ -156,6 +160,20 @@ public final class ElementalReactionSettings {
 	 */
 	public ElementalReactionSettings preventsPriorityUpgrade(boolean preventsPriorityUpgrade) {
 		this.preventsPriorityUpgrade = preventsPriorityUpgrade;
+
+		return this;
+	}
+
+	/**
+	 * Whether this reaction prevents other reactions from triggering after it.
+	 * 
+	 * This setting denies the specified reactions from triggering <b>directly after</b> this
+	 * reaction.
+	 * 
+	 * @param reactions The reactions to prevent from triggering <b>directly after</b> this reaction.
+	 */
+	public ElementalReactionSettings preventsReactionsAfter(Identifier ...reactions) {
+		this.preventsReactionsAfter.addAll(Set.of(reactions));
 
 		return this;
 	}
