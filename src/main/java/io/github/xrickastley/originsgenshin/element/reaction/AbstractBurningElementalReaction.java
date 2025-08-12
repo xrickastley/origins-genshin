@@ -148,17 +148,21 @@ public abstract sealed class AbstractBurningElementalReaction
 				entity
 					.getDamageSources()
 					.create(OriginsGenshinDamageTypes.BURNING, entity, component.getBurningOrigin()),
-				ElementalApplications.gaugeUnits(target, Element.PYRO, 1),
-				InternalCooldownContext.ofType(entity, "origins-genshin:reactions/burning", BURNING_PYRO_ICD)
+				ElementalApplications.gaugeUnits(target, Element.PYRO, 0),
+				InternalCooldownContext.ofNone()
 			).shouldApplyDMGBonus(false);
 
 			target.damage(source, damage);
 			target.setOnFire(true);
 			target.setFireTicks(5);
 
-			ElementComponent.KEY
-				.get(target)
-				.resetBurningCD();
+			final ElementComponent targetComponent = ElementComponent.KEY.get(target);
+			final ElementHolder holder = targetComponent.getElementHolder(Element.PYRO);
+			
+			if (holder.canApplyElement(Element.PYRO, InternalCooldownContext.ofType(entity, "origins-genshin:reactions/burning", BURNING_PYRO_ICD), true))
+				holder.getElementalApplication().reapply(Element.PYRO, 1);
+
+			targetComponent.resetBurningCD();
 		}
 	}
 

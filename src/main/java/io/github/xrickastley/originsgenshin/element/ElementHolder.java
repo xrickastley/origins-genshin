@@ -112,11 +112,9 @@ public final class ElementHolder {
 
 		final InternalCooldown icdData = icdContext.getInternalCooldown(this);
 
-		final boolean inICD = handleICD
+		return handleICD
 			? icdData.handleInternalCooldown()
 			: icdData.isInInternalCooldown();
-
-		return inICD;
 	}
 
 	public LivingEntity getOwner() {
