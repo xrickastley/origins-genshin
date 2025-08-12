@@ -37,7 +37,7 @@ public abstract sealed class AbstractBurningElementalReaction
 		() -> OriginsGenshinRegistries.ELEMENTAL_REACTION
 			.streamEntries()
 			.map(Reference::value)
-			.filter(r -> !(r.getAuraElement() == Element.PYRO || (r.getTriggeringElement() == Element.PYRO && r.reversable)))
+			.filter(r -> !(r instanceof AbstractDendroCoreElementalReaction) && !(r.getAuraElement() == Element.PYRO || (r.getTriggeringElement() == Element.PYRO && r.reversable)))
 			.collect(Collectors.toSet())
 	);
 
@@ -163,7 +163,9 @@ public abstract sealed class AbstractBurningElementalReaction
 				final ElementalApplication application = holder.getElementalApplication();
 	
 				if (application == null) {
-					holder.setElementalApplication(ElementalApplications.gaugeUnits(target, Element.PYRO, 1, true));
+					System.out.println(ElementalApplications.gaugeUnits(target, Element.PYRO, 1));
+
+					holder.setElementalApplication(ElementalApplications.gaugeUnits(target, Element.PYRO, 1));
 				} else {
 					application.reapply(Element.PYRO, 1);
 				}
