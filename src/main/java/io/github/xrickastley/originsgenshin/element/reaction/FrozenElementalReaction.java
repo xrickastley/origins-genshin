@@ -41,10 +41,6 @@ public final class FrozenElementalReaction extends ElementalReaction {
 		// Freeze Duration (Seconds) = 2√(5 * freezeAuraGauge) + 4) - 4
 		final double freezeTickDuration = (2.0 * Math.sqrt((5 * freezeAuraGauge) + 4) - 4) * 20;
 
-		OriginsGenshin
-			.sublogger(this)
-			.info("Freeze Aura Gauge: {} | Tick Duration: {}", freezeAuraGauge, freezeTickDuration);
-
 		final ElementalApplication application = ElementalApplications.duration(entity, Element.FROZEN, freezeAuraGauge, freezeTickDuration);
 		final ElementHolder holder = ElementComponent.KEY
 			.get(entity)
