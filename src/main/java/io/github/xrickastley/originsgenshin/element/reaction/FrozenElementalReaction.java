@@ -18,7 +18,7 @@ public final class FrozenElementalReaction extends ElementalReaction {
 	FrozenElementalReaction() {
 		super(
 			new ElementalReactionSettings("Frozen", OriginsGenshin.identifier("frozen"), OriginsGenshinParticleFactory.FROZEN)
-				.setReactionCoefficient(0)
+				.setReactionCoefficient(1)
 				.setAuraElement(Element.CRYO, 4)
 				.setTriggeringElement(Element.HYDRO, 3)
 				.reversable(true)
@@ -40,6 +40,10 @@ public final class FrozenElementalReaction extends ElementalReaction {
 		final double freezeAuraGauge = 2 * triggeringElement.reduceGauge(reducedGauge);
 		// Freeze Duration (Seconds) = 2√(5 * freezeAuraGauge) + 4) - 4
 		final double freezeTickDuration = (2.0 * Math.sqrt((5 * freezeAuraGauge) + 4) - 4) * 20;
+
+		OriginsGenshin
+			.sublogger(this)
+			.info("Freeze Aura Gauge: {} | Tick Duration: {}", freezeAuraGauge, freezeTickDuration);
 
 		final ElementalApplication application = ElementalApplications.duration(entity, Element.FROZEN, freezeAuraGauge, freezeTickDuration);
 		final ElementHolder holder = ElementComponent.KEY
