@@ -18,7 +18,7 @@ public final class FrozenElementalReaction extends ElementalReaction {
 	FrozenElementalReaction() {
 		super(
 			new ElementalReactionSettings("Frozen", OriginsGenshin.identifier("frozen"), OriginsGenshinParticleFactory.FROZEN)
-				.setReactionCoefficient(1)
+				.setReactionCoefficient(0)
 				.setAuraElement(Element.CRYO, 4)
 				.setTriggeringElement(Element.HYDRO, 3)
 				.reversable(true)
@@ -30,7 +30,7 @@ public final class FrozenElementalReaction extends ElementalReaction {
 		double reducedGauge;
 
 		if (auraElement.getElement() == Element.HYDRO) {
-			reducedGauge = auraElement.reduceGauge(reactionCoefficient * triggeringElement.getCurrentGauge());
+			reducedGauge = auraElement.reduceGauge(1 * triggeringElement.getCurrentGauge());
 		} else {
 			reducedGauge = auraElement.reduceGauge(Double.MAX_VALUE * triggeringElement.getCurrentGauge());
 		}

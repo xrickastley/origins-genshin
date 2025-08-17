@@ -14,6 +14,6 @@ public class ElectroChargedParticleFactory implements ParticleFactory<DefaultPar
 
 	public Particle createParticle(DefaultParticleType defaultParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
 		return new ReactionParticle(clientWorld, d, e, f, Color.fromRGBAHex("#d691fc").asARGB())
-			.setText(TextHelper.withFont("Electro-Charged", TextBillboardParticle.GENSHIN_FONT));
+			.setText(TextHelper.font("Electro-Charged", TextBillboardParticle.GENSHIN_FONT));
 	}
 }

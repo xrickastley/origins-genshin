@@ -39,6 +39,10 @@ public class ElementEntry {
 		return new ElementEntry(application.getElement(), (application.getRemainingTicks() - tickDelta) / 20.0, application.getAppliedAt(), tickDelta);
 	}
 
+	public Element getElement() {
+		return element;
+	}
+
 	private long getAppliedTicks(final Entity entity) {
 		return entity.getWorld().getTime() - this.appliedAt;
 	}
@@ -64,7 +68,8 @@ public class ElementEntry {
 
 		RenderSystem.enableBlend();
 		RenderSystem.defaultBlendFunc();
-		RenderSystem.enableCull();
+		RenderSystem.disableCull();
+		RenderSystem.enableDepthTest();
 
 		this.draw(matrixStack, camera, offset);
 

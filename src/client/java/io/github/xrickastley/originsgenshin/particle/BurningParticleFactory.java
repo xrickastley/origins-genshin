@@ -14,6 +14,6 @@ public class BurningParticleFactory implements ParticleFactory<DefaultParticleTy
 
 	public Particle createParticle(DefaultParticleType defaultParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
 		return new ReactionParticle(clientWorld, d, e, f, Colors.PYRO.asARGB())
-			.setText(TextHelper.withFont("Burning", TextBillboardParticle.GENSHIN_FONT));
+			.setText(TextHelper.font("Burning", TextBillboardParticle.GENSHIN_FONT));
 	}
 }

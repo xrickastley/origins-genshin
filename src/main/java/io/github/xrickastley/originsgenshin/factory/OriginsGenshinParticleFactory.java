@@ -31,9 +31,9 @@ public class OriginsGenshinParticleFactory {
 	public static final DefaultParticleType CRYSTALLIZE = register("crystallize");
 	public static final DefaultParticleType HYPERBLOOM = register("hyperbloom");
 	public static final DefaultParticleType BURGEON = register("burgeon");
+	public static final DefaultParticleType SHATTER = register("shatter");
 
 	public static final DefaultParticleType DAMAGE_TEXT = register("damage_text");
-	public static final DefaultParticleType TEST = register("test");
 
 	private static DefaultParticleType register(String name) {
 		return Registry.register(Registries.PARTICLE_TYPE, OriginsGenshin.identifier(name), FabricParticleTypes.simple());

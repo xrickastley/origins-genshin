@@ -14,6 +14,6 @@ public class OverloadedParticleFactory implements ParticleFactory<DefaultParticl
 
 	public Particle createParticle(DefaultParticleType defaultParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
 		return new ReactionParticle(clientWorld, d, e, f, Color.fromRGBAHex("#fc7fa4").asARGB())
-			.setText(TextHelper.withFont("Overloaded", TextBillboardParticle.GENSHIN_FONT));
+			.setText(TextHelper.font("Overloaded", TextBillboardParticle.GENSHIN_FONT));
 	}
 }

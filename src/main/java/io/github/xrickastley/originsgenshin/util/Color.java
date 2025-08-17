@@ -83,6 +83,14 @@ public final class Color {
 		);
 	}
 
+	public int asRGB() {
+		int r = red & 0xFF;
+		int g = green & 0xFF;
+		int b = blue & 0xFF;
+
+		return (r << 16) | (g << 8) | b;
+	}
+
 	public int asARGB() {
 		int a = (int) (alpha * 255) & 0xFF;
 		int r = red & 0xFF;
@@ -192,9 +200,9 @@ public final class Color {
 	}
 
 	public static Color fromARGBHex(int argbHex) {
-		int alpha = (argbHex >> 24) & 0xFF;
-		int red = (argbHex >> 16) & 0xFF;
-		int green = (argbHex >> 8) & 0xFF;
+		int alpha = argbHex >>> 24;
+		int red = argbHex >>> 16 & 0xFF;
+		int green = argbHex >>> 8 & 0xFF;
 		int blue = argbHex & 0xFF;
 		float a = alpha / 255f;
 

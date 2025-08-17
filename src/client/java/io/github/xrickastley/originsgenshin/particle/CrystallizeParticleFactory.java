@@ -15,6 +15,6 @@ public class CrystallizeParticleFactory implements ParticleFactory<DefaultPartic
 	public Particle createParticle(DefaultParticleType defaultParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
 		// TODO: check for accuracy in-game
 		return new ReactionParticle(clientWorld, d, e, f, Colors.GEO.asARGB())
-			.setText(TextHelper.withFont("Crystallize", TextBillboardParticle.GENSHIN_FONT));
+			.setText(TextHelper.font("Crystallize", TextBillboardParticle.GENSHIN_FONT));
 	}
 }

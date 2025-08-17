@@ -14,6 +14,6 @@ public class AggravateParticleFactory implements ParticleFactory<DefaultParticle
 
 	public Particle createParticle(DefaultParticleType defaultParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
 		return new ReactionParticle(clientWorld, d, e, f, Colors.ELECTRO.asARGB())
-			.setText(TextHelper.withFont("Aggravate", TextBillboardParticle.GENSHIN_FONT));
+			.setText(TextHelper.font("Aggravate", TextBillboardParticle.GENSHIN_FONT));
 	}
 }

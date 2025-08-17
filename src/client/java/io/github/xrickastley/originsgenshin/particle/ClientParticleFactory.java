@@ -35,9 +35,9 @@ public class ClientParticleFactory {
 		register(OriginsGenshinParticleFactory.CRYSTALLIZE, CrystallizeParticleFactory::new);
 		register(OriginsGenshinParticleFactory.HYPERBLOOM, HyperbloomParticleFactory::new);
 		register(OriginsGenshinParticleFactory.BURGEON, BurgeonParticleFactory::new);
+		register(OriginsGenshinParticleFactory.SHATTER, ShatterParticleFactory::new);
 
 		register(OriginsGenshinParticleFactory.DAMAGE_TEXT, DamageTextParticle.Factory::new);
-		register(OriginsGenshinParticleFactory.TEST, TestParticleFactory::new);
 	}
 
 	private static <P extends ParticleEffect> void register(ParticleType<P> particle, PendingParticleFactory<P> factory) {

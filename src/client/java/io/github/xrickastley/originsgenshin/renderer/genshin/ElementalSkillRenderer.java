@@ -139,7 +139,7 @@ public class ElementalSkillRenderer extends PowerRenderer {
 
 		circleRenderer
 			.add(36 * rescaler.getRescaleFactorWindow(), 1, 0x64646464)
-			.draw(tessellator, posMatrix);
+			.draw(posMatrix);
 
 		if (disable) RenderSystem.setShaderColor(1, 1, 1, 0.375f);
 
@@ -160,7 +160,7 @@ public class ElementalSkillRenderer extends PowerRenderer {
 				.add(36 * rescaler.getRescaleFactorWindow(), percentFilled, 0x0dc8c8c8)
 				.addOutline(32 * rescaler.getRescaleFactorWindow(), 4 * rescaler.getRescaleFactorWindow(), disable, 0x1ac8c8c8)
 				.addOutline(32 * rescaler.getRescaleFactorWindow(), 4 * rescaler.getRescaleFactorWindow(), percentFilled, 0x80c8c8c8)
-				.draw(tessellator, posMatrix);
+				.draw(posMatrix);
 		} else {
 			final int charges = skillIcon.getCharges();
 			final int currentCharges = chargeRender.getCurrentCharges(client.player);
@@ -178,7 +178,7 @@ public class ElementalSkillRenderer extends PowerRenderer {
 					.addOutline(32 * rescaler.getRescaleFactorWindow(), 4 * rescaler.getRescaleFactorWindow(), percentFilled, 0x99c8c8c8);
 			}
 
-			circleRenderer.draw(tessellator, posMatrix);
+			circleRenderer.draw(posMatrix);
 
 			final int scaleCharge = (int) (12.0 * rescaler.getRescaleFactor());
 			final ArrayList<Pair<Double, Double>> positions = generateChargesWithCenter(0, (int) (-44 * rescaler.getRescaleFactor()), scaleCharge, scaleCharge, (int) (4 * rescaler.getRescaleFactor()), charges);

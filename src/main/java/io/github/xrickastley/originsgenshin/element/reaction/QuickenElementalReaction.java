@@ -36,4 +36,10 @@ public final class QuickenElementalReaction extends ElementalReaction {
 				ElementalApplications.duration(entity, Element.QUICKEN, quickenAuraGauge, tickDuration)
 			);
 	}
+
+	// These "mixins" are injected pieces of code (likening @Inject) that allow Burning to work properly, and allow others to easily see the way it was hardcoded.
+	public static boolean mixin$preventReapplication(ElementalApplication application, ElementComponent component) {
+		return (application.getElement() == Element.ELECTRO || application.getElement() == Element.DENDRO)
+			&& component.hasElementalApplication(Element.QUICKEN);
+	}
 }

@@ -14,6 +14,6 @@ public class MeltParticleFactory implements ParticleFactory<DefaultParticleType>
 
 	public Particle createParticle(DefaultParticleType defaultParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
 		return new ReactionParticle(clientWorld, d, e, f, Color.fromRGBAHex("#f2be87").asARGB())
-			.setText(TextHelper.withFont("Melt", TextBillboardParticle.GENSHIN_FONT));
+			.setText(TextHelper.font("Melt", TextBillboardParticle.GENSHIN_FONT));
 	}
 }

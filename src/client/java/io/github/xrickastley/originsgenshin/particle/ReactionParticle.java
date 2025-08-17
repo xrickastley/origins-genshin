@@ -101,10 +101,6 @@ public class ReactionParticle extends TextBillboardParticle {
 		renderer.draw(text, x, 0, intColor, false, matrixStack.peek().getPositionMatrix(), immediate, TextLayerType.SEE_THROUGH, Colors.BLANK.asARGB(), LightmapTextureManager.MAX_LIGHT_COORDINATE);
 		immediate.draw();
 
-		// RenderSystem.depthFunc(GL11.GL_LEQUAL);
-
-		// RenderSystem.enableDepthTest();
-
 		matrixStack.pop();
 	}
 

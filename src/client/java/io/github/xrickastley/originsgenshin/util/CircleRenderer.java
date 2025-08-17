@@ -123,7 +123,7 @@ public class CircleRenderer {
 	 * @param tessellator The {@code Tessellator} instance. Obtained from {@code Tessellator.getInstance()}.
 	 * @param posMatrix The position matrix. Normally obtained from {@code <MatrixStack>.peek().getPositionMatrix()}.
 	 */
-	public void draw(Tessellator tessellator, Matrix4f posMatrix) {
+	public void draw(Matrix4f posMatrix) {
 		final Vec3d origin = new Vec3d(x, y, 0)
 			.multiply(scaleFactor);
 

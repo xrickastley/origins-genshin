@@ -6,6 +6,7 @@ import io.github.xrickastley.originsgenshin.element.ElementalApplication;
 import io.github.xrickastley.originsgenshin.element.ElementalApplications;
 import io.github.xrickastley.originsgenshin.element.ElementalDamageSource;
 import io.github.xrickastley.originsgenshin.element.InternalCooldownContext;
+import io.github.xrickastley.originsgenshin.factory.OriginsGenshinParticleFactory;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinStatusEffects;
 import io.github.xrickastley.originsgenshin.registry.OriginsGenshinDamageTypes;
 
@@ -23,7 +24,7 @@ import javax.annotation.Nullable;
 public final class ShatterElementalReaction extends ElementalReaction {
 	ShatterElementalReaction() {
 		super(
-			new ElementalReactionSettings("Shatter", OriginsGenshin.identifier("shatter"), null)
+			new ElementalReactionSettings("Shatter", OriginsGenshin.identifier("shatter"), OriginsGenshinParticleFactory.SHATTER)
 				.setReactionCoefficient(0)
 				.setAuraElement(Element.FROZEN)
 				.setTriggeringElement(Element.GEO, 1)

@@ -143,13 +143,20 @@ public abstract sealed class AbstractBurningElementalReaction
 
 		for (final LivingEntity target : ElementalReaction.getEntitiesInAoE(entity, 1, t -> !ElementComponent.KEY.get(t).isBurningOnCD())) {
 			// TODO: Burning DMG from this point (of reapplication) will be calculated based on the stats of the character responsible for the latest instance of Dendro or Pyro application. (not possible unless EM is added, there is no EM here)
+
+			// TODO: if target, direct, else, by dmg
+
 			final float damage = ElementalReaction.getReactionDamage(entity, 0.25);
 			final ElementalDamageSource source = new ElementalDamageSource(
 				entity
 					.getDamageSources()
 					.create(OriginsGenshinDamageTypes.BURNING, entity, component.getBurningOrigin()),
-				ElementalApplications.gaugeUnits(target, Element.PYRO, 0),
-				InternalCooldownContext.ofNone()
+				target == entity
+					? ElementalApplications.gaugeUnits(target, Element.PYRO, 0)
+					: ElementalApplications.gaugeUnits(target, Element.PYRO, 1),
+				target == entity
+					? InternalCooldownContext.ofNone()
+					: InternalCooldownContext.ofType(entity, "origins-genshin:reactions/burning", BURNING_PYRO_ICD)
 			).shouldApplyDMGBonus(false);
 
 			target.damage(source, damage);
@@ -159,12 +166,10 @@ public abstract sealed class AbstractBurningElementalReaction
 			final ElementComponent targetComponent = ElementComponent.KEY.get(target);
 			final ElementHolder holder = targetComponent.getElementHolder(Element.PYRO);
 			
-			if (holder.canApplyElement(Element.PYRO, InternalCooldownContext.ofType(entity, "origins-genshin:reactions/burning", BURNING_PYRO_ICD), true)) {
+			if (target == entity && holder.canApplyElement(Element.PYRO, InternalCooldownContext.ofType(entity, "origins-genshin:reactions/burning", BURNING_PYRO_ICD), true)) {
 				final ElementalApplication application = holder.getElementalApplication();
 	
 				if (application == null) {
-					System.out.println(ElementalApplications.gaugeUnits(target, Element.PYRO, 1));
-
 					holder.setElementalApplication(ElementalApplications.gaugeUnits(target, Element.PYRO, 1));
 				} else {
 					application.reapply(Element.PYRO, 1);

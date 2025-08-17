@@ -14,6 +14,6 @@ public class SpreadParticleFactory implements ParticleFactory<DefaultParticleTyp
 
 	public Particle createParticle(DefaultParticleType defaultParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
 		return new ReactionParticle(clientWorld, d, e, f, Color.fromRGBAHex("#01e858").asARGB())
-			.setText(TextHelper.withFont("Spread", TextBillboardParticle.GENSHIN_FONT));
+			.setText(TextHelper.font("Spread", TextBillboardParticle.GENSHIN_FONT));
 	}
 }

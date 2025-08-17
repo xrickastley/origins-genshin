@@ -39,7 +39,8 @@ public class ElectroChargedElementalReaction extends ElementalReaction {
 		// We need both Elements to exist for Electro-Charged.
 		return applicationAE != null && !applicationAE.isEmpty()
 			&& applicationTE != null && !applicationTE.isEmpty()
-			&& !component.isElectroChargedOnCD();
+			&& !component.isElectroChargedOnCD()
+			&& !component.hasElementalApplication(Element.FROZEN);
 	}
 
 	@Override

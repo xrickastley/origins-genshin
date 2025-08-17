@@ -13,7 +13,8 @@ public abstract sealed class AbstractPyroMeltElementalReaction
 			new ElementalReactionSettings(name, OriginsGenshin.identifier(idPath), OriginsGenshinParticleFactory.MELT)
 				.setReactionCoefficient(2.0)
 				.setAuraElement(auraElement)
-				.setTriggeringElement(Element.PYRO, 5),
+				.setTriggeringElement(Element.PYRO, 5)
+				.preventsReactionsAfter(OriginsGenshin.identifier("vaporize_pyro")),
 			2
 		);
 	}

@@ -14,6 +14,6 @@ public class SwirlParticleFactory implements ParticleFactory<DefaultParticleType
 
 	public Particle createParticle(DefaultParticleType defaultParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
 		return new ReactionParticle(clientWorld, d, e, f, Colors.ANEMO.asARGB())
-			.setText(TextHelper.withFont("Swirl", TextBillboardParticle.GENSHIN_FONT));
+			.setText(TextHelper.font("Swirl", TextBillboardParticle.GENSHIN_FONT));
 	}
 }

@@ -93,7 +93,7 @@ public class ElementalBurstRenderer extends PowerRenderer {
 
 		circleRenderer
 			.add(radiusEB, 1, 0x64646464)
-			.draw(tessellator, posMatrix);
+			.draw(posMatrix);
 
 		if (icon.getColor() == null) return;
 
@@ -119,7 +119,7 @@ public class ElementalBurstRenderer extends PowerRenderer {
 				.addOutline(innerRadiusEB, outerRadiusEB, 1, icon.getOutlineColor().asARGB());
 		}
 
-		circleRenderer.draw(tessellator, posMatrix);
+		circleRenderer.draw(posMatrix);
 
 		drawContext.disableScissor();
 	}
@@ -141,7 +141,7 @@ public class ElementalBurstRenderer extends PowerRenderer {
 		circleRenderer
 			.add(56 * rescaler.getRescaleFactorWindow(), percentFilled, 0x26c8c8c8)
 			.addOutline(50 * rescaler.getRescaleFactorWindow(), 6 * rescaler.getRescaleFactorWindow(), percentFilled, 0x99c8c8c8)
-			.draw(tessellator, posMatrix);
+			.draw(posMatrix);
 	}
 
 	private void renderCooldown(ElementalBurst burstData, ElementalBurstIcon icon, DrawContext drawContext, Rescaler rescaler, double percentFilled) {
@@ -185,7 +185,7 @@ public class ElementalBurstRenderer extends PowerRenderer {
 				.addOutline(innerRadiusEB, outerRadiusEB, percentFilled, icon.getOutlineColor().from().multiply(1.5, 1.5, 1.5, 0.5).asARGB());
 		}
 
-		circleRenderer.draw(tessellator, posMatrix);
+		circleRenderer.draw(posMatrix);
 	}
 
 	public double resolveFillResource(ElementalBurstIcon skillIcon) {

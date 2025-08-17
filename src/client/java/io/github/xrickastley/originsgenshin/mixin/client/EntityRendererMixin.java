@@ -38,6 +38,7 @@ import net.minecraft.client.render.entity.EntityRenderer;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
 import net.minecraft.util.math.RotationAxis;
 import net.minecraft.util.math.Vec3d;
@@ -98,8 +99,10 @@ public abstract class EntityRendererMixin {
 			.generateTexturesUsingCenter(new Vec3d(0, 0, 0), 1, elementArray.size())
 			.iterator();
 
-		elementArray
-			.forEach(entry -> entry.render(entity, matrixStack, dispatcher.camera, (float) coords.next().getZ()));
+		final Set<Identifier> elementTexs = new HashSet<>();
+
+		elementArray.removeIf(entry -> !elementTexs.add(entry.getElement().getTexture()));
+		elementArray.forEach(entry -> entry.render(entity, matrixStack, dispatcher.camera, (float) coords.next().getZ()));
 	}
 
 	@Unique

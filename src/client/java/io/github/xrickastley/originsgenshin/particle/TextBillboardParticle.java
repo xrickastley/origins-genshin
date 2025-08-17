@@ -1,4 +1,3 @@
-// "Forked" from https://github.com/Lafolie/Final-Minecraft/blob/1.18.2/src/main/java/lafolie/fmc/core/particle/TextBillboardParticle.java, with some edits.
 package io.github.xrickastley.originsgenshin.particle;
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
 
