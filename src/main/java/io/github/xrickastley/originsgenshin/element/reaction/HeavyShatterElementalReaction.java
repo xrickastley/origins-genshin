@@ -1,0 +1,30 @@
+package io.github.xrickastley.originsgenshin.element.reaction;
+
+import io.github.xrickastley.originsgenshin.OriginsGenshin;
+import io.github.xrickastley.originsgenshin.component.ElementComponent;
+import io.github.xrickastley.originsgenshin.element.Element;
+import io.github.xrickastley.originsgenshin.factory.OriginsGenshinParticleFactory;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.item.AxeItem;
+import net.minecraft.item.PickaxeItem;
+import net.minecraft.item.ToolItem;
+
+public final class HeavyShatterElementalReaction extends ShatterElementalReaction {
+	HeavyShatterElementalReaction() {
+		super(
+			new ElementalReactionSettings("Shatter", OriginsGenshin.identifier("shatter_heavy"), OriginsGenshinParticleFactory.SHATTER)
+				.setReactionCoefficient(0)
+				.setAuraElement(Element.FROZEN)
+				.setTriggeringElement(Element.PHYSICAL, 0)
+		);
+	}
+
+	@Override
+	public boolean isTriggerable(LivingEntity entity) {
+		return ElementComponent.KEY.get(entity).hasElementalApplication(Element.FROZEN)
+			&& entity.originsgenshin$getPlannedAttacker() != null
+			&& entity.originsgenshin$getPlannedAttacker() instanceof final LivingEntity attacker
+			&& attacker.getMainHandStack().getItem() instanceof final ToolItem tool
+			&& (tool instanceof AxeItem || tool instanceof PickaxeItem);
+	}
+}

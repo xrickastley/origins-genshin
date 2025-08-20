@@ -95,6 +95,10 @@ public abstract class EntityRendererMixin {
 			);
 		}
 
+		final Set<Identifier> textures = new HashSet<>();
+
+		elementArray.removeIf(entry -> !entry.getElement().hasTexture() || !textures.add(entry.getElement().getTexture()));
+
 		final Iterator<Vec3d> coords = this
 			.generateTexturesUsingCenter(new Vec3d(0, 0, 0), 1, elementArray.size())
 			.iterator();

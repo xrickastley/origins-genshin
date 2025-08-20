@@ -18,6 +18,9 @@ public class ClientConfig implements ConfigData {
 		@ConfigEntry.Gui.Tooltip
 		@ConfigEntry.BoundedDiscrete(min = 4, max = 48)
 		public int sphereResolution = 4;
+		public boolean showDamageText = true;
+		public double normalDMGScale = 0.65;
+		public double critDMGScale = 1.0;
 	}
 
 	public static class Developer {
@@ -25,5 +28,9 @@ public class ClientConfig implements ConfigData {
 		public boolean displayElementalGauges = false;
 		@ConfigEntry.Gui.Tooltip
 		public boolean displayGaugeRuler = false;
+		@ConfigEntry.Gui.Tooltip
+		public boolean genshinDamageLim = false;
+		@ConfigEntry.Gui.Tooltip
+		public boolean commafyDamage = false;
 	}
 }

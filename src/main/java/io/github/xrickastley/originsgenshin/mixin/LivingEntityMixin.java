@@ -8,6 +8,7 @@ import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 
 import org.spongepowered.asm.mixin.Debug;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
@@ -21,6 +22,7 @@ import io.github.xrickastley.originsgenshin.element.InternalCooldownContext;
 import io.github.xrickastley.originsgenshin.element.InternalCooldownType;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinAttributes;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinGameRules;
+import io.github.xrickastley.originsgenshin.interfaces.IPlayerEntity;
 import io.github.xrickastley.originsgenshin.networking.ShowElementalDamageS2CPacket;
 
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
@@ -32,6 +34,7 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.Box;
@@ -45,6 +48,9 @@ public abstract class LivingEntityMixin extends Entity {
 		super(entityType, world);
 		throw new AssertionError();
 	}
+
+	@Unique
+	private float originsgenshin$subdamage;
 
 	@ModifyReturnValue(
 		method = "createLivingAttributes",
@@ -130,6 +136,14 @@ public abstract class LivingEntityMixin extends Entity {
 			? eds2
 			: new ElementalDamageSource(source, ElementalApplications.gaugeUnits((LivingEntity)(Entity) this, Element.PHYSICAL, 0), InternalCooldownContext.ofNone(source.getAttacker()));
 
+		originsgenshin$subdamage += amount;
+
+		if (originsgenshin$subdamage < 1) return;
+
+		final float extra = originsgenshin$subdamage - (float) Math.floor(originsgenshin$subdamage);
+		
+		originsgenshin$subdamage = (float) Math.floor(originsgenshin$subdamage);
+
 		final World world = this.getWorld();
 
 		if (world.isClient || !(world instanceof ServerWorld)) return;
@@ -140,9 +154,14 @@ public abstract class LivingEntityMixin extends Entity {
 		final double y = this.getY() + (boundingBox.getLengthY() * 0.50 * Math.random()) + 0.50;
 		final double z = this.getZ() + (boundingBox.getLengthZ() * 1.25 * Math.random());
 		final Vec3d pos = new Vec3d(x, y, z);
+		final boolean isCrit = eds.getOriginalSource() != null && source.getAttacker() instanceof final PlayerEntity player
+			? ((IPlayerEntity) player).originsgenshin$isCrit(eds.getOriginalSource())
+			: false;
 
 		final Element element = eds.getElementalApplication().getElement();
-		final ShowElementalDamageS2CPacket showElementalDMGPacket = new ShowElementalDamageS2CPacket(pos, element, amount);
+		final ShowElementalDamageS2CPacket showElementalDMGPacket = new ShowElementalDamageS2CPacket(pos, element, originsgenshin$subdamage, isCrit);
+
+		originsgenshin$subdamage = extra;
 
 		for (final ServerPlayerEntity player : PlayerLookup.tracking(this)) {
 			if (player.getId() == this.getId()) return;

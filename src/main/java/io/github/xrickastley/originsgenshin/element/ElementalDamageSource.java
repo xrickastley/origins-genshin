@@ -1,14 +1,15 @@
 package io.github.xrickastley.originsgenshin.element;
 
+import org.jetbrains.annotations.Nullable;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.DamageType;
 import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.util.math.Vec3d;
 
-import blue.endless.jankson.annotation.Nullable;
-
 public final class ElementalDamageSource extends DamageSource {
+	private final @Nullable DamageSource original;
 	private final ElementalApplication application;
 	private final InternalCooldownContext icdContext;
 	private boolean applyDMGBonus = true;
@@ -27,6 +28,7 @@ public final class ElementalDamageSource extends DamageSource {
 	public ElementalDamageSource(final DamageSource source, final ElementalApplication application, final InternalCooldownContext icdContext) {
 		super(source.getTypeRegistryEntry(), source.getSource(), source.getAttacker());
 
+		this.original = source;
 		this.application = application;
 		this.icdContext = icdContext;
 	}
@@ -47,6 +49,7 @@ public final class ElementalDamageSource extends DamageSource {
 	public ElementalDamageSource(final RegistryEntry<DamageType> type, @Nullable final Entity source, @Nullable final Entity attacker, final ElementalApplication application, final InternalCooldownContext icdContext) {
 		super(type, source, attacker);
 
+		this.original = null;
 		this.application = application;
 		this.icdContext = icdContext;
 	}
@@ -64,6 +67,7 @@ public final class ElementalDamageSource extends DamageSource {
 	public ElementalDamageSource(final RegistryEntry<DamageType> type, final Vec3d position, final ElementalApplication application, final InternalCooldownContext icdContext) {
 		super(type, position);
 
+		this.original = null;
 		this.application = application;
 		this.icdContext = icdContext;
 	}
@@ -82,6 +86,7 @@ public final class ElementalDamageSource extends DamageSource {
 	public ElementalDamageSource(final RegistryEntry<DamageType> type, @Nullable final Entity attacker, final ElementalApplication application, final InternalCooldownContext icdContext) {
 		super(type, attacker, attacker);
 
+		this.original = null;
 		this.application = application;
 		this.icdContext = icdContext;
 	}
@@ -98,6 +103,7 @@ public final class ElementalDamageSource extends DamageSource {
 	public ElementalDamageSource(final RegistryEntry<DamageType> type, final ElementalApplication application, final InternalCooldownContext icdContext) {
 		super(type);
 
+		this.original = null;
 		this.application = application;
 		this.icdContext = icdContext;
 	}
@@ -128,6 +134,14 @@ public final class ElementalDamageSource extends DamageSource {
 
 	public InternalCooldownContext getIcdContext() {
 		return this.icdContext;
+	}
+
+	/**
+	 * Returns the {@code DamageSource} that was used to create this {@code ElementalDamageSource},
+	 * or {@code null} if a {@code DamageSource} wasn't used.
+	 */
+	public @Nullable DamageSource getOriginalSource() {
+		return this.original;
 	}
 
 	public boolean applyDMGBonus() {

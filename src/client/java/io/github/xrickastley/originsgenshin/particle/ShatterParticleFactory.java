@@ -15,7 +15,7 @@ public class ShatterParticleFactory implements ParticleFactory<DefaultParticleTy
 		return new ReactionParticle(clientWorld, d, e, f, 0xFFFFFFFF)
 			.setText(
 				TextHelper.font(
-					TextHelper.gradient("Shatter", 0x70dee4, 0xcfffff), 
+					TextHelper.gradient("Shatter", 0xcfffff, 0x70dee4), 
 					TextBillboardParticle.GENSHIN_FONT
 				)
 			);

@@ -2,11 +2,12 @@ package io.github.xrickastley.originsgenshin.particle;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 
+import io.github.xrickastley.originsgenshin.util.ClientConfig;
 import io.github.xrickastley.originsgenshin.util.Color;
 import io.github.xrickastley.originsgenshin.util.DelayedRenderer;
 import io.github.xrickastley.originsgenshin.util.Ease;
 import io.github.xrickastley.originsgenshin.util.TextHelper;
-
+import me.shedaniel.autoconfig.AutoConfig;
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -23,9 +24,20 @@ import net.minecraft.util.math.MathHelper;
 
 @Environment(EnvType.CLIENT)
 public class DamageTextParticle extends TextBillboardParticle {
-	protected DamageTextParticle(ClientWorld clientWorld, double x, double y, double z, double amount, double color) {
+	private final double scale;
+
+	protected DamageTextParticle(ClientWorld clientWorld, double x, double y, double z, double amount, double color, double scale) {
 		super(clientWorld, x, y, z, color);
 
+		final ClientConfig config = AutoConfig
+			.getConfigHolder(ClientConfig.class)
+			.getConfig();
+
+		final String damageFormat = config.developer.commafyDamage
+			? "%,.0f"
+			: "%.0f";
+
+		this.scale = scale;
 		this.collidesWithWorld = false;
 		this.gravityStrength = 0f;
 		this.velocityY = 0d;
@@ -33,7 +45,7 @@ public class DamageTextParticle extends TextBillboardParticle {
 		this.maxAge = 40;
 		this.fadeAge = maxAge - 15;
 		this.color = MathHelper.floor(color);
-		this.setText(TextHelper.font(String.format("%d", (int) Math.max(amount, 1)), TextBillboardParticle.GENSHIN_FONT));
+		this.setText(TextHelper.font(String.format(damageFormat, Math.floor(Math.max(amount, 1))), TextBillboardParticle.GENSHIN_FONT));
 	}
 
 	@Override
@@ -48,7 +60,7 @@ public class DamageTextParticle extends TextBillboardParticle {
 		final float deltaTime = age + tickDelta;
 
 		final double alpha = Math.max(0.0f, MathHelper.lerp((deltaTime - fadeAge) / (maxAge - fadeAge), 1.0, 0.0));
-		final float scale = (float) (1.25 - (Ease.IN_OUT_QUART.applyLerpProgress(((age + tickDelta) / scaleAge), 0, 1) * 0.5));
+		final float scale = (float) ((1.25 - (Ease.IN_OUT_QUART.applyLerpProgress(((age + tickDelta) / scaleAge), 0, 1) * 0.5)) * this.scale);
 
 		if (alpha <= 0f || scale <= 0f) return;
 
@@ -77,7 +89,7 @@ public class DamageTextParticle extends TextBillboardParticle {
 
 		public Particle createParticle(DefaultParticleType defaultParticleType, ClientWorld clientWorld, double x, double y, double z, double velX, double velY, double velZ) {
 			// VelX and VelY serve as damage dealt and color, respectively.
-			return new DamageTextParticle(clientWorld, x, y, z, velX, velY);
+			return new DamageTextParticle(clientWorld, x, y, z, velX, velY, velZ);
 		}
 	}
 }

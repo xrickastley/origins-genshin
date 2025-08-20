@@ -22,6 +22,7 @@ public final class FrozenElementalReaction extends ElementalReaction {
 				.setAuraElement(Element.CRYO, 4)
 				.setTriggeringElement(Element.HYDRO, 3)
 				.reversable(true)
+				.preventsReactionsAfter(OriginsGenshin.identifier("shatter_geo"), OriginsGenshin.identifier("shatter_heavy"))
 		);
 	}
 

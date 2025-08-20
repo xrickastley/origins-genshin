@@ -103,9 +103,9 @@ public class ElementalBurstRenderer extends PowerRenderer {
 
 		drawContext.enableScissor(
 			rescaler.rescaleX(1762),
-			rescaler.rescaleY(1028 - (112 * resourceMultiplier)),
-			rescaler.rescaleX(1762 + 112),
-			rescaler.rescaleY(1028)
+			rescaler.rescaleY(1030 - (114 * resourceMultiplier)),
+			rescaler.rescaleX(1762 + 114),
+			rescaler.rescaleY(1030)
 		);
 
 		circleRenderer

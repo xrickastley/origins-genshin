@@ -137,6 +137,12 @@ public class OriginsGenshin implements ModInitializer {
 	public static Identifier identifier(String path) {
 		return Identifier.of(MOD_ID, path);
 	}
+
+	public static Logger sublogger() {
+		final String className = Thread.currentThread().getStackTrace()[2].getClassName();
+
+		return OriginsGenshin.sublogger(className.substring(className.lastIndexOf(".") + 1));
+	}
 	
 	public static Logger sublogger(String sublogger) {
 		return LoggerFactory.getLogger(MOD_ID + "/" + sublogger);

@@ -146,6 +146,11 @@ public final class ElementComponentImpl implements ElementComponent {
 		return ImmutablePair.of(this.lastReaction);
 	}
 
+	// TO BE USED ONLY INTERNALLY.
+	public void setLastReaction(Pair<ElementalReaction, Long> lastReaction) {
+		this.lastReaction = lastReaction;
+	}
+
 	@Override
 	public boolean canApplyElement(Element element, InternalCooldownContext icdContext, boolean handleICD) {
 		if (element.bypassesInternalCooldown() || !icdContext.hasOrigin()) return true;

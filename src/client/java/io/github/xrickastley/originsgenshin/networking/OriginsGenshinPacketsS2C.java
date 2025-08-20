@@ -3,9 +3,10 @@ package io.github.xrickastley.originsgenshin.networking;
 import io.github.xrickastley.originsgenshin.element.reaction.ElementalReaction;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinParticleFactory;
 import io.github.xrickastley.originsgenshin.registry.OriginsGenshinRegistries;
+import io.github.xrickastley.originsgenshin.util.ClientConfig;
 import io.github.xrickastley.originsgenshin.util.Color;
 import io.github.xrickastley.originsgenshin.util.Colors;
-
+import me.shedaniel.autoconfig.AutoConfig;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
@@ -36,15 +37,24 @@ public class OriginsGenshinPacketsS2C {
 	}
 
 	protected static void onElementalDamageShow(ShowElementalDamageS2CPacket packet, ClientPlayerEntity player, PacketSender responseSender) {
+		final ClientConfig config = AutoConfig
+			.getConfigHolder(ClientConfig.class)
+			.getConfig();
+
+		if (!config.renderers.showDamageText) return;
+
 		final Vec3d pos = packet.pos();
 		final Color color = packet.element() != null && packet.element().hasDamageColor()
 			? packet.element().getDamageColor()
 			: Colors.PHYSICAL;
+		final float amount = config.developer.genshinDamageLim
+			? Math.min(packet.amount(), 20_000_000)
+			: packet.amount();
 
 		MinecraftClient
 			.getInstance()
 			.player
 			.getWorld()
-			.addImportantParticle(OriginsGenshinParticleFactory.DAMAGE_TEXT, pos.x, pos.y, pos.z, packet.amount(), color.asARGB(), 1.0f);
+			.addImportantParticle(OriginsGenshinParticleFactory.DAMAGE_TEXT, pos.x, pos.y, pos.z, amount, color.asARGB(), packet.crit() ? config.renderers.critDMGScale : config.renderers.normalDMGScale);
 	}
 }

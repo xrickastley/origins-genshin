@@ -11,9 +11,11 @@ import io.github.xrickastley.originsgenshin.element.ElementalDamageSource;
 import io.github.xrickastley.originsgenshin.element.InternalCooldownContext;
 import io.github.xrickastley.originsgenshin.events.ReactionTriggered;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinParticleFactory;
+import io.github.xrickastley.originsgenshin.factory.OriginsGenshinSoundEvents;
 import io.github.xrickastley.originsgenshin.registry.OriginsGenshinDamageTypes;
 
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.sound.SoundCategory;
 
 import javax.annotation.Nullable;
 
@@ -60,6 +62,10 @@ public class ElectroChargedElementalReaction extends ElementalReaction {
 		ReactionTriggered.EVENT
 			.invoker()
 			.onReactionTriggered(this, reducedGauge, entity, origin);
+
+		entity
+			.getWorld()
+			.playSound(null, entity.getBlockPos(), OriginsGenshinSoundEvents.REACTION, SoundCategory.PLAYERS, 1.0f, 1.0f);
 
 		return true;
 	}

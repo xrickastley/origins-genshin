@@ -25,7 +25,8 @@ public class ElementalReactions {
 	public static final ElementalReaction SUPERCONDUCT = new SuperconductElementalReaction();
 	public static final ElementalReaction FROZEN_SUPERCONDUCT = new FrozenSuperconductElementalReaction();
 	// Shatters the Frozen aura on the target, dealing damage.
-	public static final ElementalReaction SHATTER = new ShatterElementalReaction();
+	public static final ElementalReaction GEO_SHATTER = new GeoShatterElementalReaction();
+	public static final ElementalReaction SHATTER = new HeavyShatterElementalReaction();
 	// Applies the Quicken aura to the target.
 	public static final ElementalReaction QUICKEN = new QuickenElementalReaction();
 	// Applies a 125% Level Multipler Additive Base DMG Bonus to the damage dealt.
@@ -71,6 +72,7 @@ public class ElementalReactions {
 		register(ElementalReactions.OVERLOADED);
 		register(ElementalReactions.SUPERCONDUCT);
 		register(ElementalReactions.FROZEN_SUPERCONDUCT);
+		register(ElementalReactions.GEO_SHATTER);
 		register(ElementalReactions.SHATTER);
 		register(ElementalReactions.QUICKEN);
 		register(ElementalReactions.SPREAD);
