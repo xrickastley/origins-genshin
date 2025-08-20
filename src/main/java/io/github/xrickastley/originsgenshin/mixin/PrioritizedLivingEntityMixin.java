@@ -36,7 +36,7 @@ import net.minecraft.util.Pair;
 import net.minecraft.world.World;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-@Mixin(value = LivingEntity.class, priority = Integer.MIN_VALUE)
+@Mixin(value = LivingEntity.class, priority = 0)
 public abstract class PrioritizedLivingEntityMixin 
 	extends Entity
 	implements ILivingEntity

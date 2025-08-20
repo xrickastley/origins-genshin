@@ -1,6 +1,5 @@
 package io.github.xrickastley.originsgenshin.mixin;
 
-import org.spongepowered.asm.mixin.Debug;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 
@@ -8,7 +7,6 @@ import io.github.xrickastley.originsgenshin.interfaces.IDamageSource;
 import net.minecraft.entity.damage.DamageSource;
 
 @Mixin(DamageSource.class)
-@Debug(export = true)
 public class DamageSourceMixin implements IDamageSource {
 	@Unique
 	private boolean originsgenshin$displayDamage = true;

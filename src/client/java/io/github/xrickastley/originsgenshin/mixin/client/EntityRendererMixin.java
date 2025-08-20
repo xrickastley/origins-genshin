@@ -7,7 +7,6 @@ import java.util.stream.Stream;
 
 import org.jetbrains.annotations.Nullable;
 import org.joml.Matrix4f;
-import org.spongepowered.asm.mixin.Debug;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -45,7 +44,6 @@ import net.minecraft.util.math.Vec3d;
 
 import me.shedaniel.autoconfig.AutoConfig;
 
-@Debug(export = true)
 @Mixin(EntityRenderer.class)
 public abstract class EntityRendererMixin {
 	@Shadow
