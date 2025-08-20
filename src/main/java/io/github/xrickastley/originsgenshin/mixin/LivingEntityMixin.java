@@ -132,6 +132,8 @@ public abstract class LivingEntityMixin extends Entity {
 		at = @At("TAIL")
 	)
 	private void damageHandlers_elements(final DamageSource source, float amount, CallbackInfo ci) {
+		if (!source.originsgenshin$displayDamage()) return;
+
 		final ElementalDamageSource eds = source instanceof final ElementalDamageSource eds2
 			? eds2
 			: new ElementalDamageSource(source, ElementalApplications.gaugeUnits((LivingEntity)(Entity) this, Element.PHYSICAL, 0), InternalCooldownContext.ofNone(source.getAttacker()));

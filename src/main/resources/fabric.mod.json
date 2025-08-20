@@ -50,6 +50,9 @@
 			],
 			"net/minecraft/class_1309": [
 				"io/github/xrickastley/originsgenshin/interfaces/ILivingEntity"
+			],
+			"net/minecraft/class_1282": [
+				"io/github/xrickastley/originsgenshin/interfaces/IDamageSource"
 			]
 		},
 		"cardinal-components": [
