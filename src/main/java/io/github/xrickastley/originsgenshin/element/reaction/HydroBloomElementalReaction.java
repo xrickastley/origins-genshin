@@ -11,6 +11,7 @@ public final class HydroBloomElementalReaction extends AbstractBloomElementalRea
 				.setReactionCoefficient(0.5)
 				.setAuraElement(Element.DENDRO)
 				.setTriggeringElement(Element.HYDRO, 4)
+				.preventsReactionsAfter(OriginsGenshin.identifier("bloom_quicken"))
 		);
 	}
 }

@@ -33,6 +33,9 @@ public class OriginsGenshinRegistries {
 	}
 
 	static {
+		Registry.register(OriginsGenshinRegistries.INTERNAL_COOLDOWN_TYPE, InternalCooldownType.NONE.getId(), InternalCooldownType.NONE);
+		Registry.register(OriginsGenshinRegistries.INTERNAL_COOLDOWN_TYPE, InternalCooldownType.DEFAULT.getId(), InternalCooldownType.DEFAULT);
+
 		OriginsGenshinReloadListener.addReloadableRegistry(
 			ReloadableRegistry.ofCodec(
 				OriginsGenshinRegistries.INTERNAL_COOLDOWN_TYPE,

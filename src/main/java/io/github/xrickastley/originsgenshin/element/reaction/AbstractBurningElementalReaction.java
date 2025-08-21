@@ -144,8 +144,6 @@ public abstract sealed class AbstractBurningElementalReaction
 		for (final LivingEntity target : ElementalReaction.getEntitiesInAoE(entity, 1, t -> !ElementComponent.KEY.get(t).isBurningOnCD())) {
 			// TODO: Burning DMG from this point (of reapplication) will be calculated based on the stats of the character responsible for the latest instance of Dendro or Pyro application. (not possible unless EM is added, there is no EM here)
 
-			// TODO: if target, direct, else, by dmg
-
 			final float damage = ElementalReaction.getReactionDamage(entity, 0.25);
 			final ElementalDamageSource source = new ElementalDamageSource(
 				entity
@@ -209,19 +207,6 @@ public abstract sealed class AbstractBurningElementalReaction
 		ElementComponent.sync(component.getOwner());
 	}
 
-	public static void mixin$reduceBurningGauge(ElementalApplication auraElement, ElementalApplication triggeringElement, LivingEntity entity, double reducedGauge) {
-		if (auraElement.getElement() != Element.PYRO || triggeringElement.getElement() != Element.PYRO) return;
-
-		final ElementComponent component = ElementComponent.KEY.get(entity);
-
-		if (!component.hasElementalApplication(Element.BURNING)) return;
-
-		component
-			.getElementHolder(Element.BURNING)
-			.getElementalApplication()
-			.reduceGauge(reducedGauge);
-	}
-
 	public static boolean mixin$onlyAllowPyroReactions(final boolean original, final ElementComponent component, final ElementalReaction reaction) {
 		if (!component.hasElementalApplication(Element.BURNING)) return original;
 
@@ -236,7 +221,7 @@ public abstract sealed class AbstractBurningElementalReaction
 	public static void mixin$reduceQuickenGauge(final ElementalApplication application) {
 		final ElementComponent component = ElementComponent.KEY.get(application.getEntity());
 
-		if (!component.hasElementalApplication(Element.BURNING) || application.getElement() != Element.QUICKEN) return;
+		if (!component.hasElementalApplication(Element.BURNING) || component.hasElementalApplication(Element.DENDRO) || application.getElement() != Element.QUICKEN) return;
 
 		application.reduceGauge(Element.DENDRO.getCustomDecayRate().apply(application).doubleValue());
 	}

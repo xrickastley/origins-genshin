@@ -94,6 +94,7 @@ public final class GaugeUnitElementalApplication extends ElementalApplication {
 		super.tick();
 
 		this.currentGauge -= this.getDecayRate();
+		this.element.reduceLinkedElements(this.getDecayRate(), this, true);
 	}
 
 	@Override

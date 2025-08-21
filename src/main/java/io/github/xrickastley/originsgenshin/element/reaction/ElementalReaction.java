@@ -43,8 +43,6 @@ public abstract class ElementalReaction {
 	protected final Pair<Element, Integer> auraElement;
 	protected final Pair<Element, Integer> triggeringElement;
 	protected final boolean reversable;
-	@Deprecated
-	protected final boolean allowChildElements = false;
 	protected final boolean applyResultAsAura;
 	protected final boolean endsReactionTrigger;
 	protected final boolean preventsPriorityUpgrade;
@@ -251,7 +249,6 @@ public abstract class ElementalReaction {
 
 		LOGGER.debug("Phase: AFTER - Aura element: {} GU {}; Triggering elements: {} GU {}; Reaction coefficient: {}", df.format(applicationAE.getCurrentGauge()), applicationAE.getElement(), df.format(applicationTE.getCurrentGauge()), applicationTE.getElement(), reactionCoefficient);
 
-		AbstractBurningElementalReaction.mixin$reduceBurningGauge(applicationAE, applicationTE, entity, reducedGauge);
 		this.onReaction(entity, applicationAE, applicationTE, reducedGauge, origin);
 		this.displayReaction(entity);
 

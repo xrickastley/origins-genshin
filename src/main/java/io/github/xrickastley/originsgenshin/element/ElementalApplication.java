@@ -133,6 +133,7 @@ public abstract sealed class ElementalApplication permits DurationElementalAppli
 		final double previousValue = this.currentGauge;
 
 		this.currentGauge = Math.max(this.currentGauge - gaugeUnits, 0);
+		this.element.reduceLinkedElements(previousValue - this.currentGauge, this, false);
 
 		return previousValue - this.currentGauge;
 	}

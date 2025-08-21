@@ -1,7 +1,9 @@
 package io.github.xrickastley.originsgenshin.element;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.function.Function;
+import java.util.function.Predicate;
 
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -13,6 +15,7 @@ import io.github.xrickastley.originsgenshin.util.Color;
 import io.github.xrickastley.originsgenshin.util.Colors;
 
 import net.minecraft.util.Identifier;
+import net.minecraft.util.Pair;
 
 public enum Element {
 	// Only here for Attribute Identification. Other than that, this serves no use, since Physical isn't really an Element.
@@ -88,64 +91,60 @@ public enum Element {
 		ElementSettings.create()
 			.setTexture(OriginsGenshin.identifier("textures/element/cryo.png"))
 			.setDamageColor(Color.fromRGBAHex("#b4ffff"))
-			.setParentElement(Element.CRYO)
 			.setPriority(2)
 			.bypassesCooldown(true)
-	),
-	QUICKEN(
-		OriginsGenshin.identifier("quicken"),
-		ElementSettings.create()
-			.setTexture(OriginsGenshin.identifier("textures/element/dendro.png"))
-			.setDamageColor(Color.fromRGBAHex("#01e858"))
-			.setParentElement(Element.DENDRO)
-			.setPriority(2)
-			.bypassesCooldown(true)
+			.linkElement(Element.CRYO)
 	),
 	BURNING(
 		OriginsGenshin.identifier("burning"),
 		ElementSettings.create()
 			.setTexture(OriginsGenshin.identifier("textures/element/pyro.png"))
 			.setDamageColor(Colors.PYRO)
-			.setParentElement(Element.PYRO)
 			.setPriority(1)
 			.setDecayRate(Decays.NO_DECAY_RATE)
 			.bypassesCooldown(true)
 			.hasAuraTax(false)
+			.linkToElement(Element.PYRO)
+	),
+	QUICKEN(
+		OriginsGenshin.identifier("quicken"),
+		ElementSettings.create()
+			.setTexture(OriginsGenshin.identifier("textures/element/dendro.png"))
+			.setDamageColor(Color.fromRGBAHex("#01e858"))
+			.setPriority(2)
+			.bypassesCooldown(true)
+			.linkToElement(Element.DENDRO)
+			.linkGaugeDecayIf(application -> ElementComponent.KEY.get(application.getEntity()).hasElementalApplication(Element.BURNING))
 	);
 
 	private final Identifier id;
 	private final ElementSettings settings;
-	private final ArrayList<Element> children = new ArrayList<>();
+	private final List<Pair<Element, Predicate<ElementalApplication>>> linkedElements;
 
 	private Element(Identifier id, ElementSettings settings) {
 		this.id = id;
 		this.settings = settings;
+		this.linkedElements = new ArrayList<>();
 
-		if (settings.parentElement != null) settings.parentElement.children.add(this);
+		if (settings.linkedElement == null) return;
+
+		if (settings.reverseLinkedElement) {
+			this.linkedElements.add(new Pair<>(settings.linkedElement, settings.linkDecayOnlyIf));
+		} else {
+			settings.linkedElement.linkedElements.add(new Pair<>(this, settings.linkDecayOnlyIf));
+		}
 	}
 
 	public boolean hasDecayInheritance() {
 		return settings.decayInheritance;
 	}
 
-	public boolean hasParentElement() {
-		return settings.parentElement != null;
-	}
-
-	public Element getParentElement() {
-		return settings.parentElement;
-	}
-
 	public boolean hasTexture() {
-		return settings.texture != null || (settings.parentElement != null && settings.parentElement.hasTexture());
+		return settings.texture != null;
 	}
 
 	public Identifier getTexture() {
-		return settings.texture != null
-			? settings.texture
-			: settings.parentElement != null
-				? settings.parentElement.getTexture()
-				: null;
+		return settings.texture;
 	}
 
 	public boolean hasDamageColor() {
@@ -176,28 +175,24 @@ public enum Element {
 		return this.settings.bypassesCooldown;
 	}
 
-	public ArrayList<Element> getChildrenElements() {
-		// Prevents modification to the original array.
-		return new ArrayList<>(this.children);
-	}
-
-	/**
-	 * Checks if the provided {@code element} is a first-child of this {@link Element}. <br> <br>
-	 *
-	 * This does not work recursively, meaning that a child-of-child element will not be considered
-	 * as a child of this element.
-	 *
-	 * @param element The element to check.
-	 * @return Whether {@code element} is a first-child of this {@link Element}.
-	 */
-	public boolean isChild(Element element) {
-		return this.children
-			.stream()
-			.anyMatch(childElement -> childElement == element);
-	}
-
 	public boolean hasAuraTax() {
 		return settings.hasAuraTax;
+	}
+
+	void reduceLinkedElements(double reduction, ElementalApplication application, boolean isGaugeDecay) {
+		final ElementComponent component = ElementComponent.KEY.get(application.getEntity());
+
+		if (component == null) return;
+
+		for (final Pair<Element, Predicate<ElementalApplication>> pair : application.getElement().linkedElements) {
+			if (!component.hasElementalApplication(pair.getLeft())) continue;
+
+			if (isGaugeDecay && !pair.getRight().test(application)) continue;
+		
+			component.getElementalApplication(pair.getLeft()).currentGauge -= reduction;
+		}
+
+		ElementComponent.sync(application.getEntity());
 	}
 
 	/**
@@ -209,12 +204,14 @@ public enum Element {
 		protected Identifier texture;
 		protected Color damageColor;
 		protected int priority;
-		protected @Nullable Element parentElement;
 		protected @Nullable Function<ElementalApplication, Number> decayRate = null;
 		protected boolean canBeAura = true;
 		protected boolean decayInheritance = true;
 		protected boolean bypassesCooldown = false;
 		protected boolean hasAuraTax = true;
+		protected @Nullable Element linkedElement = null;
+		protected boolean reverseLinkedElement = false;
+		protected Predicate<ElementalApplication> linkDecayOnlyIf = entity -> true; 
 
 		/**
 		 * Creates a new, empty instance of {@code ElementSettings}.
@@ -259,22 +256,6 @@ public enum Element {
 		 */
 		public ElementSettings setPriority(int priority) {
 			this.priority = priority;
-
-			return this;
-		}
-
-		/**
-		 * Sets the element as a child of {@code parentElement}. <br> <br>
-		 *
-		 * A child element is able to be used in-place of it's parent element in an Elemental
-		 * Reaction if it has {@code allowChildElements} set to {@code true}.
-		 *
-		 * @param parentElement The parent element of the element.
-		 * @deprecated This setting does nothing.
-		 */
-		@Deprecated
-		public ElementSettings setParentElement(Element parentElement) {
-			this.parentElement = parentElement;
 
 			return this;
 		}
@@ -330,6 +311,73 @@ public enum Element {
 		 */
 		public ElementSettings decayInheritance(boolean decayInheritance) {
 			this.decayInheritance = decayInheritance;
+
+			return this;
+		}
+	
+		/**
+		 * Links this element to the provided {@code element}. <br> <br>
+		 * 
+		 * Upon linking, <i>gauge reduction</i> not originating from the gauge decay will be 
+		 * "synced" to the gauge units of this element, if it exists. <br> <br>
+		 * 
+		 * Do note that linking isn't a "recursive" operation, i.e. Element A linked to Element B,
+		 * Element B linked to Element C, reduction on Element A, B and C. <br> <br>
+		 * 
+		 * You may also choose to sync the gauge decay permanently or with a {@code Predicate}.
+		 * 
+		 * @param element The {@link Element} to link this element to.
+		 * @see {@link ElementSettings#linkToElement(Element) ElementSettings#linkToElement} For linking the specified {@code element} to <b>this</b> element.
+		 */
+		public ElementSettings linkToElement(Element element) {
+			this.linkedElement = element;
+
+			return this;
+		}
+
+		/**
+		 * Links the provided {@code element} to this element. <br> <br>
+		 * 
+		 * Upon linking, <i>gauge reduction</i> not originating from the gauge decay will be 
+		 * "synced" to the gauge units of the provided {@code element}, if it exists. <br> <br>
+		 * 
+		 * Do note that linking isn't a "recursive" operation, i.e. Element A linked to Element B,
+		 * Element B linked to Element C, reduction on Element A, B and C. <br> <br>
+		 * 
+		 * You may also choose to sync the gauge decay permanently or with a {@code Predicate}.
+		 * 
+		 * @param element The {@link Element} to link to this element.
+		 * @param boolean Whether the provided {@code element} is linked to this element instead.
+		 * @see {@link ElementSettings#linkToElement(Element) ElementSettings#linkToElement} For linking <b>this</b> element to the specified {@code element}.
+		 */
+		public ElementSettings linkElement(Element element) {
+			this.linkedElement = element;
+			this.reverseLinkedElement = true;
+
+			return this;
+		}
+
+		/**
+		 * Sets whether the gauge decay is linked to the gauge of this element, or the gauge of the
+		 * corresponding element, if {@code reverse} was {@code true} for 
+		 * {@link ElementSettings#linkElement(Element, boolean) ElementSettings#linkedElement}.
+		 * 
+		 * @param link Whether or not the gauge decay is also linked.
+		 */
+		@SuppressWarnings("unused")
+		public ElementSettings linkGaugeDecay(boolean link) {
+			return this.linkGaugeDecayIf(a -> link);
+		}
+
+		/**
+		 * Sets whether, at this instance in time, the gauge decay is linked to the gauge of this
+		 * element, or the gauge of the corresponding element, if {@code reverse} was {@code true}
+		 * for {@link ElementSettings#linkElement(Element, boolean) ElementSettings#linkedElement}.
+		 * 
+		 * @param predicate A {@code Predicate} indicating whether or not the gauge decay is also linked at this instance in time. The passed {@code ElementalApplication} is the one belonging to the linked element, or more formally, the element this element is linked to.
+		 */
+		public ElementSettings linkGaugeDecayIf(Predicate<ElementalApplication> predicate) {
+			this.linkDecayOnlyIf = predicate;
 
 			return this;
 		}
