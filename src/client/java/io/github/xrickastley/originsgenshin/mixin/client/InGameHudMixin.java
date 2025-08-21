@@ -52,7 +52,7 @@ public class InGameHudMixin {
 			final CircleRenderer circleRenderer = new CircleRenderer((x1 + 4.5) * scaleFactor, (y + 4.5) * scaleFactor, 0);
 
 			circleRenderer
-				.add(5 * scaleFactor, 1, 0x7F646464)
+				.add(4.5 * scaleFactor, 1, 0x7F646464)
 				.draw(context.getMatrices().peek().getPositionMatrix());
 
 			context.drawTexture(texture, x1, y, 9, 9, 0, 0, 9, 9, 9, 9);
