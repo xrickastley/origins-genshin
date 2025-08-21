@@ -86,8 +86,8 @@ public enum Element {
 			.setPriority(2)
 			.canBeAura(false)
 	),
-	FROZEN(
-		OriginsGenshin.identifier("frozen"),
+	FREEZE(
+		OriginsGenshin.identifier("freeze"),
 		ElementSettings.create()
 			.setTexture(OriginsGenshin.identifier("textures/element/cryo.png"))
 			.setDamageColor(Color.fromRGBAHex("#b4ffff"))

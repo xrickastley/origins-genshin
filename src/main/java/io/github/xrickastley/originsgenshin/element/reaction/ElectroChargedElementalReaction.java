@@ -42,7 +42,7 @@ public class ElectroChargedElementalReaction extends ElementalReaction {
 		return applicationAE != null && !applicationAE.isEmpty()
 			&& applicationTE != null && !applicationTE.isEmpty()
 			&& !component.isElectroChargedOnCD()
-			&& !component.hasElementalApplication(Element.FROZEN);
+			&& !component.hasElementalApplication(Element.FREEZE);
 	}
 
 	@Override

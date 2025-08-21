@@ -14,14 +14,14 @@ public final class HeavyShatterElementalReaction extends ShatterElementalReactio
 		super(
 			new ElementalReactionSettings("Shatter", OriginsGenshin.identifier("shatter_heavy"), OriginsGenshinParticleFactory.SHATTER)
 				.setReactionCoefficient(0)
-				.setAuraElement(Element.FROZEN)
+				.setAuraElement(Element.FREEZE)
 				.setTriggeringElement(Element.PHYSICAL, 0)
 		);
 	}
 
 	@Override
 	public boolean isTriggerable(LivingEntity entity) {
-		return ElementComponent.KEY.get(entity).hasElementalApplication(Element.FROZEN)
+		return ElementComponent.KEY.get(entity).hasElementalApplication(Element.FREEZE)
 			&& entity.originsgenshin$getPlannedAttacker() != null
 			&& entity.originsgenshin$getPlannedAttacker() instanceof final LivingEntity attacker
 			&& attacker.getMainHandStack().getItem() instanceof final ToolItem tool

@@ -9,7 +9,7 @@ public final class FrozenCrystallizeElementalReaction extends AbstractCrystalliz
 		super(
 			new ElementalReactionSettings("Crystallize", OriginsGenshin.identifier("crystallize_frozen"), OriginsGenshinParticleFactory.CRYSTALLIZE)
 				.setReactionCoefficient(0.5)
-				.setAuraElement(Element.FROZEN)
+				.setAuraElement(Element.FREEZE)
 				.setTriggeringElement(Element.GEO, 6)
 		);
 	}

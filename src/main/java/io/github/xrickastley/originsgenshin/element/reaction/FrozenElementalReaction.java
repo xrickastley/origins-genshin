@@ -42,10 +42,10 @@ public final class FrozenElementalReaction extends ElementalReaction {
 		// Freeze Duration (Seconds) = 2√(5 * freezeAuraGauge) + 4) - 4
 		final double freezeTickDuration = (2.0 * Math.sqrt((5 * freezeAuraGauge) + 4) - 4) * 20;
 
-		final ElementalApplication application = ElementalApplications.duration(entity, Element.FROZEN, freezeAuraGauge, freezeTickDuration);
+		final ElementalApplication application = ElementalApplications.duration(entity, Element.FREEZE, freezeAuraGauge, freezeTickDuration);
 		final ElementHolder holder = ElementComponent.KEY
 			.get(entity)
-			.getElementHolder(Element.FROZEN);
+			.getElementHolder(Element.FREEZE);
 
 
 		if (holder.hasElementalApplication()) {
@@ -62,6 +62,6 @@ public final class FrozenElementalReaction extends ElementalReaction {
 
 		OriginsGenshin
 			.sublogger(this)
-			.debug("Frozen (Elemental Application): {} | Frozen (Status Effect): {}", ElementComponent.KEY.get(entity).getElementalApplication(Element.FROZEN), entity.getStatusEffect(OriginsGenshinStatusEffects.FROZEN));
+			.debug("Frozen (Elemental Application): {} | Frozen (Status Effect): {}", ElementComponent.KEY.get(entity).getElementalApplication(Element.FREEZE), entity.getStatusEffect(OriginsGenshinStatusEffects.FROZEN));
 	}
 }

@@ -9,7 +9,7 @@ public final class FrozenSwirlElementalReaction extends AbstractSwirlElementalRe
 		super(
 			new ElementalReactionSettings("Swirl", OriginsGenshin.identifier("swirl_frozen"), OriginsGenshinParticleFactory.SWIRL)
 				.setReactionCoefficient(0.5)
-				.setAuraElement(Element.FROZEN, 4)
+				.setAuraElement(Element.FREEZE, 4)
 				.setTriggeringElement(Element.ANEMO, 5)
 				.reversable(true),
 			Element.CRYO

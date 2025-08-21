@@ -10,7 +10,7 @@ import javax.annotation.Nullable;
 
 public final class PyroFrozenMeltElementalReaction extends AbstractPyroMeltElementalReaction {
 	PyroFrozenMeltElementalReaction() {
-		super("Melt (Pyro)", "melt_pyro-frozen", Element.FROZEN);
+		super("Melt (Pyro)", "melt_pyro-frozen", Element.FREEZE);
 	}
 
 	@Override

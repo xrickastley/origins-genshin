@@ -9,7 +9,7 @@ public final class GeoShatterElementalReaction extends ShatterElementalReaction 
 		super(
 			new ElementalReactionSettings("Shatter", OriginsGenshin.identifier("shatter_geo"), OriginsGenshinParticleFactory.SHATTER)
 				.setReactionCoefficient(0)
-				.setAuraElement(Element.FROZEN)
+				.setAuraElement(Element.FREEZE)
 				.setTriggeringElement(Element.GEO, 1)
 		);
 	}

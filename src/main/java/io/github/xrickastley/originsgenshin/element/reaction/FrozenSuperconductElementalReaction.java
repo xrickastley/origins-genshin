@@ -9,7 +9,7 @@ public final class FrozenSuperconductElementalReaction extends AbstractSupercond
 		super(
 			new ElementalReactionSettings("Superconduct (Frozen)", OriginsGenshin.identifier("superconduct_frozen"), OriginsGenshinParticleFactory.SUPERCONDUCT)
 				.setReactionCoefficient(1.0)
-				.setAuraElement(Element.FROZEN, 2)
+				.setAuraElement(Element.FREEZE, 2)
 				.setTriggeringElement(Element.ELECTRO, 7)
 				.reversable(true)
 				.preventsReactionsAfter()
