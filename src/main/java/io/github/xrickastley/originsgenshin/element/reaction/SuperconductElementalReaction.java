@@ -12,6 +12,7 @@ public final class SuperconductElementalReaction extends AbstractSuperconductEle
 				.setAuraElement(Element.CRYO, 1)
 				.setTriggeringElement(Element.ELECTRO, 6)
 				.reversable(true)
+				.preventsReactionsAfter(OriginsGenshin.identifier("superconduct_frozen"))
 		);
 	}
 }

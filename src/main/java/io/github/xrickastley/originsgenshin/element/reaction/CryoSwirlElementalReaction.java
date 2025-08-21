@@ -12,6 +12,7 @@ public final class CryoSwirlElementalReaction extends AbstractSwirlElementalReac
 				.setAuraElement(Element.CRYO, 3)
 				.setTriggeringElement(Element.ANEMO, 4)
 				.reversable(true)
+				.preventsReactionsAfter(OriginsGenshin.identifier("swirl_frozen"))
 		);
 	}
 }

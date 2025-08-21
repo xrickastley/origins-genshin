@@ -93,7 +93,7 @@ public enum Element {
 			.setDamageColor(Color.fromRGBAHex("#b4ffff"))
 			.setPriority(2)
 			.bypassesCooldown(true)
-			.linkElement(Element.CRYO)
+			.linkToElement(Element.CRYO)
 	),
 	BURNING(
 		OriginsGenshin.identifier("burning"),
@@ -350,6 +350,7 @@ public enum Element {
 		 * @param boolean Whether the provided {@code element} is linked to this element instead.
 		 * @see {@link ElementSettings#linkToElement(Element) ElementSettings#linkToElement} For linking <b>this</b> element to the specified {@code element}.
 		 */
+		@SuppressWarnings("unused")
 		public ElementSettings linkElement(Element element) {
 			this.linkedElement = element;
 			this.reverseLinkedElement = true;

@@ -437,6 +437,7 @@ public final class ElementComponentImpl implements ElementComponent {
 
 		Optional<ElementalReaction> optional = this
 			.getTriggerableReactions(priority, application)
+			.filter(reaction -> reaction.hasElement(application.getElement()))
 			.findFirst();
 
 		optional = AbstractBurningElementalReaction.mixin$changeReaction(optional, this, application);

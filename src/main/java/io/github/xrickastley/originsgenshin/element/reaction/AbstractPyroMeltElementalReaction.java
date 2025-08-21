@@ -14,7 +14,7 @@ public abstract sealed class AbstractPyroMeltElementalReaction
 				.setReactionCoefficient(2.0)
 				.setAuraElement(auraElement)
 				.setTriggeringElement(Element.PYRO, 5)
-				.preventsReactionsAfter(OriginsGenshin.identifier("vaporize_pyro")),
+				.preventsReactionsAfter(OriginsGenshin.identifier("vaporize_pyro"), OriginsGenshin.identifier("melt_pyro-frozen")),
 			2
 		);
 	}

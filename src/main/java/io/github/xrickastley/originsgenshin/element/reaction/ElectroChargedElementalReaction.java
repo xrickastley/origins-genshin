@@ -24,8 +24,8 @@ public class ElectroChargedElementalReaction extends ElementalReaction {
 		super(
 			new ElementalReactionSettings("Electro-Charged", OriginsGenshin.identifier("electro-charged"), OriginsGenshinParticleFactory.ELECTRO_CHARGED)
 				.setReactionCoefficient(0)
-				.setAuraElement(Element.HYDRO, 6)
-				.setTriggeringElement(Element.ELECTRO, 5)
+				.setAuraElement(Element.ELECTRO, 5)
+				.setTriggeringElement(Element.HYDRO, 6)
 				.applyResultAsAura(true)
 				.reversable(true)
 		);
