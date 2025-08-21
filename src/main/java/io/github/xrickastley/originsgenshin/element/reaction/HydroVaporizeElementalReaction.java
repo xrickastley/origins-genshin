@@ -7,7 +7,7 @@ import io.github.xrickastley.originsgenshin.factory.OriginsGenshinParticleFactor
 public final class HydroVaporizeElementalReaction extends AmplifyingElementalReaction {
 	HydroVaporizeElementalReaction() {
 		super(
-			new ElementalReactionSettings("Vaporize (Hydro)", OriginsGenshin.identifier("vaporize_hydro"), OriginsGenshinParticleFactory.VAPORIZE)
+			new ElementalReactionSettings("Vaporize", OriginsGenshin.identifier("vaporize_hydro"), OriginsGenshinParticleFactory.VAPORIZE)
 				.setReactionCoefficient(2.0)
 				.setAuraElement(Element.PYRO)
 				.setTriggeringElement(Element.HYDRO, 1),

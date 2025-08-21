@@ -4,6 +4,6 @@ import io.github.xrickastley.originsgenshin.element.Element;
 
 public final class PyroCryoMeltElementalReaction extends AbstractPyroMeltElementalReaction {
 	PyroCryoMeltElementalReaction() {
-		super("Melt (Pyro)", "melt_pyro-cryo", Element.CRYO);
+		super("Melt", "melt_pyro-cryo", Element.CRYO);
 	}
 }

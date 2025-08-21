@@ -7,7 +7,7 @@ import io.github.xrickastley.originsgenshin.factory.OriginsGenshinParticleFactor
 public final class QuickenBloomElementalReaction extends AbstractBloomElementalReaction {
 	QuickenBloomElementalReaction() {
 		super(
-			new ElementalReactionSettings("Bloom (Quicken)", OriginsGenshin.identifier("bloom_quicken"), OriginsGenshinParticleFactory.BLOOM)
+			new ElementalReactionSettings("Bloom", OriginsGenshin.identifier("bloom_quicken"), OriginsGenshinParticleFactory.BLOOM)
 				.setReactionCoefficient(2.0)
 				.setAuraElement(Element.QUICKEN)
 				.setTriggeringElement(Element.HYDRO, 4)

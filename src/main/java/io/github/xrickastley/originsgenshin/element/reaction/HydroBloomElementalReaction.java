@@ -7,7 +7,7 @@ import io.github.xrickastley.originsgenshin.factory.OriginsGenshinParticleFactor
 public final class HydroBloomElementalReaction extends AbstractBloomElementalReaction {
 	HydroBloomElementalReaction() {
 		super(
-			new ElementalReactionSettings("Bloom (Hydro)", OriginsGenshin.identifier("bloom_hydro"), OriginsGenshinParticleFactory.BLOOM)
+			new ElementalReactionSettings("Bloom", OriginsGenshin.identifier("bloom_hydro"), OriginsGenshinParticleFactory.BLOOM)
 				.setReactionCoefficient(0.5)
 				.setAuraElement(Element.DENDRO)
 				.setTriggeringElement(Element.HYDRO, 4)
