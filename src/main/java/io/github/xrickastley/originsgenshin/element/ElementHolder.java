@@ -76,11 +76,11 @@ public final class ElementHolder {
 		this.application = application;
 
 		if (prev != null && application == null) {
-			ElementRemoved.EVENT.invoker().onElementRemoved(prev);
+			ElementRemoved.EVENT.invoker().onElementRemoved(element, prev);
 		} else if (this.application != null) {
-			ElementApplied.EVENT.invoker().onElementApplied(application);
+			ElementApplied.EVENT.invoker().onElementApplied(element, application);
 		} else {
-			ElementRefreshed.EVENT.invoker().onElementRefreshed(application, prev);
+			ElementRefreshed.EVENT.invoker().onElementRefreshed(element, application, prev);
 		}
 	}
 

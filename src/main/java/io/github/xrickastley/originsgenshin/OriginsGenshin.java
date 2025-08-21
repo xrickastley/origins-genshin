@@ -16,31 +16,36 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 
+import java.util.function.Consumer;
+
+import org.jetbrains.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import io.github.apace100.apoli.component.PowerHolderComponent;
+import io.github.apace100.apoli.power.Power;
 import io.github.apace100.apoli.util.Scheduler;
 import io.github.xrickastley.originsgenshin.command.ElementArgumentType;
 import io.github.xrickastley.originsgenshin.command.ElementCommand;
 import io.github.xrickastley.originsgenshin.component.ElementComponent;
 import io.github.xrickastley.originsgenshin.element.Element;
+import io.github.xrickastley.originsgenshin.element.ElementalApplication;
 import io.github.xrickastley.originsgenshin.element.InternalCooldownType;
-import io.github.xrickastley.originsgenshin.element.reaction.ElementalReactions;
-import io.github.xrickastley.originsgenshin.factory.OriginsGenshinAttributes;
-import io.github.xrickastley.originsgenshin.factory.OriginsGenshinBiEntityActions;
-import io.github.xrickastley.originsgenshin.factory.OriginsGenshinEntities;
+import io.github.xrickastley.originsgenshin.events.ElementApplied;
+import io.github.xrickastley.originsgenshin.events.ElementRefreshed;
+import io.github.xrickastley.originsgenshin.events.ElementRemoved;
+import io.github.xrickastley.originsgenshin.events.ReactionTriggered;
+import io.github.xrickastley.originsgenshin.factory.OriginsGenshinFactories;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinGameRules;
-import io.github.xrickastley.originsgenshin.factory.OriginsGenshinPowers;
-import io.github.xrickastley.originsgenshin.factory.OriginsGenshinSoundEvents;
-import io.github.xrickastley.originsgenshin.factory.OriginsGenshinStatusEffects;
+import io.github.xrickastley.originsgenshin.power.ActionOnElementAppliedPower;
+import io.github.xrickastley.originsgenshin.power.ActionOnElementEventPower;
+import io.github.xrickastley.originsgenshin.power.ActionOnElementRefreshedPower;
+import io.github.xrickastley.originsgenshin.power.ActionOnElementRemovedPower;
+import io.github.xrickastley.originsgenshin.power.ActionOnElementalReactionPower;
 import io.github.xrickastley.originsgenshin.registry.OriginsGenshinRegistries;
-import io.github.xrickastley.originsgenshin.registry.OriginsGenshinRegistryKeys;
 import io.github.xrickastley.originsgenshin.registry.OriginsGenshinReloadListener;
 
 public class OriginsGenshin implements ModInitializer {
-	// TODO: make mod client/server, not client AND server
-	// elements???
-
 	public static final String MOD_ID = "origins-genshin";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
 	public static final Scheduler SCHEDULER = new Scheduler();
@@ -49,18 +54,7 @@ public class OriginsGenshin implements ModInitializer {
 	public void onInitialize() {
 		LOGGER.info("Origins: Genshin Initialized!");
 
-		OriginsGenshinRegistryKeys.load();
-		OriginsGenshinRegistries.load();
-
-		OriginsGenshinAttributes.register();
-		OriginsGenshinEntities.register();
-		OriginsGenshinBiEntityActions.register();
-		OriginsGenshinStatusEffects.register();
-		OriginsGenshinPowers.register();
-		OriginsGenshinSoundEvents.register();
-		OriginsGenshinGameRules.register();
-
-		ElementalReactions.register();
+		OriginsGenshinFactories.registerAll();
 
 		ResourceManagerHelper
 			.get(ResourceType.SERVER_DATA)
@@ -132,6 +126,20 @@ public class OriginsGenshin implements ModInitializer {
 			ElementArgumentType.class,
 			ConstantArgumentSerializer.of(ElementArgumentType::new)
 		);
+
+		ElementApplied.EVENT
+			.register((element, application) -> OriginsGenshin.callElementEventActions(ActionOnElementAppliedPower.class, element, application));
+
+		ElementRefreshed.EVENT
+			.register((element, oldApp, newApp) -> OriginsGenshin.callElementEventActions(ActionOnElementRefreshedPower.class, element, newApp));
+
+		ElementRemoved.EVENT
+			.register((element, application) -> OriginsGenshin.callElementEventActions(ActionOnElementRemovedPower.class, element, application));
+
+		ReactionTriggered.EVENT
+			.register((reaction, reducedGauge, target, origin) -> 
+				OriginsGenshin.callEventActions(ActionOnElementalReactionPower.class, target, power -> power.trigger(reaction, target, origin))
+			);
 	}
 
 	public static Identifier identifier(String path) {
@@ -165,5 +173,19 @@ public class OriginsGenshin implements ModInitializer {
 			.getGameRules()
 			.get(OriginsGenshinGameRules.LEVEL_MULTIPLIER)
 			.get();
+	}
+
+	private static <T extends ActionOnElementEventPower> void callElementEventActions(Class<T> eventClass, Element element, @Nullable ElementalApplication application) {
+		if (application == null) return;
+
+		final LivingEntity entity = application.getEntity();
+
+		OriginsGenshin.callEventActions(eventClass, entity, power -> power.trigger(element, entity));
+	}
+
+	private static <T extends Power> void callEventActions(Class<T> eventClass, LivingEntity entity, Consumer<T> powerConsumer) {
+		PowerHolderComponent
+			.getPowers(entity, eventClass)
+			.forEach(powerConsumer);
 	}
 }

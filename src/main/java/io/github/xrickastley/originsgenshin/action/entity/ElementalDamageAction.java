@@ -1,4 +1,4 @@
-package io.github.xrickastley.originsgenshin.action.bientity;
+package io.github.xrickastley.originsgenshin.action.entity;
 
 import com.google.gson.JsonSyntaxException;
 
@@ -22,47 +22,41 @@ import io.github.xrickastley.originsgenshin.element.InternalCooldownContext;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.util.Pair;
 
 public class ElementalDamageAction {
-	private static void action(SerializableData.Instance data, Pair<Entity, Entity> entities) {
-		final Entity actor = entities.getLeft();
-		final Entity target = entities.getRight();
-
-		if (actor == null || target == null) return;
-
+	private static void action(SerializableData.Instance data, Entity entity) {
 		Float damageAmount = data.get("amount");
 		final List<Modifier> modifiers = new LinkedList<>();
 
 		data.<Modifier>ifPresent("modifier", modifiers::add);
 		data.<List<Modifier>>ifPresent("modifiers", modifiers::addAll);
 
-		if (!modifiers.isEmpty() && target instanceof final LivingEntity livingTarget) {
-			final float targetMaxHealth = livingTarget.getMaxHealth();
-			final float newDamageAmount = (float) ModifierUtil.applyModifiers(actor, modifiers, targetMaxHealth);
+		if (!modifiers.isEmpty() && entity instanceof final LivingEntity livingEntity) {
+			final float maxHealth = livingEntity.getMaxHealth();
+			final float newDamageAmount = (float) ModifierUtil.applyModifiers(livingEntity, modifiers, maxHealth);
 
-			damageAmount = newDamageAmount > targetMaxHealth ? newDamageAmount - targetMaxHealth : newDamageAmount;
+			damageAmount = newDamageAmount > maxHealth ? newDamageAmount - maxHealth : newDamageAmount;
 		}
 
 		if (damageAmount == null) return;
 
 		try {
-			DamageSource source = MiscUtil.createDamageSource(actor.getDamageSources(), data.get("source"), data.get("damage_type"), actor);
+			DamageSource source = MiscUtil.createDamageSource(entity.getDamageSources(), data.get("source"), data.get("damage_type"));
 
-			if (data.isPresent("element") && target instanceof final LivingEntity livingTarget && actor instanceof final LivingEntity livingActor)
+			if (data.isPresent("element") && entity instanceof final LivingEntity livingEntity)
 				source = new ElementalDamageSource(
 					source,
-					data.<ElementalApplication.Builder>get("element").build(livingTarget),
-					data.<InternalCooldownContext.Builder>get("internal_cooldown").build(livingActor)
+					data.<ElementalApplication.Builder>get("element").build(livingEntity),
+					data.<InternalCooldownContext.Builder>get("internal_cooldown").build(livingEntity)
 				);
 
-			target.damage(source, damageAmount);
+			entity.damage(source, damageAmount);
 		} catch (JsonSyntaxException e) {
-			Apoli.LOGGER.error("Error trying to create damage source in a `damage` bi-entity action: " + e.getMessage());
+			Apoli.LOGGER.error("Error trying to create damage source in a `damage` entity action: " + e.getMessage());
 		}
 	}
 
-	public static ActionFactory<Pair<Entity, Entity>> getFactory() {
+	public static ActionFactory<Entity> getFactory() {
 		return new ActionFactory<>(OriginsGenshin.identifier("elemental_damage"),
 			new SerializableData()
 				.add("amount", SerializableDataTypes.FLOAT, null)

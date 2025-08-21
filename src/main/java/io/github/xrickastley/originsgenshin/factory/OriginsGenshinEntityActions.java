@@ -4,18 +4,18 @@ import java.util.function.Supplier;
 
 import io.github.apace100.apoli.power.factory.action.ActionFactory;
 import io.github.apace100.apoli.registry.ApoliRegistries;
-import io.github.xrickastley.originsgenshin.action.bientity.*;
+import io.github.xrickastley.originsgenshin.action.entity.*;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.registry.Registry;
-import net.minecraft.util.Pair;
 
-public class OriginsGenshinBiEntityActions {
+public class OriginsGenshinEntityActions {
 	public static void register() {
+		register(ApplyElementAction::getFactory);
 		register(ElementalDamageAction::getFactory);
 	}
 
-	private static ActionFactory<Pair<Entity, Entity>> register(Supplier<ActionFactory<Pair<Entity, Entity>>> actionFactory) {
-		return Registry.register(ApoliRegistries.BIENTITY_ACTION, actionFactory.get().getSerializerId(), actionFactory.get());
+	private static ActionFactory<Entity> register(Supplier<ActionFactory<Entity>> actionFactory) {
+		return Registry.register(ApoliRegistries.ENTITY_ACTION, actionFactory.get().getSerializerId(), actionFactory.get());
 	}
 }

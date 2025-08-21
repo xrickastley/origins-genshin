@@ -79,8 +79,8 @@ public abstract sealed class AbstractBurningElementalReaction
 	}
 
 	static {
-		ElementApplied.EVENT.register(application -> {
-			if (application.getEntity().getWorld().isClient || application.getElement() != Element.BURNING) return;
+		ElementApplied.EVENT.register((element, application) -> {
+			if (application.getEntity().getWorld().isClient || element != Element.BURNING) return;
 
 			final ElementComponent component = ElementComponent.KEY.get(application.getEntity());
 
@@ -93,10 +93,10 @@ public abstract sealed class AbstractBurningElementalReaction
 			ElementComponent.sync(application.getEntity());
 		});
 
-		ElementRemoved.EVENT.register(application -> {
-			if (application.getElement() == Element.BURNING) ElementComponent.sync(application.getEntity());
+		ElementRemoved.EVENT.register((element, application) -> {
+			if (element == Element.BURNING) ElementComponent.sync(application.getEntity());
 
-			if (application.getElement() != Element.DENDRO && application.getElement() != Element.QUICKEN) return;
+			if (element != Element.DENDRO && element != Element.QUICKEN) return;
 
 			final ElementComponent component = ElementComponent.KEY.get(application.getEntity());
 

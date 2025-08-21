@@ -1,5 +1,7 @@
 package io.github.xrickastley.originsgenshin.data;
 
+import java.util.List;
+
 import io.github.apace100.apoli.data.ApoliDataTypes;
 import io.github.apace100.apoli.power.factory.condition.ConditionFactory;
 import io.github.apace100.calio.ClassUtil;
@@ -11,6 +13,7 @@ import io.github.xrickastley.originsgenshin.element.ElementalApplication;
 import io.github.xrickastley.originsgenshin.element.InternalCooldownContext;
 import io.github.xrickastley.originsgenshin.element.InternalCooldownTag;
 import io.github.xrickastley.originsgenshin.element.InternalCooldownType;
+import io.github.xrickastley.originsgenshin.element.reaction.ElementalReaction;
 import io.github.xrickastley.originsgenshin.registry.OriginsGenshinRegistries;
 import io.github.xrickastley.originsgenshin.util.Color;
 
@@ -21,8 +24,17 @@ public class OriginsGenshinDataTypes {
 	public static final SerializableDataType<Element> ELEMENT
 		= SerializableDataType.enumValue(Element.class);
 
+	public static final SerializableDataType<List<Element>> ELEMENTS
+		= SerializableDataType.list(OriginsGenshinDataTypes.ELEMENT);
+
 	public static final SerializableDataType<InternalCooldownType> INTERNAL_COOLDOWN_TYPE
 		= SerializableDataType.registry(InternalCooldownType.class, OriginsGenshinRegistries.INTERNAL_COOLDOWN_TYPE);
+
+	public static final SerializableDataType<ElementalReaction> ELEMENTAL_REACTION
+		= SerializableDataType.registry(ElementalReaction.class, OriginsGenshinRegistries.ELEMENTAL_REACTION);
+
+	public static final SerializableDataType<List<ElementalReaction>> ELEMENTAL_REACTIONS
+		= SerializableDataType.list(OriginsGenshinDataTypes.ELEMENTAL_REACTION);
 
 	public static final SerializableDataType<InternalCooldownTag> INTERNAL_COOLDOWN_TAG
 		= SerializableDataType.wrap(InternalCooldownTag.class, SerializableDataTypes.STRING, InternalCooldownTag::getTag, InternalCooldownTag::tag);

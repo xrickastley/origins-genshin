@@ -15,13 +15,16 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.util.Util;
 
-public final class ElementalInfusionPower extends Power implements Comparable<ElementalInfusionPower> {
+public final class ElementalInfusionPower 
+	extends Power 
+	implements Comparable<ElementalInfusionPower>
+{
 	private final ElementalApplication.Builder application;
 	private final InternalCooldownContext icdContext;
 	private final int priority;
 	private long appliedAt;
 
-	public ElementalInfusionPower(PowerType<?> type, LivingEntity entity, ElementalApplication.Builder application, InternalCooldownContext.Builder icdContextBuilder, int priority) {
+	private ElementalInfusionPower(PowerType<?> type, LivingEntity entity, ElementalApplication.Builder application, InternalCooldownContext.Builder icdContextBuilder, int priority) {
 		super(type, entity);
 
 		this.application = application;
