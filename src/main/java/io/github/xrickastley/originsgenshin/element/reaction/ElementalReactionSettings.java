@@ -1,18 +1,18 @@
 package io.github.xrickastley.originsgenshin.element.reaction;
 
-import io.github.xrickastley.originsgenshin.element.Element;
-import io.github.xrickastley.originsgenshin.element.ElementalApplication.Type;
-
-import net.minecraft.particle.DefaultParticleType;
-import net.minecraft.util.Identifier;
-import net.minecraft.util.Pair;
-
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
+
+import io.github.xrickastley.originsgenshin.element.Element;
+import io.github.xrickastley.originsgenshin.element.ElementalApplication.Type;
+
+import net.minecraft.particle.DefaultParticleType;
+import net.minecraft.util.Identifier;
+import net.minecraft.util.Pair;
 
 import javax.annotation.Nullable;
 
@@ -100,11 +100,11 @@ public final class ElementalReactionSettings {
 
 	/**
 	 * Sets the display order when this reaction is displayed. <br> <br>
-	 * 
+	 *
 	 * This <b>must</b> contain <b>only</b> the Aura and Triggering element, as an
 	 * {@code IllegalArgumentException} will be thrown when a different unexpected {@code Element}
 	 * is added instead.
-	 * 
+	 *
 	 * @param elementOrder The order of the elements when this reaction is displayed.
 	 */
 	public ElementalReactionSettings setReactionDisplayOrder(Element... elementOrder) {
@@ -195,10 +195,10 @@ public final class ElementalReactionSettings {
 
 	/**
 	 * Whether this reaction prevents other reactions from triggering after it.
-	 * 
+	 *
 	 * This setting denies the specified reactions from triggering <b>directly after</b> this
 	 * reaction.
-	 * 
+	 *
 	 * @param reactions The reactions to prevent from triggering <b>directly after</b> this reaction.
 	 */
 	public ElementalReactionSettings preventsReactionsAfter(Identifier ...reactions) {

@@ -37,7 +37,7 @@ public class TextHelper {
 			result.append(
 				Text.literal(String.valueOf(text.charAt(i)))
 					.fillStyle(Style.EMPTY.withColor(color))
-			);	
+			);
 	    }
 
 	    return result;

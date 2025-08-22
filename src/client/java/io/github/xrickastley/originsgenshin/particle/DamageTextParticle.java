@@ -7,7 +7,7 @@ import io.github.xrickastley.originsgenshin.util.Color;
 import io.github.xrickastley.originsgenshin.util.DelayedRenderer;
 import io.github.xrickastley.originsgenshin.util.Ease;
 import io.github.xrickastley.originsgenshin.util.TextHelper;
-import me.shedaniel.autoconfig.AutoConfig;
+
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.MinecraftClient;
@@ -21,6 +21,8 @@ import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.client.world.ClientWorld;
 import net.minecraft.particle.DefaultParticleType;
 import net.minecraft.util.math.MathHelper;
+
+import me.shedaniel.autoconfig.AutoConfig;
 
 @Environment(EnvType.CLIENT)
 public class DamageTextParticle extends TextBillboardParticle {

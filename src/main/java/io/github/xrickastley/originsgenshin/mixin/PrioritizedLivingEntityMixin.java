@@ -1,11 +1,9 @@
 package io.github.xrickastley.originsgenshin.mixin;
 
+import com.llamalad7.mixinextras.sugar.Local;
+
 import java.util.ArrayList;
 import java.util.List;
-
-import io.github.xrickastley.originsgenshin.factory.OriginsGenshinStatusEffects;
-import io.github.xrickastley.originsgenshin.interfaces.ILivingEntity;
-import io.github.xrickastley.originsgenshin.util.ClassInstanceUtil;
 
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
@@ -14,8 +12,6 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
-
-import com.llamalad7.mixinextras.sugar.Local;
 
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.component.ElementComponent;
@@ -29,6 +25,9 @@ import io.github.xrickastley.originsgenshin.element.reaction.AmplifyingElemental
 import io.github.xrickastley.originsgenshin.element.reaction.ElementalReaction;
 import io.github.xrickastley.originsgenshin.element.reaction.ElementalReactions;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinAttributes;
+import io.github.xrickastley.originsgenshin.factory.OriginsGenshinStatusEffects;
+import io.github.xrickastley.originsgenshin.interfaces.ILivingEntity;
+import io.github.xrickastley.originsgenshin.util.ClassInstanceUtil;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -38,7 +37,7 @@ import net.minecraft.util.Pair;
 import net.minecraft.world.World;
 
 @Mixin(value = LivingEntity.class, priority = 0)
-public abstract class PrioritizedLivingEntityMixin 
+public abstract class PrioritizedLivingEntityMixin
 	extends Entity
 	implements ILivingEntity
 {
@@ -109,15 +108,15 @@ public abstract class PrioritizedLivingEntityMixin
 			? null
 			: this.originsgenshin$reactions.get(this.originsgenshin$reactions.size() - 1);
 
-		final boolean doShatter = !this.originsgenshin$reactions.contains(ElementalReactions.GEO_SHATTER) 
-			&& !this.originsgenshin$reactions.contains(ElementalReactions.SHATTER) 
+		final boolean doShatter = !this.originsgenshin$reactions.contains(ElementalReactions.GEO_SHATTER)
+			&& !this.originsgenshin$reactions.contains(ElementalReactions.SHATTER)
 			&& ElementalReactions.SHATTER.isTriggerable(this)
 			&& (lastReaction == null || !lastReaction.preventsReaction(ElementalReactions.SHATTER));
 
 		if (doShatter) {
 			this.originsgenshin$reactions.add(ElementalReactions.SHATTER);
 			((ElementComponentImpl) component).setLastReaction(new Pair<>(ElementalReactions.SHATTER, this.getWorld().getTime()));
-			
+
 			ElementalReactions.SHATTER.trigger((LivingEntity)(Entity) this, ClassInstanceUtil.castOrNull(source.getAttacker(), LivingEntity.class));
 		}
 

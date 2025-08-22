@@ -23,8 +23,8 @@ import javax.annotation.Nullable;
  * When the target takes **any** Geo DMG (considering ICD) or when they are hit with a Pickaxe or
  * an Axe, Shatter is triggered and the Frozen Aura is removed.
  */
-public abstract sealed class ShatterElementalReaction 
-	extends ElementalReaction 
+public abstract sealed class ShatterElementalReaction
+	extends ElementalReaction
 	permits GeoShatterElementalReaction, HeavyShatterElementalReaction
 {
 	ShatterElementalReaction(ElementalReactionSettings settings) {

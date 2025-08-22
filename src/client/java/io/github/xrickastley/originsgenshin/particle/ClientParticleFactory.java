@@ -44,4 +44,3 @@ public class ClientParticleFactory {
 		ParticleFactoryRegistry.getInstance().register(particle, factory);
 	}
 }
-

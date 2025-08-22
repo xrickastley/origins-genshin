@@ -121,7 +121,7 @@ public interface ElementComponent extends AutoSyncedComponent, CommonTickingComp
 
 	/**
 	 * Reduces the Crystallize shield and returns the effective amount of DMG reduced.
-	 * 
+	 *
 	 * @param source The {@code DamageSource}. If this isn't an instance of {@code ElementalDamageSource}, {@code 0} is returned.
 	 * @param amount The amount of damage to be dealt to the entity.
 	 */

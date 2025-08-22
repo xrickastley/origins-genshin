@@ -49,8 +49,8 @@ public class ElementalReactions {
 	// TODO: Crystallize Shards
 	// Creates a Crystallize Shard at the location, providing a shield upon picking it up.
 	// Since the strength of Crystallize Shards is based *per level*, it shall statically be LM * 3 hearts (LM * 6 HP).
-	// Crystallize will also spawn a Crystal in front of the enemy (Enemy PoV) 
-	// Prioritizes origin LivingEntity, if not picked up within 7.5s, allows all other players. 
+	// Crystallize will also spawn a Crystal in front of the enemy (Enemy PoV)
+	// Prioritizes origin LivingEntity, if not picked up within 7.5s, allows all other players.
 	public static final ElementalReaction PYRO_CRYSTALLIZE = new PyroCrystallizeElementalReaction();
 	public static final ElementalReaction HYDRO_CRYSTALLIZE = new HydroCrystallizeElementalReaction();
 	public static final ElementalReaction ELECTRO_CRYSTALLIZE = new ElectroCrystallizeElementalReaction();

@@ -17,7 +17,7 @@ public class OriginsGenshinFactories {
 		OriginsGenshinPowers.register();
 		OriginsGenshinSoundEvents.register();
 		OriginsGenshinStatusEffects.register();
-		
+
 		ElementalReactions.register();
 	}
 }

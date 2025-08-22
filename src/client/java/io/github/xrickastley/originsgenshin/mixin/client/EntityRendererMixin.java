@@ -290,8 +290,8 @@ public abstract class EntityRendererMixin {
 		RenderSystem.depthMask(false);
 
 		SphereRenderer.render(
-			matrixStack, 
-			new Vec3d(0, 0, 0), 
+			matrixStack,
+			new Vec3d(0, 0, 0),
 			(float) (lengthY / 2 * 1.25),
 			config.renderers.sphereResolution,
 			config.renderers.sphereResolution * 2,

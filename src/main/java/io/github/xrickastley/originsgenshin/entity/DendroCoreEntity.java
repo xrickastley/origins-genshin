@@ -224,7 +224,7 @@ public final class DendroCoreEntity extends LivingEntity {
 		source = ElementComponent.applyElementalInfusions(source, this);
 
 		if (!(source instanceof final ElementalDamageSource eds) || !this.isNormal()) return false;
-		
+
 		final Element element = eds.getElementalApplication().getElement();
 
 		if (element != Element.PYRO && element != Element.ELECTRO) return false;

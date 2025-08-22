@@ -13,7 +13,7 @@ public class ClassInstanceUtil {
 	/**
 	 * Casts the provided {@code instance} into an instance of {@code T} if it's an instance of
 	 * {@code T}.
-	 * 
+	 *
 	 * @param <T> The type of the instance.
 	 * @param instance The object to cast into an instance of {@code T}
 	 * @param castClass The target class of the cast.
@@ -28,7 +28,7 @@ public class ClassInstanceUtil {
 
 	/**
 	 * Maps the provided instance into {@code R} if it isn't {@code null}.
-	 * 
+	 *
 	 * @param <T> The type of the instance.
 	 * @param <R> The type of the result.
 	 * @param instance The instance of {@code T} to map if it isn't null.

@@ -2,15 +2,6 @@ package io.github.xrickastley.originsgenshin.mixin.client;
 
 import com.llamalad7.mixinextras.sugar.Local;
 
-import io.github.xrickastley.originsgenshin.component.ElementComponent;
-import io.github.xrickastley.originsgenshin.util.Array;
-import io.github.xrickastley.originsgenshin.util.CircleRenderer;
-import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.hud.InGameHud;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.util.Identifier;
-
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,6 +9,16 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+import io.github.xrickastley.originsgenshin.component.ElementComponent;
+import io.github.xrickastley.originsgenshin.util.Array;
+import io.github.xrickastley.originsgenshin.util.CircleRenderer;
+
+import net.minecraft.client.MinecraftClient;
+import net.minecraft.client.gui.DrawContext;
+import net.minecraft.client.gui.hud.InGameHud;
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.Identifier;
 
 @Mixin(InGameHud.class)
 public class InGameHudMixin {

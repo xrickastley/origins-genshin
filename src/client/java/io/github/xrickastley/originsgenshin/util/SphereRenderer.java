@@ -2,18 +2,19 @@ package io.github.xrickastley.originsgenshin.util;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 
-import net.minecraft.client.render.BufferBuilder;
-import net.minecraft.client.render.GameRenderer;
-import net.minecraft.client.render.Tessellator;
-import net.minecraft.client.render.VertexFormats;
-import net.minecraft.client.render.VertexFormat.DrawMode;
-import net.minecraft.client.util.math.MatrixStack;
-import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.Vec3d;
+import java.util.function.Function;
+
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
 
-import java.util.function.Function;
+import net.minecraft.client.render.BufferBuilder;
+import net.minecraft.client.render.GameRenderer;
+import net.minecraft.client.render.Tessellator;
+import net.minecraft.client.render.VertexFormat.DrawMode;
+import net.minecraft.client.render.VertexFormats;
+import net.minecraft.client.util.math.MatrixStack;
+import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.Vec3d;
 
 public final class SphereRenderer {
 	private SphereRenderer() {}
@@ -111,4 +112,3 @@ public final class SphereRenderer {
 		);
 	}
 }
-

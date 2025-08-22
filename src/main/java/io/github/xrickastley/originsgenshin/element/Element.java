@@ -188,7 +188,7 @@ public enum Element {
 			if (!component.hasElementalApplication(pair.getLeft())) continue;
 
 			if (isGaugeDecay && !pair.getRight().test(application)) continue;
-		
+
 			component.getElementalApplication(pair.getLeft()).currentGauge -= reduction;
 		}
 
@@ -211,7 +211,7 @@ public enum Element {
 		protected boolean hasAuraTax = true;
 		protected @Nullable Element linkedElement = null;
 		protected boolean reverseLinkedElement = false;
-		protected Predicate<ElementalApplication> linkDecayOnlyIf = entity -> true; 
+		protected Predicate<ElementalApplication> linkDecayOnlyIf = entity -> true;
 
 		/**
 		 * Creates a new, empty instance of {@code ElementSettings}.
@@ -239,14 +239,14 @@ public enum Element {
 
 			return this;
 		}
-		
+
 		/**
 		 * Controls the priority of this element over the others. <br> <br>
-		 * 
-		 * An element's <b>priority</b> dictates when it can be applied, reapplied, reacted 
-		 * with or when it is rendered on top of the entity. Element priority uses natural 
+		 *
+		 * An element's <b>priority</b> dictates when it can be applied, reapplied, reacted
+		 * with or when it is rendered on top of the entity. Element priority uses natural
 		 * ordering, also known as ascending order or "least to greatest". <br> <br>
-		 * 
+		 *
 		 * For more information, you may refer to the methods that use Element priority.
 		 *
 		 * @param priority The priority of this element.
@@ -314,18 +314,18 @@ public enum Element {
 
 			return this;
 		}
-	
+
 		/**
 		 * Links this element to the provided {@code element}. <br> <br>
-		 * 
-		 * Upon linking, <i>gauge reduction</i> not originating from the gauge decay will be 
+		 *
+		 * Upon linking, <i>gauge reduction</i> not originating from the gauge decay will be
 		 * "synced" to the gauge units of this element, if it exists. <br> <br>
-		 * 
+		 *
 		 * Do note that linking isn't a "recursive" operation, i.e. Element A linked to Element B,
 		 * Element B linked to Element C, reduction on Element A, B and C. <br> <br>
-		 * 
+		 *
 		 * You may also choose to sync the gauge decay permanently or with a {@code Predicate}.
-		 * 
+		 *
 		 * @param element The {@link Element} to link this element to.
 		 * @see {@link ElementSettings#linkToElement(Element) ElementSettings#linkToElement} For linking the specified {@code element} to <b>this</b> element.
 		 */
@@ -337,15 +337,15 @@ public enum Element {
 
 		/**
 		 * Links the provided {@code element} to this element. <br> <br>
-		 * 
-		 * Upon linking, <i>gauge reduction</i> not originating from the gauge decay will be 
+		 *
+		 * Upon linking, <i>gauge reduction</i> not originating from the gauge decay will be
 		 * "synced" to the gauge units of the provided {@code element}, if it exists. <br> <br>
-		 * 
+		 *
 		 * Do note that linking isn't a "recursive" operation, i.e. Element A linked to Element B,
 		 * Element B linked to Element C, reduction on Element A, B and C. <br> <br>
-		 * 
+		 *
 		 * You may also choose to sync the gauge decay permanently or with a {@code Predicate}.
-		 * 
+		 *
 		 * @param element The {@link Element} to link to this element.
 		 * @param boolean Whether the provided {@code element} is linked to this element instead.
 		 * @see {@link ElementSettings#linkToElement(Element) ElementSettings#linkToElement} For linking <b>this</b> element to the specified {@code element}.
@@ -360,9 +360,9 @@ public enum Element {
 
 		/**
 		 * Sets whether the gauge decay is linked to the gauge of this element, or the gauge of the
-		 * corresponding element, if {@code reverse} was {@code true} for 
+		 * corresponding element, if {@code reverse} was {@code true} for
 		 * {@link ElementSettings#linkElement(Element, boolean) ElementSettings#linkedElement}.
-		 * 
+		 *
 		 * @param link Whether or not the gauge decay is also linked.
 		 */
 		@SuppressWarnings("unused")
@@ -374,7 +374,7 @@ public enum Element {
 		 * Sets whether, at this instance in time, the gauge decay is linked to the gauge of this
 		 * element, or the gauge of the corresponding element, if {@code reverse} was {@code true}
 		 * for {@link ElementSettings#linkElement(Element, boolean) ElementSettings#linkedElement}.
-		 * 
+		 *
 		 * @param predicate A {@code Predicate} indicating whether or not the gauge decay is also linked at this instance in time. The passed {@code ElementalApplication} is the one belonging to the linked element, or more formally, the element this element is linked to.
 		 */
 		public ElementSettings linkGaugeDecayIf(Predicate<ElementalApplication> predicate) {

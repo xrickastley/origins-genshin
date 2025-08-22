@@ -26,6 +26,7 @@ import io.github.xrickastley.originsgenshin.factory.OriginsGenshinGameRules;
 import io.github.xrickastley.originsgenshin.interfaces.IPlayerEntity;
 import io.github.xrickastley.originsgenshin.networking.ShowElementalDamageS2CPacket;
 import io.github.xrickastley.originsgenshin.util.BoxUtil;
+
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.block.Blocks;
@@ -145,7 +146,7 @@ public abstract class LivingEntityMixin extends Entity {
 		if (originsgenshin$subdamage < 1) return;
 
 		final float extra = originsgenshin$subdamage - (float) Math.floor(originsgenshin$subdamage);
-		
+
 		originsgenshin$subdamage = (float) Math.floor(originsgenshin$subdamage);
 
 		final World world = this.getWorld();

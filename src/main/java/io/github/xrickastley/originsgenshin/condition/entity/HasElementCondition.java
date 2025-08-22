@@ -8,6 +8,7 @@ import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.component.ElementComponent;
 import io.github.xrickastley.originsgenshin.data.OriginsGenshinDataTypes;
 import io.github.xrickastley.originsgenshin.element.Element;
+
 import net.minecraft.entity.Entity;
 
 public class HasElementCondition {

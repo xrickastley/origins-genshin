@@ -61,4 +61,3 @@ public final class FrozenStatusEffect extends StatusEffect {
 		return true;
 	}
 }
-

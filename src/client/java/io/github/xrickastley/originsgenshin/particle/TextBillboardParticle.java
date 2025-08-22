@@ -1,6 +1,5 @@
 package io.github.xrickastley.originsgenshin.particle;
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
-
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.particle.BillboardParticle;

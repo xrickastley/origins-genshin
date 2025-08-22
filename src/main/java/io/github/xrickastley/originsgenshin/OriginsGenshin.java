@@ -1,21 +1,5 @@
 package io.github.xrickastley.originsgenshin;
 
-import net.fabricmc.api.ModInitializer;
-import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry;
-import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
-import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
-import net.minecraft.command.argument.EntityArgumentType;
-import net.minecraft.command.argument.serialize.ConstantArgumentSerializer;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.LivingEntity;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.entry.RegistryEntry;
-import net.minecraft.resource.ResourceType;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.text.Text;
-import net.minecraft.util.Identifier;
-import net.minecraft.world.World;
-
 import java.util.function.Consumer;
 
 import org.jetbrains.annotations.Nullable;
@@ -44,6 +28,22 @@ import io.github.xrickastley.originsgenshin.power.ActionOnElementRemovedPower;
 import io.github.xrickastley.originsgenshin.power.ActionOnElementalReactionPower;
 import io.github.xrickastley.originsgenshin.registry.OriginsGenshinRegistries;
 import io.github.xrickastley.originsgenshin.registry.OriginsGenshinReloadListener;
+
+import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry;
+import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
+import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
+import net.minecraft.command.argument.EntityArgumentType;
+import net.minecraft.command.argument.serialize.ConstantArgumentSerializer;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.entry.RegistryEntry;
+import net.minecraft.resource.ResourceType;
+import net.minecraft.server.command.CommandManager;
+import net.minecraft.text.Text;
+import net.minecraft.util.Identifier;
+import net.minecraft.world.World;
 
 public class OriginsGenshin implements ModInitializer {
 	public static final String MOD_ID = "origins-genshin";
@@ -76,14 +76,14 @@ public class OriginsGenshin implements ModInitializer {
 
 										if (!(entity instanceof final LivingEntity livingEntity)) {
 											context.getSource().sendError(Text.literal("/eval target must be a LivingEntity!"));
-										
+
 											return 0;
 										}
-									
+
 										final ElementComponent component = ElementComponent.KEY.get(livingEntity);
-									
+
 										component.setCrystallizeShield(element, 50);
-									
+
 										return 1;
 									})
 							)
@@ -137,7 +137,7 @@ public class OriginsGenshin implements ModInitializer {
 			.register((element, application) -> OriginsGenshin.callElementEventActions(ActionOnElementRemovedPower.class, element, application));
 
 		ReactionTriggered.EVENT
-			.register((reaction, reducedGauge, target, origin) -> 
+			.register((reaction, reducedGauge, target, origin) ->
 				OriginsGenshin.callEventActions(ActionOnElementalReactionPower.class, target, power -> power.trigger(reaction, target, origin))
 			);
 	}
@@ -151,15 +151,15 @@ public class OriginsGenshin implements ModInitializer {
 
 		return OriginsGenshin.sublogger(className.substring(className.lastIndexOf(".") + 1));
 	}
-	
+
 	public static Logger sublogger(String sublogger) {
 		return LoggerFactory.getLogger(MOD_ID + "/" + sublogger);
 	}
-		
+
 	public static Logger sublogger(Class<?> sublogger) {
 		return LoggerFactory.getLogger(MOD_ID + "/" + sublogger.getSimpleName());
 	}
-		
+
 	public static Logger sublogger(Object sublogger) {
 		return LoggerFactory.getLogger(MOD_ID + "/" + sublogger.getClass().getSimpleName());
 	}

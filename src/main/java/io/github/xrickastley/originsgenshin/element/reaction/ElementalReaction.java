@@ -19,6 +19,7 @@ import io.github.xrickastley.originsgenshin.networking.ShowElementalReactionS2CP
 import io.github.xrickastley.originsgenshin.registry.OriginsGenshinRegistries;
 import io.github.xrickastley.originsgenshin.util.Array;
 import io.github.xrickastley.originsgenshin.util.ClassInstanceUtil;
+
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.Entity;
@@ -154,7 +155,7 @@ public abstract class ElementalReaction {
 	}
 
 	public List<Element> getReactionDisplayOrder() {
-		return this.reactionDisplayOrder;	
+		return this.reactionDisplayOrder;
 	}
 
 	public boolean shouldApplyResultAsAura() {

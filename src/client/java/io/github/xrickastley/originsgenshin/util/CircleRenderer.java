@@ -189,48 +189,48 @@ public class CircleRenderer {
 		public void render(Vec3d origin, Matrix4f posMatrix) {
 			final Tessellator tessellator = Tessellator.getInstance();
 			final BufferBuilder bufferBuilder = tessellator.getBuffer();
-		
+
 			final float innerRadius = (float) (this.radius * scaleFactor);
 			final float totalRadius = (float) ((this.radius + this.length) * scaleFactor);
-		
+
 			bufferBuilder.begin(VertexFormat.DrawMode.TRIANGLE_STRIP, VertexFormats.POSITION_COLOR);
-		
+
 			final float x = (float) (origin.getX() + (Math.cos((0 * (Math.PI / 180)) + (Math.PI / 2)) * innerRadius));
 			final float y = (float) (origin.getY() - (Math.sin((0 * (Math.PI / 180)) + (Math.PI / 2)) * innerRadius));
-		
+
 			bufferBuilder
 				.vertex(posMatrix, x, y, (float) origin.getZ())
 				.color(this.color)
 				.next();
-		
+
 			final double subdivisions = Math.ceil(360.0 * this.percentFilled);
-		
+
 			for (int i = 0; i <= subdivisions; i++) {
 				final float outerX = (float) (origin.getX() + (Math.cos((i * (Math.PI / 180)) + (Math.PI / 2)) * totalRadius));
 				final float outerY = (float) (origin.getY() - (Math.sin((i * (Math.PI / 180)) + (Math.PI / 2)) * totalRadius));
-				
+
 				bufferBuilder
 					.vertex(posMatrix, outerX, outerY, (float) origin.getZ())
 					.color(this.color)
 					.next();
-			
+
 				// Add vertices for the inner circle
 				final float innerX = (float) (origin.getX() + (Math.cos((i * (Math.PI / 180)) + (Math.PI / 2)) * innerRadius));
 				final float innerY = (float) (origin.getY() - (Math.sin((i * (Math.PI / 180)) + (Math.PI / 2)) * innerRadius));
-				
+
 				bufferBuilder
 					.vertex(posMatrix, innerX, innerY, (float) origin.getZ())
 					.color(this.color)
 					.next();
 			}
-		
+
 			RenderSystem.enableBlend();
 			RenderSystem.defaultBlendFunc();
 			RenderSystem.enableCull();
-		
+
 			RenderSystem.setShader(GameRenderer::getPositionColorProgram);
 			RenderSystem.setShaderColor(1.0F, 1.0F, 1.0F, 1.0F);
-		
+
 			tessellator.draw();
 		}
 	}

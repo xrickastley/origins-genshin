@@ -8,8 +8,6 @@ import io.github.xrickastley.originsgenshin.util.ClientConfig;
 import io.github.xrickastley.originsgenshin.util.Color;
 import io.github.xrickastley.originsgenshin.util.Colors;
 
-import me.shedaniel.autoconfig.AutoConfig;
-
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
@@ -18,6 +16,8 @@ import net.minecraft.client.network.ClientPlayerEntity;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+
+import me.shedaniel.autoconfig.AutoConfig;
 
 public class OriginsGenshinPacketsS2C {
 	public static void register() {

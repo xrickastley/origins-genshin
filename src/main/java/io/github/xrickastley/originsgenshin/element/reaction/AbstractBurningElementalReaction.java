@@ -163,10 +163,10 @@ public abstract sealed class AbstractBurningElementalReaction
 
 			final ElementComponent targetComponent = ElementComponent.KEY.get(target);
 			final ElementHolder holder = targetComponent.getElementHolder(Element.PYRO);
-			
+
 			if (target == entity && holder.canApplyElement(Element.PYRO, InternalCooldownContext.ofType(entity, "origins-genshin:reactions/burning", BURNING_PYRO_ICD), true)) {
 				final ElementalApplication application = holder.getElementalApplication();
-	
+
 				if (application == null) {
 					holder.setElementalApplication(ElementalApplications.gaugeUnits(target, Element.PYRO, 1));
 				} else {

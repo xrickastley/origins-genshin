@@ -15,8 +15,8 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.util.Util;
 
-public final class ElementalInfusionPower 
-	extends Power 
+public final class ElementalInfusionPower
+	extends Power
 	implements Comparable<ElementalInfusionPower>
 {
 	private final ElementalApplication.Builder application;

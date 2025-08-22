@@ -16,6 +16,7 @@ import io.github.xrickastley.originsgenshin.util.Rescaler;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
+
 import me.shedaniel.autoconfig.AutoConfig;
 
 public class ElementalBurstRenderer extends PowerRenderer {

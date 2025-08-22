@@ -109,7 +109,7 @@ public final class ElementalDamageSource extends DamageSource {
 	}
 
 	/**
-	 * Sets whether the Elemental DMG Bonus% should be included in the DMG calculation for this 
+	 * Sets whether the Elemental DMG Bonus% should be included in the DMG calculation for this
 	 * {@code ElementalDamageSource}.
 	 */
 	public ElementalDamageSource shouldApplyDMGBonus(boolean dmgBonus) {
@@ -119,7 +119,7 @@ public final class ElementalDamageSource extends DamageSource {
 	}
 
 	/**
-	 * Sets whether the Elemental RES% should be included in the DMG calculation for this 
+	 * Sets whether the Elemental RES% should be included in the DMG calculation for this
 	 * {@code ElementalDamageSource}.
 	 */
 	public ElementalDamageSource shouldApplyRES(boolean res) {

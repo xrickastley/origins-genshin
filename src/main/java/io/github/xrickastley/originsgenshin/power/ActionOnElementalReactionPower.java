@@ -15,6 +15,7 @@ import io.github.apace100.apoli.power.factory.PowerFactory;
 import io.github.apace100.calio.data.SerializableData;
 import io.github.xrickastley.originsgenshin.data.OriginsGenshinDataTypes;
 import io.github.xrickastley.originsgenshin.element.reaction.ElementalReaction;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.Pair;
