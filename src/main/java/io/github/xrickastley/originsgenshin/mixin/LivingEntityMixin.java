@@ -13,17 +13,19 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.component.ElementComponent;
 import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementalApplications;
 import io.github.xrickastley.originsgenshin.element.ElementalDamageSource;
 import io.github.xrickastley.originsgenshin.element.InternalCooldownContext;
 import io.github.xrickastley.originsgenshin.element.InternalCooldownType;
+import io.github.xrickastley.originsgenshin.entity.DendroCoreEntity;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinAttributes;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinGameRules;
 import io.github.xrickastley.originsgenshin.interfaces.IPlayerEntity;
 import io.github.xrickastley.originsgenshin.networking.ShowElementalDamageS2CPacket;
-
+import io.github.xrickastley.originsgenshin.util.BoxUtil;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.block.Blocks;
@@ -130,6 +132,8 @@ public abstract class LivingEntityMixin extends Entity {
 		at = @At("TAIL")
 	)
 	private void damageHandlers_elements(final DamageSource source, float amount, CallbackInfo ci) {
+		this.triggerDendroCoreReactions(source);
+
 		if (!source.originsgenshin$displayDamage()) return;
 
 		final ElementalDamageSource eds = source instanceof final ElementalDamageSource eds2
@@ -168,5 +172,18 @@ public abstract class LivingEntityMixin extends Entity {
 
 			ServerPlayNetworking.send(player, showElementalDMGPacket);
 		}
+	}
+
+	@Unique
+	private void triggerDendroCoreReactions(final DamageSource source) {
+		if (!(source instanceof final ElementalDamageSource eds)) return;
+
+		final Element element = eds.getElementalApplication().getElement();
+
+		if (element != Element.PYRO && element != Element.ELECTRO) return;
+
+		this.getWorld()
+			.getEntitiesByClass(DendroCoreEntity.class, BoxUtil.multiply(this.getBoundingBox(), 2), dc -> true)
+			.forEach(dc -> dc.damage(source, 1));
 	}
 }

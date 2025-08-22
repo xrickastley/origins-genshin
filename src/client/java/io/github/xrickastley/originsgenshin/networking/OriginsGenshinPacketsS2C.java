@@ -1,28 +1,34 @@
 package io.github.xrickastley.originsgenshin.networking;
 
 import io.github.xrickastley.originsgenshin.element.reaction.ElementalReaction;
+import io.github.xrickastley.originsgenshin.entity.DendroCoreEntity;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinParticleFactory;
 import io.github.xrickastley.originsgenshin.registry.OriginsGenshinRegistries;
 import io.github.xrickastley.originsgenshin.util.ClientConfig;
 import io.github.xrickastley.originsgenshin.util.Color;
 import io.github.xrickastley.originsgenshin.util.Colors;
+
 import me.shedaniel.autoconfig.AutoConfig;
+
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
+import net.minecraft.entity.Entity;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 
 public class OriginsGenshinPacketsS2C {
 	public static void register() {
 		ClientPlayConnectionEvents.INIT.register(((clientPlayNetworkHandler, minecraftClient) -> {
 			ClientPlayNetworking.registerReceiver(ShowElementalReactionS2CPacket.TYPE, OriginsGenshinPacketsS2C::onElementalReactionShow);
 			ClientPlayNetworking.registerReceiver(ShowElementalDamageS2CPacket.TYPE, OriginsGenshinPacketsS2C::onElementalDamageShow);
+			ClientPlayNetworking.registerReceiver(SyncDendroCoreAgeS2CPacket.TYPE, OriginsGenshinPacketsS2C::onSyncDendroCoreAge);
 		}));
 	}
 
-	protected static void onElementalReactionShow(ShowElementalReactionS2CPacket packet, ClientPlayerEntity player, PacketSender responseSender) {
+	private static void onElementalReactionShow(ShowElementalReactionS2CPacket packet, ClientPlayerEntity player, PacketSender responseSender) {
 		final Vec3d pos = packet.pos();
 
 		final ElementalReaction reaction = OriginsGenshinRegistries.ELEMENTAL_REACTION.get(packet.reaction());
@@ -36,7 +42,7 @@ public class OriginsGenshinPacketsS2C {
 			.addImportantParticle(reaction.getParticle(), pos.x, pos.y, pos.z, 0.02, 0.02, 0.02);
 	}
 
-	protected static void onElementalDamageShow(ShowElementalDamageS2CPacket packet, ClientPlayerEntity player, PacketSender responseSender) {
+	private static void onElementalDamageShow(ShowElementalDamageS2CPacket packet, ClientPlayerEntity player, PacketSender responseSender) {
 		final ClientConfig config = AutoConfig
 			.getConfigHolder(ClientConfig.class)
 			.getConfig();
@@ -56,5 +62,18 @@ public class OriginsGenshinPacketsS2C {
 			.player
 			.getWorld()
 			.addImportantParticle(OriginsGenshinParticleFactory.DAMAGE_TEXT, pos.x, pos.y, pos.z, amount, color.asARGB(), packet.crit() ? config.renderers.critDMGScale : config.renderers.normalDMGScale);
+	}
+
+	private static void onSyncDendroCoreAge(SyncDendroCoreAgeS2CPacket packet, ClientPlayerEntity player, PacketSender responseSender) {
+		final World world = MinecraftClient
+			.getInstance()
+			.player
+			.getWorld();
+
+		final Entity entity = world.getEntityById(packet.entityId());
+
+		if (entity == null || !(entity instanceof final DendroCoreEntity dendroCore)) return;
+
+		dendroCore.age = packet.age();
 	}
 }

@@ -1,6 +1,6 @@
 package io.github.xrickastley.originsgenshin.particle;
 
-import io.github.xrickastley.originsgenshin.util.Colors;
+import io.github.xrickastley.originsgenshin.util.Color;
 import io.github.xrickastley.originsgenshin.util.TextHelper;
 
 import net.minecraft.client.particle.Particle;
@@ -13,8 +13,7 @@ public class CrystallizeParticleFactory implements ParticleFactory<DefaultPartic
 	public CrystallizeParticleFactory(SpriteProvider sp) {}
 
 	public Particle createParticle(DefaultParticleType defaultParticleType, ClientWorld clientWorld, double d, double e, double f, double g, double h, double i) {
-		// TODO: check for accuracy in-game
-		return new ReactionParticle(clientWorld, d, e, f, Colors.GEO.asARGB())
+		return new ReactionParticle(clientWorld, d, e, f, Color.fromRGBAHex("#f79c00").asARGB())
 			.setText(TextHelper.font("Crystallize", TextBillboardParticle.GENSHIN_FONT));
 	}
 }

@@ -27,6 +27,7 @@ import io.github.xrickastley.originsgenshin.element.reaction.AbstractBurningElem
 import io.github.xrickastley.originsgenshin.element.reaction.ElectroChargedElementalReaction;
 import io.github.xrickastley.originsgenshin.element.reaction.ElementalReaction;
 import io.github.xrickastley.originsgenshin.element.reaction.QuickenElementalReaction;
+import io.github.xrickastley.originsgenshin.factory.OriginsGenshinGameRules;
 import io.github.xrickastley.originsgenshin.registry.OriginsGenshinRegistries;
 import io.github.xrickastley.originsgenshin.util.Array;
 import io.github.xrickastley.originsgenshin.util.ImmutablePair;
@@ -161,8 +162,8 @@ public final class ElementComponentImpl implements ElementComponent {
 
 	@Override
 	public List<ElementalReaction> addElementalApplication(ElementalApplication application, InternalCooldownContext icdContext) {
-		// Only do this on the server.
-		if (application.getEntity().getWorld().isClient) return Collections.emptyList();
+		// Only do this on the server || Only do this when doElements is true.
+		if (application.getEntity().getWorld().isClient || !application.getEntity().getWorld().getGameRules().getBoolean(OriginsGenshinGameRules.DO_ELEMENTS)) return Collections.emptyList();
 
 		if (application.isAuraElement() && application.isGaugeUnits() && this.getAppliedElements().length() > 0)
 			application = application.asNonAura();

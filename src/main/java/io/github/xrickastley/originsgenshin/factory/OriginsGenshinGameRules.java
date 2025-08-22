@@ -15,7 +15,7 @@ public class OriginsGenshinGameRules {
 	public static final GameRules.Key<DoubleRule> LEVEL_MULTIPLIER = GameRuleRegistry.register(
 		"levelMultiplier",
 		GameRules.Category.PLAYER,
-		GameRuleFactory.createDoubleRule(1)
+		GameRuleFactory.createDoubleRule(5)
 	);
 
 	public static final GameRules.Key<GameRules.BooleanRule> OVERLOADED_EXPLOSIONS_DAMAGE_BLOCKS = GameRuleRegistry.register(

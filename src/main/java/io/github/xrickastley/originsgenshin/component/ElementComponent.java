@@ -42,16 +42,16 @@ public interface ElementComponent extends AutoSyncedComponent, CommonTickingComp
 	 * @param entityClass The entity to deny Elemental Applications for.
 	 */
 	public static <T extends LivingEntity> void denyElementsFor(Class<T> entityClass) {
-		ElementComponentImpl.DENIED_ENTITIES.add(ClassInstanceUtil.castInstance(entityClass));
+		ElementComponentImpl.DENIED_ENTITIES.add(ClassInstanceUtil.cast(entityClass));
 	}
 
-	public static DamageSource applyElementalInfusions(DamageSource source, LivingEntity entity) {
+	public static DamageSource applyElementalInfusions(DamageSource source, LivingEntity target) {
 		if (source instanceof ElementalDamageSource) return source;
 
 		if (source.isIn(DamageTypeTags.IS_LIGHTNING)) {
-			return new ElementalDamageSource(source, ElementalApplications.gaugeUnits(entity, Element.ELECTRO, 0, true), InternalCooldownContext.ofType(source.getAttacker(), "origins-genshin:natural_environment", InternalCooldownType.INTERVAL_ONLY));
+			return new ElementalDamageSource(source, ElementalApplications.gaugeUnits(target, Element.ELECTRO, 0, true), InternalCooldownContext.ofType(source.getAttacker(), "origins-genshin:natural_environment", InternalCooldownType.INTERVAL_ONLY));
 		} else if (source.isIn(DamageTypeTags.IS_FIRE)) {
-			return new ElementalDamageSource(source, ElementalApplications.gaugeUnits(entity, Element.PYRO, 0, true), InternalCooldownContext.ofType(source.getAttacker(), "origins-genshin:natural_environment", InternalCooldownType.INTERVAL_ONLY));
+			return new ElementalDamageSource(source, ElementalApplications.gaugeUnits(target, Element.PYRO, 0, true), InternalCooldownContext.ofType(source.getAttacker(), "origins-genshin:natural_environment", InternalCooldownType.INTERVAL_ONLY));
 		}
 
 		if (source.getAttacker() == null || (source instanceof final ElementalDamageSource eds && eds.getElementalApplication().getElement() != Element.PHYSICAL)) return source;
@@ -66,7 +66,7 @@ public interface ElementComponent extends AutoSyncedComponent, CommonTickingComp
 
 		return power == null
 			? source
-			: new ElementalDamageSource(source, power.getApplication(entity), power.getIcdContext());
+			: new ElementalDamageSource(source, power.getApplication(target), power.getIcdContext());
 	}
 
 	public LivingEntity getOwner();

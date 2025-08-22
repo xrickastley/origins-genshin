@@ -7,8 +7,12 @@ import net.minecraft.particle.DefaultParticleType;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import javax.annotation.Nullable;
 
@@ -24,6 +28,7 @@ public final class ElementalReactionSettings {
 	boolean endsReactionTrigger = false;
 	boolean preventsPriorityUpgrade = false;
 	Set<Identifier> preventsReactionsAfter = new HashSet<>();
+	List<Element> reactionDisplayOrder = new ArrayList<>();
 
 	public ElementalReactionSettings(String name, Identifier id, @Nullable DefaultParticleType particle) {
 		this.name = name;
@@ -89,6 +94,30 @@ public final class ElementalReactionSettings {
 	 */
 	public ElementalReactionSettings setTriggeringElement(Element element, int priority) {
 		this.triggeringElement = new Pair<Element,Integer>(element, priority);
+
+		return this;
+	}
+
+	/**
+	 * Sets the display order when this reaction is displayed. <br> <br>
+	 * 
+	 * This <b>must</b> contain <b>only</b> the Aura and Triggering element, as an
+	 * {@code IllegalArgumentException} will be thrown when a different unexpected {@code Element}
+	 * is added instead.
+	 * 
+	 * @param elementOrder The order of the elements when this reaction is displayed.
+	 */
+	public ElementalReactionSettings setReactionDisplayOrder(Element... elementOrder) {
+		this.reactionDisplayOrder = List.of(elementOrder);
+
+		final Set<Element> onlyElements = Set.of(this.auraElement.getLeft(), this.triggeringElement.getLeft());
+		final List<Element> invalidElements = this.reactionDisplayOrder
+			.stream()
+			.filter(Predicate.not(onlyElements::contains))
+			.collect(Collectors.toList());
+
+		if (this.reactionDisplayOrder.stream().anyMatch(Predicate.not(onlyElements::contains)))
+			throw new IllegalArgumentException("The elements: " + invalidElements + " are not permitted as part of the reaction display order!");
 
 		return this;
 	}

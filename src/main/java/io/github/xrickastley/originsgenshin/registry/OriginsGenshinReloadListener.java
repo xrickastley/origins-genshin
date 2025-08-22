@@ -53,19 +53,19 @@ public class OriginsGenshinReloadListener implements SimpleSynchronousResourceRe
 	}
 
 	public static <T> void addBeforeLoadListener(Registry<T> registry, Consumer<Registry<T>> listener) {
-		final List<Consumer<Registry<T>>> listeners = ClassInstanceUtil.castInstance(BEFORE_LOAD_LISTENERS.getOrDefault(registry, new ArrayList<>()));
+		final List<Consumer<Registry<T>>> listeners = ClassInstanceUtil.cast(BEFORE_LOAD_LISTENERS.getOrDefault(registry, new ArrayList<>()));
 
 		listeners.add(listener);
 
-		BEFORE_LOAD_LISTENERS.put(registry, ClassInstanceUtil.castInstance(listeners));
+		BEFORE_LOAD_LISTENERS.put(registry, ClassInstanceUtil.cast(listeners));
 	}
 
 	public static <T> void addAfterLoadListener(Registry<T> registry, Consumer<Registry<T>> listener) {
-		final List<Consumer<Registry<T>>> listeners = ClassInstanceUtil.castInstance(AFTER_LOAD_LISTENERS.getOrDefault(registry, new ArrayList<>()));
+		final List<Consumer<Registry<T>>> listeners = ClassInstanceUtil.cast(AFTER_LOAD_LISTENERS.getOrDefault(registry, new ArrayList<>()));
 
 		listeners.add(listener);
 
-		AFTER_LOAD_LISTENERS.put(registry, ClassInstanceUtil.castInstance(listeners));
+		AFTER_LOAD_LISTENERS.put(registry, ClassInstanceUtil.cast(listeners));
 	}
 
 	@Override

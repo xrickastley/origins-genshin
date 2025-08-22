@@ -76,8 +76,9 @@ public abstract class EntityRendererMixin {
 			final ElementalReaction reaction = component.getLastReaction().getLeft();
 			final long reactionAt = component.getLastReaction().getRight();
 
-			elementArray.add(new ElementEntry(reaction.getAuraElement(), 60.0, reactionAt, tickDelta));
-			elementArray.add(new ElementEntry(reaction.getTriggeringElement(), 60.0, reactionAt, tickDelta));
+			reaction
+				.getReactionDisplayOrder()
+				.forEach(element -> elementArray.add(new ElementEntry(element, 60.0, reactionAt, tickDelta)));
 		} else {
 			if (component.getAppliedElements().length() == 0) return;
 

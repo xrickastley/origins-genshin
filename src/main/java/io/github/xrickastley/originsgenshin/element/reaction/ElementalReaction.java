@@ -4,6 +4,7 @@ import java.text.DecimalFormat;
 import java.util.List;
 import java.util.Set;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import org.slf4j.Logger;
@@ -17,7 +18,7 @@ import io.github.xrickastley.originsgenshin.factory.OriginsGenshinSoundEvents;
 import io.github.xrickastley.originsgenshin.networking.ShowElementalReactionS2CPacket;
 import io.github.xrickastley.originsgenshin.registry.OriginsGenshinRegistries;
 import io.github.xrickastley.originsgenshin.util.Array;
-
+import io.github.xrickastley.originsgenshin.util.ClassInstanceUtil;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.Entity;
@@ -47,6 +48,7 @@ public abstract class ElementalReaction {
 	protected final boolean endsReactionTrigger;
 	protected final boolean preventsPriorityUpgrade;
 	protected final Set<Identifier> preventsReactionsAfter;
+	protected final List<Element> reactionDisplayOrder;
 
 	protected ElementalReaction(ElementalReactionSettings settings) {
 		this.name = settings.name;
@@ -61,6 +63,14 @@ public abstract class ElementalReaction {
 		this.endsReactionTrigger = settings.endsReactionTrigger;
 		this.preventsPriorityUpgrade = settings.preventsPriorityUpgrade;
 		this.preventsReactionsAfter = settings.preventsReactionsAfter;
+
+		final Stream<Element> reactionDisplayOrder = settings.reactionDisplayOrder.isEmpty()
+			? Stream.of(ClassInstanceUtil.mapOrNull(settings.auraElement, Pair::getLeft), ClassInstanceUtil.mapOrNull(settings.triggeringElement, Pair::getLeft))
+			: settings.reactionDisplayOrder.stream();
+
+		this.reactionDisplayOrder = reactionDisplayOrder
+			.filter(element -> element != null)
+			.collect(Collectors.toList());
 
 		OriginsGenshinRegistries.ELEMENTAL_REACTION.createEntry(this);
 	}
@@ -141,6 +151,10 @@ public abstract class ElementalReaction {
 			: element == triggeringElement.getLeft()
 				? triggeringElement
 				: null;
+	}
+
+	public List<Element> getReactionDisplayOrder() {
+		return this.reactionDisplayOrder;	
 	}
 
 	public boolean shouldApplyResultAsAura() {

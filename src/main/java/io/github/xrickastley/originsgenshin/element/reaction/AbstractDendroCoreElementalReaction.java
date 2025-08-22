@@ -24,7 +24,7 @@ public abstract sealed class AbstractDendroCoreElementalReaction
 
 	@Override
 	public boolean trigger(LivingEntity entity, @Nullable LivingEntity origin) {
-		if (!(entity instanceof final DendroCoreEntity dendroCore)) throw new AssertionError("This reaction may only be triggered on a Dendro Core! Provided entity: " + entity);
+		if (!(entity instanceof final DendroCoreEntity dendroCore)) throw new ClassCastException("This reaction may only be triggered on a Dendro Core! Provided entity: " + entity);
 
 		if (!dendroCore.isNormal()) return false;
 

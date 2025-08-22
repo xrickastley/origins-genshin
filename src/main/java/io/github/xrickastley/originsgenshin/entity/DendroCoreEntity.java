@@ -14,9 +14,12 @@ import io.github.xrickastley.originsgenshin.element.InternalCooldownContext;
 import io.github.xrickastley.originsgenshin.element.reaction.ElementalReaction;
 import io.github.xrickastley.originsgenshin.element.reaction.ElementalReactions;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinSoundEvents;
+import io.github.xrickastley.originsgenshin.networking.SyncDendroCoreAgeS2CPacket;
 import io.github.xrickastley.originsgenshin.registry.OriginsGenshinDamageTypes;
 import io.github.xrickastley.originsgenshin.util.ClassInstanceUtil;
 
+import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.EntityType;
@@ -27,6 +30,7 @@ import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.item.ItemStack;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.Arm;
 import net.minecraft.util.collection.DefaultedList;
@@ -42,6 +46,7 @@ public final class DendroCoreEntity extends LivingEntity {
 	private static final double SPRAWLING_SHOT_GRAVITY = -0.05;
 	private static final double SPRAWLING_SHOT_RADIUS = 24;
 	private static final int SPRAWLING_SHOT_DELAY = 6;
+	private static final double DENDRO_CORES_IN_RADIUS = 64;
 
 	private List<LivingEntity> owners;
 	private @Nullable LivingEntity target;
@@ -218,17 +223,17 @@ public final class DendroCoreEntity extends LivingEntity {
 	public boolean damage(DamageSource source, float amount) {
 		source = ElementComponent.applyElementalInfusions(source, this);
 
-		if (source instanceof final ElementalDamageSource eds && this.isNormal()) {
-			final Element element = eds.getElementalApplication().getElement();
+		if (!(source instanceof final ElementalDamageSource eds) || !this.isNormal()) return false;
+		
+		final Element element = eds.getElementalApplication().getElement();
 
-			if (element != Element.PYRO && element != Element.ELECTRO) return false;
+		if (element != Element.PYRO && element != Element.ELECTRO) return false;
 
-			final ElementalReaction reaction = element == Element.PYRO
-				? ElementalReactions.BURGEON
-				: ElementalReactions.HYPERBLOOM;
+		final ElementalReaction reaction = element == Element.PYRO
+			? ElementalReactions.BURGEON
+			: ElementalReactions.HYPERBLOOM;
 
-			reaction.trigger(this, ClassInstanceUtil.castOrNull(source.getAttacker(), LivingEntity.class));
-		}
+		reaction.trigger(this, ClassInstanceUtil.castOrNull(source.getAttacker(), LivingEntity.class));
 
 		return false;
 	}
@@ -261,7 +266,7 @@ public final class DendroCoreEntity extends LivingEntity {
 	}
 
 	private void removeOldDendroCores() {
-		final Box box = Box.of(this.getLerpedPos(1f), 24, 24, 24);
+		final Box box = Box.of(this.getLerpedPos(1f), DendroCoreEntity.DENDRO_CORES_IN_RADIUS, DendroCoreEntity.DENDRO_CORES_IN_RADIUS, DendroCoreEntity.DENDRO_CORES_IN_RADIUS);
 		final List<DendroCoreEntity> dendroCores = this.getWorld().getEntitiesByClass(DendroCoreEntity.class, box, dc -> true);
 
 		if (dendroCores.size() <= 5) return;
@@ -278,6 +283,13 @@ public final class DendroCoreEntity extends LivingEntity {
 
 		this.exploded = true;
 		this.age = 117;
+
+		if (!this.getWorld().isClient) {
+			final SyncDendroCoreAgeS2CPacket packet = new SyncDendroCoreAgeS2CPacket(this.getId(), this.age);
+
+			for (final ServerPlayerEntity otherPlayer : PlayerLookup.tracking(this))
+				ServerPlayNetworking.send(otherPlayer, packet);
+		}
 
 		final @Nullable LivingEntity recentOwner = owners.isEmpty() ? null : owners.get(owners.size() - 1);
 		for (final LivingEntity target : ElementalReaction.getEntitiesInAoE(this, 5.0)) {
