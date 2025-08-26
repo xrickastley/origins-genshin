@@ -17,7 +17,8 @@
     "PowerTypesMixin",
     "PrioritizedLivingEntityMixin",
     "PrioritizedPlayerEntityMixin",
-    "SimpleRegistryMixin"
+    "SimpleRegistryMixin",
+    "StatusEffectMixin"
   ],
   "injectors": {
     "defaultRequire": 1
