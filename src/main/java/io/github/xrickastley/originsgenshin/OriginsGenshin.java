@@ -8,7 +8,6 @@ import org.slf4j.LoggerFactory;
 
 import io.github.apace100.apoli.component.PowerHolderComponent;
 import io.github.apace100.apoli.power.Power;
-import io.github.apace100.apoli.util.Scheduler;
 import io.github.xrickastley.originsgenshin.command.ElementArgumentType;
 import io.github.xrickastley.originsgenshin.command.ElementCommand;
 import io.github.xrickastley.originsgenshin.component.ElementComponent;
@@ -48,7 +47,6 @@ import net.minecraft.world.World;
 public class OriginsGenshin implements ModInitializer {
 	public static final String MOD_ID = "origins-genshin";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
-	public static final Scheduler SCHEDULER = new Scheduler();
 
 	@Override
 	public void onInitialize() {

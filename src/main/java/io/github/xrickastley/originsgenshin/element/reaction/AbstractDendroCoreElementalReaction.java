@@ -8,7 +8,6 @@ import net.minecraft.entity.LivingEntity;
 
 import javax.annotation.Nullable;
 
-// TODO: do Hyperbloom/Burgeon if hit by electro/pyro nearby
 public abstract sealed class AbstractDendroCoreElementalReaction
 	extends ElementalReaction
 	permits HyperbloomElementalReaction, BurgeonElementalReaction

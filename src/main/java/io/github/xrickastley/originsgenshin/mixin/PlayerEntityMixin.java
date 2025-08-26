@@ -4,6 +4,7 @@ import com.llamalad7.mixinextras.expression.Definition;
 import com.llamalad7.mixinextras.expression.Expression;
 import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import com.llamalad7.mixinextras.sugar.Local;
+import com.mojang.authlib.GameProfile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -17,16 +18,42 @@ import org.spongepowered.asm.mixin.injection.ModifyArg;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import io.github.xrickastley.originsgenshin.component.ElementComponent;
+import io.github.xrickastley.originsgenshin.element.Element;
+import io.github.xrickastley.originsgenshin.element.ElementalApplications;
+import io.github.xrickastley.originsgenshin.element.ElementalDamageSource;
+import io.github.xrickastley.originsgenshin.element.InternalCooldownContext;
+import io.github.xrickastley.originsgenshin.entity.DendroCoreEntity;
 import io.github.xrickastley.originsgenshin.interfaces.IPlayerEntity;
-
+import io.github.xrickastley.originsgenshin.networking.ShowElementalDamageS2CPacket;
+import io.github.xrickastley.originsgenshin.util.BoxUtil;
+import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Box;
+import net.minecraft.util.math.Vec3d;
+import net.minecraft.world.World;
 
 @Mixin(PlayerEntity.class)
 @Debug(export = true)
-public abstract class PlayerEntityMixin implements IPlayerEntity {
+public abstract class PlayerEntityMixin 
+	extends LivingEntity
+	implements IPlayerEntity
+{
+	public PlayerEntityMixin(World world, BlockPos pos, float yaw, GameProfile gameProfile) {
+		super(EntityType.PLAYER, world);
+		throw new AssertionError();
+	}
+
+	@Unique
+	private float originsgenshin$subdamage;
+
 	@Unique
 	private List<DamageSource> originsgenshin$critDamageSources = new ArrayList<>();
 
@@ -92,5 +119,65 @@ public abstract class PlayerEntityMixin implements IPlayerEntity {
 			originsgenshin$critDamageSources.clear();
 		else
 			originsgenshin$critDamageSources = new ArrayList<>();
+	}
+
+	@Inject(
+		method = "applyDamage",
+		at = @At("TAIL")
+	)
+	private void damageHandlers_elements(final DamageSource source, float amount, CallbackInfo ci) {
+		this.triggerDendroCoreReactions(source);
+
+		if (!source.originsgenshin$displayDamage()) return;
+
+		final ElementalDamageSource eds = source instanceof final ElementalDamageSource eds2
+			? eds2
+			: new ElementalDamageSource(source, ElementalApplications.gaugeUnits((LivingEntity)(Entity) this, Element.PHYSICAL, 0), InternalCooldownContext.ofNone(source.getAttacker()));
+
+		originsgenshin$subdamage += amount;
+
+		if (originsgenshin$subdamage < 1) return;
+
+		final float extra = originsgenshin$subdamage - (float) Math.floor(originsgenshin$subdamage);
+
+		originsgenshin$subdamage = (float) Math.floor(originsgenshin$subdamage);
+
+		final World world = this.getWorld();
+
+		if (world.isClient || !(world instanceof ServerWorld)) return;
+
+		final Box boundingBox = this.getBoundingBox();
+
+		final double x = this.getX() + (boundingBox.getLengthX() * 1.25 * Math.random());
+		final double y = this.getY() + (boundingBox.getLengthY() * 0.50 * Math.random()) + 0.50;
+		final double z = this.getZ() + (boundingBox.getLengthZ() * 1.25 * Math.random());
+		final Vec3d pos = new Vec3d(x, y, z);
+		final boolean isCrit = eds.getOriginalSource() != null && source.getAttacker() instanceof final PlayerEntity player
+			? ((IPlayerEntity) player).originsgenshin$isCrit(eds.getOriginalSource())
+			: false;
+
+		final Element element = eds.getElementalApplication().getElement();
+		final ShowElementalDamageS2CPacket showElementalDMGPacket = new ShowElementalDamageS2CPacket(pos, element, originsgenshin$subdamage, isCrit);
+
+		originsgenshin$subdamage = extra;
+
+		for (final ServerPlayerEntity player : PlayerLookup.tracking(this)) {
+			if (player.getId() == this.getId()) return;
+
+			ServerPlayNetworking.send(player, showElementalDMGPacket);
+		}
+	}
+
+	@Unique
+	private void triggerDendroCoreReactions(final DamageSource source) {
+		if (!(source instanceof final ElementalDamageSource eds)) return;
+
+		final Element element = eds.getElementalApplication().getElement();
+
+		if (element != Element.PYRO && element != Element.ELECTRO) return;
+
+		this.getWorld()
+			.getEntitiesByClass(DendroCoreEntity.class, BoxUtil.multiply(this.getBoundingBox(), 2), dc -> true)
+			.forEach(dc -> dc.damage(source, 1));
 	}
 }

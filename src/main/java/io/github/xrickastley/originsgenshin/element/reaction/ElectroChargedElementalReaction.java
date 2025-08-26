@@ -1,5 +1,6 @@
 package io.github.xrickastley.originsgenshin.element.reaction;
 
+import java.util.List;
 import java.util.function.Predicate;
 
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
@@ -12,9 +13,14 @@ import io.github.xrickastley.originsgenshin.element.InternalCooldownContext;
 import io.github.xrickastley.originsgenshin.events.ReactionTriggered;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinParticleFactory;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinSoundEvents;
+import io.github.xrickastley.originsgenshin.networking.ShowElectroChargeS2CPacket;
 import io.github.xrickastley.originsgenshin.registry.OriginsGenshinDamageTypes;
 
+import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
+import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+
 import net.minecraft.entity.LivingEntity;
+import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
 
 import javax.annotation.Nullable;
@@ -82,7 +88,9 @@ public class ElectroChargedElementalReaction extends ElementalReaction {
 			return (e == entity || c.hasElementalApplication(Element.HYDRO)) && !c.isElectroChargedOnCD();
 		};
 
-		for (final LivingEntity target : ElementalReaction.getEntitiesInAoE(entity, 2.5, predicate)) {
+		final List<LivingEntity> targets = ElementalReaction.getEntitiesInAoE(entity, 2.5, predicate);
+
+		for (final LivingEntity target : targets) {
 			final float damage = ElementalReaction.getReactionDamage(entity, 2.0);
 			final ElementalDamageSource source = new ElementalDamageSource(
 				entity
@@ -98,15 +106,32 @@ public class ElectroChargedElementalReaction extends ElementalReaction {
 				.get(target)
 				.resetElectroChargedCD();
 		}
+
+		this.sendDisplayPacket(entity, targets);
 	}
 
 	// These "mixins" are injected pieces of code (likening @Inject) that allow Burning to work properly, and allow others to easily see the way it was hardcoded.
 	public static void mixin$tick(LivingEntity entity) {
-		if (!ElementalReactions.ELECTRO_CHARGED.isTriggerable(entity) || entity.getWorld().isClient) return;
+		if (!ElementalReactions.ELECTRO_CHARGED.isTriggerable(entity) || entity.getWorld().isClient || entity.isDead()) return;
 
 		ElementalReactions.ELECTRO_CHARGED.trigger(entity);
 
 		ElementComponent.sync(entity);
 	}
 
+	private void sendDisplayPacket(LivingEntity mainTarget, List<LivingEntity> otherTargets) {
+		if (otherTargets.isEmpty()) return;
+
+		final ShowElectroChargeS2CPacket packet = new ShowElectroChargeS2CPacket(mainTarget, otherTargets);
+
+		if (mainTarget instanceof final ServerPlayerEntity serverPlayer) ServerPlayNetworking.send(serverPlayer, packet);
+
+		for (final ServerPlayerEntity otherPlayer : PlayerLookup.tracking(mainTarget)) {
+			OriginsGenshin.sublogger().info("Showing Electro-Charged packet for: {}", otherPlayer);
+
+			if (otherPlayer.getId() == mainTarget.getId()) continue;
+
+			ServerPlayNetworking.send(otherPlayer, packet);
+		}
+	}
 }

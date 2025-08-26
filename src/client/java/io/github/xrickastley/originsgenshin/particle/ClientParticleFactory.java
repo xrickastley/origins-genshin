@@ -12,14 +12,6 @@ import net.minecraft.particle.ParticleType;
 @Environment(EnvType.CLIENT)
 public class ClientParticleFactory {
 	public static void register() {
-		register(OriginsGenshinParticleFactory.PYRO, ElementParticle.Factory::new);
-		register(OriginsGenshinParticleFactory.HYDRO, ElementParticle.Factory::new);
-		register(OriginsGenshinParticleFactory.ANEMO, ElementParticle.Factory::new);
-		register(OriginsGenshinParticleFactory.ELECTRO, ElementParticle.Factory::new);
-		register(OriginsGenshinParticleFactory.DENDRO, ElementParticle.Factory::new);
-		register(OriginsGenshinParticleFactory.CRYO, ElementParticle.Factory::new);
-		register(OriginsGenshinParticleFactory.GEO, ElementParticle.Factory::new);
-
 		register(OriginsGenshinParticleFactory.OVERLOADED, OverloadedParticleFactory::new);
 		register(OriginsGenshinParticleFactory.ELECTRO_CHARGED, ElectroChargedParticleFactory::new);
 		register(OriginsGenshinParticleFactory.SUPERCONDUCT, SuperconductParticleFactory::new);

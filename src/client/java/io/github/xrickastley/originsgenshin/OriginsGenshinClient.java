@@ -22,23 +22,33 @@ import net.fabricmc.api.ClientModInitializer;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityModelLayerRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.EntityRendererRegistry;
 import net.fabricmc.fabric.api.client.rendering.v1.HudRenderCallback;
+import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
+
+import io.github.xrickastley.originsgenshin.renderer.genshin.ElectroChargedRenderer;
+import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 
 public class OriginsGenshinClient implements ClientModInitializer {
 	public static final String MOD_ID = "origins-genshin";
 	public static final Logger LOGGER = LoggerFactory.getLogger(MOD_ID);
-
+	
 	private static final MinecraftClient client = MinecraftClient.getInstance();
-	private static final Rescaler rescaler = new Rescaler(1920, 1080);
-	private static final ElementalBurstRenderer burstRenderer = new ElementalBurstRenderer(rescaler);
-	private static final ElementalSkillRenderer skillRenderer = new ElementalSkillRenderer(rescaler);
+	private static final Rescaler RESCALER = new Rescaler(1920, 1080);
+	private static final ElementalBurstRenderer ELEMENTAL_BURST_RENDERER = new ElementalBurstRenderer(RESCALER);
+	private static final ElementalSkillRenderer ELEMENTAL_SKILL_RENDERER = new ElementalSkillRenderer(RESCALER);
+	private static final ElectroChargedRenderer ELECTRO_CHARGED_RENDERER = new ElectroChargedRenderer();
 
 	@Override
 	public void onInitializeClient() {
 		OriginsGenshinClient.LOGGER.info("Origins: Genshin (Client) Initialized!");
 
 		HudRenderCallback.EVENT.register(this::renderSkills);
+
+		WorldRenderEvents.END.register(OriginsGenshinClient.ELECTRO_CHARGED_RENDERER::render);
+		ClientTickEvents.START_WORLD_TICK.register(OriginsGenshinClient.ELECTRO_CHARGED_RENDERER::tick);
+
+		OriginsGenshinPacketsS2C.registerHandler(OriginsGenshinClient.ELECTRO_CHARGED_RENDERER);
 
 		ClientParticleFactory.register();
 		EntityRendererRegistry.register(OriginsGenshinEntities.DENDRO_CORE, DendroCoreEntityRenderer::new);
@@ -49,27 +59,27 @@ public class OriginsGenshinClient implements ClientModInitializer {
 	}
 
 	protected void renderSkills(DrawContext context, float tickDeltaManager) {
-		renderElementalBurst(rescaler, context, Math.max(tickDeltaManager, 0f));
-		renderElementalSkill(rescaler, context, Math.max(tickDeltaManager, 0f));
+		renderElementalBurst(RESCALER, context, Math.max(tickDeltaManager, 0f));
+		renderElementalSkill(RESCALER, context, Math.max(tickDeltaManager, 0f));
 	}
 
 	protected void renderElementalBurst(Rescaler rescaler, DrawContext context, float tickDeltaManager) {
 		for (Origin origin : ModComponents.ORIGIN.get(client.player).getOrigins().values()) {
 			IOrigin originMixinData = ((IOrigin)(Object) origin);
 	
-			if (originMixinData.hasElementalBurstPower(client.player)) burstRenderer.setOrPersist(originMixinData.getElementalBurstPower(client.player));
+			if (originMixinData.hasElementalBurstPower(client.player)) ELEMENTAL_BURST_RENDERER.setOrPersist(originMixinData.getElementalBurstPower(client.player));
 		}
 
-		burstRenderer.render(context, tickDeltaManager);
+		ELEMENTAL_BURST_RENDERER.render(context, tickDeltaManager);
 	}
 
 	protected void renderElementalSkill(Rescaler rescaler, DrawContext context, float tickDeltaManager) {
 		for (Origin origin : ModComponents.ORIGIN.get(client.player).getOrigins().values()) {
 			IOrigin originMixinData = ((IOrigin)(Object) origin);
 
-			if (originMixinData.hasElementalSkillPower(client.player)) skillRenderer.setOrPersist(originMixinData.getElementalSkillPower(client.player));
+			if (originMixinData.hasElementalSkillPower(client.player)) ELEMENTAL_SKILL_RENDERER.setOrPersist(originMixinData.getElementalSkillPower(client.player));
 		}
 
-		skillRenderer.render(context, tickDeltaManager);
+		ELEMENTAL_SKILL_RENDERER.render(context, tickDeltaManager);
 	}
 }

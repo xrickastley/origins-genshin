@@ -1,15 +1,21 @@
 package io.github.xrickastley.originsgenshin.networking;
 
+import java.util.ArrayList;
+import java.util.List;
+
+import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.element.reaction.ElementalReaction;
 import io.github.xrickastley.originsgenshin.entity.DendroCoreEntity;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinParticleFactory;
 import io.github.xrickastley.originsgenshin.registry.OriginsGenshinRegistries;
+import io.github.xrickastley.originsgenshin.util.ClassInstanceUtil;
 import io.github.xrickastley.originsgenshin.util.ClientConfig;
 import io.github.xrickastley.originsgenshin.util.Color;
 import io.github.xrickastley.originsgenshin.util.Colors;
 
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayConnectionEvents;
 import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking;
+import net.fabricmc.fabric.api.networking.v1.FabricPacket;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.network.ClientPlayerEntity;
@@ -20,12 +26,30 @@ import net.minecraft.world.World;
 import me.shedaniel.autoconfig.AutoConfig;
 
 public class OriginsGenshinPacketsS2C {
+	private static final List<PacketHandler<? extends FabricPacket>> HANDLERS = new ArrayList<>();
+	private static boolean registered = false;
+
 	public static void register() {
 		ClientPlayConnectionEvents.INIT.register(((clientPlayNetworkHandler, minecraftClient) -> {
 			ClientPlayNetworking.registerReceiver(ShowElementalReactionS2CPacket.TYPE, OriginsGenshinPacketsS2C::onElementalReactionShow);
 			ClientPlayNetworking.registerReceiver(ShowElementalDamageS2CPacket.TYPE, OriginsGenshinPacketsS2C::onElementalDamageShow);
 			ClientPlayNetworking.registerReceiver(SyncDendroCoreAgeS2CPacket.TYPE, OriginsGenshinPacketsS2C::onSyncDendroCoreAge);
+
+			OriginsGenshinPacketsS2C.registerHandlers();
 		}));
+	}
+
+	public static void registerHandler(final PacketHandler<? extends FabricPacket> handler) {
+		if (registered) throw new IllegalStateException("All ClientPlayConnectionEvents.INIT handlers have already been registered!");
+
+		OriginsGenshinPacketsS2C.HANDLERS.add(handler);
+	}
+
+	private static void registerHandlers() {
+		registered = true;
+
+		for (final PacketHandler<? extends FabricPacket> handler : OriginsGenshinPacketsS2C.HANDLERS)
+			ClientPlayNetworking.registerReceiver(handler.getType(), ClassInstanceUtil.cast(handler));
 	}
 
 	private static void onElementalReactionShow(ShowElementalReactionS2CPacket packet, ClientPlayerEntity player, PacketSender responseSender) {
@@ -34,6 +58,8 @@ public class OriginsGenshinPacketsS2C {
 		final ElementalReaction reaction = OriginsGenshinRegistries.ELEMENTAL_REACTION.get(packet.reaction());
 
 		if (reaction == null || reaction.getParticle() == null) return;
+
+		OriginsGenshin.sublogger().info("Receiving packet: ShowElementalReactionS2CPacket[pos={}, reaction={}]", pos, reaction);
 
 		MinecraftClient
 			.getInstance()
@@ -56,6 +82,8 @@ public class OriginsGenshinPacketsS2C {
 		final float amount = config.developer.genshinDamageLim
 			? Math.min(packet.amount(), 20_000_000)
 			: packet.amount();
+
+		OriginsGenshin.sublogger().info("Receiving packet: ShowElementalDamageS2CPacket[pos={}, color={}, amount={}]", pos, color, amount);
 
 		MinecraftClient
 			.getInstance()

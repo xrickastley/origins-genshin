@@ -1,6 +1,7 @@
 package io.github.xrickastley.originsgenshin.util;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -207,5 +208,31 @@ public final class Color {
 		float a = alpha / 255f;
 
 		return new Color(red, green, blue, a);
+	}
+
+	public static List<Color> gradient(final Color start, final Color end, final int steps) {
+		return Color.gradient(start, end, steps, Ease.LINEAR);
+	}
+
+	public static List<Color> gradient(final Color start, final Color end, final int steps, final Ease ease) {
+		final List<Color> result = new ArrayList<>();
+
+		for (int i = 0; i < steps; i++)
+			result.add(Color.gradientStep(start, end, (double) i / (double) (steps - 1), ease)); 
+
+		return result;
+	}
+
+	public static Color gradientStep(final Color start, final Color end, final double step) {
+		return Color.gradientStep(start, end, step, Ease.LINEAR);
+	}
+
+	public static Color gradientStep(final Color start, final Color end, final double step, final Ease ease) {
+		return new Color(
+			ease.applyLerp(step, start.red, end.red),
+			ease.applyLerp(step, start.green, end.green),
+			ease.applyLerp(step, start.blue, end.blue),
+			ease.applyLerp(step, start.alpha, end.alpha)
+		);
 	}
 }

@@ -28,7 +28,6 @@ public class OriginsGenshinRegistries {
 	private static <T> Registry<T> createRegistry(RegistryKey<Registry<T>> registryKey) {
 		return FabricRegistryBuilder
 			.createSimple(registryKey)
-			.attribute(RegistryAttribute.SYNCED)
 			.buildAndRegister();
 	}
 
@@ -49,6 +48,13 @@ public class OriginsGenshinRegistries {
 			registry -> {
 				Registry.register(registry, InternalCooldownType.NONE.getId(), InternalCooldownType.NONE);
 				Registry.register(registry, InternalCooldownType.DEFAULT.getId(), InternalCooldownType.DEFAULT);
+			}
+		);
+
+		OriginsGenshinReloadListener.addAfterLoadListener(
+			OriginsGenshinRegistries.INTERNAL_COOLDOWN_TYPE,
+			registry -> {
+				
 			}
 		);
 	}

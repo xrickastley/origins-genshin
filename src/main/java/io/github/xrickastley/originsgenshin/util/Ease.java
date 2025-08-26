@@ -30,8 +30,9 @@ public enum Ease {
 	}
 
 	public double applyLerp(double delta, double start, double end) {
-		return easeFunction.apply(
-			MathHelper.clamp(MathHelper.lerp(MathHelper.clamp(delta, 0, 1), start, end), start, end)
+		return MathHelper.clamp(
+			MathHelper.lerp(MathHelper.clamp(easeFunction.apply(delta), 0, 1), start, end),
+			start, end
 		);
 	}
 

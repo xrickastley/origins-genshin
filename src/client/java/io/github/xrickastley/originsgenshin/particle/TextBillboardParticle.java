@@ -28,7 +28,7 @@ public abstract class TextBillboardParticle extends BillboardParticle {
 
 		this.collidesWithWorld = false;
 		this.gravityStrength = 0f;
-		this.velocityY = 0d;
+		this.velocityY = 0;
 		this.maxAge = 75;
 		this.fadeAge = maxAge - 25;
 		this.scaleAge = 5;

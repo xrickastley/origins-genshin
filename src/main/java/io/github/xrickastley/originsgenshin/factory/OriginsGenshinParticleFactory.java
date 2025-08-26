@@ -8,14 +8,6 @@ import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 
 public class OriginsGenshinParticleFactory {
-	public static final DefaultParticleType PYRO = register("pyro");
-	public static final DefaultParticleType HYDRO = register("hydro");
-	public static final DefaultParticleType ANEMO = register("anemo");
-	public static final DefaultParticleType ELECTRO = register("electro");
-	public static final DefaultParticleType DENDRO = register("dendro");
-	public static final DefaultParticleType CRYO = register("cryo");
-	public static final DefaultParticleType GEO = register("geo");
-
 	public static final DefaultParticleType OVERLOADED = register("overloaded");
 	public static final DefaultParticleType ELECTRO_CHARGED = register("electro-charged");
 	public static final DefaultParticleType SUPERCONDUCT = register("superconduct");
