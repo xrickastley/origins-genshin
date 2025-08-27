@@ -134,7 +134,7 @@ public final class DendroCoreEntity extends LivingEntity {
 	private void doHyperbloom() {
 		final int hyperbloomTick = this.age - this.hyperbloomAge;
 
-		if (target != null) {
+		if (this.target != null) {
 			final Vec3d target = this.target.getEyePos().subtract(this.getPos());
 			final double distance = Math.sqrt(target.x * target.x + target.z * target.z);
 			final int ticks = Math.max(1, (int) (distance / DendroCoreEntity.SPRAWLING_SHOT_SPEED));
@@ -156,7 +156,9 @@ public final class DendroCoreEntity extends LivingEntity {
 
 			if (this.curTicksInHitbox < DendroCoreEntity.SPRAWLING_SHOT_DELAY) return;
 
-			this.target.damage(this.createDamageSource(this.target), ElementalReaction.getReactionDamage(this, 3.0));
+			for (final Entity target2 : ElementalReaction.getEntitiesInAoE(this.target, 1.0, e -> !owners.contains(e)))
+				target2.damage(this.createDamageSource(this.target), ElementalReaction.getReactionDamage(this, 3.0));
+
 			this.remove(RemovalReason.KILLED);
 
 			this.getWorld()

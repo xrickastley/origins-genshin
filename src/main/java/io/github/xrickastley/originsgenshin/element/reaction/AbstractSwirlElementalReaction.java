@@ -16,7 +16,7 @@ public abstract sealed class AbstractSwirlElementalReaction
 	permits PyroSwirlElementalReaction, HydroSwirlElementalReaction, ElectroSwirlElementalReaction, CryoSwirlElementalReaction, FrozenSwirlElementalReaction
 {
 	private final Element swirlElement;
-	private final boolean damageTargetInstead;
+	private final boolean elementalAbsorptionOnly;
 
 	/**
 	 * Creates a Swirl reaction with the specified settings. <br> <br>
@@ -49,15 +49,14 @@ public abstract sealed class AbstractSwirlElementalReaction
 	 * Swirl Elemental Application</a>
 	 *
 	 * @param settings The {@code ElementalReactionSettings} for this {@code ElementalReaction}.
-	 * @param damageTargetInstead Whether Swirl will <i>only</i> spread the element and
-	 * deals damage to the Swirl target instead, i.e. the entity the Swirl reaction was triggered
-	 * on.
+	 * @param elementalAbsorptionOnly Whether Swirl will <i>only</i> deal it's Elemental Absorption
+	 * damage to the Swirl target instead, i.e. the entity the Swirl reaction was triggered on.
 	 */
-	AbstractSwirlElementalReaction(ElementalReactionSettings settings, boolean damageTargetInstead) {
+	AbstractSwirlElementalReaction(ElementalReactionSettings settings, boolean elementalAbsorptionOnly) {
 		super(settings);
 
 		this.swirlElement = settings.auraElement.getLeft();
-		this.damageTargetInstead = damageTargetInstead;
+		this.elementalAbsorptionOnly = elementalAbsorptionOnly;
 	}
 
 	/**
@@ -79,7 +78,7 @@ public abstract sealed class AbstractSwirlElementalReaction
 		super(settings);
 
 		this.swirlElement = swirlElement;
-		this.damageTargetInstead = false;
+		this.elementalAbsorptionOnly = false;
 	}
 
 	@Override
@@ -94,10 +93,15 @@ public abstract sealed class AbstractSwirlElementalReaction
 		final double gaugeSwirlAttack = ((gaugeReaction - 0.04) * 1.25) + 1;
 
 		for (final LivingEntity target : ElementalReaction.getEntitiesInAoE(entity, 6, t -> t != origin)) {
-			// Simplification of (damageTargetInstead && target == entity) || (!damageTargetInstead && target != entity), an XNOR
-			final float damage = damageTargetInstead == (target == entity)
+			final float damage = !elementalAbsorptionOnly || target == entity
 				? ElementalReaction.getReactionDamage(entity, 0.6)
 				: 0f;
+
+			/**
+			 * There isn't much documentation on the DMG of Elemental Absorption, but from tests,
+			 * there *are* instances in which Swirl DMG = Elemental Absorption DMG. As such, it is
+			 * used instead.
+			 */
 
 			final ElementalDamageSource source = new ElementalDamageSource(
 				entity
