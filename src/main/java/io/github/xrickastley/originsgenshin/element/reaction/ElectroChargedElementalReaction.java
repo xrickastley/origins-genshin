@@ -11,11 +11,10 @@ import io.github.xrickastley.originsgenshin.element.ElementalApplications;
 import io.github.xrickastley.originsgenshin.element.ElementalDamageSource;
 import io.github.xrickastley.originsgenshin.element.InternalCooldownContext;
 import io.github.xrickastley.originsgenshin.events.ReactionTriggered;
-import io.github.xrickastley.originsgenshin.factory.OriginsGenshinParticleFactory;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinSoundEvents;
 import io.github.xrickastley.originsgenshin.networking.ShowElectroChargeS2CPacket;
 import io.github.xrickastley.originsgenshin.registry.OriginsGenshinDamageTypes;
-
+import io.github.xrickastley.originsgenshin.util.TextHelper;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 
@@ -28,7 +27,7 @@ import javax.annotation.Nullable;
 public class ElectroChargedElementalReaction extends ElementalReaction {
 	ElectroChargedElementalReaction() {
 		super(
-			new ElementalReactionSettings("Electro-Charged", OriginsGenshin.identifier("electro-charged"), OriginsGenshinParticleFactory.ELECTRO_CHARGED)
+			new ElementalReactionSettings("Electro-Charged", OriginsGenshin.identifier("electro-charged"), TextHelper.reaction("Electro-Charged", "#d691fc"))
 				.setReactionCoefficient(0)
 				.setAuraElement(Element.ELECTRO, 5)
 				.setTriggeringElement(Element.HYDRO, 6)

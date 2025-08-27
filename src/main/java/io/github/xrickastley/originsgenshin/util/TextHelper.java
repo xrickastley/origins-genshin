@@ -1,11 +1,14 @@
 package io.github.xrickastley.originsgenshin.util;
 
+import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 public class TextHelper {
+	public static final Identifier GENSHIN_FONT = OriginsGenshin.identifier("genshin");
+
 	public static MutableText font(String text, Identifier font) {
 		return font(Text.literal(text), font);
 	}
@@ -41,5 +44,14 @@ public class TextHelper {
 	    }
 
 	    return result;
+	}
+
+	public static MutableText reaction(String text, String color) {
+		return TextHelper.reaction(text, Color.fromRGBAHex(color));
+	}
+
+	public static MutableText reaction(String text, Color color) {
+		return TextHelper.font(text, TextHelper.GENSHIN_FONT)
+			.fillStyle(Style.EMPTY.withColor(color.asRGB()));
 	}
 }

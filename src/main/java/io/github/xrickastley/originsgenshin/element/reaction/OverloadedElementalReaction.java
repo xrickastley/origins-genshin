@@ -7,10 +7,9 @@ import io.github.xrickastley.originsgenshin.element.ElementalApplications;
 import io.github.xrickastley.originsgenshin.element.ElementalDamageSource;
 import io.github.xrickastley.originsgenshin.element.InternalCooldownContext;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinGameRules;
-import io.github.xrickastley.originsgenshin.factory.OriginsGenshinParticleFactory;
 import io.github.xrickastley.originsgenshin.registry.OriginsGenshinDamageTypes;
 import io.github.xrickastley.originsgenshin.util.NonEntityDamagingExplosion;
-
+import io.github.xrickastley.originsgenshin.util.TextHelper;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.network.packet.s2c.play.ExplosionS2CPacket;
@@ -25,7 +24,7 @@ import javax.annotation.Nullable;
 public class OverloadedElementalReaction extends ElementalReaction {
 	OverloadedElementalReaction() {
 		super(
-			new ElementalReactionSettings("Overloaded", OriginsGenshin.identifier("overloaded"), OriginsGenshinParticleFactory.OVERLOADED)
+			new ElementalReactionSettings("Overloaded", OriginsGenshin.identifier("overloaded"), TextHelper.reaction("Overloaded", "#fc7fa4"))
 				.setReactionCoefficient(1.0)
 				.setAuraElement(Element.PYRO, 2)
 				.setTriggeringElement(Element.ELECTRO, 3)

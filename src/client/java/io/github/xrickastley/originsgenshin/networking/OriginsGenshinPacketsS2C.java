@@ -4,10 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
+import io.github.xrickastley.originsgenshin.OriginsGenshinClient;
 import io.github.xrickastley.originsgenshin.element.reaction.ElementalReaction;
 import io.github.xrickastley.originsgenshin.entity.DendroCoreEntity;
-import io.github.xrickastley.originsgenshin.factory.OriginsGenshinParticleFactory;
 import io.github.xrickastley.originsgenshin.registry.OriginsGenshinRegistries;
+import io.github.xrickastley.originsgenshin.renderer.WorldTextRenderer.DamageText;
+import io.github.xrickastley.originsgenshin.renderer.WorldTextRenderer.ReactionText;
 import io.github.xrickastley.originsgenshin.util.ClassInstanceUtil;
 import io.github.xrickastley.originsgenshin.util.ClientConfig;
 import io.github.xrickastley.originsgenshin.util.Color;
@@ -57,15 +59,13 @@ public class OriginsGenshinPacketsS2C {
 
 		final ElementalReaction reaction = OriginsGenshinRegistries.ELEMENTAL_REACTION.get(packet.reaction());
 
-		if (reaction == null || reaction.getParticle() == null) return;
+		if (reaction == null || reaction.getText() == null) return;
 
 		OriginsGenshin.sublogger().info("Receiving packet: ShowElementalReactionS2CPacket[pos={}, reaction={}]", pos, reaction);
 
-		MinecraftClient
-			.getInstance()
-			.player
-			.getWorld()
-			.addImportantParticle(reaction.getParticle(), pos.x, pos.y, pos.z, 0.02, 0.02, 0.02);
+		OriginsGenshinClient.WORLD_TEXT_RENDERER.addEntry(
+			new ReactionText(pos.x, pos.y, pos.z, Colors.PHYSICAL, reaction.getText())
+		);
 	}
 
 	private static void onElementalDamageShow(ShowElementalDamageS2CPacket packet, ClientPlayerEntity player, PacketSender responseSender) {
@@ -85,11 +85,9 @@ public class OriginsGenshinPacketsS2C {
 
 		OriginsGenshin.sublogger().info("Receiving packet: ShowElementalDamageS2CPacket[pos={}, color={}, amount={}]", pos, color, amount);
 
-		MinecraftClient
-			.getInstance()
-			.player
-			.getWorld()
-			.addImportantParticle(OriginsGenshinParticleFactory.DAMAGE_TEXT, pos.x, pos.y, pos.z, amount, color.asARGB(), packet.crit() ? config.renderers.critDMGScale : config.renderers.normalDMGScale);
+		OriginsGenshinClient.WORLD_TEXT_RENDERER.addEntry(
+			new DamageText(pos.x, pos.y, pos.z, color, amount, packet.crit() ? config.renderers.critDMGScale : config.renderers.normalDMGScale)
+		);
 	}
 
 	private static void onSyncDendroCoreAge(SyncDendroCoreAgeS2CPacket packet, ClientPlayerEntity player, PacketSender responseSender) {

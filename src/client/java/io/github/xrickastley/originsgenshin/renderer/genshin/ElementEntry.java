@@ -19,7 +19,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.util.math.MathHelper;
 
-public class ElementEntry {
+public final class ElementEntry {
 	private static final float BLINK_SECONDS = 1.5f;
 	private static final float BLINK_COUNT = 3;
 

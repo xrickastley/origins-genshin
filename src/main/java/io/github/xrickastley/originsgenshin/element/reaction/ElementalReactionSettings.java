@@ -10,7 +10,7 @@ import java.util.stream.Collectors;
 import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication.Type;
 
-import net.minecraft.particle.DefaultParticleType;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
 
@@ -19,7 +19,7 @@ import javax.annotation.Nullable;
 public final class ElementalReactionSettings {
 	final String name;
 	final Identifier id;
-	final @Nullable DefaultParticleType particle;
+	final @Nullable Text text;
 	double reactionCoefficient = 1.0;
 	Pair<Element, Integer> auraElement;
 	Pair<Element, Integer> triggeringElement;
@@ -30,10 +30,10 @@ public final class ElementalReactionSettings {
 	Set<Identifier> preventsReactionsAfter = new HashSet<>();
 	List<Element> reactionDisplayOrder = new ArrayList<>();
 
-	public ElementalReactionSettings(String name, Identifier id, @Nullable DefaultParticleType particle) {
+	public ElementalReactionSettings(String name, Identifier id, @Nullable Text text) {
 		this.name = name;
 		this.id = id;
-		this.particle = particle;
+		this.text = text;
 	}
 
 	/**

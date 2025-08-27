@@ -2,12 +2,12 @@ package io.github.xrickastley.originsgenshin.element.reaction;
 
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.element.Element;
-import io.github.xrickastley.originsgenshin.factory.OriginsGenshinParticleFactory;
+import io.github.xrickastley.originsgenshin.util.TextHelper;
 
 public final class SpreadElementalReaction extends AdditiveElementalReaction {
 	SpreadElementalReaction() {
 		super(
-			new ElementalReactionSettings("Spread", OriginsGenshin.identifier("spread"), OriginsGenshinParticleFactory.SPREAD)
+			new ElementalReactionSettings("Spread", OriginsGenshin.identifier("spread"), TextHelper.reaction("Spread", "#01e858"))
 				.setReactionCoefficient(0)
 				.setAuraElement(Element.QUICKEN)
 				.setTriggeringElement(Element.DENDRO, 1)

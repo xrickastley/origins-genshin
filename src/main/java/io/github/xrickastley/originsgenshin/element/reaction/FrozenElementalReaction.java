@@ -6,9 +6,8 @@ import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementHolder;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
 import io.github.xrickastley.originsgenshin.element.ElementalApplications;
-import io.github.xrickastley.originsgenshin.factory.OriginsGenshinParticleFactory;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinStatusEffects;
-
+import io.github.xrickastley.originsgenshin.util.TextHelper;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.effect.StatusEffectInstance;
 
@@ -17,7 +16,7 @@ import javax.annotation.Nullable;
 public final class FrozenElementalReaction extends ElementalReaction {
 	FrozenElementalReaction() {
 		super(
-			new ElementalReactionSettings("Frozen", OriginsGenshin.identifier("frozen"), OriginsGenshinParticleFactory.FROZEN)
+			new ElementalReactionSettings("Frozen", OriginsGenshin.identifier("frozen"), TextHelper.reaction("Frozen", "#b4ffff"))
 				.setReactionCoefficient(0)
 				.setAuraElement(Element.CRYO, 4)
 				.setTriggeringElement(Element.HYDRO, 3)

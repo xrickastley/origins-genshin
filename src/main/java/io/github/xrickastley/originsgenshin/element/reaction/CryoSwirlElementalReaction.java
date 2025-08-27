@@ -2,12 +2,13 @@ package io.github.xrickastley.originsgenshin.element.reaction;
 
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.element.Element;
-import io.github.xrickastley.originsgenshin.factory.OriginsGenshinParticleFactory;
+import io.github.xrickastley.originsgenshin.util.Colors;
+import io.github.xrickastley.originsgenshin.util.TextHelper;
 
 public final class CryoSwirlElementalReaction extends AbstractSwirlElementalReaction {
 	CryoSwirlElementalReaction() {
 		super(
-			new ElementalReactionSettings("Swirl", OriginsGenshin.identifier("swirl_cryo"), OriginsGenshinParticleFactory.SWIRL)
+			new ElementalReactionSettings("Swirl", OriginsGenshin.identifier("swirl_cryo"), TextHelper.reaction("Swirl", Colors.ANEMO))
 				.setReactionCoefficient(0.5)
 				.setAuraElement(Element.CRYO, 3)
 				.setTriggeringElement(Element.ANEMO, 4)

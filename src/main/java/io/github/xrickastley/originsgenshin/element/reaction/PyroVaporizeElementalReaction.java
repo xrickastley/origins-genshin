@@ -2,12 +2,12 @@ package io.github.xrickastley.originsgenshin.element.reaction;
 
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.element.Element;
-import io.github.xrickastley.originsgenshin.factory.OriginsGenshinParticleFactory;
+import io.github.xrickastley.originsgenshin.util.TextHelper;
 
 public final class PyroVaporizeElementalReaction extends AmplifyingElementalReaction {
 	PyroVaporizeElementalReaction() {
 		super(
-			new ElementalReactionSettings("Vaporize", OriginsGenshin.identifier("vaporize_pyro"), OriginsGenshinParticleFactory.VAPORIZE)
+			new ElementalReactionSettings("Vaporize", OriginsGenshin.identifier("vaporize_pyro"), TextHelper.reaction("Vaporize", "#f2be87"))
 				.setReactionCoefficient(0.5)
 				.setAuraElement(Element.HYDRO)
 				.setTriggeringElement(Element.PYRO, 5),

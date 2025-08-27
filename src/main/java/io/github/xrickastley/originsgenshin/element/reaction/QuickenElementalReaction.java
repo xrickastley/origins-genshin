@@ -5,8 +5,7 @@ import io.github.xrickastley.originsgenshin.component.ElementComponent;
 import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
 import io.github.xrickastley.originsgenshin.element.ElementalApplications;
-import io.github.xrickastley.originsgenshin.factory.OriginsGenshinParticleFactory;
-
+import io.github.xrickastley.originsgenshin.util.TextHelper;
 import net.minecraft.entity.LivingEntity;
 
 import javax.annotation.Nullable;
@@ -14,7 +13,7 @@ import javax.annotation.Nullable;
 public final class QuickenElementalReaction extends ElementalReaction {
 	QuickenElementalReaction() {
 		super(
-			new ElementalReactionSettings("Quicken", OriginsGenshin.identifier("quicken"), OriginsGenshinParticleFactory.QUICKEN)
+			new ElementalReactionSettings("Quicken", OriginsGenshin.identifier("quicken"), TextHelper.reaction("Quicken", "#01e858"))
 				.setReactionCoefficient(1.0)
 				.setAuraElement(Element.DENDRO, 2)
 				.setTriggeringElement(Element.ELECTRO, 8)

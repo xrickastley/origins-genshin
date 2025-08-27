@@ -8,7 +8,7 @@ import io.github.apace100.origins.registry.ModComponents;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinEntities;
 import io.github.xrickastley.originsgenshin.interfaces.IOrigin;
 import io.github.xrickastley.originsgenshin.networking.OriginsGenshinPacketsS2C;
-import io.github.xrickastley.originsgenshin.particle.ClientParticleFactory;
+import io.github.xrickastley.originsgenshin.renderer.WorldTextRenderer;
 import io.github.xrickastley.originsgenshin.renderer.entity.DendroCoreEntityRenderer;
 import io.github.xrickastley.originsgenshin.renderer.entity.model.DendroCoreEntityModel;
 import io.github.xrickastley.originsgenshin.renderer.genshin.ElementalBurstRenderer;
@@ -38,6 +38,7 @@ public class OriginsGenshinClient implements ClientModInitializer {
 	private static final ElementalBurstRenderer ELEMENTAL_BURST_RENDERER = new ElementalBurstRenderer(RESCALER);
 	private static final ElementalSkillRenderer ELEMENTAL_SKILL_RENDERER = new ElementalSkillRenderer(RESCALER);
 	private static final ElectroChargedRenderer ELECTRO_CHARGED_RENDERER = new ElectroChargedRenderer();
+	public static final WorldTextRenderer WORLD_TEXT_RENDERER = new WorldTextRenderer();
 
 	@Override
 	public void onInitializeClient() {
@@ -47,10 +48,11 @@ public class OriginsGenshinClient implements ClientModInitializer {
 
 		WorldRenderEvents.END.register(OriginsGenshinClient.ELECTRO_CHARGED_RENDERER::render);
 		ClientTickEvents.START_WORLD_TICK.register(OriginsGenshinClient.ELECTRO_CHARGED_RENDERER::tick);
-
 		OriginsGenshinPacketsS2C.registerHandler(OriginsGenshinClient.ELECTRO_CHARGED_RENDERER);
 
-		ClientParticleFactory.register();
+		WorldRenderEvents.END.register(OriginsGenshinClient.WORLD_TEXT_RENDERER::render);
+		ClientTickEvents.START_WORLD_TICK.register(OriginsGenshinClient.WORLD_TEXT_RENDERER::tick);
+
 		EntityRendererRegistry.register(OriginsGenshinEntities.DENDRO_CORE, DendroCoreEntityRenderer::new);
 		EntityModelLayerRegistry.registerModelLayer(DendroCoreEntityModel.MODEL_LAYER, DendroCoreEntityModel::getTexturedModelData);
 		OriginsGenshinPacketsS2C.register();

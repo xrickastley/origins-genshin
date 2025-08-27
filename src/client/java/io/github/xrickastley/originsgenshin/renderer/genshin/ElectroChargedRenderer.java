@@ -35,11 +35,10 @@ import net.minecraft.util.math.RotationAxis;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
-public class ElectroChargedRenderer implements PacketHandler<ShowElectroChargeS2CPacket> {
+public final class ElectroChargedRenderer implements PacketHandler<ShowElectroChargeS2CPacket> {
 	private static final int MAX_TICKS = 10;
 	private static final double POISSON_DENSITY = 1.5;
 	private static final Random RANDOM = new Random();
-
 	private final List<Entry> entries = new ArrayList<>();
 
 	@Override

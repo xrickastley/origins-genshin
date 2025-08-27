@@ -24,9 +24,9 @@ import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.particle.DefaultParticleType;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.sound.SoundCategory;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
 import net.minecraft.util.math.Box;
@@ -40,7 +40,7 @@ public abstract class ElementalReaction {
 
 	protected final String name;
 	protected final Identifier id;
-	protected final @Nullable DefaultParticleType particle;
+	protected final @Nullable Text text;
 	protected final double reactionCoefficient;
 	protected final Pair<Element, Integer> auraElement;
 	protected final Pair<Element, Integer> triggeringElement;
@@ -54,7 +54,7 @@ public abstract class ElementalReaction {
 	protected ElementalReaction(ElementalReactionSettings settings) {
 		this.name = settings.name;
 		this.id = settings.id;
-		this.particle = settings.particle;
+		this.text = settings.text;
 
 		this.reactionCoefficient = settings.reactionCoefficient;
 		this.auraElement = settings.auraElement;
@@ -142,8 +142,8 @@ public abstract class ElementalReaction {
 		return Math.min(this.auraElement.getLeft().getPriority(), this.triggeringElement.getLeft().getPriority());
 	}
 
-	public @Nullable DefaultParticleType getParticle() {
-		return this.particle;
+	public @Nullable Text getText() {
+		return text;
 	}
 
 	public Pair<Element, Integer> getElementPair(Element element) {
