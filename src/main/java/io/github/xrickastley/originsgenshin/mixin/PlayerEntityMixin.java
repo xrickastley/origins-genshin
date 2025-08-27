@@ -73,7 +73,7 @@ public abstract class PlayerEntityMixin
 	private boolean preventKnockbackIfCrystallize(boolean original, @Local(argsOnly = true) Entity entity) {
 		if (!(entity instanceof final LivingEntity livingEntity)) return original;
 
-		final ElementComponent component = ElementComponent.KEY.get(livingEntity);  
+		final ElementComponent component = ElementComponent.KEY.get(livingEntity);
 
 		return original && !component.reducedCrystallizeShield();
 	}
