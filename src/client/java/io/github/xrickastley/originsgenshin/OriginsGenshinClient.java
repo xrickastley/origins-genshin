@@ -26,7 +26,7 @@ import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderEvents;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 
-import io.github.xrickastley.originsgenshin.renderer.genshin.ElectroChargedRenderer;
+import io.github.xrickastley.originsgenshin.renderer.genshin.SpecialEffectsRenderer;
 import net.fabricmc.fabric.api.client.event.lifecycle.v1.ClientTickEvents;
 
 public class OriginsGenshinClient implements ClientModInitializer {
@@ -37,7 +37,7 @@ public class OriginsGenshinClient implements ClientModInitializer {
 	private static final Rescaler RESCALER = new Rescaler(1920, 1080);
 	private static final ElementalBurstRenderer ELEMENTAL_BURST_RENDERER = new ElementalBurstRenderer(RESCALER);
 	private static final ElementalSkillRenderer ELEMENTAL_SKILL_RENDERER = new ElementalSkillRenderer(RESCALER);
-	private static final ElectroChargedRenderer ELECTRO_CHARGED_RENDERER = new ElectroChargedRenderer();
+	private static final SpecialEffectsRenderer SPECIAL_EFFECTS_RENDERER = new SpecialEffectsRenderer();
 	public static final WorldTextRenderer WORLD_TEXT_RENDERER = new WorldTextRenderer();
 
 	@Override
@@ -46,9 +46,9 @@ public class OriginsGenshinClient implements ClientModInitializer {
 
 		HudRenderCallback.EVENT.register(this::renderSkills);
 
-		WorldRenderEvents.END.register(OriginsGenshinClient.ELECTRO_CHARGED_RENDERER::render);
-		ClientTickEvents.START_WORLD_TICK.register(OriginsGenshinClient.ELECTRO_CHARGED_RENDERER::tick);
-		OriginsGenshinPacketsS2C.registerHandler(OriginsGenshinClient.ELECTRO_CHARGED_RENDERER);
+		WorldRenderEvents.END.register(OriginsGenshinClient.SPECIAL_EFFECTS_RENDERER::render);
+		ClientTickEvents.START_WORLD_TICK.register(OriginsGenshinClient.SPECIAL_EFFECTS_RENDERER::tick);
+		OriginsGenshinPacketsS2C.registerHandler(OriginsGenshinClient.SPECIAL_EFFECTS_RENDERER);
 
 		WorldRenderEvents.END.register(OriginsGenshinClient.WORLD_TEXT_RENDERER::render);
 		ClientTickEvents.START_WORLD_TICK.register(OriginsGenshinClient.WORLD_TEXT_RENDERER::tick);
