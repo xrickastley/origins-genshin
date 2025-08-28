@@ -55,8 +55,6 @@ public final class SpecialEffectsRenderer implements PacketHandler<ShowElectroCh
 
 	@Override
 	public void receive(ShowElectroChargeS2CPacket packet, ClientPlayerEntity player, PacketSender responseSender) {
-		OriginsGenshin.sublogger().info("Handling packet: ShowElectroChargeS2CPacket");
-
 		final World world = player.getWorld();
 		final Entity mainEntity = world.getEntityById(packet.mainEntity());
 

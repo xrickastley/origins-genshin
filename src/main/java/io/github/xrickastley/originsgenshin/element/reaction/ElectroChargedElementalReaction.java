@@ -126,8 +126,6 @@ public class ElectroChargedElementalReaction extends ElementalReaction {
 		if (mainTarget instanceof final ServerPlayerEntity serverPlayer) ServerPlayNetworking.send(serverPlayer, packet);
 
 		for (final ServerPlayerEntity otherPlayer : PlayerLookup.tracking(mainTarget)) {
-			OriginsGenshin.sublogger().info("Showing Electro-Charged packet for: {}", otherPlayer);
-
 			if (otherPlayer.getId() == mainTarget.getId()) continue;
 
 			ServerPlayNetworking.send(otherPlayer, packet);

@@ -3,7 +3,6 @@ package io.github.xrickastley.originsgenshin.networking;
 import java.util.ArrayList;
 import java.util.List;
 
-import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.OriginsGenshinClient;
 import io.github.xrickastley.originsgenshin.element.reaction.ElementalReaction;
 import io.github.xrickastley.originsgenshin.entity.DendroCoreEntity;
@@ -61,8 +60,6 @@ public class OriginsGenshinPacketsS2C {
 
 		if (reaction == null || reaction.getText() == null) return;
 
-		OriginsGenshin.sublogger().info("Receiving packet: ShowElementalReactionS2CPacket[pos={}, reaction={}]", pos, reaction);
-
 		OriginsGenshinClient.WORLD_TEXT_RENDERER.addEntry(
 			new ReactionText(pos.x, pos.y, pos.z, Colors.PHYSICAL, reaction.getText())
 		);
@@ -83,7 +80,7 @@ public class OriginsGenshinPacketsS2C {
 			? Math.min(packet.amount(), 20_000_000)
 			: packet.amount();
 
-		OriginsGenshin.sublogger().info("Receiving packet: ShowElementalDamageS2CPacket[pos={}, color={}, amount={}]", pos, color, amount);
+		if (amount == Float.MAX_VALUE) return;
 
 		OriginsGenshinClient.WORLD_TEXT_RENDERER.addEntry(
 			new DamageText(pos.x, pos.y, pos.z, color, amount, packet.crit() ? config.renderers.critDMGScale : config.renderers.normalDMGScale)

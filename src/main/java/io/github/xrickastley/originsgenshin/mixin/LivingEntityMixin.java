@@ -6,7 +6,6 @@ import com.llamalad7.mixinextras.sugar.Local;
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 
-import org.spongepowered.asm.mixin.Debug;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.*;
@@ -45,7 +44,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 @Mixin(LivingEntity.class)
-@Debug(export = true)
 public abstract class LivingEntityMixin extends Entity {
 	public LivingEntityMixin(final EntityType<? extends LivingEntity> entityType, final World world) {
 		super(entityType, world);

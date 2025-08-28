@@ -9,7 +9,6 @@ import com.mojang.authlib.GameProfile;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.spongepowered.asm.mixin.Debug;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
@@ -41,7 +40,6 @@ import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 @Mixin(PlayerEntity.class)
-@Debug(export = true)
 public abstract class PlayerEntityMixin 
 	extends LivingEntity
 	implements IPlayerEntity
