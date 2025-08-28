@@ -61,6 +61,7 @@ public class ElementCommand {
 										argument("isAura", BoolArgumentType.bool())
 										.executes(ElementCommand::applyGaugeUnit)
 									)
+									.executes(ElementCommand::applyGaugeUnit)
 								)
 								.then(
 									literal("duration")
