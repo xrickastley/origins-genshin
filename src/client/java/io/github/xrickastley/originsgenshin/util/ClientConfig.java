@@ -17,7 +17,7 @@ public class ClientConfig implements ConfigData {
 		public boolean showElementalBurst = true;
 		@ConfigEntry.Gui.Tooltip
 		@ConfigEntry.BoundedDiscrete(min = 4, max = 48)
-		public int sphereResolution = 4;
+		public int sphereResolution = 16;
 		public boolean showDamageText = true;
 		public double normalDMGScale = 0.65;
 		public double critDMGScale = 1.0;
