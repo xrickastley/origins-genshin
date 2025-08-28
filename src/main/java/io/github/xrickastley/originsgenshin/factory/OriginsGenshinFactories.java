@@ -11,8 +11,11 @@ public class OriginsGenshinFactories {
 
 		OriginsGenshinAttributes.register();
 		OriginsGenshinBiEntityActions.register();
+		OriginsGenshinBiEntityConditions.register();
+		OriginsGenshinDamageConditions.register();
 		OriginsGenshinEntities.register();
 		OriginsGenshinEntityActions.register();
+		OriginsGenshinEntityConditions.register();
 		OriginsGenshinGameRules.register();
 		OriginsGenshinPowers.register();
 		OriginsGenshinSoundEvents.register();

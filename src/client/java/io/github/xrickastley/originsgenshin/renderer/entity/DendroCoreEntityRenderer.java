@@ -26,6 +26,9 @@ public class DendroCoreEntityRenderer extends LivingEntityRenderer<DendroCoreEnt
 	}
 
 	private static EntityModel<DendroCoreEntity> createModel(EntityRendererFactory.Context context) {
+		return new DendroCoreEntityModel(context.getPart(DendroCoreEntityModel.MODEL_LAYER));
+
+		/*
 		try {
 			return new ObjEntityModel<DendroCoreEntity>(OriginsGenshin.identifier("models/entity/dendro_core"));
 		} catch (Exception e) {
@@ -35,6 +38,7 @@ public class DendroCoreEntityRenderer extends LivingEntityRenderer<DendroCoreEnt
 
 			return new DendroCoreEntityModel(context.getPart(DendroCoreEntityModel.MODEL_LAYER));
 		}
+		*/
 	}
 
 	public Identifier getTexture(DendroCoreEntity entity) {
@@ -53,12 +57,12 @@ public class DendroCoreEntityRenderer extends LivingEntityRenderer<DendroCoreEnt
 	protected void scale(DendroCoreEntity dendroCore, MatrixStack matrixStack, float delta) {
 		final double explodeProgress = Ease.IN_QUAD.applyLerp(MathHelper2.endOffset(dendroCore.age + delta, 2, 0, 120), 0, 1.5);
 		final float scale = !dendroCore.isHyperbloom()
-			? 3f + (float) (explodeProgress * 10)
-			: 2f;
+			? 0.5f + (float) (explodeProgress * 5)
+			: 0.35f;
 
+		matrixStack.translate(0, 0, 0);
 		matrixStack.scale(scale, scale, scale);
-		matrixStack.translate(0, -1.501f, 0);
-		matrixStack.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(180.0f));
+		// matrixStack.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(180.0f));
 	}
 
 	@Override

@@ -1,7 +1,5 @@
 package io.github.xrickastley.originsgenshin.renderer.entity.model;
 
-import com.google.common.collect.ImmutableList;
-
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.entity.DendroCoreEntity;
 
@@ -15,71 +13,30 @@ import net.minecraft.client.model.TexturedModelData;
 import net.minecraft.client.render.VertexConsumer;
 import net.minecraft.client.render.entity.model.EntityModel;
 import net.minecraft.client.render.entity.model.EntityModelLayer;
-import net.minecraft.client.render.entity.model.EntityModelPartNames;
 import net.minecraft.client.util.math.MatrixStack;
 
 public class DendroCoreEntityModel extends EntityModel<DendroCoreEntity> {
 	public static final EntityModelLayer MODEL_LAYER = new EntityModelLayer(OriginsGenshin.identifier("cube"), "all");
 
-	private final ModelPart base;
+	private final ModelPart bone;
 
 	public DendroCoreEntityModel(ModelPart root) {
-		this.base = root.getChild(EntityModelPartNames.ROOT);
+		this.bone = root.getChild("bone");
 	}
 
 	public static TexturedModelData getTexturedModelData() {
-		ModelData modelData = new ModelData();
+		final ModelData modelData = new ModelData();
 
-		ModelPartData modelPartData = modelData.getRoot();
-		ModelPartData all = modelPartData.addChild(EntityModelPartNames.ROOT, ModelPartBuilder.create(), ModelTransform.pivot(0.0F, 24.0F, 0.0F));
+		final ModelPartData modelPartData = modelData.getRoot();
+		final ModelPartData bone = modelPartData.addChild("bone", ModelPartBuilder.create().uv(21, 2).cuboid(-0.5F, -15.0F, -6.5F, 0.0F, 17.0F, 13.0F, new Dilation(0.0F))
+		.uv(21, 15).cuboid(-7.0F, -15.0F, 0.0F, 13.0F, 17.0F, 0.0F, new Dilation(0.0F))
+		.uv(25, 2).cuboid(-1.5F, -14.0F, -1.0F, 2.0F, 3.0F, 2.0F, new Dilation(0.0F)), ModelTransform.pivot(0.5F, 22.0F, 0.0F));
 
-		all.addChild("layer0", ModelPartBuilder.create().uv(0, 0).cuboid(-1.0F, -2.0F, -1.0F, 2.0F, 1.0F, 2.0F, new Dilation(0.0F)), ModelTransform.pivot(0.0F, 1.0F, 0.0F));
-		all.addChild("layer1", ModelPartBuilder.create().uv(0, 0).cuboid(-2.0F, -2.0F, -2.0F, 4.0F, 1.0F, 4.0F, new Dilation(0.0F)), ModelTransform.pivot(0.0F, 0.0F, 0.0F));
-
-		ModelPartData layer2 = all.addChild(
-			"layer2",
-			ModelPartBuilder
-				.create()
-				.uv(0, 0).cuboid(2.0F, -4.0F, -2.0F, 1.0F, 2.0F, 4.0F, new Dilation(0.0F))
-				.uv(0, 0).cuboid(-3.0F, -4.0F, -2.0F, 1.0F, 2.0F, 4.0F, new Dilation(0.0F)),
-			ModelTransform.pivot(0.0F, 0.0F, 0.0F)
-		);
-
-		layer2.addChild("cube_r1", ModelPartBuilder.create().uv(0, 0).cuboid(0.0F, -2.0F, -2.0F, 1.0F, 2.0F, 4.0F, new Dilation(0.0F)), ModelTransform.of(0.0F, -2.0F, -2.0F, 0.0F, 1.5708F, 0.0F));
-		layer2.addChild("cube_r2", ModelPartBuilder.create().uv(0, 0).cuboid(0.0F, -2.0F, -2.0F, 1.0F, 2.0F, 4.0F, new Dilation(0.0F)), ModelTransform.of(0.0F, -2.0F, 3.0F, 0.0F, 1.5708F, 0.0F));
-
-		ModelPartData layer3 = all.addChild(
-			"layer3",
-			ModelPartBuilder
-				.create()
-				.uv(0, 0).cuboid(3.0F, -4.0F, -2.0F, 1.0F, 3.0F, 4.0F, new Dilation(0.0F))
-				.uv(0, 0).cuboid(-4.0F, -4.0F, -2.0F, 1.0F, 3.0F, 4.0F, new Dilation(0.0F))
-				.uv(3, 3).cuboid(-3.0F, -4.0F, -3.0F, 1.0F, 3.0F, 1.0F, new Dilation(0.0F))
-				.uv(3, 3).cuboid(-3.0F, -4.0F, 2.0F, 1.0F, 3.0F, 1.0F, new Dilation(0.0F))
-				.uv(3, 3).cuboid(2.0F, -4.0F, 2.0F, 1.0F, 3.0F, 1.0F, new Dilation(0.0F))
-				.uv(3, 3).cuboid(2.0F, -4.0F, -3.0F, 1.0F, 3.0F, 1.0F, new Dilation(0.0F)),
-			ModelTransform.pivot(0.0F, -3.0F, 0.0F)
-		);
-
-		layer3.addChild("cube_r3", ModelPartBuilder.create().uv(0, 0).cuboid(0.0F, -3.0F, -2.0F, 1.0F, 3.0F, 4.0F, new Dilation(0.0F)), ModelTransform.of(0.0F, -1.0F, -3.0F, 0.0F, 1.5708F, 0.0F));
-		layer3.addChild("cube_r4", ModelPartBuilder.create().uv(0, 0).cuboid(0.0F, -3.0F, -2.0F, 1.0F, 3.0F, 4.0F, new Dilation(0.0F)), ModelTransform.of(0.0F, -1.0F, 4.0F, 0.0F, 1.5708F, 0.0F));
-
-		ModelPartData layer4 = all.addChild(
-			"layer4",
-			ModelPartBuilder
-				.create()
-				.uv(0, 0).cuboid(2.0F, -3.0F, -2.0F, 1.0F, 1.0F, 4.0F, new Dilation(0.0F))
-				.uv(0, 0).cuboid(-3.0F, -3.0F, -2.0F, 1.0F, 1.0F, 4.0F, new Dilation(0.0F)),
-			ModelTransform.pivot(0.0F, -5.0F, 0.0F)
-		);
-
-		layer4.addChild("cube_r5", ModelPartBuilder.create().uv(0, 0).cuboid(0.0F, -1.0F, -2.0F, 1.0F, 1.0F, 4.0F, new Dilation(0.0F)), ModelTransform.of(0.0F, -2.0F, -2.0F, 0.0F, 1.5708F, 0.0F));
-		layer4.addChild("cube_r6", ModelPartBuilder.create().uv(0, 0).cuboid(0.0F, -1.0F, -2.0F, 1.0F, 1.0F, 4.0F, new Dilation(0.0F)), ModelTransform.of(0.0F, -2.0F, 3.0F, 0.0F, 1.5708F, 0.0F));
-
-		all.addChild("layer5", ModelPartBuilder.create().uv(0, 0).cuboid(-2.0F, -2.0F, -2.0F, 4.0F, 1.0F, 4.0F, new Dilation(0.0F)), ModelTransform.pivot(0.0F, -7.0F, 0.0F));
-		all.addChild("layer6", ModelPartBuilder.create().uv(0, 0).cuboid(-1.0F, -3.0F, -1.0F, 2.0F, 2.0F, 2.0F, new Dilation(0.0F)), ModelTransform.pivot(0.0F, -8.0F, 0.0F));
-
-		return TexturedModelData.of(modelData, 16, 16);
+		bone.addChild("cube_r1", ModelPartBuilder.create().uv(0, 5).cuboid(0.0F, -10.0F, -5.0F, 0.0F, 12.0F, 10.0F, new Dilation(0.0F))
+		.uv(0, 15).cuboid(-5.0F, -10.0F, 0.0F, 10.0F, 12.0F, 0.0F, new Dilation(0.0F))
+		.uv(0, 0).cuboid(-4.0F, -9.0F, -4.0F, 8.0F, 6.0F, 8.0F, new Dilation(0.0F)), ModelTransform.of(-0.5F, 0.0F, 0.0F, 0.0F, -0.7854F, 0.0F));
+		
+		return TexturedModelData.of(modelData, 48, 48);
 	}
 
 	@Override
@@ -93,13 +50,11 @@ public class DendroCoreEntityModel extends EntityModel<DendroCoreEntity> {
 			? 1
 			: (entity.age + tickDelta) % 60;
 
-		base.setAngles(0, -progress * 0.05f, 0);
+		bone.setAngles(0, -progress * 0.05f, 0);
 	}
 
 	@Override
 	public void render(MatrixStack matrices, VertexConsumer vertexConsumer, int light, int overlay, float red, float green, float blue, float alpha) {
-		ImmutableList
-			.of(base)
-			.forEach(modelRenderer -> modelRenderer.render(matrices, vertexConsumer, light, overlay, red, green, blue, alpha));
+		bone.render(matrices, vertexConsumer, light, overlay, red, green, blue, alpha);
 	}
 }

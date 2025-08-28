@@ -13,6 +13,7 @@ import io.github.apace100.apoli.power.Power;
 import io.github.apace100.apoli.power.PowerType;
 import io.github.apace100.apoli.power.factory.PowerFactory;
 import io.github.apace100.calio.data.SerializableData;
+import io.github.apace100.calio.data.SerializableDataTypes;
 import io.github.xrickastley.originsgenshin.data.OriginsGenshinDataTypes;
 import io.github.xrickastley.originsgenshin.element.reaction.ElementalReaction;
 
@@ -24,22 +25,27 @@ public class ActionOnElementalReactionPower extends Power {
 	private final Set<ElementalReaction> reactions;
 	private final @Nullable Consumer<Entity> entityAction;
 	private final @Nullable Consumer<Pair<Entity, Entity>> bientityAction;
+	private final boolean alwaysTrigger;
 
-	protected ActionOnElementalReactionPower(PowerType<?> type, LivingEntity entity, List<ElementalReaction> reactions, Consumer<Entity> entityAction, Consumer<Pair<Entity, Entity>> bientityAction) {
+	protected ActionOnElementalReactionPower(PowerType<?> type, LivingEntity entity, List<ElementalReaction> reactions, Consumer<Entity> entityAction, Consumer<Pair<Entity, Entity>> bientityAction, boolean alwaysTrigger) {
 		super(type, entity);
 
 		this.reactions = new HashSet<>(reactions);
 		this.entityAction = entityAction;
 		this.bientityAction = bientityAction;
+		this.alwaysTrigger = alwaysTrigger;
 	}
 
 	public void trigger(ElementalReaction reaction, Entity target, @Nullable Entity origin) {
-		if (target != entity || !reactions.isEmpty() || !reactions.contains(reaction)) return;
+		if (target != this.entity || !reactions.isEmpty() || !reactions.contains(reaction)) return;
+
+		if (origin != null && entityAction != null && alwaysTrigger)
+			entityAction.accept(target);
 
 		if (origin == null && entityAction != null) {
 			entityAction.accept(target);
 		} else if (bientityAction != null) {
-			bientityAction.accept(new Pair<>(target, origin));
+		bientityAction.accept(new Pair<>(origin, target));
 		}
 	}
 
@@ -49,13 +55,15 @@ public class ActionOnElementalReactionPower extends Power {
             new SerializableData()
 				.add("reactions", OriginsGenshinDataTypes.ELEMENTAL_REACTIONS)
                 .add("entity_action", ApoliDataTypes.ENTITY_ACTION, null)
-                .add("bientity_action", ApoliDataTypes.ENTITY_ACTION, null),
+                .add("bientity_action", ApoliDataTypes.ENTITY_ACTION, null)
+				.add("always_trigger", SerializableDataTypes.BOOLEAN, false),
             data -> (powerType, livingEntity) -> new ActionOnElementalReactionPower(
                 powerType,
                 livingEntity,
                 data.get("reactions"),
                 data.get("entity_action"),
-                data.get("bientity_action")
+                data.get("bientity_action"),
+				data.getBoolean("always_trigger")
             )
         ).allowCondition();
     }
