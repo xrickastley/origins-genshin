@@ -142,8 +142,6 @@ public abstract sealed class AbstractBurningElementalReaction
 		}
 
 		for (final LivingEntity target : ElementalReaction.getEntitiesInAoE(entity, 1, t -> !ElementComponent.KEY.get(t).isBurningOnCD())) {
-			// TODO: Burning DMG from this point (of reapplication) will be calculated based on the stats of the character responsible for the latest instance of Dendro or Pyro application. (not possible unless EM is added, there is no EM here)
-
 			final float damage = ElementalReaction.getReactionDamage(entity, 0.25);
 			final ElementalDamageSource source = new ElementalDamageSource(
 				entity

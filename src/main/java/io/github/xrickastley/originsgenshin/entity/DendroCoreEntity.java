@@ -54,8 +54,6 @@ public final class DendroCoreEntity extends OriginsGenshinEntity {
 	private int hyperbloomAge = 0;
 	private int curTicksInHitbox = 0;
 
-	// TODO: add sync shit
-
 	public DendroCoreEntity(EntityType<? extends LivingEntity> entityType, World world) {
 		this(entityType, world, null);
 	}
