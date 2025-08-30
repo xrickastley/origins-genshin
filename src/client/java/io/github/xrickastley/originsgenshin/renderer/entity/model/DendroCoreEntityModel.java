@@ -16,7 +16,7 @@ import net.minecraft.client.render.entity.model.EntityModelLayer;
 import net.minecraft.client.util.math.MatrixStack;
 
 public class DendroCoreEntityModel extends EntityModel<DendroCoreEntity> {
-	public static final EntityModelLayer MODEL_LAYER = new EntityModelLayer(OriginsGenshin.identifier("cube"), "all");
+	public static final EntityModelLayer MODEL_LAYER = new EntityModelLayer(OriginsGenshin.identifier("dendro_core"), "all");
 
 	private final ModelPart bone;
 

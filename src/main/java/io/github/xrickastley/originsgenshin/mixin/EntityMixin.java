@@ -20,8 +20,10 @@ import io.github.xrickastley.originsgenshin.element.ElementalApplications;
 import io.github.xrickastley.originsgenshin.element.ElementalDamageSource;
 import io.github.xrickastley.originsgenshin.element.InternalCooldownContext;
 import io.github.xrickastley.originsgenshin.element.InternalCooldownType;
+import io.github.xrickastley.originsgenshin.entity.CrystallizeShardEntity;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinGameRules;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinStatusEffects;
+import io.github.xrickastley.originsgenshin.util.ClassInstanceUtil;
 
 // Prioritized since Frozen **MUST** disable movement.
 @Mixin(value = Entity.class, priority = Integer.MIN_VALUE)
@@ -58,5 +60,23 @@ public abstract class EntityMixin {
 		return (Entity)(Object) this instanceof final LivingEntity entity && this.getWorld().getGameRules().getBoolean(OriginsGenshinGameRules.ELECTRO_FROM_LIGHTNING)
 			? new ElementalDamageSource(source, ElementalApplications.gaugeUnits(entity, Element.ELECTRO, 2.0), InternalCooldownContext.ofType(entity, "origins-genshin:natural_environment", InternalCooldownType.INTERVAL_ONLY))
 			: source;
+	}
+
+	
+	// damn final modifier, fair enough though
+	// also probably not a good idea to AW it, it does have the right to be final.
+	// this should do.
+	// right this is prioritized but honestly it's just a sync thing for a CUSTOM entity, shouldn't affect that much.
+	@Inject(
+		method = "setPos",
+		at = @At("TAIL")
+	)
+	private void syncOnPosChangeIfCrystallizeShard(double x, double y, double z, CallbackInfo ci) {
+		final CrystallizeShardEntity crystallizeShard = ClassInstanceUtil.castOrNull(this, CrystallizeShardEntity.class);
+		
+		if (crystallizeShard == null) return;
+
+		// Sync after pos change, that way PlayerTracking.lookup properly works.
+		crystallizeShard.syncToPlayers();
 	}
 }

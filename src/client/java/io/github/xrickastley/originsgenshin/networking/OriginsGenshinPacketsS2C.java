@@ -5,7 +5,9 @@ import java.util.List;
 
 import io.github.xrickastley.originsgenshin.OriginsGenshinClient;
 import io.github.xrickastley.originsgenshin.element.reaction.ElementalReaction;
+import io.github.xrickastley.originsgenshin.entity.CrystallizeShardEntity;
 import io.github.xrickastley.originsgenshin.entity.DendroCoreEntity;
+import io.github.xrickastley.originsgenshin.entity.CrystallizeShardEntity.SyncCrystallizeShardTypeS2CPacket;
 import io.github.xrickastley.originsgenshin.registry.OriginsGenshinRegistries;
 import io.github.xrickastley.originsgenshin.renderer.WorldTextRenderer.DamageText;
 import io.github.xrickastley.originsgenshin.renderer.WorldTextRenderer.ReactionText;
@@ -35,6 +37,7 @@ public class OriginsGenshinPacketsS2C {
 			ClientPlayNetworking.registerReceiver(ShowElementalReactionS2CPacket.TYPE, OriginsGenshinPacketsS2C::onElementalReactionShow);
 			ClientPlayNetworking.registerReceiver(ShowElementalDamageS2CPacket.TYPE, OriginsGenshinPacketsS2C::onElementalDamageShow);
 			ClientPlayNetworking.registerReceiver(SyncDendroCoreAgeS2CPacket.TYPE, OriginsGenshinPacketsS2C::onSyncDendroCoreAge);
+			ClientPlayNetworking.registerReceiver(SyncCrystallizeShardTypeS2CPacket.TYPE, OriginsGenshinPacketsS2C::onSyncCrystallizeShardElement);
 
 			OriginsGenshinPacketsS2C.registerHandlers();
 		}));
@@ -98,5 +101,18 @@ public class OriginsGenshinPacketsS2C {
 		if (entity == null || !(entity instanceof final DendroCoreEntity dendroCore)) return;
 
 		dendroCore.age = packet.age();
+	}
+
+	private static void onSyncCrystallizeShardElement(SyncCrystallizeShardTypeS2CPacket packet, ClientPlayerEntity player, PacketSender responseSender) {
+		final World world = MinecraftClient
+			.getInstance()
+			.player
+			.getWorld();
+
+		final Entity entity = world.getEntityById(packet.entityId());
+
+		if (entity == null || !(entity instanceof final CrystallizeShardEntity crystallizeShard)) return;
+
+		crystallizeShard.syncFromPacket(packet);
 	}
 }

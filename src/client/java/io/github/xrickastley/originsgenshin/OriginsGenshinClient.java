@@ -9,7 +9,9 @@ import io.github.xrickastley.originsgenshin.factory.OriginsGenshinEntities;
 import io.github.xrickastley.originsgenshin.interfaces.IOrigin;
 import io.github.xrickastley.originsgenshin.networking.OriginsGenshinPacketsS2C;
 import io.github.xrickastley.originsgenshin.renderer.WorldTextRenderer;
+import io.github.xrickastley.originsgenshin.renderer.entity.CrystallizeShardEntityRenderer;
 import io.github.xrickastley.originsgenshin.renderer.entity.DendroCoreEntityRenderer;
+import io.github.xrickastley.originsgenshin.renderer.entity.model.CrystallizeShardEntityModel;
 import io.github.xrickastley.originsgenshin.renderer.entity.model.DendroCoreEntityModel;
 import io.github.xrickastley.originsgenshin.renderer.genshin.ElementalBurstRenderer;
 import io.github.xrickastley.originsgenshin.renderer.genshin.ElementalSkillRenderer;
@@ -54,7 +56,10 @@ public class OriginsGenshinClient implements ClientModInitializer {
 		ClientTickEvents.START_WORLD_TICK.register(OriginsGenshinClient.WORLD_TEXT_RENDERER::tick);
 
 		EntityRendererRegistry.register(OriginsGenshinEntities.DENDRO_CORE, DendroCoreEntityRenderer::new);
+		EntityRendererRegistry.register(OriginsGenshinEntities.CRYSTALLIZE_SHARD, CrystallizeShardEntityRenderer::new);
 		EntityModelLayerRegistry.registerModelLayer(DendroCoreEntityModel.MODEL_LAYER, DendroCoreEntityModel::getTexturedModelData);
+		EntityModelLayerRegistry.registerModelLayer(CrystallizeShardEntityModel.MODEL_LAYER, CrystallizeShardEntityModel::getTexturedModelData);
+
 		OriginsGenshinPacketsS2C.register();
 		
 		AutoConfig.register(ClientConfig.class, GsonConfigSerializer::new);

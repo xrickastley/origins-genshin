@@ -4,6 +4,6 @@ import net.fabricmc.fabric.api.client.networking.v1.ClientPlayNetworking.PlayPac
 import net.fabricmc.fabric.api.networking.v1.FabricPacket;
 import net.fabricmc.fabric.api.networking.v1.PacketType;
 
-public interface PacketHandler<T extends FabricPacket> extends PlayPacketHandler<ShowElectroChargeS2CPacket> {
+public interface PacketHandler<T extends FabricPacket> extends PlayPacketHandler<T> {
 	PacketType<T> getType();
 }

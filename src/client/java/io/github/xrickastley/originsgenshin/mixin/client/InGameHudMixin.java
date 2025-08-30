@@ -11,9 +11,11 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import io.github.xrickastley.originsgenshin.component.ElementComponent;
+import io.github.xrickastley.originsgenshin.element.Element;
+import io.github.xrickastley.originsgenshin.element.ElementalApplication;
 import io.github.xrickastley.originsgenshin.util.Array;
 import io.github.xrickastley.originsgenshin.util.CircleRenderer;
-
+import io.github.xrickastley.originsgenshin.util.Functions;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.InGameHud;
@@ -44,7 +46,7 @@ public class InGameHudMixin {
 		final Array<Identifier> appliedElements = ElementComponent.KEY
 			.get(player)
 			.getAppliedElements()
-			.map(a -> a.getElement().getTexture())
+			.map(Functions.compose(ElementalApplication::getElement, Element::getTexture))
 			.filter(existing::add);
 
 		for (int i = 0; i < appliedElements.length(); i++) {

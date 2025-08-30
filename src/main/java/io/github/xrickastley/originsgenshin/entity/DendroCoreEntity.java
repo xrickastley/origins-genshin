@@ -5,6 +5,7 @@ import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Queue;
+import java.util.UUID;
 
 import io.github.xrickastley.originsgenshin.component.ElementComponent;
 import io.github.xrickastley.originsgenshin.element.Element;
@@ -17,23 +18,21 @@ import io.github.xrickastley.originsgenshin.factory.OriginsGenshinSoundEvents;
 import io.github.xrickastley.originsgenshin.networking.SyncDendroCoreAgeS2CPacket;
 import io.github.xrickastley.originsgenshin.registry.OriginsGenshinDamageTypes;
 import io.github.xrickastley.originsgenshin.util.ClassInstanceUtil;
-
+import io.github.xrickastley.originsgenshin.util.Functions;
+import io.github.xrickastley.originsgenshin.util.JavaScriptUtil;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.EntityType;
-import net.minecraft.entity.EquipmentSlot;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.attribute.DefaultAttributeContainer;
-import net.minecraft.entity.attribute.EntityAttributes;
 import net.minecraft.entity.damage.DamageSource;
-import net.minecraft.entity.effect.StatusEffectInstance;
-import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NbtCompound;
+import net.minecraft.nbt.NbtElement;
+import net.minecraft.nbt.NbtHelper;
+import net.minecraft.nbt.NbtList;
 import net.minecraft.server.network.ServerPlayerEntity;
+import net.minecraft.server.world.ServerWorld;
 import net.minecraft.sound.SoundCategory;
-import net.minecraft.util.Arm;
-import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
@@ -41,19 +40,21 @@ import net.minecraft.world.World;
 import javax.annotation.Nullable;
 
 // Should technically extend Entity, but extends LivingEntity instead to NOT deal with more Networking and Spawn Packets.
-public final class DendroCoreEntity extends LivingEntity {
+public final class DendroCoreEntity extends OriginsGenshinEntity {
 	private static final double SPRAWLING_SHOT_SPEED = 0.75;
 	private static final double SPRAWLING_SHOT_GRAVITY = -0.05;
 	private static final double SPRAWLING_SHOT_RADIUS = 24;
 	private static final int SPRAWLING_SHOT_DELAY = 6;
 	private static final double DENDRO_CORES_IN_RADIUS = 64;
 
-	private List<LivingEntity> owners;
-	private @Nullable LivingEntity target;
+	private List<UUID> owners;
+	private @Nullable UUID target;
 	private Type type = Type.NORMAL;
 	private boolean exploded = false;
 	private int hyperbloomAge = 0;
 	private int curTicksInHitbox = 0;
+
+	// TODO: add sync shit
 
 	public DendroCoreEntity(EntityType<? extends LivingEntity> entityType, World world) {
 		this(entityType, world, null);
@@ -63,28 +64,19 @@ public final class DendroCoreEntity extends LivingEntity {
 		super(entityType, world);
 
 		this.owners = new ArrayList<>();
-		if (owner != null) this.owners.add(owner);
-	}
-
-	public static DefaultAttributeContainer.Builder getAttributeBuilder() {
-		return LivingEntity.createLivingAttributes()
-			.add(EntityAttributes.GENERIC_MAX_HEALTH, 1);
-	}
-
-	public int getAge() {
-		return this.age;
+		if (owner != null) this.owners.add(owner.getUuid());
 	}
 
 	public DendroCoreEntity setOwner(LivingEntity owner) {
 		this.owners = new ArrayList<>();
 
-		if (owner != null) this.owners.add(owner);
+		if (owner != null) this.owners.add(owner.getUuid());
 
 		return this;
 	}
 
 	public DendroCoreEntity addOwner(LivingEntity owner) {
-		if (owner != null) this.owners.add(owner);
+		if (owner != null) this.owners.add(owner.getUuid());
 
 		return this;
 	}
@@ -100,14 +92,14 @@ public final class DendroCoreEntity extends LivingEntity {
 		final @Nullable LivingEntity target = ElementalReaction
 			.getEntitiesInAoE(this, DendroCoreEntity.SPRAWLING_SHOT_RADIUS)
 			.stream()
-			.filter(e -> !this.owners.contains(e) && !(e instanceof DendroCoreEntity))
+			.filter(e -> !this.owners.contains(e.getUuid()) && !(e instanceof DendroCoreEntity))
 			.sorted(Comparator.comparing(e -> e.squaredDistanceTo(this)))
 			.findFirst()
 			.orElse(null);
 
-		this.target = target;
+		if (target == null) return;
 
-		if (this.target == null) return;
+		this.target = target.getUuid();
 	}
 
 	public void setAsBurgeon() {
@@ -129,26 +121,69 @@ public final class DendroCoreEntity extends LivingEntity {
 		return this.type == Type.BURGEON;
 	}
 
+	@Override
+	public void writeCustomDataToNbt(NbtCompound nbt) {
+		super.writeCustomDataToNbt(nbt);
+
+		nbt.putString("Type", this.type.toString());
+
+		if (target != null) nbt.putUuid("Target", target);
+
+		final NbtList list = new NbtList();
+
+		this.owners.forEach(
+			Functions.consumer(Functions.compose(NbtHelper::fromUuid, list::add))
+		);
+
+		nbt.put("Owners", list);
+	}
+	
+	@Override
+	public void readCustomDataFromNbt(NbtCompound nbt) {
+		super.readCustomDataFromNbt(nbt);
+
+		this.type = JavaScriptUtil.nullishCoalesing(
+			nbt.contains("Type")
+				? Type.valueOf(nbt.getString("Type"))
+				: null,
+			Type.NORMAL
+		);
+
+		this.target = nbt.contains("Target")
+			? nbt.getUuid("Target")
+			: null;
+
+		this.owners.clear();
+
+		nbt.getList("Owners", NbtElement.LIST_TYPE)
+			.forEach(
+				Functions.consumer(Functions.compose(NbtHelper::toUuid, this.owners::add))
+			);
+	}
+
 	// why does it say NPE on target.getBoundingBox :sob:, IT'S ALREADY TARGET != NULL??
 	@SuppressWarnings("null")
 	private void doHyperbloom() {
-		final int hyperbloomTick = this.age - this.hyperbloomAge;
+		if (!(this.getWorld() instanceof final ServerWorld world)) return;
 
-		if (this.target != null) {
-			final Vec3d target = this.target.getEyePos().subtract(this.getPos());
-			final double distance = Math.sqrt(target.x * target.x + target.z * target.z);
+		final int hyperbloomTick = this.age - this.hyperbloomAge;
+		final LivingEntity target = ClassInstanceUtil.castOrNull(world.getEntity(this.target), LivingEntity.class);
+
+		if (target != null) {
+			final Vec3d targetPos = target.getEyePos().subtract(this.getPos());
+			final double distance = Math.sqrt(targetPos.x * targetPos.x + targetPos.z * targetPos.z);
 			final int ticks = Math.max(1, (int) (distance / DendroCoreEntity.SPRAWLING_SHOT_SPEED));
 
 			// y value is derived from y(t) = y_0 + v_yt + \frac{1}{2}ay \times t^2
 			final Vec3d velocity = new Vec3d(
-				target.x / ticks,
-				(target.y - 0.5 * DendroCoreEntity.SPRAWLING_SHOT_GRAVITY * ticks * ticks) / ticks,
-				target.z / ticks
+				targetPos.x / ticks,
+				(targetPos.y - 0.5 * DendroCoreEntity.SPRAWLING_SHOT_GRAVITY * ticks * ticks) / ticks,
+				targetPos.z / ticks
 			);
 
 			super.setVelocity(velocity);
 
-			final Box boundingBox = this.target.getBoundingBox();
+			final Box boundingBox = target.getBoundingBox();
 
 			if (!boundingBox.contains(this.getPos())) return;
 
@@ -156,8 +191,8 @@ public final class DendroCoreEntity extends LivingEntity {
 
 			if (this.curTicksInHitbox < DendroCoreEntity.SPRAWLING_SHOT_DELAY) return;
 
-			for (final Entity target2 : ElementalReaction.getEntitiesInAoE(this.target, 1.0, e -> !owners.contains(e)))
-				target2.damage(this.createDamageSource(this.target), ElementalReaction.getReactionDamage(this, 3.0));
+			for (final Entity target2 : ElementalReaction.getEntitiesInAoE(target, 1.0, e -> !owners.contains(e.getUuid())))
+				target2.damage(this.createDamageSource(target), ElementalReaction.getReactionDamage(this, 3.0));
 
 			this.remove(RemovalReason.KILLED);
 
@@ -168,52 +203,6 @@ public final class DendroCoreEntity extends LivingEntity {
 
 			if (hyperbloomTick >= 40) this.remove(RemovalReason.KILLED);
 		}
-	}
-
-	@Override
-	public Arm getMainArm() {
-		return Arm.LEFT;
-	}
-
-	@Override
-	public void setPose(EntityPose pose) {
-		super.setPose(EntityPose.STANDING);
-	}
-
-	@Override
-	public EntityPose getPose() {
-		return EntityPose.STANDING;
-	}
-
-	@Override
-	public void setVelocity(Vec3d velocity) {
-		super.setVelocity(velocity);
-	}
-
-	@Override
-	public Iterable<ItemStack> getArmorItems() {
-		return DefaultedList.of();
-	}
-
-	@Override
-	public void equipStack(EquipmentSlot slot, ItemStack stack) {
-		// You cannot equip a Dendro Core with an item.
-	}
-
-	@Override
-	public ItemStack getEquippedStack(EquipmentSlot slot) {
-		// A Dendro Core has no items.
-		return ItemStack.EMPTY;
-	}
-
-	@Override
-	public boolean canHaveStatusEffect(StatusEffectInstance effect) {
-		return false;
-	}
-
-	@Override
-	public boolean addStatusEffect(StatusEffectInstance effect, Entity source) {
-		return false;
 	}
 
 	@Override
@@ -239,19 +228,6 @@ public final class DendroCoreEntity extends LivingEntity {
 
 		return false;
 	}
-
-	@Override
-	public boolean collidesWith(Entity other) {
-		return false;
-	}
-
-	@Override
-	public boolean isPushable() {
-		return false;
-	}
-
-	@Override
-	public void pushAwayFrom(Entity entity) {}
 
 	@Override
 	public void tick() {
@@ -293,7 +269,8 @@ public final class DendroCoreEntity extends LivingEntity {
 				ServerPlayNetworking.send(otherPlayer, packet);
 		}
 
-		final @Nullable LivingEntity recentOwner = owners.isEmpty() ? null : owners.get(owners.size() - 1);
+		final @Nullable LivingEntity recentOwner = this.getRecentOwner();
+
 		for (final LivingEntity target : ElementalReaction.getEntitiesInAoE(this, 5.0)) {
 			if (target instanceof DendroCoreEntity) continue;
 
@@ -301,7 +278,7 @@ public final class DendroCoreEntity extends LivingEntity {
 
 			float damage = ElementalReaction.getReactionDamage(this, reactionMultiplier);
 
-			if (this.owners.contains(target)) damage *= 0.05f;
+			if (this.owners.contains(target.getUuid())) damage *= 0.05f;
 
 			target.damage(source, damage);
 		}
@@ -312,8 +289,14 @@ public final class DendroCoreEntity extends LivingEntity {
 		return true;
 	}
 
+	private @Nullable LivingEntity getRecentOwner() {
+		return !owners.isEmpty() && this.getWorld() instanceof ServerWorld
+			? this.getEntityFromUUID(owners.get(owners.size() - 1))
+			: null;
+	}
+
 	private ElementalDamageSource createDamageSource(final LivingEntity target) {
-		final @Nullable LivingEntity recentOwner = owners.isEmpty() ? null : owners.get(owners.size() - 1);
+		final @Nullable LivingEntity recentOwner = this.getRecentOwner();
 
 		return this.createDamageSource(target, recentOwner);
 	}

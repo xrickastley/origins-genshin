@@ -3,7 +3,6 @@ package io.github.xrickastley.originsgenshin.renderer.entity;
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.entity.DendroCoreEntity;
 import io.github.xrickastley.originsgenshin.renderer.entity.model.DendroCoreEntityModel;
-import io.github.xrickastley.originsgenshin.renderer.entity.model.obj.ObjEntityModel;
 import io.github.xrickastley.originsgenshin.util.Ease;
 import io.github.xrickastley.originsgenshin.util.MathHelper2;
 
@@ -14,7 +13,6 @@ import net.minecraft.client.render.entity.model.EntityModel;
 import net.minecraft.client.util.math.MatrixStack;
 import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
-import net.minecraft.util.math.RotationAxis;
 
 public class DendroCoreEntityRenderer extends LivingEntityRenderer<DendroCoreEntity, EntityModel<DendroCoreEntity>> {
 	public DendroCoreEntityRenderer(EntityRendererFactory.Context context) {
@@ -27,18 +25,6 @@ public class DendroCoreEntityRenderer extends LivingEntityRenderer<DendroCoreEnt
 
 	private static EntityModel<DendroCoreEntity> createModel(EntityRendererFactory.Context context) {
 		return new DendroCoreEntityModel(context.getPart(DendroCoreEntityModel.MODEL_LAYER));
-
-		/*
-		try {
-			return new ObjEntityModel<DendroCoreEntity>(OriginsGenshin.identifier("models/entity/dendro_core"));
-		} catch (Exception e) {
-			OriginsGenshin
-				.sublogger(DendroCoreEntityRenderer.class)
-				.warn("An exception occured while trying to load ObjEntityModel, resorting to fallback...", e);
-
-			return new DendroCoreEntityModel(context.getPart(DendroCoreEntityModel.MODEL_LAYER));
-		}
-		*/
 	}
 
 	public Identifier getTexture(DendroCoreEntity entity) {
@@ -62,7 +48,6 @@ public class DendroCoreEntityRenderer extends LivingEntityRenderer<DendroCoreEnt
 
 		matrixStack.translate(0, 0, 0);
 		matrixStack.scale(scale, scale, scale);
-		// matrixStack.multiply(RotationAxis.POSITIVE_Z.rotationDegrees(180.0f));
 	}
 
 	@Override

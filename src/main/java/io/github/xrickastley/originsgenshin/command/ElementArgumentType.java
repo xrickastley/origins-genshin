@@ -14,7 +14,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;
 
 import io.github.xrickastley.originsgenshin.element.Element;
-
+import io.github.xrickastley.originsgenshin.util.Functions;
 import net.minecraft.command.CommandSource;
 import net.minecraft.server.command.ServerCommandSource;
 
@@ -36,13 +36,13 @@ public class ElementArgumentType implements ArgumentType<Element> {
 
 	public <S> CompletableFuture<Suggestions> listSuggestions(final CommandContext<S> context, final SuggestionsBuilder builder) {
 		return CommandSource.suggestMatching(
-			ElementArgumentType.map(Element.values(), e -> e.toString().toLowerCase()),
+			ElementArgumentType.map(Element.values(), Functions.compose(Element::toString, String::toLowerCase)),
 			builder
 		);
 	}
 
 	public Collection<String> getExamples() {
-		return ElementArgumentType.map(Element.values(), e -> e.toString().toLowerCase());
+		return ElementArgumentType.map(Element.values(), Functions.compose(Element::toString, String::toLowerCase));
 	}
 
 	private static <T, R> List<R> map(T[] array, Function<T, R> mapper) {

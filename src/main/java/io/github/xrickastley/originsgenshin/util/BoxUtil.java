@@ -14,4 +14,10 @@ public class BoxUtil {
 
 		return new Box(centerX - halfExtentX, centerY - halfExtentY, centerZ - halfExtentZ, centerX + halfExtentX, centerY + halfExtentY, centerZ + halfExtentZ);
 	}
+
+	public static boolean isColliding(Box box, Box other) {
+		return box.minX <= other.maxX && box.maxX >= other.minX
+			&& box.minY <= other.maxY && box.maxY >= other.minY
+			&& box.minZ <= other.maxZ && box.maxZ >= other.minZ;
+	}
 }

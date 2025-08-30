@@ -531,6 +531,7 @@ public final class ElementComponentImpl implements ElementComponent {
 			final double dmgTakenByShield = Math.min(this.amount * elementBonus, amount);
 			System.out.println("Shield amount: " + this.amount);
 			System.out.println("DMG Taken by Shield: " + dmgTakenByShield / elementBonus);
+			System.out.println("DMG Reduced by Shield: " + dmgTakenByShield);
 			// Use Math.max to guarantee >= 0 in case of FP errors.
 			this.amount = Math.max(this.amount - (dmgTakenByShield / elementBonus), 0);
 
