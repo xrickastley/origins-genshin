@@ -17,8 +17,7 @@ import io.github.xrickastley.originsgenshin.element.ElementalApplications;
 import io.github.xrickastley.originsgenshin.element.ElementalDamageSource;
 import io.github.xrickastley.originsgenshin.element.InternalCooldownContext;
 import io.github.xrickastley.originsgenshin.element.InternalCooldownType;
-import io.github.xrickastley.originsgenshin.events.ElementApplied;
-import io.github.xrickastley.originsgenshin.events.ElementRemoved;
+import io.github.xrickastley.originsgenshin.events.ElementEvents;
 import io.github.xrickastley.originsgenshin.events.ReactionTriggered;
 import io.github.xrickastley.originsgenshin.registry.OriginsGenshinDamageTypes;
 import io.github.xrickastley.originsgenshin.registry.OriginsGenshinRegistries;
@@ -79,7 +78,7 @@ public abstract sealed class AbstractBurningElementalReaction
 	}
 
 	static {
-		ElementApplied.EVENT.register((element, application) -> {
+		ElementEvents.APPLIED.register((element, application) -> {
 			if (application.getEntity().getWorld().isClient || element != Element.BURNING) return;
 
 			final ElementComponent component = ElementComponent.KEY.get(application.getEntity());
@@ -93,7 +92,7 @@ public abstract sealed class AbstractBurningElementalReaction
 			ElementComponent.sync(application.getEntity());
 		});
 
-		ElementRemoved.EVENT.register((element, application) -> {
+		ElementEvents.REMOVED.register((element, application) -> {
 			if (element == Element.BURNING) ElementComponent.sync(application.getEntity());
 
 			if (element != Element.DENDRO && element != Element.QUICKEN) return;

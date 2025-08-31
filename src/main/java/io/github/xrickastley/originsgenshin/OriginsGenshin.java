@@ -14,9 +14,7 @@ import io.github.xrickastley.originsgenshin.component.ElementComponent;
 import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
 import io.github.xrickastley.originsgenshin.element.InternalCooldownType;
-import io.github.xrickastley.originsgenshin.events.ElementApplied;
-import io.github.xrickastley.originsgenshin.events.ElementRefreshed;
-import io.github.xrickastley.originsgenshin.events.ElementRemoved;
+import io.github.xrickastley.originsgenshin.events.ElementEvents;
 import io.github.xrickastley.originsgenshin.events.ReactionTriggered;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinFactories;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinGameRules;
@@ -125,13 +123,13 @@ public class OriginsGenshin implements ModInitializer {
 			ConstantArgumentSerializer.of(ElementArgumentType::new)
 		);
 
-		ElementApplied.EVENT
+		ElementEvents.APPLIED
 			.register((element, application) -> OriginsGenshin.callElementEventActions(ActionOnElementAppliedPower.class, element, application));
 
-		ElementRefreshed.EVENT
+		ElementEvents.REFRESHED
 			.register((element, oldApp, newApp) -> OriginsGenshin.callElementEventActions(ActionOnElementRefreshedPower.class, element, newApp));
 
-		ElementRemoved.EVENT
+		ElementEvents.REMOVED
 			.register((element, application) -> OriginsGenshin.callElementEventActions(ActionOnElementRemovedPower.class, element, application));
 
 		ReactionTriggered.EVENT

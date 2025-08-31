@@ -11,9 +11,11 @@ import org.jetbrains.annotations.Nullable;
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.component.ElementComponent;
 import io.github.xrickastley.originsgenshin.component.ElementComponentImpl;
+import io.github.xrickastley.originsgenshin.events.ElementEvents;
+import io.github.xrickastley.originsgenshin.factory.OriginsGenshinStatusEffects;
 import io.github.xrickastley.originsgenshin.util.Color;
 import io.github.xrickastley.originsgenshin.util.Colors;
-
+import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
 
@@ -193,6 +195,59 @@ public enum Element {
 		}
 
 		ElementComponent.sync(application.getEntity());
+	}
+
+	// These "mixins" are injected pieces of code (likening @Inject) that allow Cryo to work properly, and allow others to easily see the way it was hardcoded.
+	public static void mixin$tick(ElementComponent component) {
+		if (component.hasElementalApplication(Element.CRYO) && !component.getOwner().hasStatusEffect(OriginsGenshinStatusEffects.CRYO)) {
+			component.getOwner().addStatusEffect(
+				new StatusEffectInstance(
+					OriginsGenshinStatusEffects.CRYO,
+					component.getElementalApplication(Element.CRYO).getRemainingTicks(),
+					0,
+					true,
+					false,
+					true
+				)
+			);
+		} else if (!component.hasElementalApplication(Element.CRYO) && component.getOwner().hasStatusEffect(OriginsGenshinStatusEffects.CRYO)) {
+			component.getOwner().removeStatusEffect(OriginsGenshinStatusEffects.CRYO);
+		}
+	}
+
+	static {
+		ElementEvents.APPLIED
+			.register((element, application) -> {
+				if (element != Element.CRYO) return;
+
+				application.getEntity().addStatusEffect(
+					new StatusEffectInstance(
+						OriginsGenshinStatusEffects.CRYO,
+						application.getRemainingTicks(),
+						0,
+						true,
+						false,
+						true
+					)
+				);
+			});
+			
+		ElementEvents.REFRESHED
+			.register((element, application, _prev) -> {
+				if (element != Element.CRYO || application == null) return;
+
+				application.getEntity().removeStatusEffect(OriginsGenshinStatusEffects.CRYO);
+				application.getEntity().addStatusEffect(
+					new StatusEffectInstance(
+						OriginsGenshinStatusEffects.CRYO,
+						application.getRemainingTicks(),
+						0,
+						true,
+						false,
+						true
+					)
+				);
+			});
 	}
 
 	/**

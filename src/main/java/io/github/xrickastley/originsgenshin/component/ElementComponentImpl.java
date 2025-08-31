@@ -278,6 +278,7 @@ public final class ElementComponentImpl implements ElementComponent {
 	public void tick() {
 		ElectroChargedElementalReaction.mixin$tick(this.owner);
 		AbstractBurningElementalReaction.mixin$tick(this.owner);
+		Element.mixin$tick(this);
 
 		final int tickedElements = this
 			.getAppliedElements()

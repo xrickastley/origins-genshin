@@ -6,9 +6,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.jetbrains.annotations.Nullable;
 
-import io.github.xrickastley.originsgenshin.events.ElementApplied;
-import io.github.xrickastley.originsgenshin.events.ElementRefreshed;
-import io.github.xrickastley.originsgenshin.events.ElementRemoved;
+import io.github.xrickastley.originsgenshin.events.ElementEvents;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinGameRules;
 
 import net.minecraft.entity.LivingEntity;
@@ -76,11 +74,11 @@ public final class ElementHolder {
 		this.application = application;
 
 		if (prev != null && application == null) {
-			ElementRemoved.EVENT.invoker().onElementRemoved(element, prev);
+			ElementEvents.REMOVED.invoker().onElementRemoved(element, prev);
 		} else if (this.application != null) {
-			ElementApplied.EVENT.invoker().onElementApplied(element, application);
+			ElementEvents.APPLIED.invoker().onElementApplied(element, application);
 		} else {
-			ElementRefreshed.EVENT.invoker().onElementRefreshed(element, application, prev);
+			ElementEvents.REFRESHED.invoker().onElementRefreshed(element, application, prev);
 		}
 	}
 

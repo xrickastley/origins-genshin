@@ -1,6 +1,7 @@
 package io.github.xrickastley.originsgenshin.factory;
 
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
+import io.github.xrickastley.originsgenshin.effect.CryoStatusEffect;
 import io.github.xrickastley.originsgenshin.effect.FrozenStatusEffect;
 import io.github.xrickastley.originsgenshin.effect.SuperconductStatusEffect;
 
@@ -14,13 +15,18 @@ public class OriginsGenshinStatusEffects {
 	 */
 	public static final StatusEffect FROZEN = new FrozenStatusEffect();
 	/**
-	 * Applies a -40% Physical RES% onto the entity.
+	 * Reduces the entity's Physical RES% by 40%.
 	 */
 	public static final StatusEffect SUPERCONDUCT = new SuperconductStatusEffect();
+	/**
+	 * Reduces the entity's Movement Speed and Attack Speed by 15%.
+	 */
+	public static final StatusEffect CRYO = new CryoStatusEffect();
 
 	public static void register() {
 		OriginsGenshinStatusEffects.register("frozen", FROZEN);
 		OriginsGenshinStatusEffects.register("superconduct", SUPERCONDUCT);
+		OriginsGenshinStatusEffects.register("cryo", CRYO);
 	}
 
 	private static StatusEffect register(String name, StatusEffect statusEffect) {

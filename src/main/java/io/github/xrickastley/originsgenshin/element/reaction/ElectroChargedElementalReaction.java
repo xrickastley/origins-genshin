@@ -109,15 +109,6 @@ public class ElectroChargedElementalReaction extends ElementalReaction {
 		this.sendDisplayPacket(entity, targets);
 	}
 
-	// These "mixins" are injected pieces of code (likening @Inject) that allow Burning to work properly, and allow others to easily see the way it was hardcoded.
-	public static void mixin$tick(LivingEntity entity) {
-		if (!ElementalReactions.ELECTRO_CHARGED.isTriggerable(entity) || entity.getWorld().isClient || entity.isDead()) return;
-
-		ElementalReactions.ELECTRO_CHARGED.trigger(entity);
-
-		ElementComponent.sync(entity);
-	}
-
 	private void sendDisplayPacket(LivingEntity mainTarget, List<LivingEntity> otherTargets) {
 		if (otherTargets.isEmpty()) return;
 
@@ -130,5 +121,14 @@ public class ElectroChargedElementalReaction extends ElementalReaction {
 
 			ServerPlayNetworking.send(otherPlayer, packet);
 		}
+	}
+
+	// These "mixins" are injected pieces of code (likening @Inject) that allow Electro-Charged to work properly, and allow others to easily see the way it was hardcoded.
+	public static void mixin$tick(LivingEntity entity) {
+		if (!ElementalReactions.ELECTRO_CHARGED.isTriggerable(entity) || entity.getWorld().isClient || entity.isDead()) return;
+
+		ElementalReactions.ELECTRO_CHARGED.trigger(entity);
+
+		ElementComponent.sync(entity);
 	}
 }
