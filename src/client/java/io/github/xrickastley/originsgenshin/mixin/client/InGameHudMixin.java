@@ -5,7 +5,9 @@ import com.llamalad7.mixinextras.sugar.Local;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
@@ -16,6 +18,7 @@ import io.github.xrickastley.originsgenshin.element.ElementalApplication;
 import io.github.xrickastley.originsgenshin.util.Array;
 import io.github.xrickastley.originsgenshin.util.CircleRenderer;
 import io.github.xrickastley.originsgenshin.util.Functions;
+
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.InGameHud;
@@ -24,20 +27,26 @@ import net.minecraft.util.Identifier;
 
 @Mixin(InGameHud.class)
 public class InGameHudMixin {
+
+	@Shadow
+	@Final
+	private MinecraftClient client;
+
 	@Inject(
 		method = "renderStatusBars",
 		at = @At(
 			value = "INVOKE",
-			target = "Lnet/minecraft/client/gui/hud/InGameHud;renderHealthBar(Lnet/minecraft/client/gui/DrawContext;Lnet/minecraft/entity/player/PlayerEntity;IIIIFIIIZ)V",
-			shift = At.Shift.AFTER
+			target = "Lnet/minecraft/util/profiler/Profiler;swap(Ljava/lang/String;)V",
+			shift = At.Shift.BEFORE,
+			ordinal = 0
 		)
 	)
-	private void renderAppliedElements(DrawContext context, CallbackInfo ci, @Local PlayerEntity player, @Local(ordinal = 3) int x, @Local(ordinal = 5) int y) {
+	private void renderAppliedElements(DrawContext context, CallbackInfo ci, @Local PlayerEntity player, @Local(ordinal = 3) int x, @Local(ordinal = 9) int y) {
+		this.client.getProfiler().swap("origins-genshin:elements");
+
 		int offset = 0;
 
 		if (player.getArmor() > 0) offset += 1;
-
-		offset += Math.ceil((player.getMaxHealth() + player.getAbsorptionAmount()) / 20);
 
 		y -= (10 * (offset));
 

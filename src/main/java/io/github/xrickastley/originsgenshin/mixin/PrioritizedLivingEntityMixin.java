@@ -3,7 +3,11 @@ package io.github.xrickastley.originsgenshin.mixin;
 import com.llamalad7.mixinextras.sugar.Local;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
+
+import net.minecraft.entity.effect.StatusEffect;
+import net.minecraft.entity.effect.StatusEffectInstance;
 
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Mixin;
@@ -28,6 +32,7 @@ import io.github.xrickastley.originsgenshin.factory.OriginsGenshinAttributes;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinStatusEffects;
 import io.github.xrickastley.originsgenshin.interfaces.ILivingEntity;
 import io.github.xrickastley.originsgenshin.util.ClassInstanceUtil;
+import io.github.xrickastley.originsgenshin.util.FilteredIterator;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
@@ -59,9 +64,29 @@ public abstract class PrioritizedLivingEntityMixin
 	}
 
 	@Inject(
+		method = "removeStatusEffectInternal",
+		at = @At("HEAD"),
+		cancellable = true
+	)
+	private void preventRemovingCryoEffectIfCryoElement(@Nullable StatusEffect type, CallbackInfoReturnable<StatusEffectInstance> cir) {
+		if (type == OriginsGenshinStatusEffects.CRYO
+			&& ElementComponent.KEY.get(this).hasElementalApplication(Element.CRYO)) cir.setReturnValue(null);
+	}
+
+	@ModifyVariable(
+		method = "clearStatusEffects",
+		at = @At("STORE"),
+		ordinal = 0
+	)
+	private Iterator<StatusEffectInstance> replaceIterator(Iterator<StatusEffectInstance> value) {
+		if (!ElementComponent.KEY.get(this).hasElementalApplication(Element.CRYO)) return value;
+
+		return FilteredIterator.of(value, v -> v.getEffectType() == OriginsGenshinStatusEffects.CRYO);
+	}
+
+	@Inject(
 		method = "damage",
 		at = @At("HEAD"),
-		cancellable = true,
 		order = Integer.MIN_VALUE
 	)
 	private void setPlannedAttacker(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
@@ -79,7 +104,6 @@ public abstract class PrioritizedLivingEntityMixin
 			cir.setReturnValue(false);
 	}
 
-
 	@ModifyVariable(
 		method = "damage",
 		at = @At("HEAD"),
@@ -94,7 +118,7 @@ public abstract class PrioritizedLivingEntityMixin
 		method = "damage",
 		at = @At("HEAD"),
 		argsOnly = true,
-		order = Integer.MIN_VALUE // Additive DMG Bonus is a Base DMG multiplier.
+		order = Integer.MIN_VALUE // Additive DMG Bonus is a Base DMG multiplier, should be applied ASAP.
 	)
 	private float applyDMGModifiers(float amount, @Local(argsOnly = true) DamageSource source) {
 		final ElementalDamageSource eds = source instanceof final ElementalDamageSource eds2
