@@ -8,6 +8,7 @@ import org.slf4j.LoggerFactory;
 
 import io.github.apace100.apoli.component.PowerHolderComponent;
 import io.github.apace100.apoli.power.Power;
+import io.github.xrickastley.originsgenshin.command.BossBarCommand;
 import io.github.xrickastley.originsgenshin.command.ElementArgumentType;
 import io.github.xrickastley.originsgenshin.command.ElementCommand;
 import io.github.xrickastley.originsgenshin.component.ElementComponent;
@@ -114,6 +115,7 @@ public class OriginsGenshin implements ModInitializer {
 					})
 			);
 
+			BossBarCommand.register(dispatcher);
 			ElementCommand.register(dispatcher);
 		});
 

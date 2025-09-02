@@ -1,0 +1,36 @@
+package io.github.xrickastley.originsgenshin.mixin;
+
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.boss.ServerBossBar;
+import net.minecraft.entity.mob.HostileEntity;
+import net.minecraft.world.World;
+
+import org.spongepowered.asm.mixin.Final;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+
+import net.minecraft.entity.boss.WitherEntity;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+
+@Mixin(WitherEntity.class)
+public abstract class WitherEntityMixin extends HostileEntity {
+	public WitherEntityMixin(EntityType<? extends WitherEntity> entityType, World world) {
+		super(entityType, world);
+
+		throw new AssertionError();
+	}
+
+	@Shadow
+	@Final
+	private ServerBossBar bossBar;
+
+	@Inject(
+		method = "<init>",
+		at = @At("TAIL")
+	)
+	public void setBossBarEntity(EntityType<? extends WitherEntity> entityType, World world, CallbackInfo ci) {
+		this.bossBar.originsgenshin$setEntity(this);
+	}
+}

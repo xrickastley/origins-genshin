@@ -53,6 +53,9 @@
 			],
 			"net/minecraft/class_1282": [
 				"io/github/xrickastley/originsgenshin/interfaces/IDamageSource"
+			],
+			"net/minecraft/class_1259": [
+				"io/github/xrickastley/originsgenshin/interfaces/IBossBar"
 			]
 		},
 		"cardinal-components": [

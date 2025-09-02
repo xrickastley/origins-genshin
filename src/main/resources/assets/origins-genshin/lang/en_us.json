@@ -42,5 +42,20 @@
 
 	"death.attack.superconduct": "%1$s experienced freezing cold conduction",
 	"death.attack.superconduct.item": "%1$s experienced freezing cold conduction due to %2$s while wielding %3$s",
-	"death.attack.superconduct.player": "%1$s experienced freezing cold conduction whilst trying to escape %2$s"
+	"death.attack.superconduct.player": "%1$s experienced freezing cold conduction whilst trying to escape %2$s",
+
+	"commands.bossbar.set.entity.success": "Custom bossbar %s now is now linked to %s",
+	"commands.bossbar.get.entity.success": "Custom bossbar %s is linked to entity %s",
+	"commands.bossbar.get.entity.none": "Custom bossbar %s is not linked to any entities",
+	
+	"commands.element.failed.entity": "%s is not a valid entity for this command, a living entity is required",
+	"commands.element.failed.none": "%s already does not have the %s element applied",
+	"commands.element.apply": "Applied %s element to %s",
+	"commands.element.apply.reactions": "Applied %s element to %s, triggered reaction(s): %s",
+	"commands.element.remove": "Removed the %s element from %s",
+	"commands.element.reduce": "Reduced the %s element by %s",
+	"commands.element.query.multiple.none": "%s has no applied elements",
+	"commands.element.query.multiple.success": "Applied element(s) on %s: %s",
+	"commands.element.query.single.none": "%s has no applied %s element",
+	"commands.element.query.single.success": "%s has %s"
 }

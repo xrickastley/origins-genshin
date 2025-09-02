@@ -8,6 +8,7 @@ import io.github.apace100.origins.registry.ModComponents;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinEntities;
 import io.github.xrickastley.originsgenshin.interfaces.IOrigin;
 import io.github.xrickastley.originsgenshin.networking.OriginsGenshinPacketsS2C;
+import io.github.xrickastley.originsgenshin.networking.SyncBossBarEntityPacketHandler;
 import io.github.xrickastley.originsgenshin.renderer.WorldTextRenderer;
 import io.github.xrickastley.originsgenshin.renderer.entity.CrystallizeShardEntityRenderer;
 import io.github.xrickastley.originsgenshin.renderer.entity.DendroCoreEntityRenderer;
@@ -41,6 +42,7 @@ public class OriginsGenshinClient implements ClientModInitializer {
 	private static final ElementalSkillRenderer ELEMENTAL_SKILL_RENDERER = new ElementalSkillRenderer(RESCALER);
 	private static final SpecialEffectsRenderer SPECIAL_EFFECTS_RENDERER = new SpecialEffectsRenderer();
 	public static final WorldTextRenderer WORLD_TEXT_RENDERER = new WorldTextRenderer();
+	public static final SyncBossBarEntityPacketHandler SYNC_BOSS_BAR_ENTITY_HANDLER = new SyncBossBarEntityPacketHandler();
 
 	@Override
 	public void onInitializeClient() {
@@ -51,6 +53,7 @@ public class OriginsGenshinClient implements ClientModInitializer {
 		WorldRenderEvents.END.register(OriginsGenshinClient.SPECIAL_EFFECTS_RENDERER::render);
 		ClientTickEvents.START_WORLD_TICK.register(OriginsGenshinClient.SPECIAL_EFFECTS_RENDERER::tick);
 		OriginsGenshinPacketsS2C.registerHandler(OriginsGenshinClient.SPECIAL_EFFECTS_RENDERER);
+		OriginsGenshinPacketsS2C.registerHandler(OriginsGenshinClient.SYNC_BOSS_BAR_ENTITY_HANDLER);
 
 		WorldRenderEvents.END.register(OriginsGenshinClient.WORLD_TEXT_RENDERER::render);
 		ClientTickEvents.START_WORLD_TICK.register(OriginsGenshinClient.WORLD_TEXT_RENDERER::tick);

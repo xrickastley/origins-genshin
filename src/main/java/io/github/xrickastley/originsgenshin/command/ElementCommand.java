@@ -20,14 +20,14 @@ import io.github.xrickastley.originsgenshin.element.ElementalApplications;
 import io.github.xrickastley.originsgenshin.element.InternalCooldownContext;
 import io.github.xrickastley.originsgenshin.element.reaction.ElementalReaction;
 import io.github.xrickastley.originsgenshin.util.Array;
-
+import io.github.xrickastley.originsgenshin.util.Functions;
 import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
-import net.minecraft.util.Formatting;
+import net.minecraft.text.Texts;
 import net.minecraft.util.Identifier;
 
 import static net.minecraft.server.command.CommandManager.argument;
@@ -119,26 +119,25 @@ public class ElementCommand {
 		final boolean aura = ElementCommand.getOrDefault(context, "isAura", Boolean.class, true);
 
 		if (!(entity instanceof final LivingEntity target)) {
-			context.getSource().sendError(Text.literal("The provided target must be a living entity!").formatted(Formatting.RED));
+			context
+				.getSource()
+				.sendError(Text.translatable("commands.element.failed.entity", entity));
 
 			return 0;
 		}
 
 		final ElementComponent component = ElementComponent.KEY.get(target);
-		final List<Identifier> reactions = component
+		final List<ElementalReaction> reactions = component
 			.addElementalApplication(
 				ElementalApplications.gaugeUnits(target, element, gaugeUnits, aura),
 				InternalCooldownContext.ofNone()
-			)
-			.stream()
-			.map(ElementalReaction::getId)
-			.toList();
+			);
 
 		context
 			.getSource()
-			.sendFeedback(() ->
-				Text.literal(String.format("Applied element: %s, Triggered reactions: %s", element, reactions.toString())),
-				false
+			.sendFeedback(
+				() -> Text.translatable(reactions.isEmpty() ? "commands.element.apply" : "commands.element.apply.reactions", element, entity.getDisplayName(), Texts.join(reactions, Functions.compose(ElementalReaction::getId, Identifier::toString, Text::literal))),
+				true
 			);
 
 		return 1;
@@ -151,26 +150,25 @@ public class ElementCommand {
 		final int duration = IntegerArgumentType.getInteger(context, "duration");
 
 		if (!(entity instanceof final LivingEntity target)) {
-			context.getSource().sendError(Text.literal("The provided target must be a living entity!").formatted(Formatting.RED));
+			context
+				.getSource()
+				.sendError(Text.translatable("commands.element.failed.entity", entity));
 
 			return 0;
 		}
 
 		final ElementComponent component = ElementComponent.KEY.get(target);
-		final List<Identifier> reactions = component
+		final List<ElementalReaction> reactions = component
 			.addElementalApplication(
 				ElementalApplications.duration(target, element, gaugeUnits, duration),
 				InternalCooldownContext.ofNone()
-			)
-			.stream()
-			.map(ElementalReaction::getId)
-			.toList();
+			);
 
 		context
 			.getSource()
-			.sendFeedback(() ->
-				Text.literal(String.format("Applied element: %s, Triggered reactions: %s", element, reactions.toString())),
-				false
+			.sendFeedback(
+				() -> Text.translatable(reactions.isEmpty() ? "commands.element.apply" : "commands.element.apply.reactions", element, entity.getDisplayName(), Texts.join(reactions, Functions.compose(ElementalReaction::getId, Identifier::toString, Text::literal))),
+				true
 			);
 
 		return 1;
@@ -181,7 +179,9 @@ public class ElementCommand {
 		final Element element = ElementArgumentType.getElement(context, "element");
 
 		if (!(entity instanceof final LivingEntity target)) {
-			context.getSource().sendError(Text.literal("The provided target must be a living entity!").formatted(Formatting.RED));
+			context
+				.getSource()
+				.sendError(Text.translatable("commands.element.failed.entity", entity));
 
 			return 0;
 		}
@@ -190,7 +190,9 @@ public class ElementCommand {
 		final ElementHolder holder = component.getElementHolder(element);
 
 		if (!holder.hasElementalApplication()) {
-			context.getSource().sendError(Text.literal("The provided target already doesn't have the \"" + element + "\" element applied!").formatted(Formatting.RED));
+			context
+				.getSource()
+				.sendError(Text.translatable("commands.element.failed.none", entity.getDisplayName(), element));
 
 			return 0;
 		}
@@ -201,9 +203,9 @@ public class ElementCommand {
 
 		context
 			.getSource()
-			.sendFeedback(() ->
-				Text.literal(String.format("Removed element: %s", element)),
-				false
+			.sendFeedback(
+				() -> Text.translatable("commands.element.remove", element, entity),
+				true
 			);
 
 		return 1;
@@ -215,7 +217,9 @@ public class ElementCommand {
 		final double gaugeUnits = DoubleArgumentType.getDouble(context, "gaugeUnits");
 
 		if (!(entity instanceof final LivingEntity target)) {
-			context.getSource().sendError(Text.literal("The provided target must be a living entity!").formatted(Formatting.RED));
+			context
+				.getSource()
+				.sendError(Text.translatable("commands.element.failed.entity", entity));
 
 			return 0;
 		}
@@ -224,7 +228,9 @@ public class ElementCommand {
 		final ElementHolder holder = component.getElementHolder(element);
 
 		if (!holder.hasElementalApplication()) {
-			context.getSource().sendError(Text.literal("The provided target already doesn't have the \"" + element + "\" applied!").formatted(Formatting.RED));
+			context
+				.getSource()
+				.sendError(Text.translatable("commands.element.failed.none", entity.getDisplayName(), element));
 
 			return 0;
 		}
@@ -237,9 +243,9 @@ public class ElementCommand {
 
 		context
 			.getSource()
-			.sendFeedback(() ->
-				Text.literal(String.format("Reduced \"%s\" gauge by: %f", element, reducedGauge)),
-				false
+			.sendFeedback(
+				() -> Text.translatable("commands.element.reduce", element, reducedGauge),
+				true
 			);
 
 		return 1;
@@ -249,7 +255,9 @@ public class ElementCommand {
 		final Entity entity = EntityArgumentType.getEntity(context, "target");
 
 		if (!(entity instanceof final LivingEntity target)) {
-			context.getSource().sendError(Text.literal("The provided target must be a living entity!").formatted(Formatting.RED));
+			context
+				.getSource()
+				.sendError(Text.translatable("commands.element.failed.entity", entity));
 
 			return 0;
 		}
@@ -258,18 +266,19 @@ public class ElementCommand {
 		final Array<ElementalApplication> appliedElements = component.getAppliedElements();
 
 		if (appliedElements.isEmpty()) {
-			context.getSource().sendError(Text.literal("The provided target has no applied elements!").formatted(Formatting.RED));
+			context
+				.getSource()
+				.sendError(Text.translatable("commands.element.query.multiple.none", entity));
 
 			return 0;
 		}
 
-		final String message = "Applied elements: " + appliedElements
-			.map(ElementCommand.TO_FRIENDLY_STRING)
-			.join(", ");
-
 		context
 			.getSource()
-			.sendFeedback(() -> Text.literal(message), false);
+			.sendFeedback(
+				() -> Text.translatable("commands.element.query.multiple.success", entity.getDisplayName(), Texts.join(appliedElements, Functions.compose(ElementCommand.TO_FRIENDLY_STRING, Text::literal))), 
+				true
+			);
 
 		return 1;
 	}
@@ -279,7 +288,9 @@ public class ElementCommand {
 		final Element element = ElementArgumentType.getElement(context, "element");
 
 		if (!(entity instanceof final LivingEntity target)) {
-			context.getSource().sendError(Text.literal("The provided target must be a living entity!").formatted(Formatting.RED));
+			context
+				.getSource()
+				.sendError(Text.translatable("commands.element.failed.entity", entity));
 
 			return 0;
 		}
@@ -288,14 +299,19 @@ public class ElementCommand {
 		final @Nullable ElementalApplication application = component.getElementHolder(element).getElementalApplication();
 
 		if (application == null) {
-			context.getSource().sendError(Text.literal("The provided target doesn't have the \"" + element + "\" element applied!").formatted(Formatting.RED));
+			context
+				.getSource()
+				.sendError(Text.translatable("commands.element.query.single.none", entity.getDisplayName(), element));
 
 			return 0;
 		}
 
 		context
 			.getSource()
-			.sendFeedback(() -> Text.literal("Element: " + ElementCommand.TO_FRIENDLY_STRING.apply(application)), false);
+			.sendFeedback(
+				() -> Text.translatable("commands.element.query.single.success", entity.getDisplayName(), ElementCommand.TO_FRIENDLY_STRING.apply(application)), 
+				true
+			);
 
 		return application != null ? 1 : 0;
 	}
