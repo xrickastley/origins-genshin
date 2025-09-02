@@ -11,10 +11,8 @@ import io.github.apace100.apoli.power.Power;
 import io.github.xrickastley.originsgenshin.command.BossBarCommand;
 import io.github.xrickastley.originsgenshin.command.ElementArgumentType;
 import io.github.xrickastley.originsgenshin.command.ElementCommand;
-import io.github.xrickastley.originsgenshin.component.ElementComponent;
 import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
-import io.github.xrickastley.originsgenshin.element.InternalCooldownType;
 import io.github.xrickastley.originsgenshin.events.ElementEvents;
 import io.github.xrickastley.originsgenshin.events.ReactionTriggered;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinFactories;
@@ -24,22 +22,16 @@ import io.github.xrickastley.originsgenshin.power.ActionOnElementEventPower;
 import io.github.xrickastley.originsgenshin.power.ActionOnElementRefreshedPower;
 import io.github.xrickastley.originsgenshin.power.ActionOnElementRemovedPower;
 import io.github.xrickastley.originsgenshin.power.ActionOnElementalReactionPower;
-import io.github.xrickastley.originsgenshin.registry.OriginsGenshinRegistries;
 import io.github.xrickastley.originsgenshin.registry.OriginsGenshinReloadListener;
 
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.command.v2.ArgumentTypeRegistry;
 import net.fabricmc.fabric.api.command.v2.CommandRegistrationCallback;
 import net.fabricmc.fabric.api.resource.ResourceManagerHelper;
-import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.command.argument.serialize.ConstantArgumentSerializer;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.registry.Registry;
-import net.minecraft.registry.entry.RegistryEntry;
 import net.minecraft.resource.ResourceType;
-import net.minecraft.server.command.CommandManager;
-import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.world.World;
 
@@ -58,63 +50,6 @@ public class OriginsGenshin implements ModInitializer {
 			.registerReloadListener(OriginsGenshinReloadListener.INSTANCE);
 
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
-			dispatcher.register(
-				CommandManager
-					.literal("eval")
-					.then(
-						CommandManager
-							.argument("entity", EntityArgumentType.entity())
-							.then(
-								CommandManager
-									.argument("element", ElementArgumentType.element())
-									.executes(context -> {
-										final Entity entity = EntityArgumentType.getEntity(context, "entity");
-										final Element element = ElementArgumentType.getElement(context, "element");
-
-										if (!(entity instanceof final LivingEntity livingEntity)) {
-											context.getSource().sendError(Text.literal("/eval target must be a LivingEntity!"));
-
-											return 0;
-										}
-
-										final ElementComponent component = ElementComponent.KEY.get(livingEntity);
-
-										component.setCrystallizeShield(element, 50);
-
-										return 1;
-									})
-							)
-							.executes(context -> {
-								final Entity entity = EntityArgumentType.getEntity(context, "entity");
-
-								if (!(entity instanceof final LivingEntity livingEntity)) {
-									context.getSource().sendError(Text.literal("/eval target must be a LivingEntity!"));
-
-									return 0;
-								}
-
-								final ElementComponent component = ElementComponent.KEY.get(livingEntity);
-
-								component.setCrystallizeShield(Element.HYDRO, 50);
-
-								return 1;
-							})
-					)
-					.executes(context -> {
-						final Registry<InternalCooldownType> internalCooldowns = OriginsGenshinRegistries.INTERNAL_COOLDOWN_TYPE;
-
-						LOGGER.info(internalCooldowns.getClass().getName());
-						LOGGER.info("There are currently {} registered entries for Registry<InternalCooldown.Builder>", internalCooldowns.size());
-
-						internalCooldowns
-							.streamEntries()
-							.map(RegistryEntry.Reference::value)
-							.forEach(icd -> LOGGER.info("Registered InternalCooldown: {}", icd));
-
-						return 1;
-					})
-			);
-
 			BossBarCommand.register(dispatcher);
 			ElementCommand.register(dispatcher);
 		});
