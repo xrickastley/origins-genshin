@@ -124,7 +124,7 @@ public abstract class PlayerEntityMixin
 		at = @At("TAIL")
 	)
 	private void damageHandlers_elements(final DamageSource source, float amount, CallbackInfo ci) {
-		this.triggerDendroCoreReactions(source);
+		this.originsgenshin$triggerDendroCoreReactions(source);
 
 		if (!source.originsgenshin$displayDamage()) return;
 
@@ -167,7 +167,7 @@ public abstract class PlayerEntityMixin
 	}
 
 	@Unique
-	private void triggerDendroCoreReactions(final DamageSource source) {
+	private void originsgenshin$triggerDendroCoreReactions(final DamageSource source) {
 		if (!(source instanceof final ElementalDamageSource eds)) return;
 
 		final Element element = eds.getElementalApplication().getElement();

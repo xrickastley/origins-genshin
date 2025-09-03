@@ -7,7 +7,6 @@
     "BossBarHud$1Mixin",
     "BossBarHudAccessor",
     "BossBarHudMixin",
-    "EntityRendererMixin",
     "GameRendererMixin",
     "InGameHudMixin",
     "LivingEntityRendererMixin",
