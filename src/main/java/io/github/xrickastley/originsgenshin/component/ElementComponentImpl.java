@@ -3,6 +3,7 @@ package io.github.xrickastley.originsgenshin.component;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashSet;
 import java.util.List;
@@ -28,16 +29,20 @@ import io.github.xrickastley.originsgenshin.element.reaction.ElectroChargedEleme
 import io.github.xrickastley.originsgenshin.element.reaction.ElementalReaction;
 import io.github.xrickastley.originsgenshin.element.reaction.QuickenElementalReaction;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinGameRules;
+import io.github.xrickastley.originsgenshin.registry.OriginsGenshinDamageTypeTags;
+import io.github.xrickastley.originsgenshin.registry.OriginsGenshinEntityTypeTags;
 import io.github.xrickastley.originsgenshin.registry.OriginsGenshinRegistries;
 import io.github.xrickastley.originsgenshin.util.Array;
 import io.github.xrickastley.originsgenshin.util.ImmutablePair;
-
+import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
+import net.minecraft.entity.damage.DamageType;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtList;
 import net.minecraft.registry.entry.RegistryEntry.Reference;
+import net.minecraft.registry.tag.TagKey;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
@@ -45,7 +50,10 @@ import net.minecraft.util.Pair;
 import javax.annotation.Nonnull;
 
 public final class ElementComponentImpl implements ElementComponent {
-	protected static final Set<Class<LivingEntity>> DENIED_ENTITIES = new HashSet<>();
+	static final Set<Class<LivingEntity>> DENIED_ENTITIES = new HashSet<>();
+	static final Map<TagKey<EntityType<?>>, Element> ENTITY_TYPE_ELEMENT_MAP = new HashMap<>();
+	static final Map<TagKey<DamageType>, Element> DAMAGE_TYPE_ELEMENT_MAP = new HashMap<>();
+
 	private final LivingEntity owner;
 	private final Map<Element, ElementHolder> elementHolders = new ConcurrentHashMap<>();
 	private final Logger LOGGER = OriginsGenshin.sublogger(ElementComponent.class);
@@ -56,6 +64,11 @@ public final class ElementComponentImpl implements ElementComponent {
 	private @Nullable LivingEntity burningOrigin = null;
 	private CrystallizeShield crystallizeShield = null;
 	private int crystallizeShieldReducedAt = -1;
+
+	// TO BE USED ONLY INTERNALLY.
+	public static <T extends LivingEntity> boolean canApplyElement(Class<T> entityClass) {
+		return !ElementComponentImpl.DENIED_ENTITIES.contains(entityClass);
+	}
 
 	public ElementComponentImpl(LivingEntity owner) {
 		this.owner = owner;
@@ -562,5 +575,23 @@ public final class ElementComponentImpl implements ElementComponent {
 
 			ElementComponent.sync(impl.owner);
 		}
+	}
+
+	static {
+		ElementComponentImpl.ENTITY_TYPE_ELEMENT_MAP.put(OriginsGenshinEntityTypeTags.DEALS_PYRO_DAMAGE, Element.PYRO);
+		ElementComponentImpl.ENTITY_TYPE_ELEMENT_MAP.put(OriginsGenshinEntityTypeTags.DEALS_HYDRO_DAMAGE, Element.HYDRO);
+		ElementComponentImpl.ENTITY_TYPE_ELEMENT_MAP.put(OriginsGenshinEntityTypeTags.DEALS_ELECTRO_DAMAGE, Element.ELECTRO);
+		ElementComponentImpl.ENTITY_TYPE_ELEMENT_MAP.put(OriginsGenshinEntityTypeTags.DEALS_ANEMO_DAMAGE, Element.ANEMO);
+		ElementComponentImpl.ENTITY_TYPE_ELEMENT_MAP.put(OriginsGenshinEntityTypeTags.DEALS_DENDRO_DAMAGE, Element.DENDRO);
+		ElementComponentImpl.ENTITY_TYPE_ELEMENT_MAP.put(OriginsGenshinEntityTypeTags.DEALS_CRYO_DAMAGE, Element.CRYO);
+		ElementComponentImpl.ENTITY_TYPE_ELEMENT_MAP.put(OriginsGenshinEntityTypeTags.DEALS_GEO_DAMAGE, Element.GEO);
+		
+		ElementComponentImpl.DAMAGE_TYPE_ELEMENT_MAP.put(OriginsGenshinDamageTypeTags.HAS_PYRO_INFUSION, Element.PYRO);
+		ElementComponentImpl.DAMAGE_TYPE_ELEMENT_MAP.put(OriginsGenshinDamageTypeTags.HAS_HYDRO_INFUSION, Element.HYDRO);
+		ElementComponentImpl.DAMAGE_TYPE_ELEMENT_MAP.put(OriginsGenshinDamageTypeTags.HAS_ELECTRO_INFUSION, Element.ELECTRO);
+		ElementComponentImpl.DAMAGE_TYPE_ELEMENT_MAP.put(OriginsGenshinDamageTypeTags.HAS_ANEMO_INFUSION, Element.ANEMO);
+		ElementComponentImpl.DAMAGE_TYPE_ELEMENT_MAP.put(OriginsGenshinDamageTypeTags.HAS_DENDRO_INFUSION, Element.DENDRO);
+		ElementComponentImpl.DAMAGE_TYPE_ELEMENT_MAP.put(OriginsGenshinDamageTypeTags.HAS_CRYO_INFUSION, Element.CRYO);
+		ElementComponentImpl.DAMAGE_TYPE_ELEMENT_MAP.put(OriginsGenshinDamageTypeTags.HAS_GEO_INFUSION, Element.GEO);
 	}
 }

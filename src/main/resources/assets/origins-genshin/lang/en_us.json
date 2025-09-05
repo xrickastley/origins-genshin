@@ -4,6 +4,8 @@
 	"text.autoconfig.origins-genshin.option.renderers.showElementalBurst": "Show Elemental Burst",
 	"text.autoconfig.origins-genshin.option.renderers.sphereResolution": "Crystallize Shield Resolution",
 	"text.autoconfig.origins-genshin.option.renderers.sphereResolution.@Tooltip": "Controls the amount of triangles generated for the Crystallize Shield. This setting may be tuned down for more performance.",
+	"text.autoconfig.origins-genshin.option.renderers.globalTextScale": "Global Text Scale",
+	"text.autoconfig.origins-genshin.option.renderers.globalTextScale.@Tooltip": "Controls the scale of all Origins: Genshin Text Elements (Elemental Reactions and Damage Text)",
 	"text.autoconfig.origins-genshin.option.renderers.showDamageText": "Show Damage Text",
 	"text.autoconfig.origins-genshin.option.renderers.normalDMGScale": "Normal DMG Scale",
 	"text.autoconfig.origins-genshin.option.renderers.critDMGScale": "CRIT DMG Scale",

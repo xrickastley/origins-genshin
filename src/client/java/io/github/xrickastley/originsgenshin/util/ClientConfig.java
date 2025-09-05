@@ -18,6 +18,8 @@ public class ClientConfig implements ConfigData {
 		@ConfigEntry.Gui.Tooltip
 		@ConfigEntry.BoundedDiscrete(min = 4, max = 48)
 		public int sphereResolution = 16;
+		@ConfigEntry.Gui.Tooltip
+		public double globalTextScale = 1.0;
 		public boolean showDamageText = true;
 		public double normalDMGScale = 0.65;
 		public double critDMGScale = 1.0;

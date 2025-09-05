@@ -45,15 +45,20 @@ public final class WorldTextRenderer {
 	public static void drawText(final Camera camera, final MatrixStack matrices, final VertexConsumerProvider vertexConsumers, final OrderedText text, final double x, final double y, final double z, final int color, final float size, final boolean center, final float offset, final boolean visibleThroughObjects) {
 		final MinecraftClient client = MinecraftClient.getInstance();
 		final TextRenderer textRenderer = client.textRenderer;
-
+		final ClientConfig config = AutoConfig
+			.getConfigHolder(ClientConfig.class)
+			.getConfig();
+		
 		final double d = camera.getPos().x;
 		final double e = camera.getPos().y;
 		final double f = camera.getPos().z;
 
+		final float scale = (float) (size * config.renderers.globalTextScale);
+
 		matrices.push();
 		matrices.translate((float) (x - d), (float) (y - e), (float) (z - f));
 		matrices.multiplyPositionMatrix(new Matrix4f().rotation(camera.getRotation()));
-		matrices.scale(-size, -size, size);
+		matrices.scale(-scale, -scale, scale);
 
 		float g = center ? (-textRenderer.getWidth(text) / 2.0f) : 0.0f;
 		g -= offset / size;

@@ -6,6 +6,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.jetbrains.annotations.Nullable;
 
+import io.github.xrickastley.originsgenshin.component.ElementComponentImpl;
 import io.github.xrickastley.originsgenshin.events.ElementEvents;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinGameRules;
 
@@ -67,7 +68,7 @@ public final class ElementHolder {
 	}
 
 	public void setElementalApplication(@Nullable ElementalApplication application) {
-		if (!this.shouldDoElements()) return;
+		if (!this.shouldDoElements() || !ElementComponentImpl.canApplyElement(this.owner.getClass())) return;
 
 		final @Nullable ElementalApplication prev = this.application;
 

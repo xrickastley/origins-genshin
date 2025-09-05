@@ -47,6 +47,12 @@ public interface ElementComponent extends AutoSyncedComponent, CommonTickingComp
 
 	public static DamageSource applyElementalInfusions(DamageSource source, LivingEntity target) {
 		if (source instanceof ElementalDamageSource) return source;
+			
+		final Optional<ElementalDamageSource> opDamage = ElementComponent.attemptDamageTypeInfusions(source, target);
+		if (opDamage.isPresent()) return opDamage.get();
+
+		final Optional<ElementalDamageSource> opEntity = ElementComponent.attemptEntityDamageInfusions(source, target);
+		if (opEntity.isPresent()) return opEntity.get();
 
 		if (source.isIn(DamageTypeTags.IS_LIGHTNING)) {
 			return new ElementalDamageSource(source, ElementalApplications.gaugeUnits(target, Element.ELECTRO, 0, true), InternalCooldownContext.ofType(source.getAttacker(), "origins-genshin:natural_environment", InternalCooldownType.INTERVAL_ONLY));
@@ -67,6 +73,40 @@ public interface ElementComponent extends AutoSyncedComponent, CommonTickingComp
 		return power == null
 			? source
 			: new ElementalDamageSource(source, power.getApplication(target), power.getIcdContext());
+	}
+
+	private static Optional<ElementalDamageSource> attemptEntityDamageInfusions(DamageSource source, LivingEntity target) {
+		if (!(source.getAttacker() instanceof final LivingEntity attacker)) return Optional.empty();
+
+		for (final var entry : ElementComponentImpl.ENTITY_TYPE_ELEMENT_MAP.entrySet()) {
+			if (!attacker.getType().isIn(entry.getKey())) continue;
+
+			return Optional.of(
+				new ElementalDamageSource(
+					source,
+					ElementalApplications.gaugeUnits(target, entry.getValue(), 1.0),
+					InternalCooldownContext.ofDefault(attacker, "origins-genshin:mob_attack")
+				)
+			);
+		}
+
+		return Optional.empty();
+	}
+
+	private static Optional<ElementalDamageSource> attemptDamageTypeInfusions(DamageSource source, LivingEntity target) {
+		for (final var entry : ElementComponentImpl.DAMAGE_TYPE_ELEMENT_MAP.entrySet()) {
+			if (!source.isIn(entry.getKey())) continue;
+
+			return Optional.of(
+				new ElementalDamageSource(
+					source,
+					ElementalApplications.gaugeUnits(target, entry.getValue(), 1.0),
+					InternalCooldownContext.ofDefault(target, "origins-genshin:damage_infusion")
+				)
+			);
+		}
+
+		return Optional.empty();
 	}
 
 	public LivingEntity getOwner();

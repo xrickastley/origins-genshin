@@ -11,7 +11,6 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.component.ElementComponent;
 import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementalApplications;
@@ -23,6 +22,7 @@ import io.github.xrickastley.originsgenshin.factory.OriginsGenshinAttributes;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinGameRules;
 import io.github.xrickastley.originsgenshin.interfaces.IPlayerEntity;
 import io.github.xrickastley.originsgenshin.networking.ShowElementalDamageS2CPacket;
+import io.github.xrickastley.originsgenshin.registry.OriginsGenshinDamageTypeTags;
 import io.github.xrickastley.originsgenshin.util.BoxUtil;
 
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
@@ -35,8 +35,6 @@ import net.minecraft.entity.attribute.DefaultAttributeContainer;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.registry.RegistryKeys;
-import net.minecraft.registry.tag.TagKey;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
 import net.minecraft.util.math.Box;
@@ -180,7 +178,7 @@ public abstract class LivingEntityMixin extends Entity {
 		constant = @Constant(intValue = 20, ordinal = 0)
 	)
 	private int changeTimeUntilRegen(int original, @Local(argsOnly = true) DamageSource source) {
-		return source.isIn(TagKey.of(RegistryKeys.DAMAGE_TYPE, OriginsGenshin.identifier("prevents_cooldown_trigger")))
+		return source.isIn(OriginsGenshinDamageTypeTags.PREVENTS_COOLDOWN_TRIGGER)
 			? 10
 			: original;
 	}
