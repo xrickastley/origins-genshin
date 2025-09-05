@@ -4,9 +4,13 @@ import java.util.Objects;
 
 import org.jetbrains.annotations.Nullable;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+
 import io.github.apace100.calio.data.SerializableData;
 import io.github.apace100.calio.data.SerializableDataType;
 import io.github.xrickastley.originsgenshin.data.OriginsGenshinDataTypes;
+import io.github.xrickastley.originsgenshin.registry.OriginsGenshinRegistries;
 import io.github.xrickastley.originsgenshin.util.ClassInstanceUtil;
 
 import net.minecraft.entity.Entity;
@@ -143,6 +147,11 @@ public final class InternalCooldownContext {
 	}
 
 	public static final class Builder {
+		public static final Codec<InternalCooldownContext.Builder> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+			InternalCooldownTag.CODEC.fieldOf("tag").forGetter(i -> i.tag),
+			OriginsGenshinRegistries.INTERNAL_COOLDOWN_TYPE.getCodec().optionalFieldOf("type", InternalCooldownType.DEFAULT).forGetter(i -> i.type)
+		).apply(instance, InternalCooldownContext.Builder::new));
+
 		public static final SerializableDataType<InternalCooldownContext.Builder> DATA
 			= SerializableDataType.compound(
 				InternalCooldownContext.Builder.class,
@@ -164,6 +173,11 @@ public final class InternalCooldownContext {
 		private InternalCooldownType type;
 
 		private Builder() {}
+
+		private Builder(InternalCooldownTag tag, InternalCooldownType type) {
+			this.tag = tag;
+			this.type = type;
+		}
 
 		public static InternalCooldownContext.Builder ofNone() {
 			return new InternalCooldownContext.Builder()

@@ -8,6 +8,8 @@ import java.util.function.Predicate;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
+import com.mojang.serialization.Codec;
+
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.component.ElementComponent;
 import io.github.xrickastley.originsgenshin.component.ElementComponentImpl;
@@ -18,6 +20,7 @@ import io.github.xrickastley.originsgenshin.util.Colors;
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
+import net.minecraft.util.dynamic.Codecs;
 
 public enum Element {
 	// Only here for Attribute Identification. Other than that, this serves no use, since Physical isn't really an Element.
@@ -118,6 +121,8 @@ public enum Element {
 			.linkToElement(Element.DENDRO)
 			.linkGaugeDecayIf(application -> ElementComponent.KEY.get(application.getEntity()).hasElementalApplication(Element.BURNING))
 	);
+	
+	public static final Codec<Element> CODEC = Codecs.NON_EMPTY_STRING.xmap(Element::valueOf, Element::toString);
 
 	private final Identifier id;
 	private final ElementSettings settings;
@@ -179,6 +184,12 @@ public enum Element {
 
 	public boolean hasAuraTax() {
 		return settings.hasAuraTax;
+	}
+
+	public String getString() {
+		final String string = this.toString();
+
+		return string.substring(0, 1).toUpperCase() + string.substring(1).toLowerCase();
 	}
 
 	void reduceLinkedElements(double reduction, ElementalApplication application, boolean isGaugeDecay) {

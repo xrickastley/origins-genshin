@@ -51,7 +51,7 @@ public class OriginsGenshin implements ModInitializer {
 
 		CommandRegistrationCallback.EVENT.register((dispatcher, registryAccess, environment) -> {
 			BossBarCommand.register(dispatcher);
-			ElementCommand.register(dispatcher);
+			ElementCommand.register(dispatcher, registryAccess);
 		});
 
 		ArgumentTypeRegistry.registerArgumentType(

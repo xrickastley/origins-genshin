@@ -60,6 +60,7 @@
 		},
 		"cardinal-components": [
 			"origins-genshin:elements",
+			"origins-genshin:elemental_infusion",
 			"origins-genshin:frozen_effect"
 		]
 	}

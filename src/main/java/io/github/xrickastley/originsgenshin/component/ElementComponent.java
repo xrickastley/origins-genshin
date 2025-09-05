@@ -47,6 +47,9 @@ public interface ElementComponent extends AutoSyncedComponent, CommonTickingComp
 
 	public static DamageSource applyElementalInfusions(DamageSource source, LivingEntity target) {
 		if (source instanceof ElementalDamageSource) return source;
+
+		final Optional<ElementalDamageSource> itemInfusion = ElementalInfusionComponent.applyToDamageSource(source, target);
+		if (itemInfusion.isPresent()) return itemInfusion.get();
 			
 		final Optional<ElementalDamageSource> opDamage = ElementComponent.attemptDamageTypeInfusions(source, target);
 		if (opDamage.isPresent()) return opDamage.get();

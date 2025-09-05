@@ -48,6 +48,16 @@ public class ElementalApplications {
 	 * @param entity The entity to create an Elemental Application for.
 	 * @param nbt The NBT to create the Elemental Application from.
 	 */
+	public static ElementalApplication fromNbt(LivingEntity entity, NbtElement nbt) {
+		return ElementalApplications.fromNbt(entity, nbt, entity.getWorld().getTime());
+	}
+
+	/**
+	 * Creates an Elemental Application from an NBT.
+	 * @param entity The entity to create an Elemental Application for.
+	 * @param nbt The NBT to create the Elemental Application from.
+	 * @param syncedAt The world time this Elemental Application was last synced at.
+	 */
 	public static ElementalApplication fromNbt(LivingEntity entity, NbtElement nbt, long syncedAt) {
 		if (!(nbt instanceof final NbtCompound compound)) throw new ElementalApplicationOperationException(Operation.INVALID_NBT_DATA, null, null);
 

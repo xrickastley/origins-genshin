@@ -54,4 +54,23 @@ public class TextHelper {
 		return TextHelper.font(text, TextHelper.GENSHIN_FONT)
 			.fillStyle(Style.EMPTY.withColor(color.asRGB()));
 	}
+
+	public static MutableText color(String text, Color color) {
+		return TextHelper.color(text, color.asRGB());
+	}
+
+	public static MutableText color(String text, int rgbColor) {
+		return Text.literal(text).fillStyle(Style.EMPTY.withColor(rgbColor));
+	}
+
+	public static MutableText noModifiers(MutableText text) {
+		return text.setStyle(
+			text.getStyle()
+				.withBold(false)
+				.withItalic(false)
+				.withStrikethrough(false)
+				.withObfuscated(false)
+				.withUnderline(false)
+		);
+	}
 }

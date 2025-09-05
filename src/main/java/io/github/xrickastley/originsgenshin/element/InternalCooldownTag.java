@@ -5,6 +5,10 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import org.jetbrains.annotations.Nullable;
 
+import com.mojang.serialization.Codec;
+
+import net.minecraft.util.dynamic.Codecs;
+
 /**
  * An {@code InternalCooldownTag} is a class used for holding unique instances of Internal Cooldown
  * Tags per session. <br> <br>
@@ -16,6 +20,7 @@ import org.jetbrains.annotations.Nullable;
 public final class InternalCooldownTag {
 	private static final Map<String, InternalCooldownTag> INSTANCES = new ConcurrentHashMap<>();
 	public static final InternalCooldownTag NONE = new InternalCooldownTag(null);
+	public static final Codec<InternalCooldownTag> CODEC = Codecs.NON_EMPTY_STRING.xmap(InternalCooldownTag::new, InternalCooldownTag::getTag);
 
 	private final @Nullable String tag;
 

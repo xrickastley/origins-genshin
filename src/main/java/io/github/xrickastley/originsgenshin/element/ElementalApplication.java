@@ -3,6 +3,9 @@ package io.github.xrickastley.originsgenshin.element;
 import java.util.Objects;
 import java.util.UUID;
 
+import com.mojang.serialization.Codec;
+import com.mojang.serialization.codecs.RecordCodecBuilder;
+
 import io.github.apace100.calio.data.SerializableData;
 import io.github.apace100.calio.data.SerializableDataType;
 import io.github.apace100.calio.data.SerializableDataTypes;
@@ -14,6 +17,7 @@ import io.github.xrickastley.originsgenshin.exception.ElementalApplicationOperat
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
+import net.minecraft.util.dynamic.Codecs;
 
 /**
  * A class representing an Elemental Application for an entity.
@@ -196,9 +200,19 @@ public abstract sealed class ElementalApplication permits DurationElementalAppli
 		GAUGE_UNIT,
 		// Has a specified amount of Gauge Units that are removed after DURATION.
 		DURATION;
+
+		public static final Codec<Type> CODEC = Codecs.NON_EMPTY_STRING.xmap(Type::valueOf, Type::toString);
 	}
 
 	public static final class Builder {
+		public static final Codec<ElementalApplication.Builder> CODEC = RecordCodecBuilder.create(instance -> instance.group(
+			Type.CODEC.optionalFieldOf("type", ElementalApplication.Type.GAUGE_UNIT).forGetter(i -> i.type),
+			Element.CODEC.fieldOf("element").forGetter(i -> i.element),
+			Codec.BOOL.optionalFieldOf("aura", true).forGetter(i -> i.isAura),
+			Codec.DOUBLE.fieldOf("gauge_units").forGetter(i -> i.gaugeUnits),
+			Codec.DOUBLE.optionalFieldOf("duration", -1.0).forGetter(i -> i.duration)
+		).apply(instance, ElementalApplication.Builder::new));
+
 		public static final SerializableDataType<ElementalApplication.Builder> DATA
 			= SerializableDataType.compound(
 				ElementalApplication.Builder.class,
@@ -233,6 +247,14 @@ public abstract sealed class ElementalApplication permits DurationElementalAppli
 
 		Builder() {
 			this.isAura = true;
+		}
+
+		private Builder(Type type, Element element, boolean isAura, double gaugeUnits, double duration) {
+			this.type = type;
+			this.element = element;
+			this.isAura = isAura;
+			this.gaugeUnits = gaugeUnits;
+			this.duration = duration;
 		}
 
 		public Builder setType(Type type) {

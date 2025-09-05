@@ -12,7 +12,7 @@ import net.minecraft.util.math.MathHelper;
 
 import javax.annotation.Nonnull;
 
-public class FrozenEffectComponentImpl implements FrozenEffectComponent {
+public final class FrozenEffectComponentImpl implements FrozenEffectComponent {
 	private final LivingEntity owner;
 	private boolean isFrozen = false;
 	private boolean hadNoAi = false;
