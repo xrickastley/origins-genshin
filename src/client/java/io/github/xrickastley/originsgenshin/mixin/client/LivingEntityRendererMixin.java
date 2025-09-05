@@ -32,7 +32,7 @@ import io.github.xrickastley.originsgenshin.renderer.genshin.ElementEntry;
 import io.github.xrickastley.originsgenshin.util.ClientConfig;
 import io.github.xrickastley.originsgenshin.util.Color;
 import io.github.xrickastley.originsgenshin.util.SphereRenderer;
-import me.shedaniel.autoconfig.AutoConfig;
+
 import net.fabricmc.api.EnvType;
 import net.fabricmc.api.Environment;
 import net.minecraft.client.render.BufferBuilder;
@@ -51,6 +51,8 @@ import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
 import net.minecraft.util.math.RotationAxis;
 import net.minecraft.util.math.Vec3d;
+
+import me.shedaniel.autoconfig.AutoConfig;
 
 @Environment(EnvType.CLIENT)
 @Mixin(value = LivingEntityRenderer.class, priority = Integer.MAX_VALUE)

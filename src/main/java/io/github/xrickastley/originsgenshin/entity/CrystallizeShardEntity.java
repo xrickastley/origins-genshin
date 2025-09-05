@@ -11,6 +11,7 @@ import io.github.xrickastley.originsgenshin.component.ElementComponent;
 import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.reaction.ElementalReaction;
 import io.github.xrickastley.originsgenshin.util.ClassInstanceUtil;
+
 import net.fabricmc.fabric.api.networking.v1.FabricPacket;
 import net.fabricmc.fabric.api.networking.v1.PacketType;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
@@ -38,7 +39,7 @@ public final class CrystallizeShardEntity extends OriginsGenshinEntity {
 
 	public CrystallizeShardEntity(EntityType<? extends LivingEntity> entityType, World world, Element element, @Nullable LivingEntity owner) {
 		super(entityType, world);
-		
+
 		this.element = this.getWorld().isClient ? null : element;
 		this.owner = ClassInstanceUtil.mapOrNull(owner, LivingEntity::getUuid);
 	}
@@ -51,13 +52,13 @@ public final class CrystallizeShardEntity extends OriginsGenshinEntity {
 
 		if (this.owner != null) nbt.putUuid("Owner", this.owner);
 	}
-	
+
 	@Override
 	public void readCustomDataFromNbt(NbtCompound nbt) {
 		super.readCustomDataFromNbt(nbt);
 
 		if (nbt.contains("Element")) this.element = Element.valueOf(nbt.getString("Element"));
-		
+
 		if (nbt.contains("Owner")) this.owner = nbt.getUuid("Owner");
 	}
 
@@ -66,16 +67,16 @@ public final class CrystallizeShardEntity extends OriginsGenshinEntity {
 		super.tick();
 
 		this.checkCrystallizeShield();
-		
+
 		this.syncToPlayers();
 	}
 
 	/**
 	 * Gets the element of this {@code CrystallizeShardEntity}. <br> <br>
-	 * 
+	 *
 	 * This is guaranteed to only be nullable <b>if</b> the world is on the client, as the element
 	 * is considered {@code null} until the sync packet is received from the server. <br> <br>
-	 * 
+	 *
 	 * While the element is considered {@code null}, the Crystallize Shard is not rendered. <br> <br>
 	 */
 	public @Nullable Element getElement() {
@@ -91,7 +92,7 @@ public final class CrystallizeShardEntity extends OriginsGenshinEntity {
 
 		final SyncCrystallizeShardTypeS2CPacket packet = new SyncCrystallizeShardTypeS2CPacket(this.getId(), this.element);
 
-		for (final ServerPlayerEntity otherPlayer : PlayerLookup.tracking(this)) 
+		for (final ServerPlayerEntity otherPlayer : PlayerLookup.tracking(this))
 			ServerPlayNetworking.send(otherPlayer, packet);
 	}
 

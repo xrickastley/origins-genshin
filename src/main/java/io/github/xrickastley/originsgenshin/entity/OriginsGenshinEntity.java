@@ -2,9 +2,8 @@ package io.github.xrickastley.originsgenshin.entity;
 
 import java.util.UUID;
 
-import javax.annotation.Nullable;
-
 import io.github.xrickastley.originsgenshin.util.ClassInstanceUtil;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityPose;
 import net.minecraft.entity.EntityType;
@@ -20,9 +19,11 @@ import net.minecraft.util.Arm;
 import net.minecraft.util.collection.DefaultedList;
 import net.minecraft.world.World;
 
+import javax.annotation.Nullable;
+
 // Base class for all "special" entities: Crystallize Shard and Dendro Core
 // Should technically extend Entity, but extends LivingEntity instead to NOT deal with more Networking and Spawn Packets.
-public sealed class OriginsGenshinEntity 
+public sealed class OriginsGenshinEntity
 	extends LivingEntity
 	permits DendroCoreEntity, CrystallizeShardEntity
 {
@@ -104,7 +105,7 @@ public sealed class OriginsGenshinEntity
 
 	@Override
 	public void pushAwayFrom(Entity entity) {}
-	
+
 	@Override
 	public void takeKnockback(double strength, double x, double z) {}
 

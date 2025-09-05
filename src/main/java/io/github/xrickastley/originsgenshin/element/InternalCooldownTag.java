@@ -1,11 +1,11 @@
 package io.github.xrickastley.originsgenshin.element;
 
+import com.mojang.serialization.Codec;
+
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.jetbrains.annotations.Nullable;
-
-import com.mojang.serialization.Codec;
 
 import net.minecraft.util.dynamic.Codecs;
 

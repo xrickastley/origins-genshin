@@ -1,6 +1,7 @@
 package io.github.xrickastley.originsgenshin.util;
 
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
+
 import net.minecraft.text.MutableText;
 import net.minecraft.text.Style;
 import net.minecraft.text.Text;

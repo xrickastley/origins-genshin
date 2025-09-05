@@ -28,6 +28,7 @@ import io.github.xrickastley.originsgenshin.util.Array;
 import io.github.xrickastley.originsgenshin.util.ClassInstanceUtil;
 import io.github.xrickastley.originsgenshin.util.Functions;
 import io.github.xrickastley.originsgenshin.util.JavaScriptUtil;
+
 import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.command.argument.RegistryEntryArgumentType;
@@ -332,7 +333,7 @@ public class ElementCommand {
 		context
 			.getSource()
 			.sendFeedback(
-				() -> Text.translatable("commands.element.query.multiple.success", entity.getDisplayName(), Texts.join(appliedElements, Functions.compose(ElementCommand.TO_FRIENDLY_STRING, Text::literal))), 
+				() -> Text.translatable("commands.element.query.multiple.success", entity.getDisplayName(), Texts.join(appliedElements, Functions.compose(ElementCommand.TO_FRIENDLY_STRING, Text::literal))),
 				true
 			);
 
@@ -365,7 +366,7 @@ public class ElementCommand {
 		context
 			.getSource()
 			.sendFeedback(
-				() -> Text.translatable("commands.element.query.single.success", entity.getDisplayName(), ElementCommand.TO_FRIENDLY_STRING.apply(application)), 
+				() -> Text.translatable("commands.element.query.single.success", entity.getDisplayName(), ElementCommand.TO_FRIENDLY_STRING.apply(application)),
 				true
 			);
 
@@ -390,10 +391,10 @@ public class ElementCommand {
 
 		final ItemStack stack = livingEntity.getMainHandStack();
 
-		if (stack.isEmpty()) 
+		if (stack.isEmpty())
 			return sendError(context, Text.translatable("commands.enchant.failed.itemless", entity.getName().getString()));
 
-		if (!(stack.getItem() instanceof ToolItem)) 
+		if (!(stack.getItem() instanceof ToolItem))
 			return sendError(context, Text.translatable("commands.element.infuse.failed.incompatible", entity.getName().getString()));
 
 		final ElementalApplication.Builder infusionBuilder = ElementalApplications.builder()
@@ -435,10 +436,10 @@ public class ElementCommand {
 
 		final ItemStack stack = livingEntity.getMainHandStack();
 
-		if (stack.isEmpty()) 
+		if (stack.isEmpty())
 			return sendError(context, Text.translatable("commands.enchant.failed.itemless", entity.getName().getString()));
 
-		if (!(stack.getItem() instanceof ToolItem)) 
+		if (!(stack.getItem() instanceof ToolItem))
 			return sendError(context, Text.translatable("commands.element.infuse.failed.incompatible", entity.getName().getString()));
 
 		final ElementalApplication.Builder infusionBuilder = ElementalApplications.builder()
@@ -470,10 +471,10 @@ public class ElementCommand {
 
 		final ItemStack stack = livingEntity.getMainHandStack();
 
-		if (stack.isEmpty()) 
+		if (stack.isEmpty())
 			return sendError(context, Text.translatable("commands.enchant.failed.itemless", entity.getName().getString()));
 
-		if (!(stack.getItem() instanceof ToolItem)) 
+		if (!(stack.getItem() instanceof ToolItem))
 			return sendError(context, Text.translatable("commands.element.infuse.failed.incompatible", entity.getName().getString()));
 
 		return ElementalInfusionComponent.removeInfusion(stack)

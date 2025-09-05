@@ -1,21 +1,21 @@
 package io.github.xrickastley.originsgenshin.renderer;
 
+import com.mojang.blaze3d.systems.RenderSystem;
+
 import java.util.ArrayList;
 import java.util.List;
 
 import org.joml.Matrix4f;
 
-import com.mojang.blaze3d.systems.RenderSystem;
-
 import io.github.xrickastley.originsgenshin.util.ClientConfig;
 import io.github.xrickastley.originsgenshin.util.Color;
 import io.github.xrickastley.originsgenshin.util.Ease;
 import io.github.xrickastley.originsgenshin.util.TextHelper;
-import me.shedaniel.autoconfig.AutoConfig;
+
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.minecraft.client.MinecraftClient;
-import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.font.TextRenderer.TextLayerType;
+import net.minecraft.client.font.TextRenderer;
 import net.minecraft.client.render.Camera;
 import net.minecraft.client.render.VertexConsumerProvider;
 import net.minecraft.client.util.math.MatrixStack;
@@ -23,6 +23,8 @@ import net.minecraft.client.world.ClientWorld;
 import net.minecraft.text.OrderedText;
 import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
+
+import me.shedaniel.autoconfig.AutoConfig;
 
 public final class WorldTextRenderer {
 	private final List<Entry> entries = new ArrayList<>();
@@ -48,7 +50,7 @@ public final class WorldTextRenderer {
 		final ClientConfig config = AutoConfig
 			.getConfigHolder(ClientConfig.class)
 			.getConfig();
-		
+
 		final double d = camera.getPos().x;
 		final double e = camera.getPos().y;
 		final double f = camera.getPos().z;
@@ -164,7 +166,7 @@ public final class WorldTextRenderer {
 		}
 
 		@Override
-		protected void render(Camera camera, float tickDelta, MatrixStack matrices) {	
+		protected void render(Camera camera, float tickDelta, MatrixStack matrices) {
 			final MinecraftClient client = MinecraftClient.getInstance();
 			final VertexConsumerProvider.Immediate immediate = client.getBufferBuilders().getEntityVertexConsumers();
 
@@ -172,7 +174,7 @@ public final class WorldTextRenderer {
 
 			final double alpha = Math.max(0.0f, MathHelper.lerp((deltaTime - fadeAge) / (maxAge - fadeAge), 1.0, 0.0));
 			final double scale = (1.25 - (Ease.IN_OUT_QUART.applyLerpProgress(deltaTime / scaleAge, 0, 1) * 0.5)) * this.scale;
-			
+
 			if (alpha <= 0f || scale <= 0f) return;
 
 			final double x = this.x;

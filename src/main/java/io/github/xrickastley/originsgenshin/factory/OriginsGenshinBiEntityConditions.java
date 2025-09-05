@@ -5,6 +5,7 @@ import java.util.function.Supplier;
 import io.github.apace100.apoli.power.factory.condition.ConditionFactory;
 import io.github.apace100.apoli.registry.ApoliRegistries;
 import io.github.xrickastley.originsgenshin.condition.bientity.*;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.registry.Registry;
 import net.minecraft.util.Pair;

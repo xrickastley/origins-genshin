@@ -1,5 +1,7 @@
 package io.github.xrickastley.originsgenshin.renderer.genshin;
 
+import com.mojang.blaze3d.systems.RenderSystem;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -7,8 +9,6 @@ import java.util.stream.IntStream;
 
 import org.joml.Matrix3f;
 import org.joml.Matrix4f;
-
-import com.mojang.blaze3d.systems.RenderSystem;
 
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.component.ElementComponent;
@@ -19,6 +19,7 @@ import io.github.xrickastley.originsgenshin.util.BoxUtil;
 import io.github.xrickastley.originsgenshin.util.Color;
 import io.github.xrickastley.originsgenshin.util.Colors;
 import io.github.xrickastley.originsgenshin.util.Ease;
+
 import net.fabricmc.fabric.api.client.rendering.v1.WorldRenderContext;
 import net.fabricmc.fabric.api.networking.v1.PacketSender;
 import net.fabricmc.fabric.api.networking.v1.PacketType;
@@ -78,7 +79,7 @@ public final class SpecialEffectsRenderer implements PacketHandler<ShowElectroCh
 
 	public void render(WorldRenderContext context) {
 		entries.forEach(entry -> entry.render(context, this));
-		
+
 		this.renderEffects(context);
 	}
 
@@ -120,7 +121,7 @@ public final class SpecialEffectsRenderer implements PacketHandler<ShowElectroCh
 	private void renderChargeLine(WorldRenderContext context, Vec3d initialPos, Vec3d finalPos, Color outerColor, Color innerColor) {
 	    final Camera camera = context.camera();
 	    final Vec3d camPos = camera.getPos();
-		
+
 	    final MatrixStack matrices = new MatrixStack();
 	    matrices.push();
 		matrices.multiply(RotationAxis.POSITIVE_X.rotationDegrees(camera.getPitch()));
@@ -174,7 +175,7 @@ public final class SpecialEffectsRenderer implements PacketHandler<ShowElectroCh
 	    tess.draw();
 
 	    buf.begin(DrawMode.LINES, VertexFormats.LINES);
-	
+
 		for (int i = 1; i < positions.size(); i++) {
 			final Vec3d start = positions.get(i - 1);
 			final Vec3d end = positions.get(i);
@@ -201,12 +202,12 @@ public final class SpecialEffectsRenderer implements PacketHandler<ShowElectroCh
 	private List<Vec3d> generatePositions(final Vec3d initialPos, final Vec3d finalPos) {
 		final Vec3d norm = initialPos.subtract(finalPos);
 		final double length = norm.length();
-	
+
 		final int n = Math.max(1, this.poisson(SpecialEffectsRenderer.POISSON_DENSITY * length));
 		final List<Double> doubles = new ArrayList<>();
-	
+
 		for (int i = 0; i < n; i++) doubles.add(RANDOM.nextDouble());
-	
+
 		return doubles
 			.stream()
 			.sorted()
@@ -216,14 +217,14 @@ public final class SpecialEffectsRenderer implements PacketHandler<ShowElectroCh
 
 	private int poisson(double lambda) {
 		final double L = Math.exp(-lambda);
-	
+
 		int k = 0;
 		double p = 1.0;
 		do {
 			k++;
 			p *= SpecialEffectsRenderer.RANDOM.nextDouble();
 		} while (p > L);
-	
+
 		return k - 1;
 	}
 

@@ -6,6 +6,7 @@ import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
 import io.github.xrickastley.originsgenshin.element.ElementalApplications;
 import io.github.xrickastley.originsgenshin.util.TextHelper;
+
 import net.minecraft.entity.LivingEntity;
 
 import javax.annotation.Nullable;

@@ -10,6 +10,7 @@ import io.github.xrickastley.originsgenshin.factory.OriginsGenshinGameRules;
 import io.github.xrickastley.originsgenshin.registry.OriginsGenshinDamageTypes;
 import io.github.xrickastley.originsgenshin.util.NonEntityDamagingExplosion;
 import io.github.xrickastley.originsgenshin.util.TextHelper;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.network.packet.s2c.play.ExplosionS2CPacket;

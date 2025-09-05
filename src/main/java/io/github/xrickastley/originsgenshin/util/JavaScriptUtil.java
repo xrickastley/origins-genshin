@@ -11,7 +11,7 @@ public class JavaScriptUtil {
 	 * determined by {@link JavaScriptUtil#isTruthy(Object) JavaScriptUtil#isTruthy} or the last
 	 * <i>falsy</i> value as determined by {@link JavaScriptUtil#isFalsy(Object) JavaScriptUtil#isFalsy}
 	 * in the provided array.
-	 * 
+	 *
 	 * @param <T> The type of the array.
 	 * @param values The values to perform the logical OR operation on.
 	 */
@@ -25,7 +25,7 @@ public class JavaScriptUtil {
 	/**
 	 * Mimics JavaScript's "nullish coalesing" (??) operator, returning the first <b>non-null</b>
 	 * value or {@code null} if all provided values are {@code null}.
-	 * 
+	 *
 	 * @param <T> The type of the array.
 	 * @param values The values to perform the nullish coalesing operation on.
 	 */
@@ -39,7 +39,7 @@ public class JavaScriptUtil {
 	/**
 	 * Mimics JavaScript's falsy coercion, returning {@code true} if the value is considered
 	 * <i>falsy</i>. <br> <br>
-	 * 
+	 *
 	 * A value is considered <i>falsy</i> if:
 	 * <ul>
 	 * 	<li>it is {@code null},</li>
@@ -47,9 +47,9 @@ public class JavaScriptUtil {
 	 * 	<li>it is an empty string ({@code ""}), or</li>
 	 * 	<li>it is {@code 0}, {@code -0} or fulfills {@link Double#isNaN() Double#isNaN}.</li>
 	 * </ul>
-	 * 
+	 *
 	 * If any of the provided conditions are fulfilled, the value is considered <i>falsy</i>.
-	 * 
+	 *
 	 * @param any The value to test.
 	 */
 	public static boolean isFalsy(@Nullable Object any) {
@@ -62,10 +62,10 @@ public class JavaScriptUtil {
 	/**
 	 * Mimics JavaScript's truthy coercion, returning {@code true} if the value is considered
 	 * <i>truthy</i>. <br> <br>
-	 * 
+	 *
 	 * A value is considered <i>truthy</i> if {@code isFalsy(value)} is {@code false}, as <i>truthy</i>
 	 * is a direct negation of <i>falsy</i>.
-	 * 
+	 *
 	 * @param any The value to test.
 	 */
 	public static boolean isTruthy(@Nullable Object any) {

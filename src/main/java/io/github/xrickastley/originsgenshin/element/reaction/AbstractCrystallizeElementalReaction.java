@@ -1,5 +1,7 @@
 package io.github.xrickastley.originsgenshin.element.reaction;
 
+import java.util.Set;
+
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
 import io.github.xrickastley.originsgenshin.entity.CrystallizeShardEntity;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinEntities;
@@ -14,8 +16,6 @@ import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
-
-import java.util.Set;
 
 import javax.annotation.Nullable;
 
@@ -34,7 +34,7 @@ public abstract sealed class AbstractCrystallizeElementalReaction
 		final World world = entity.getWorld();
 
 		if (!(world instanceof final ServerWorld serverWorld)) return;
-		
+
 		final Vec3d spawnPos = this.clampToGround(entity.getWorld(), this.toAbsolutePos(entity, new Vec3d(0, 0, 1)));
 		final CrystallizeShardEntity crystallizeShard = new CrystallizeShardEntity(OriginsGenshinEntities.CRYSTALLIZE_SHARD, serverWorld, this.getAuraElement(), origin);
 

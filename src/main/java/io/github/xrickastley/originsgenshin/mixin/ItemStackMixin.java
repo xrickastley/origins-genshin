@@ -2,11 +2,8 @@ package io.github.xrickastley.originsgenshin.mixin;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Local;
-import net.minecraft.client.item.TooltipContext;
-import net.minecraft.item.Item;
-import net.minecraft.item.ToolItem;
-import net.minecraft.text.MutableText;
-import net.minecraft.text.Text;
+
+import java.util.List;
 
 import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
@@ -20,19 +17,23 @@ import io.github.xrickastley.originsgenshin.component.ElementalInfusionComponent
 import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinStatusEffects;
 import io.github.xrickastley.originsgenshin.util.TextHelper;
+
+import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.item.ToolItem;
+import net.minecraft.text.MutableText;
+import net.minecraft.text.Text;
 import net.minecraft.util.Formatting;
 import net.minecraft.util.Hand;
 import net.minecraft.util.TypedActionResult;
 import net.minecraft.world.World;
 
-import java.util.List;
-
 // Prioritized since Frozen **MUST** disable using items.
 @Mixin(value = ItemStack.class, priority = Integer.MIN_VALUE)
 public abstract class ItemStackMixin {
-	@Shadow 
+	@Shadow
 	public abstract Item getItem();
 
 	@Shadow

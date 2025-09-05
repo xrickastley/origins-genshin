@@ -4,15 +4,12 @@ import java.util.Optional;
 
 import org.jetbrains.annotations.Nullable;
 
-import dev.onyxstudios.cca.api.v3.component.ComponentKey;
-import dev.onyxstudios.cca.api.v3.component.ComponentRegistry;
-import dev.onyxstudios.cca.api.v3.item.ItemComponent;
-
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
 import io.github.xrickastley.originsgenshin.element.ElementalDamageSource;
 import io.github.xrickastley.originsgenshin.element.InternalCooldownContext;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
@@ -21,6 +18,10 @@ import net.minecraft.item.ToolItem;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
 import net.minecraft.nbt.NbtOps;
+
+import dev.onyxstudios.cca.api.v3.component.ComponentKey;
+import dev.onyxstudios.cca.api.v3.component.ComponentRegistry;
+import dev.onyxstudios.cca.api.v3.item.ItemComponent;
 
 public final class ElementalInfusionComponent extends ItemComponent {
 	public static final ComponentKey<ElementalInfusionComponent> KEY = ComponentRegistry.getOrCreate(OriginsGenshin.identifier("elemental_infusion"), ElementalInfusionComponent.class);
@@ -105,7 +106,7 @@ public final class ElementalInfusionComponent extends ItemComponent {
 			);
 		} catch (Exception e) {
 			OriginsGenshin.sublogger().error("Error on DS apply; supressing and skipping...", e);
-			
+
 			return Optional.empty();
 		}
 	}

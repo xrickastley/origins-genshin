@@ -1,6 +1,7 @@
 package io.github.xrickastley.originsgenshin.registry;
 
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
+
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.registry.RegistryKeys;

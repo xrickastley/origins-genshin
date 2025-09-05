@@ -23,7 +23,7 @@ public class BossBarCommand {
 				.then(
 					CommandManager
 						.literal("set")
-						.then(										
+						.then(
 							CommandManager
 								.argument("id", IdentifierArgumentType.identifier())
 								.suggests(net.minecraft.server.command.BossBarCommand.SUGGESTION_PROVIDER)
@@ -79,7 +79,7 @@ public class BossBarCommand {
 		final LivingEntity entity = bossBar.originsgenshin$getEntity();
 
 		if (entity != null && entity.isDead()) bossBar.originsgenshin$setEntity(null);
- 
+
 		context
 			.getSource()
 			.sendFeedback(
@@ -88,7 +88,7 @@ public class BossBarCommand {
 					: Text.translatable("commands.bossbar.get.entity.none", bossBar.toHoverableText()),
 				true
 			);
-	
+
 		return entity != null ? 1 : 0;
 	}
 }

@@ -1,10 +1,10 @@
 package io.github.xrickastley.originsgenshin.element;
 
-import java.util.Objects;
-import java.util.UUID;
-
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
+
+import java.util.Objects;
+import java.util.UUID;
 
 import io.github.apace100.calio.data.SerializableData;
 import io.github.apace100.calio.data.SerializableDataType;

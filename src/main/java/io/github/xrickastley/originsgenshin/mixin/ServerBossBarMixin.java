@@ -21,7 +21,7 @@ import net.minecraft.text.Text;
 import net.minecraft.util.math.MathHelper;
 
 @Mixin(ServerBossBar.class)
-public abstract class ServerBossBarMixin 
+public abstract class ServerBossBarMixin
 	extends BossBar
 {
 	@Shadow

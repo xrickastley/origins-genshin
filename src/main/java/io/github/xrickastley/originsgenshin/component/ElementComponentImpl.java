@@ -34,6 +34,7 @@ import io.github.xrickastley.originsgenshin.registry.OriginsGenshinEntityTypeTag
 import io.github.xrickastley.originsgenshin.registry.OriginsGenshinRegistries;
 import io.github.xrickastley.originsgenshin.util.Array;
 import io.github.xrickastley.originsgenshin.util.ImmutablePair;
+
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
@@ -585,7 +586,7 @@ public final class ElementComponentImpl implements ElementComponent {
 		ElementComponentImpl.ENTITY_TYPE_ELEMENT_MAP.put(OriginsGenshinEntityTypeTags.DEALS_DENDRO_DAMAGE, Element.DENDRO);
 		ElementComponentImpl.ENTITY_TYPE_ELEMENT_MAP.put(OriginsGenshinEntityTypeTags.DEALS_CRYO_DAMAGE, Element.CRYO);
 		ElementComponentImpl.ENTITY_TYPE_ELEMENT_MAP.put(OriginsGenshinEntityTypeTags.DEALS_GEO_DAMAGE, Element.GEO);
-		
+
 		ElementComponentImpl.DAMAGE_TYPE_ELEMENT_MAP.put(OriginsGenshinDamageTypeTags.HAS_PYRO_INFUSION, Element.PYRO);
 		ElementComponentImpl.DAMAGE_TYPE_ELEMENT_MAP.put(OriginsGenshinDamageTypeTags.HAS_HYDRO_INFUSION, Element.HYDRO);
 		ElementComponentImpl.DAMAGE_TYPE_ELEMENT_MAP.put(OriginsGenshinDamageTypeTags.HAS_ELECTRO_INFUSION, Element.ELECTRO);

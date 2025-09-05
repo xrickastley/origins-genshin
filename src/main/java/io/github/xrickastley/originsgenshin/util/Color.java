@@ -218,7 +218,7 @@ public final class Color {
 		final List<Color> result = new ArrayList<>();
 
 		for (int i = 0; i < steps; i++)
-			result.add(Color.gradientStep(start, end, (double) i / (double) (steps - 1), ease)); 
+			result.add(Color.gradientStep(start, end, (double) i / (double) (steps - 1), ease));
 
 		return result;
 	}

@@ -54,7 +54,7 @@ public class OriginsGenshinRegistries {
 		OriginsGenshinReloadListener.addAfterLoadListener(
 			OriginsGenshinRegistries.INTERNAL_COOLDOWN_TYPE,
 			registry -> {
-				
+
 			}
 		);
 	}

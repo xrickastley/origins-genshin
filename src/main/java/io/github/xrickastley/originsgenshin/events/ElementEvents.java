@@ -4,6 +4,7 @@ import org.jetbrains.annotations.Nullable;
 
 import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
+
 import net.fabricmc.fabric.api.event.Event;
 import net.fabricmc.fabric.api.event.EventFactory;
 
@@ -19,7 +20,7 @@ public final class ElementEvents {
 			for (final ElementRefreshed listener : listeners) listener.onElementRefreshed(element, cur, prev);
 		}
 	);
-	
+
 	public static final Event<ElementRemoved> REMOVED = EventFactory.createArrayBacked(ElementRemoved.class,
 		listeners -> (element, application) -> {
 			for (final ElementRemoved listener : listeners) listener.onElementRemoved(element, application);
@@ -30,7 +31,7 @@ public final class ElementEvents {
 	public interface ElementApplied {
 		void onElementApplied(Element element, @Nullable ElementalApplication application);
 	}
-	
+
 	@FunctionalInterface
 	public interface ElementRefreshed {
 		void onElementRefreshed(Element element, @Nullable ElementalApplication current, @Nullable ElementalApplication previous);

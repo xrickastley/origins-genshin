@@ -1,11 +1,10 @@
 package io.github.xrickastley.originsgenshin.mixin.client;
 
+import com.llamalad7.mixinextras.sugar.Local;
+
 import java.util.HashSet;
 import java.util.Set;
 
-import com.llamalad7.mixinextras.sugar.Local;
-import net.minecraft.client.gui.hud.ClientBossBar;
-import net.minecraft.entity.boss.BossBar;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
@@ -25,6 +24,8 @@ import io.github.xrickastley.originsgenshin.util.Functions;
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.gui.DrawContext;
 import net.minecraft.client.gui.hud.BossBarHud;
+import net.minecraft.client.gui.hud.ClientBossBar;
+import net.minecraft.entity.boss.BossBar;
 import net.minecraft.util.Identifier;
 
 // /bossbar set <id> entity <entity selector>
@@ -35,7 +36,7 @@ public class BossBarHudMixin {
 	private MinecraftClient client;
 
 	@ModifyConstant(
-		method = "render", 
+		method = "render",
 		constant = @Constant(intValue = 9, ordinal = 1)
 	)
 	private int addElementsToRender(int value, @Local ClientBossBar bossBar) {

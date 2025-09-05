@@ -5,9 +5,9 @@ import java.util.List;
 
 import io.github.xrickastley.originsgenshin.OriginsGenshinClient;
 import io.github.xrickastley.originsgenshin.element.reaction.ElementalReaction;
+import io.github.xrickastley.originsgenshin.entity.CrystallizeShardEntity.SyncCrystallizeShardTypeS2CPacket;
 import io.github.xrickastley.originsgenshin.entity.CrystallizeShardEntity;
 import io.github.xrickastley.originsgenshin.entity.DendroCoreEntity;
-import io.github.xrickastley.originsgenshin.entity.CrystallizeShardEntity.SyncCrystallizeShardTypeS2CPacket;
 import io.github.xrickastley.originsgenshin.registry.OriginsGenshinRegistries;
 import io.github.xrickastley.originsgenshin.renderer.WorldTextRenderer.DamageText;
 import io.github.xrickastley.originsgenshin.renderer.WorldTextRenderer.ReactionText;

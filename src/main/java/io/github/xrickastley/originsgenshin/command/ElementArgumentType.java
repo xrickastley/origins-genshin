@@ -15,6 +15,7 @@ import java.util.function.Function;
 
 import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.util.Functions;
+
 import net.minecraft.command.CommandSource;
 import net.minecraft.server.command.ServerCommandSource;
 

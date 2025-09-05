@@ -1,5 +1,7 @@
 package io.github.xrickastley.originsgenshin.element;
 
+import com.mojang.serialization.Codec;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Function;
@@ -8,8 +10,6 @@ import java.util.function.Predicate;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
-import com.mojang.serialization.Codec;
-
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.component.ElementComponent;
 import io.github.xrickastley.originsgenshin.component.ElementComponentImpl;
@@ -17,6 +17,7 @@ import io.github.xrickastley.originsgenshin.events.ElementEvents;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinStatusEffects;
 import io.github.xrickastley.originsgenshin.util.Color;
 import io.github.xrickastley.originsgenshin.util.Colors;
+
 import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
@@ -121,7 +122,7 @@ public enum Element {
 			.linkToElement(Element.DENDRO)
 			.linkGaugeDecayIf(application -> ElementComponent.KEY.get(application.getEntity()).hasElementalApplication(Element.BURNING))
 	);
-	
+
 	public static final Codec<Element> CODEC = Codecs.NON_EMPTY_STRING.xmap(Element::valueOf, Element::toString);
 
 	private final Identifier id;
@@ -242,7 +243,7 @@ public enum Element {
 					)
 				);
 			});
-			
+
 		ElementEvents.REFRESHED
 			.register((element, application, _prev) -> {
 				if (element != Element.CRYO || application == null) return;
