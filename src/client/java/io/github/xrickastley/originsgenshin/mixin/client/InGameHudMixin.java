@@ -27,7 +27,6 @@ import net.minecraft.util.Identifier;
 
 @Mixin(InGameHud.class)
 public class InGameHudMixin {
-
 	@Shadow
 	@Final
 	private MinecraftClient client;

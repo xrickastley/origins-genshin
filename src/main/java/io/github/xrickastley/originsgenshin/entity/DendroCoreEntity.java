@@ -160,8 +160,6 @@ public final class DendroCoreEntity extends OriginsGenshinEntity {
 			);
 	}
 
-	// why does it say NPE on target.getBoundingBox :sob:, IT'S ALREADY TARGET != NULL??
-	@SuppressWarnings("null")
 	private void doHyperbloom() {
 		if (!(this.getWorld() instanceof final ServerWorld world)) return;
 

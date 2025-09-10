@@ -7,10 +7,9 @@
     "BossBarHud$1Mixin",
     "BossBarHudAccessor",
     "BossBarHudMixin",
-    "GameRendererMixin",
     "InGameHudMixin",
-    "LivingEntityRendererMixin",
-    "WorldRendererAccessor"
+    "ItemStackMixin",
+    "LivingEntityRendererMixin"
   ],
   "injectors": {
     "defaultRequire": 1
