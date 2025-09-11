@@ -7,7 +7,7 @@ import io.github.xrickastley.originsgenshin.util.TextHelper;
 public final class HydroBloomElementalReaction extends AbstractBloomElementalReaction {
 	HydroBloomElementalReaction() {
 		super(
-			new ElementalReactionSettings("Bloom", OriginsGenshin.identifier("bloom_hydro"), TextHelper.reaction("Bloom", "#01e858"))
+			new ElementalReactionSettings("Bloom", OriginsGenshin.identifier("bloom_hydro"), TextHelper.reaction("origins-genshin.element.bloom", "#01e858"))
 				.setReactionCoefficient(0.5)
 				.setAuraElement(Element.DENDRO)
 				.setTriggeringElement(Element.HYDRO, 4)

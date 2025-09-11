@@ -7,7 +7,7 @@ import io.github.xrickastley.originsgenshin.util.TextHelper;
 public final class HydroVaporizeElementalReaction extends AmplifyingElementalReaction {
 	HydroVaporizeElementalReaction() {
 		super(
-			new ElementalReactionSettings("Vaporize", OriginsGenshin.identifier("vaporize_hydro"), TextHelper.reaction("Vaporize", "#f2be87"))
+			new ElementalReactionSettings("Vaporize", OriginsGenshin.identifier("vaporize_hydro"), TextHelper.reaction("origins-genshin.element.vaporize", "#f2be87"))
 				.setReactionCoefficient(2.0)
 				.setAuraElement(Element.PYRO)
 				.setTriggeringElement(Element.HYDRO, 1),

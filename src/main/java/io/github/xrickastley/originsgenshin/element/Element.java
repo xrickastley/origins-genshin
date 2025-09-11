@@ -19,6 +19,7 @@ import io.github.xrickastley.originsgenshin.util.Color;
 import io.github.xrickastley.originsgenshin.util.Colors;
 
 import net.minecraft.entity.effect.StatusEffectInstance;
+import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
 import net.minecraft.util.dynamic.Codecs;
@@ -186,11 +187,14 @@ public enum Element {
 	public boolean hasAuraTax() {
 		return settings.hasAuraTax;
 	}
-
+	
 	public String getString() {
 		final String string = this.toString();
+		final String fallback = string.substring(0, 1).toUpperCase() + string.substring(1).toLowerCase();
 
-		return string.substring(0, 1).toUpperCase() + string.substring(1).toLowerCase();
+		return Text
+			.translatableWithFallback("origins-genshin.element." + string.toLowerCase(), fallback)
+			.getString();
 	}
 
 	void reduceLinkedElements(double reduction, ElementalApplication application, boolean isGaugeDecay) {

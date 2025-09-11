@@ -8,7 +8,7 @@ import io.github.xrickastley.originsgenshin.util.TextHelper;
 public final class FrozenSwirlElementalReaction extends AbstractSwirlElementalReaction {
 	FrozenSwirlElementalReaction() {
 		super(
-			new ElementalReactionSettings("Swirl", OriginsGenshin.identifier("swirl_frozen"), TextHelper.reaction("Swirl", Colors.ANEMO))
+			new ElementalReactionSettings("Swirl", OriginsGenshin.identifier("swirl_frozen"), TextHelper.reaction("origins-genshin.element.swirl", Colors.ANEMO))
 				.setReactionCoefficient(0.5)
 				.setAuraElement(Element.FREEZE, 4)
 				.setTriggeringElement(Element.ANEMO, 5)

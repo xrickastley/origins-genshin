@@ -12,7 +12,7 @@ import javax.annotation.Nullable;
 public final class HyperbloomElementalReaction extends AbstractDendroCoreElementalReaction {
 	HyperbloomElementalReaction() {
 		super(
-			new ElementalReactionSettings("Hyperbloom", OriginsGenshin.identifier("hyperbloom"), TextHelper.reaction("Hyperbloom", Colors.ELECTRO))
+			new ElementalReactionSettings("Hyperbloom", OriginsGenshin.identifier("hyperbloom"), TextHelper.reaction("origins-genshin.element.hyperbloom", Colors.ELECTRO))
 		);
 	}
 

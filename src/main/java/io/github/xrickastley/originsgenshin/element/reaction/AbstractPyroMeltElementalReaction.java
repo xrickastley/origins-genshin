@@ -10,7 +10,7 @@ public abstract sealed class AbstractPyroMeltElementalReaction
 {
 	AbstractPyroMeltElementalReaction(String name, String idPath, Element auraElement) {
 		super(
-			new ElementalReactionSettings(name, OriginsGenshin.identifier(idPath), TextHelper.reaction("Melt", "#f2be87"))
+			new ElementalReactionSettings(name, OriginsGenshin.identifier(idPath), TextHelper.reaction("origins-genshin.element.melt", "#f2be87"))
 				.setReactionCoefficient(2.0)
 				.setAuraElement(auraElement)
 				.setTriggeringElement(Element.PYRO, 5)

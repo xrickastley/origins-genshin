@@ -185,6 +185,14 @@ public final class InternalCooldownContext {
 				.setType(InternalCooldownType.NONE);
 		}
 
+		public static InternalCooldownTag getTag(Builder builder) {
+			return builder.tag;
+		}
+
+		public static InternalCooldownType getType(Builder builder) {
+			return builder.type;
+		}
+
 		public InternalCooldownContext.Builder setTag(InternalCooldownTag tag) {
 			this.tag = tag;
 

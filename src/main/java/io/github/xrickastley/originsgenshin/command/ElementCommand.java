@@ -7,6 +7,7 @@ import com.mojang.brigadier.arguments.IntegerArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
+import java.text.DecimalFormat;
 import java.util.List;
 import java.util.function.Function;
 
@@ -160,12 +161,13 @@ public class ElementCommand {
 		);
 	}
 
-	private static final Function<ElementalApplication, String> TO_FRIENDLY_STRING = a -> {
-		final String element = a.getElement().toString().substring(0, 1).toUpperCase() + a.getElement().toString().substring(1).toLowerCase();
+	private static final DecimalFormat GAUGE_FORMAT = new DecimalFormat("#.###");
+	private static final DecimalFormat DURATION_FORMAT = new DecimalFormat("#.##");
 
-		return a.isDuration()
-			? String.format("%.3fU %s (%.2fs left)", a.getCurrentGauge(), element, a.getRemainingTicks() / 20.0)
-			: String.format("%.3fU %s", a.getCurrentGauge(), element);
+	private static final Function<ElementalApplication, Text> TO_FRIENDLY_STRING = a -> {
+		return a.isGaugeUnits()
+			? Text.translatable("origins-genshin.formats.elemental_application.gauge_unit", GAUGE_FORMAT.format(a.getCurrentGauge()), a.getElement().getString())
+			: Text.translatable("origins-genshin.formats.elemental_application.duration", GAUGE_FORMAT.format(a.getCurrentGauge()), a.getElement().getString(), DURATION_FORMAT.format(a.getRemainingTicks() / 20.0));
 	};
 
 	private static int applyGaugeUnit(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
@@ -174,13 +176,8 @@ public class ElementCommand {
 		final double gaugeUnits = DoubleArgumentType.getDouble(context, "gaugeUnits");
 		final boolean aura = ElementCommand.getOrDefault(context, "isAura", Boolean.class, true);
 
-		if (!(entity instanceof final LivingEntity target)) {
-			context
-				.getSource()
-				.sendError(Text.translatable("commands.element.failed.entity", entity));
-
-			return 0;
-		}
+		if (!(entity instanceof final LivingEntity target)) 
+			return sendError(context, Text.translatable("commands.element.failed.entity", entity));
 
 		final ElementComponent component = ElementComponent.KEY.get(target);
 		final List<ElementalReaction> reactions = component
@@ -189,14 +186,10 @@ public class ElementCommand {
 				InternalCooldownContext.ofNone()
 			);
 
-		context
-			.getSource()
-			.sendFeedback(
-				() -> Text.translatable(reactions.isEmpty() ? "commands.element.apply" : "commands.element.apply.reactions", element, entity.getDisplayName(), Texts.join(reactions, Functions.compose(ElementalReaction::getId, Identifier::toString, Text::literal))),
-				true
-			);
-
-		return 1;
+		if (reactions.isEmpty())
+			return sendFeedback(context, Text.translatable("commands.element.apply", element, entity.getDisplayName()), true);
+		else 
+			return sendFeedback(context, Text.translatable("commands.element.apply", element, entity.getDisplayName(), Texts.join(reactions, Functions.compose(ElementalReaction::getId, Identifier::toString, Text::literal))), true);
 	}
 
 	private static int applyDuration(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
@@ -205,13 +198,8 @@ public class ElementCommand {
 		final double gaugeUnits = DoubleArgumentType.getDouble(context, "gaugeUnits");
 		final int duration = IntegerArgumentType.getInteger(context, "duration");
 
-		if (!(entity instanceof final LivingEntity target)) {
-			context
-				.getSource()
-				.sendError(Text.translatable("commands.element.failed.entity", entity));
-
-			return 0;
-		}
+		if (!(entity instanceof final LivingEntity target)) 
+			return sendError(context, Text.translatable("commands.element.failed.entity", entity));
 
 		final ElementComponent component = ElementComponent.KEY.get(target);
 		final List<ElementalReaction> reactions = component
@@ -220,27 +208,18 @@ public class ElementCommand {
 				InternalCooldownContext.ofNone()
 			);
 
-		context
-			.getSource()
-			.sendFeedback(
-				() -> Text.translatable(reactions.isEmpty() ? "commands.element.apply" : "commands.element.apply.reactions", element, entity.getDisplayName(), Texts.join(reactions, Functions.compose(ElementalReaction::getId, Identifier::toString, Text::literal))),
-				true
-			);
-
-		return 1;
+		if (reactions.isEmpty())
+			return sendFeedback(context, Text.translatable("commands.element.apply", element, entity.getDisplayName()), true);
+		else 
+			return sendFeedback(context, Text.translatable("commands.element.apply", element, entity.getDisplayName(), Texts.join(reactions, Functions.compose(ElementalReaction::getId, Identifier::toString, Text::literal))), true);
 	}
 
 	private static int removeElement(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
 		final Entity entity = EntityArgumentType.getEntity(context, "target");
 		final Element element = ElementArgumentType.getElement(context, "element");
 
-		if (!(entity instanceof final LivingEntity target)) {
-			context
-				.getSource()
-				.sendError(Text.translatable("commands.element.failed.entity", entity));
-
-			return 0;
-		}
+		if (!(entity instanceof final LivingEntity target)) 
+			return sendError(context, Text.translatable("commands.element.failed.entity", entity));
 
 		final ElementComponent component = ElementComponent.KEY.get(target);
 		final ElementHolder holder = component.getElementHolder(element);
@@ -257,14 +236,7 @@ public class ElementCommand {
 
 		ElementComponent.sync(entity);
 
-		context
-			.getSource()
-			.sendFeedback(
-				() -> Text.translatable("commands.element.remove", element, entity),
-				true
-			);
-
-		return 1;
+		return sendFeedback(context, Text.translatable("commands.element.remove", element, entity), true);	
 	}
 
 	private static int reduceElement(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
@@ -272,13 +244,8 @@ public class ElementCommand {
 		final Element element = ElementArgumentType.getElement(context, "element");
 		final double gaugeUnits = DoubleArgumentType.getDouble(context, "gaugeUnits");
 
-		if (!(entity instanceof final LivingEntity target)) {
-			context
-				.getSource()
-				.sendError(Text.translatable("commands.element.failed.entity", entity));
-
-			return 0;
-		}
+		if (!(entity instanceof final LivingEntity target)) 
+			return sendError(context, Text.translatable("commands.element.failed.entity", entity));
 
 		final ElementComponent component = ElementComponent.KEY.get(target);
 		final ElementHolder holder = component.getElementHolder(element);
@@ -307,7 +274,7 @@ public class ElementCommand {
 		if (appliedElements.isEmpty())
 			return sendError(context, Text.translatable("commands.element.query.multiple.none", entity));
 		
-		return sendFeedback(context, Text.translatable("commands.element.query.multiple.success", entity.getDisplayName(), Texts.join(appliedElements, Functions.compose(ElementCommand.TO_FRIENDLY_STRING, Text::literal))), true);
+		return sendFeedback(context, Text.translatable("commands.element.query.multiple.success", entity.getDisplayName(), Texts.join(appliedElements, ElementCommand.TO_FRIENDLY_STRING)), true);
 	}
 
 	private static int queryElement(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
@@ -361,7 +328,7 @@ public class ElementCommand {
 			.setType(type);
 
 		if (ElementalInfusionComponent.applyInfusion(stack, infusionBuilder, icdBuilder)) {
-			final String elementString = ElementCommand.TO_FRIENDLY_STRING.apply(infusionBuilder.build(livingEntity));
+			final String elementString = ElementCommand.TO_FRIENDLY_STRING.apply(infusionBuilder.build(livingEntity)).getString();
 			final String icdString = String.format("%s/%s", tag.getTag(), type.getId());
 
 			return sendFeedback(context, Text.translatable("commands.element.infuse.apply.success", elementString, icdString, entity.getName().getString()), true);
@@ -406,7 +373,7 @@ public class ElementCommand {
 			.setType(type);
 
 		if (ElementalInfusionComponent.applyInfusion(stack, infusionBuilder, icdBuilder)) {
-			final String elementString = ElementCommand.TO_FRIENDLY_STRING.apply(infusionBuilder.build(livingEntity));
+			final String elementString = ElementCommand.TO_FRIENDLY_STRING.apply(infusionBuilder.build(livingEntity)).getString();
 			final String icdString = String.format("%s/%s", tag.getTag(), type.getId());
 
 			return sendFeedback(context, Text.translatable("commands.element.infuse.apply.success", elementString, icdString, entity.getName().getString()), true);

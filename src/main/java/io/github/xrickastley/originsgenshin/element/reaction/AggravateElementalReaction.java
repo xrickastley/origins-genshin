@@ -8,7 +8,7 @@ import io.github.xrickastley.originsgenshin.util.TextHelper;
 public final class AggravateElementalReaction extends AdditiveElementalReaction {
 	AggravateElementalReaction() {
 		super(
-			new ElementalReactionSettings("Aggravate", OriginsGenshin.identifier("aggravate"), TextHelper.reaction("Aggravate", Colors.ELECTRO))
+			new ElementalReactionSettings("Aggravate", OriginsGenshin.identifier("aggravate"), TextHelper.reaction("origins-genshin.element.aggravate", Colors.ELECTRO))
 				.setReactionCoefficient(0)
 				.setAuraElement(Element.QUICKEN)
 				.setTriggeringElement(Element.ELECTRO, 2)

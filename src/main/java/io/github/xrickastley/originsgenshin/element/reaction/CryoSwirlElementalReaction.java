@@ -8,7 +8,7 @@ import io.github.xrickastley.originsgenshin.util.TextHelper;
 public final class CryoSwirlElementalReaction extends AbstractSwirlElementalReaction {
 	CryoSwirlElementalReaction() {
 		super(
-			new ElementalReactionSettings("Swirl", OriginsGenshin.identifier("swirl_cryo"), TextHelper.reaction("Swirl", Colors.ANEMO))
+			new ElementalReactionSettings("Swirl", OriginsGenshin.identifier("swirl_cryo"), TextHelper.reaction("origins-genshin.element.swirl", Colors.ANEMO))
 				.setReactionCoefficient(0.5)
 				.setAuraElement(Element.CRYO, 3)
 				.setTriggeringElement(Element.ANEMO, 4)

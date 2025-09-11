@@ -12,7 +12,7 @@ import javax.annotation.Nullable;
 public final class BurgeonElementalReaction extends AbstractDendroCoreElementalReaction {
 	BurgeonElementalReaction() {
 		super(
-			new ElementalReactionSettings("Burgeon", OriginsGenshin.identifier("burgeon"), TextHelper.reaction("Burgeon", Colors.PYRO))
+			new ElementalReactionSettings("Burgeon", OriginsGenshin.identifier("burgeon"), TextHelper.reaction("origins-genshin.element.burgeon", Colors.PYRO))
 		);
 	}
 

@@ -52,7 +52,7 @@ public class TextHelper {
 	}
 
 	public static MutableText reaction(String text, Color color) {
-		return TextHelper.font(text, TextHelper.GENSHIN_FONT)
+		return TextHelper.font(Text.translatable(text), TextHelper.GENSHIN_FONT)
 			.fillStyle(Style.EMPTY.withColor(color.asRGB()));
 	}
 
