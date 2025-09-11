@@ -179,7 +179,10 @@ public final class ElementComponentImpl implements ElementComponent {
 		// Only do this on the server || Only do this when doElements is true.
 		if (application.getEntity().getWorld().isClient || !application.getEntity().getWorld().getGameRules().getBoolean(OriginsGenshinGameRules.DO_ELEMENTS)) return Collections.emptyList();
 
-		if (application.isAuraElement() && application.isGaugeUnits() && this.getAppliedElements().length() > 0)
+		if (application.isGaugeUnits() && !application.isAuraElement() && this.getAppliedElements().isEmpty())
+			application = application.asAura();
+
+		if (application.isGaugeUnits() && application.isAuraElement() && this.getAppliedElements().length() > 0)
 			application = application.asNonAura();
 
 		// The elemental application is empty.
