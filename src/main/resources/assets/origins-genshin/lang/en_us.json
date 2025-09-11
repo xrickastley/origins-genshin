@@ -63,5 +63,42 @@
 	"commands.element.infuse.failed.incompatible": "%s's item cannot be infused with an element",
 	"commands.element.infuse.apply.success": "Applied elemental infusion %s (%s) to %s's item",
 	"commands.element.infuse.remove.none": "%s's item already has no elemental infusion!",
-	"commands.element.infuse.remove.success": "Removed elemental infusion from %s's item"
+	"commands.element.infuse.remove.success": "Removed elemental infusion from %s's item",
+
+	"item.seven-elements.components.infusion.infusion": "Elemental Infusion: ",
+	"item.seven-elements.components.infusion.tag": "ICD Tag: ",
+	"item.seven-elements.components.infusion.type": "ICD Type: ",
+	
+	"seven-elements.formats.icd_type": "%ss/%s hits",
+	"seven-elements.formats.elemental_application.gauge_unit": "%sU %s",
+	"seven-elements.formats.elemental_application.duration": "%sU %s (%ss left)",
+
+	"seven-elements.element.physical": "Physical",
+	"seven-elements.element.pyro": "Pyro",
+	"seven-elements.element.hydro": "Hydro",
+	"seven-elements.element.anemo": "Anemo",
+	"seven-elements.element.electro": "Electro",
+	"seven-elements.element.dendro": "Dendro",
+	"seven-elements.element.cryo": "Cryo",
+	"seven-elements.element.geo": "Geo",
+	"seven-elements.element.freeze": "Freeze",
+	"seven-elements.element.burning": "Burning",
+	"seven-elements.element.quicken": "Quicken",
+
+	"reaction.seven-elements.melt": "Melt",
+	"reaction.seven-elements.vaporize": "Vaporize",
+	"reaction.seven-elements.frozen": "Frozen",
+	"reaction.seven-elements.electro-charged": "Electro-Charged",
+	"reaction.seven-elements.overloaded": "Overloaded",
+	"reaction.seven-elements.superconduct": "Superconduct",
+	"reaction.seven-elements.shatter": "Shatter",
+	"reaction.seven-elements.quicken": "Quicken",
+	"reaction.seven-elements.spread": "Spread",
+	"reaction.seven-elements.aggravate": "Aggravate",
+	"reaction.seven-elements.burning": "Burning",
+	"reaction.seven-elements.bloom": "Bloom",
+	"reaction.seven-elements.swirl": "Swirl",
+	"reaction.seven-elements.crystallize": "Crystallize",
+	"reaction.seven-elements.hyperbloom": "Hyperbloom",
+	"reaction.seven-elements.burgeon": "Burgeon"
 }

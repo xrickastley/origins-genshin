@@ -27,6 +27,7 @@ import io.github.xrickastley.originsgenshin.element.InternalCooldownContext;
 import io.github.xrickastley.originsgenshin.element.reaction.AbstractBurningElementalReaction;
 import io.github.xrickastley.originsgenshin.element.reaction.ElectroChargedElementalReaction;
 import io.github.xrickastley.originsgenshin.element.reaction.ElementalReaction;
+import io.github.xrickastley.originsgenshin.element.reaction.FrozenElementalReaction;
 import io.github.xrickastley.originsgenshin.element.reaction.QuickenElementalReaction;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinGameRules;
 import io.github.xrickastley.originsgenshin.registry.OriginsGenshinDamageTypeTags;
@@ -375,6 +376,8 @@ public final class ElementComponentImpl implements ElementComponent {
 		final ElementalApplication currentApplication = this.getElementalApplication(application.getElement());
 
 		if (QuickenElementalReaction.mixin$preventReapplication(application, this)) return false;
+
+		if (FrozenElementalReaction.mixin$pseudoReapplication(application, this)) return true;
 
 		if (currentApplication != null && !currentApplication.isEmpty() && application.getElement().canBeAura()) {
 			Optional<Integer> priority = this.getHighestElementPriority();

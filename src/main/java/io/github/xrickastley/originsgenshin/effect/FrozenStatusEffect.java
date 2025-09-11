@@ -3,8 +3,9 @@ package io.github.xrickastley.originsgenshin.effect;
 import io.github.apace100.apoli.component.PowerHolderComponent;
 import io.github.apace100.apoli.power.CooldownPower;
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
+import io.github.xrickastley.originsgenshin.component.ElementComponent;
 import io.github.xrickastley.originsgenshin.component.FrozenEffectComponent;
-
+import io.github.xrickastley.originsgenshin.element.Element;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.attribute.EntityAttributeModifier;
 import net.minecraft.entity.attribute.EntityAttributes;
@@ -49,6 +50,14 @@ public final class FrozenStatusEffect extends StatusEffect {
 
 	@Override
 	public void applyUpdateEffect(LivingEntity entity, int amplifier) {
+		final ElementComponent component = ElementComponent.KEY.get(entity);
+
+		if (!component.hasElementalApplication(Element.FREEZE)) {
+			entity.removeStatusEffect(this);
+
+			return;
+		}
+
 		PowerHolderComponent.getPowers(entity, CooldownPower.class)
 			.forEach(power -> power.modify(1));
 

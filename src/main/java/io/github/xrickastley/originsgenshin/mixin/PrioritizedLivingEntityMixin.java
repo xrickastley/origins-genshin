@@ -72,8 +72,12 @@ public abstract class PrioritizedLivingEntityMixin
 		cancellable = true
 	)
 	private void preventRemovingCryoEffectIfCryoElement(@Nullable StatusEffect type, CallbackInfoReturnable<StatusEffectInstance> cir) {
-		if (type == OriginsGenshinStatusEffects.CRYO
-			&& ElementComponent.KEY.get(this).hasElementalApplication(Element.CRYO)) cir.setReturnValue(null);
+		final ElementComponent component = ElementComponent.KEY.get(this);
+
+		if (
+			type == OriginsGenshinStatusEffects.CRYO && component.hasElementalApplication(Element.CRYO)
+			|| type == OriginsGenshinStatusEffects.FROZEN && component.hasElementalApplication(Element.FREEZE)
+		) cir.setReturnValue(null);
 	}
 
 	@ModifyVariable(
@@ -82,9 +86,12 @@ public abstract class PrioritizedLivingEntityMixin
 		ordinal = 0
 	)
 	private Iterator<StatusEffectInstance> replaceIterator(Iterator<StatusEffectInstance> value) {
-		if (!ElementComponent.KEY.get(this).hasElementalApplication(Element.CRYO)) return value;
+		final ElementComponent component = ElementComponent.KEY.get(this);
 
-		return FilteredIterator.of(value, v -> v.getEffectType() == OriginsGenshinStatusEffects.CRYO);
+		return FilteredIterator.of(value, 
+			v -> !(v.getEffectType() == OriginsGenshinStatusEffects.CRYO && component.hasElementalApplication(Element.CRYO)
+				|| v.getEffectType() == OriginsGenshinStatusEffects.FROZEN && component.hasElementalApplication(Element.FREEZE))
+		);
 	}
 
 	@Inject(

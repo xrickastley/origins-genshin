@@ -1,5 +1,8 @@
 package io.github.xrickastley.originsgenshin.util;
 
+import net.minecraft.util.math.BlockPos;
+import net.minecraft.util.math.Vec3d;
+
 public class MathHelper2 {
 	public static double endOffset(double value, double offset, double start, double end) {
 		return Math.max(Math.max(value, start) - (end - offset), 0) / offset;
@@ -19,5 +22,17 @@ public class MathHelper2 {
 		final double decimal = value / Math.pow(10, power);
 
 		return (float) (Math.round(decimal * Math.pow(10, sigFigs)) / Math.pow(10, sigFigs) * Math.pow(10, power));
+	}
+
+	/**
+	 * Creates a {@code BlockPos} from the provided {@code Vec3d}. <br> <br>
+	 * 
+	 * This implementation ensures that the provided {@code Vec3d} relative to the world will
+	 * point to the same {@code BlockPos} returned by this method.
+	 * 
+	 * @param pos The position to turn into a {@code BlockPos}.
+	 */
+	public static BlockPos asBlockPos(Vec3d pos) {
+		return new BlockPos((int) Math.floor(pos.x), (int) Math.floor(pos.y), (int) Math.floor(pos.z));
 	}
 }

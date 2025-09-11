@@ -64,4 +64,11 @@ public final class FrozenElementalReaction extends ElementalReaction {
 			.sublogger(this)
 			.debug("Frozen (Elemental Application): {} | Frozen (Status Effect): {}", ElementComponent.KEY.get(entity).getElementalApplication(Element.FREEZE), entity.getStatusEffect(OriginsGenshinStatusEffects.FROZEN));
 	}
+
+	// These "mixins" are injected pieces of code (likening @Inject) that allow Burning to work properly, and allow others to easily see the way it was hardcoded.
+	public static boolean mixin$pseudoReapplication(ElementalApplication application, ElementComponent component) {
+		return component.hasElementalApplication(Element.FREEZE)
+			&& (application.getElement() == Element.CRYO 
+			|| (application.getElement() == Element.HYDRO && !component.hasElementalApplication(Element.HYDRO)));
+	}
 }

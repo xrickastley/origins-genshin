@@ -112,8 +112,6 @@ public final class ElementalInfusionComponent extends ItemComponent {
 	}
 
 	public static boolean applyInfusion(ItemStack stack, ElementalApplication.Builder applicationBuilder, InternalCooldownContext.Builder icdBuilder) {
-		if (!(stack.getItem() instanceof ToolItem)) return false;
-
 		final ElementalInfusionComponent component = ElementalInfusionComponent.KEY.get(stack);
 
 		if (component == null) return false;
@@ -127,13 +125,9 @@ public final class ElementalInfusionComponent extends ItemComponent {
 	}
 
 	public static boolean removeInfusion(ItemStack stack) {
-		if (!(stack.getItem() instanceof ToolItem)) return false;
-
 		final ElementalInfusionComponent component = ElementalInfusionComponent.KEY.get(stack);
 
-		if (component == null) return false;
-
-		if (!component.hasElementalInfusion()) return false;
+		if (component == null || !component.hasElementalInfusion()) return false;
 
 		component.remove("elemental_infusion");
 		component.remove("internal_cooldown");
