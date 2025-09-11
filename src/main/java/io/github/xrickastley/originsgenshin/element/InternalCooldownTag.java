@@ -1,5 +1,6 @@
 package io.github.xrickastley.originsgenshin.element;
 
+import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import com.mojang.serialization.Codec;
 
 import java.util.Map;
@@ -66,6 +67,14 @@ public final class InternalCooldownTag {
 		return INSTANCES.containsKey(tag)
 			? INSTANCES.get(tag)
 			: new InternalCooldownTag(tag);
+	}
+
+	public static void applySuggestions(SuggestionsBuilder builder) {
+		InternalCooldownTag.INSTANCES
+			.keySet()
+			.stream()
+			.map(string -> string.contains(" ") ? '"' + string + '"' : string)
+			.forEach(builder::suggest);
 	}
 
 	/**

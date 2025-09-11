@@ -4,7 +4,6 @@ import com.mojang.brigadier.CommandDispatcher;
 import com.mojang.brigadier.arguments.BoolArgumentType;
 import com.mojang.brigadier.arguments.DoubleArgumentType;
 import com.mojang.brigadier.arguments.IntegerArgumentType;
-import com.mojang.brigadier.arguments.StringArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
@@ -125,7 +124,7 @@ public class ElementCommand {
 								.then(
 									literal("gaugeUnit")
 									.then(
-										argument("tag", StringArgumentType.greedyString())
+										argument("tag", InternalCooldownTagType.tag())
 										.then(
 											argument("type", RegistryEntryArgumentType.registryEntry(registryAccess, OriginsGenshinRegistryKeys.INTERNAL_COOLDOWN_TYPE))
 											.executes(ElementCommand::infuseGaugeUnit)
@@ -139,7 +138,7 @@ public class ElementCommand {
 									.then(
 										argument("duration", IntegerArgumentType.integer(0))
 										.then(
-											argument("tag", StringArgumentType.greedyString())
+											argument("tag", InternalCooldownTagType.tag())
 											.then(
 												argument("type", RegistryEntryArgumentType.registryEntry(registryAccess, OriginsGenshinRegistryKeys.INTERNAL_COOLDOWN_TYPE))
 												.executes(ElementCommand::infuseDuration)
@@ -284,13 +283,8 @@ public class ElementCommand {
 		final ElementComponent component = ElementComponent.KEY.get(target);
 		final ElementHolder holder = component.getElementHolder(element);
 
-		if (!holder.hasElementalApplication()) {
-			context
-				.getSource()
-				.sendError(Text.translatable("commands.element.failed.none", entity.getDisplayName(), element));
-
-			return 0;
-		}
+		if (!holder.hasElementalApplication())
+			return sendError(context, Text.translatable("commands.element.failed.none", entity.getDisplayName(), element));
 
 		final double reducedGauge = holder
 			.getElementalApplication()
@@ -298,85 +292,44 @@ public class ElementCommand {
 
 		ElementComponent.sync(entity);
 
-		context
-			.getSource()
-			.sendFeedback(
-				() -> Text.translatable("commands.element.reduce", element, reducedGauge),
-				true
-			);
-
-		return 1;
+		return sendFeedback(context, Text.translatable("commands.element.reduce", element, reducedGauge), true);
 	}
 
 	private static int queryElements(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
 		final Entity entity = EntityArgumentType.getEntity(context, "target");
 
-		if (!(entity instanceof final LivingEntity target)) {
-			context
-				.getSource()
-				.sendError(Text.translatable("commands.element.failed.entity", entity));
-
-			return 0;
-		}
+		if (!(entity instanceof final LivingEntity target))
+			return sendError(context, Text.translatable("commands.element.failed.entity", entity));
 
 		final ElementComponent component = ElementComponent.KEY.get(target);
 		final Array<ElementalApplication> appliedElements = component.getAppliedElements();
 
-		if (appliedElements.isEmpty()) {
-			context
-				.getSource()
-				.sendError(Text.translatable("commands.element.query.multiple.none", entity));
-
-			return 0;
-		}
-
-		context
-			.getSource()
-			.sendFeedback(
-				() -> Text.translatable("commands.element.query.multiple.success", entity.getDisplayName(), Texts.join(appliedElements, Functions.compose(ElementCommand.TO_FRIENDLY_STRING, Text::literal))),
-				true
-			);
-
-		return 1;
+		if (appliedElements.isEmpty())
+			return sendError(context, Text.translatable("commands.element.query.multiple.none", entity));
+		
+		return sendFeedback(context, Text.translatable("commands.element.query.multiple.success", entity.getDisplayName(), Texts.join(appliedElements, Functions.compose(ElementCommand.TO_FRIENDLY_STRING, Text::literal))), true);
 	}
 
 	private static int queryElement(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
 		final Entity entity = EntityArgumentType.getEntity(context, "target");
 		final Element element = ElementArgumentType.getElement(context, "element");
 
-		if (!(entity instanceof final LivingEntity target)) {
-			context
-				.getSource()
-				.sendError(Text.translatable("commands.element.failed.entity", entity));
-
-			return 0;
-		}
+		if (!(entity instanceof final LivingEntity target))
+			return sendError(context, Text.translatable("commands.element.failed.entity", entity));
 
 		final ElementComponent component = ElementComponent.KEY.get(target);
 		final @Nullable ElementalApplication application = component.getElementHolder(element).getElementalApplication();
 
-		if (application == null) {
-			context
-				.getSource()
-				.sendError(Text.translatable("commands.element.query.single.none", entity.getDisplayName(), element));
+		if (application == null)
+			return sendError(context, Text.translatable("commands.element.query.single.none", entity.getDisplayName(), element));
 
-			return 0;
-		}
-
-		context
-			.getSource()
-			.sendFeedback(
-				() -> Text.translatable("commands.element.query.single.success", entity.getDisplayName(), ElementCommand.TO_FRIENDLY_STRING.apply(application)),
-				true
-			);
-
-		return 1;
+		return sendFeedback(context, Text.translatable("commands.element.query.single.success", entity.getDisplayName(), ElementCommand.TO_FRIENDLY_STRING.apply(application)), true);
 	}
 
 	private static int infuseGaugeUnit(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
 		final Element element = ElementArgumentType.getElement(context, "element");
 		final double gaugeUnits = DoubleArgumentType.getDouble(context, "gaugeUnits");
-		final InternalCooldownTag tag = InternalCooldownTag.of(ElementCommand.getOrDefault(context, "tag", String.class, null));
+		final InternalCooldownTag tag = InternalCooldownTagType.getTagOrDefault(context, "tag", InternalCooldownTag.NONE);
 
 		final @Nullable Reference<InternalCooldownType> typeRef = ClassInstanceUtil.cast(ElementCommand.getOrDefault(context, "type", Reference.class, null));
 		final InternalCooldownType type = JavaScriptUtil.nullishCoalesing(
@@ -421,7 +374,7 @@ public class ElementCommand {
 		final Element element = ElementArgumentType.getElement(context, "element");
 		final double gaugeUnits = DoubleArgumentType.getDouble(context, "gaugeUnits");
 		final int duration = IntegerArgumentType.getInteger(context, "duration");
-		final InternalCooldownTag tag = InternalCooldownTag.of(ElementCommand.getOrDefault(context, "tag", String.class, null));
+		final InternalCooldownTag tag = InternalCooldownTagType.getTagOrDefault(context, "tag", InternalCooldownTag.NONE);
 
 		final @Nullable Reference<InternalCooldownType> typeRef = ClassInstanceUtil.cast(ElementCommand.getOrDefault(context, "type", Reference.class, null));
 		final InternalCooldownType type = JavaScriptUtil.nullishCoalesing(

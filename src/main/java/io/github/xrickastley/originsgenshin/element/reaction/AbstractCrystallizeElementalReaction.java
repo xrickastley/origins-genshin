@@ -1,11 +1,14 @@
 package io.github.xrickastley.originsgenshin.element.reaction;
 
+import java.util.Optional;
 import java.util.Set;
+import java.util.function.Predicate;
 
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
 import io.github.xrickastley.originsgenshin.entity.CrystallizeShardEntity;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinEntities;
-
+import io.github.xrickastley.originsgenshin.util.Functions;
+import io.github.xrickastley.originsgenshin.util.MathHelper2;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -15,6 +18,7 @@ import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.Vec2f;
 import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.Vec3i;
 import net.minecraft.world.World;
 
 import javax.annotation.Nullable;
@@ -63,24 +67,52 @@ public abstract sealed class AbstractCrystallizeElementalReaction
    	}
 
 	private Vec3d clampToGround(World world, Vec3d pos) {
-		final BlockPos initialBlockPos = new BlockPos((int) pos.x, (int) pos.y, (int) pos.z);
-		BlockPos blockPos = initialBlockPos;
+		final BlockPos originPos = MathHelper2.asBlockPos(pos);
+		final BlockState blockState = world.getBlockState(originPos);
+
+		final Optional<BlockPos> blockPos = AIR_BLOCKS.contains(blockState.getBlock())
+			? this.scan(world, originPos, new Vec3i(0, -1, 0), Functions.composePredicate(BlockState::getBlock, AIR_BLOCKS::contains), bp -> bp.getY() >= world.getBottomY()).map(bp -> bp.add(0, 1, 0))
+			: this.scan(world, originPos, new Vec3i(0, +1, 0), Functions.composePredicate(BlockState::getBlock, Predicate.not(AIR_BLOCKS::contains)), bp -> bp.getY() <= world.getTopY());
+
+		final BlockPos finalBlockPos = blockPos.orElse(originPos);
+		final Vec3d finalPos = new Vec3d(pos.x, finalBlockPos.getY(), pos.z);
+
+		return finalPos;
+	}
+
+	/**
+	 * Starting from the specified {@code initialBlockPos}, continuously scan by shfiting the 
+	 * {@code initialBlockPos} by {@code shift} until the {@code Block} at the shifted pos
+	 * fulfills the {@code blockPredicate} or until {@code posPredicate} returns {@code false}. <br> <br>
+	 * 
+	 * Returns either an {@code Optional} containing the {@code BlockPos} such that 
+	 * {@code blockPredicate.test(world.getBlockState(blockPos))} returns {@code false} or an empty
+	 * {@code Optional} when {@code posPredicate.test(blockPos)} prematurely returns {@code false}.
+	 * 
+	 * @param world The world.
+	 * @param originPos The origin block pos.
+	 * @param shift How much to shift by per iteration.
+	 * @param blockPredicate The condition that must be fulfilled by the block at the specified position.
+	 * @param posPredicate The condition that must be fulfilled for a next iteration to execute.
+	 * @return
+	 */
+	private Optional<BlockPos> scan(final World world, final BlockPos originPos, final Vec3i shift, final Predicate<BlockState> blockPredicate, final Predicate<BlockPos> posPredicate) {
+		BlockPos blockPos = originPos;
 		BlockState blockState = world.getBlockState(blockPos);
+		
+		while (posPredicate.test(blockPos)) {
+			if (blockPredicate.test(blockState)) {
+				blockPos = blockPos.add(shift);
+				blockState = world.getBlockState(blockPos);
 
-		while (blockPos.getY() >= world.getBottomY()) {
-			blockPos = blockPos.add(0, -1, 0);
+				continue;
+			}
 
-			if (AIR_BLOCKS.contains(blockState.getBlock())) continue;
+			final int diff = originPos.getY() - blockPos.getY();
 
-			final int diff = initialBlockPos
-				.add(blockPos.getX(), blockPos.getY(), blockPos.getZ())
-				.getY();
-
-			return initialBlockPos
-				.add(0, -diff + 1, 0) // offset by 1 since it'll be underground.
-				.toCenterPos();
+			return Optional.of(originPos.add(0, -diff, 0));
 		}
 
-		return initialBlockPos.toCenterPos();
+		return Optional.empty();
 	}
 }

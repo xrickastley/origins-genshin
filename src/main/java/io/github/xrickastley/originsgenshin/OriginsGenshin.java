@@ -11,6 +11,7 @@ import io.github.apace100.apoli.power.Power;
 import io.github.xrickastley.originsgenshin.command.BossBarCommand;
 import io.github.xrickastley.originsgenshin.command.ElementArgumentType;
 import io.github.xrickastley.originsgenshin.command.ElementCommand;
+import io.github.xrickastley.originsgenshin.command.InternalCooldownTagType;
 import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
 import io.github.xrickastley.originsgenshin.events.ElementEvents;
@@ -58,6 +59,12 @@ public class OriginsGenshin implements ModInitializer {
 			OriginsGenshin.identifier("element"),
 			ElementArgumentType.class,
 			ConstantArgumentSerializer.of(ElementArgumentType::new)
+		);
+
+		ArgumentTypeRegistry.registerArgumentType(
+			OriginsGenshin.identifier("internal_cooldown_tag"),
+			InternalCooldownTagType.class,
+			ConstantArgumentSerializer.of(InternalCooldownTagType::tag)
 		);
 
 		ElementEvents.APPLIED
