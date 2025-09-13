@@ -22,5 +22,13 @@
         "name": "origins-genshin:sprawling_shot_hit"
       }
     ]
+  },
+  "crystallize_shield": {
+    "category": "player",
+    "sounds": [
+      {
+        "name": "origins-genshin:crystallize_shield"
+      }
+    ]
   }
 }

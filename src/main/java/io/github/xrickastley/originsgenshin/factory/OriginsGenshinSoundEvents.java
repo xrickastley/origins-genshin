@@ -11,6 +11,7 @@ public class OriginsGenshinSoundEvents {
 	public static final SoundEvent REACTION = register("reaction");
 	public static final SoundEvent DENDRO_CORE_EXPLOSION = register("dendro_core_explosion");
 	public static final SoundEvent SPRAWLING_SHOT_HIT = register("sprawling_shot_hit");
+	public static final SoundEvent CRYSTALLIZE_SHIELD = register("crystallize_shield");
 
 	// Initializes the class upon call by OriginsGenshin.
 	public static void register() {}

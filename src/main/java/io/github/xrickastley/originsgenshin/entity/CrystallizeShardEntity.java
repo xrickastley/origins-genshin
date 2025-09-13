@@ -10,6 +10,7 @@ import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.component.ElementComponent;
 import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.reaction.ElementalReaction;
+import io.github.xrickastley.originsgenshin.factory.OriginsGenshinSoundEvents;
 import io.github.xrickastley.originsgenshin.util.ClassInstanceUtil;
 
 import net.fabricmc.fabric.api.networking.v1.FabricPacket;
@@ -22,6 +23,7 @@ import net.minecraft.nbt.NbtCompound;
 import net.minecraft.network.PacketByteBuf;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundCategory;
 import net.minecraft.world.World;
 
 // Should technically extend Entity, but extends LivingEntity instead to NOT deal with more Networking and Spawn Packets.
@@ -121,6 +123,9 @@ public final class CrystallizeShardEntity extends OriginsGenshinEntity {
 		final ElementComponent component = ElementComponent.KEY.get(target);
 
 		component.setCrystallizeShield(element, OriginsGenshin.getLevelMultiplier(this) * 3);
+		
+		this.getWorld()
+			.playSound(null, this.getBlockPos(), OriginsGenshinSoundEvents.CRYSTALLIZE_SHIELD, SoundCategory.PLAYERS, 1.0f, 1.0f);
 
 		this.remove(RemovalReason.KILLED);
 	}
