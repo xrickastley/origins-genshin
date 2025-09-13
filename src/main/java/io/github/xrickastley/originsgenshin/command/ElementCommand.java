@@ -9,7 +9,6 @@ import com.mojang.brigadier.exceptions.CommandSyntaxException;
 
 import java.text.DecimalFormat;
 import java.util.List;
-import java.util.function.Function;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -28,7 +27,7 @@ import io.github.xrickastley.originsgenshin.util.Array;
 import io.github.xrickastley.originsgenshin.util.ClassInstanceUtil;
 import io.github.xrickastley.originsgenshin.util.Functions;
 import io.github.xrickastley.originsgenshin.util.JavaScriptUtil;
-
+import io.github.xrickastley.originsgenshin.util.TextHelper;
 import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.command.argument.RegistryEntryArgumentType;
@@ -41,6 +40,7 @@ import net.minecraft.server.command.CommandManager;
 import net.minecraft.server.command.ServerCommandSource;
 import net.minecraft.text.Text;
 import net.minecraft.text.Texts;
+import net.minecraft.util.Formatting;
 import net.minecraft.util.Identifier;
 
 import static net.minecraft.server.command.CommandManager.argument;
@@ -119,43 +119,49 @@ public class ElementCommand {
 					.then(
 						literal("apply")
 						.then(
-							argument("element", ElementArgumentType.element())
+							argument("target", EntityArgumentType.entity())
 							.then(
-								argument("gaugeUnits", DoubleArgumentType.doubleArg(0))
+								argument("element", ElementArgumentType.element())
 								.then(
-									literal("gaugeUnit")
+									argument("gaugeUnits", DoubleArgumentType.doubleArg(0))
 									.then(
-										argument("tag", InternalCooldownTagType.tag())
-										.then(
-											argument("type", RegistryEntryArgumentType.registryEntry(registryAccess, OriginsGenshinRegistryKeys.INTERNAL_COOLDOWN_TYPE))
-											.executes(ElementCommand::infuseGaugeUnit)
-										)
-										.executes(ElementCommand::infuseGaugeUnit)
-									)
-									.executes(ElementCommand::infuseGaugeUnit)
-								)
-								.then(
-									literal("duration")
-									.then(
-										argument("duration", IntegerArgumentType.integer(0))
+										literal("gaugeUnit")
 										.then(
 											argument("tag", InternalCooldownTagType.tag())
 											.then(
 												argument("type", RegistryEntryArgumentType.registryEntry(registryAccess, OriginsGenshinRegistryKeys.INTERNAL_COOLDOWN_TYPE))
+												.executes(ElementCommand::infuseGaugeUnit)
+											)
+											.executes(ElementCommand::infuseGaugeUnit)
+										)
+										.executes(ElementCommand::infuseGaugeUnit)
+									)
+									.then(
+										literal("duration")
+										.then(
+											argument("duration", IntegerArgumentType.integer(0))
+											.then(
+												argument("tag", InternalCooldownTagType.tag())
+												.then(
+													argument("type", RegistryEntryArgumentType.registryEntry(registryAccess, OriginsGenshinRegistryKeys.INTERNAL_COOLDOWN_TYPE))
+													.executes(ElementCommand::infuseDuration)
+												)
 												.executes(ElementCommand::infuseDuration)
 											)
 											.executes(ElementCommand::infuseDuration)
 										)
-										.executes(ElementCommand::infuseDuration)
 									)
+									.executes(ElementCommand::infuseGaugeUnit)
 								)
-								.executes(ElementCommand::infuseGaugeUnit)
 							)
 						)
 					)
 					.then(
 						literal("remove")
-						.executes(ElementCommand::infuseRemove)
+						.then(
+							argument("target", EntityArgumentType.entity())
+							.executes(ElementCommand::infuseRemove)
+						)
 					)
 				)
 		);
@@ -163,12 +169,6 @@ public class ElementCommand {
 
 	private static final DecimalFormat GAUGE_FORMAT = new DecimalFormat("#.###");
 	private static final DecimalFormat DURATION_FORMAT = new DecimalFormat("#.##");
-
-	private static final Function<ElementalApplication, Text> TO_FRIENDLY_STRING = a -> {
-		return a.isGaugeUnits()
-			? Text.translatable("origins-genshin.formats.elemental_application.gauge_unit", GAUGE_FORMAT.format(a.getCurrentGauge()), a.getElement().getString())
-			: Text.translatable("origins-genshin.formats.elemental_application.duration", GAUGE_FORMAT.format(a.getCurrentGauge()), a.getElement().getString(), DURATION_FORMAT.format(a.getRemainingTicks() / 20.0));
-	};
 
 	private static int applyGaugeUnit(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
 		final Entity entity = EntityArgumentType.getEntity(context, "target");
@@ -274,7 +274,7 @@ public class ElementCommand {
 		if (appliedElements.isEmpty())
 			return sendError(context, Text.translatable("commands.element.query.multiple.none", entity));
 		
-		return sendFeedback(context, Text.translatable("commands.element.query.multiple.success", entity.getDisplayName(), Texts.join(appliedElements, ElementCommand.TO_FRIENDLY_STRING)), true);
+		return sendFeedback(context, Text.translatable("commands.element.query.multiple.success", entity.getDisplayName(), Texts.join(appliedElements, ElementalApplication::getText)), true);
 	}
 
 	private static int queryElement(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
@@ -290,10 +290,11 @@ public class ElementCommand {
 		if (application == null)
 			return sendError(context, Text.translatable("commands.element.query.single.none", entity.getDisplayName(), element));
 
-		return sendFeedback(context, Text.translatable("commands.element.query.single.success", entity.getDisplayName(), ElementCommand.TO_FRIENDLY_STRING.apply(application)), true);
+		return sendFeedback(context, Text.translatable("commands.element.query.single.success", entity.getDisplayName(), application.getText()), true);
 	}
 
 	private static int infuseGaugeUnit(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
+		final Entity entity = EntityArgumentType.getEntity(context, "target");
 		final Element element = ElementArgumentType.getElement(context, "element");
 		final double gaugeUnits = DoubleArgumentType.getDouble(context, "gaugeUnits");
 		final InternalCooldownTag tag = InternalCooldownTagType.getTagOrDefault(context, "tag", InternalCooldownTag.NONE);
@@ -303,8 +304,6 @@ public class ElementCommand {
 			ClassInstanceUtil.mapOrNull(typeRef, Reference::value),
 			InternalCooldownType.DEFAULT
 		);
-
-		final Entity entity = context.getSource().getEntityOrThrow();
 
 		if (!(entity instanceof final LivingEntity livingEntity))
 			return sendError(context, Text.translatable("commands.enchant.failed.entity", entity.getName().getString()));
@@ -328,16 +327,23 @@ public class ElementCommand {
 			.setType(type);
 
 		if (ElementalInfusionComponent.applyInfusion(stack, infusionBuilder, icdBuilder)) {
-			final String elementString = ElementCommand.TO_FRIENDLY_STRING.apply(infusionBuilder.build(livingEntity)).getString();
-			final String icdString = String.format("%s/%s", tag.getTag(), type.getId());
+			final Text elementString = ElementalApplication.Builder.getText(infusionBuilder);
+			final Text icdTagText = tag == InternalCooldownTag.NONE
+				? TextHelper.color(Text.literal("none"), Formatting.RED.getColorValue())
+				: Text.literal(tag.getTag());
+			
+			final Text icdText = Text.empty()
+				.append(icdTagText)
+				.append("/" + type.getId());
 
-			return sendFeedback(context, Text.translatable("commands.element.infuse.apply.success", elementString, icdString, entity.getName().getString()), true);
+			return sendFeedback(context, Text.translatable("commands.element.infuse.apply.success", elementString, icdText, entity.getName().getString()), true);
 		} else {
 			return sendError(context, Text.translatable("commands.element.infuse.failed.incompatible", entity.getName().getString()));
 		}
 	}
 
 	private static int infuseDuration(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
+		final Entity entity = EntityArgumentType.getEntity(context, "target");
 		final Element element = ElementArgumentType.getElement(context, "element");
 		final double gaugeUnits = DoubleArgumentType.getDouble(context, "gaugeUnits");
 		final int duration = IntegerArgumentType.getInteger(context, "duration");
@@ -348,8 +354,6 @@ public class ElementCommand {
 			ClassInstanceUtil.mapOrNull(typeRef, Reference::value),
 			InternalCooldownType.DEFAULT
 		);
-
-		final Entity entity = context.getSource().getEntityOrThrow();
 
 		if (!(entity instanceof final LivingEntity livingEntity))
 			return sendError(context, Text.translatable("commands.enchant.failed.entity", entity.getName().getString()));
@@ -373,18 +377,23 @@ public class ElementCommand {
 			.setType(type);
 
 		if (ElementalInfusionComponent.applyInfusion(stack, infusionBuilder, icdBuilder)) {
-			final String elementString = ElementCommand.TO_FRIENDLY_STRING.apply(infusionBuilder.build(livingEntity)).getString();
-			final String icdString = String.format("%s/%s", tag.getTag(), type.getId());
+			final Text elementString = ElementalApplication.Builder.getText(infusionBuilder);
+			final Text icdTagText = tag == InternalCooldownTag.NONE
+				? TextHelper.color(Text.literal("none"), Formatting.RED.getColorValue())
+				: Text.literal(tag.getTag());
+			
+			final Text icdText = Text.empty()
+				.append(icdTagText)
+				.append("/" + type.getId());
 
-			return sendFeedback(context, Text.translatable("commands.element.infuse.apply.success", elementString, icdString, entity.getName().getString()), true);
+			return sendFeedback(context, Text.translatable("commands.element.infuse.apply.success", elementString, icdText, entity.getName().getString()), true);
 		} else {
 			return sendError(context, Text.translatable("commands.element.infuse.failed.incompatible", entity.getName().getString()));
 		}
 	}
 
 	private static int infuseRemove(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
-		final ServerCommandSource source = context.getSource();
-		final Entity entity = source.getEntityOrThrow();
+		final Entity entity = EntityArgumentType.getEntity(context, "target");
 
 		if (!(entity instanceof final LivingEntity livingEntity))
 			return sendError(context, Text.translatable("commands.enchant.failed.entity", entity.getName().getString()));

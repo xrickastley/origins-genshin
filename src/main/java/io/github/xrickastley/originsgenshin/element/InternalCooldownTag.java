@@ -3,12 +3,12 @@ package io.github.xrickastley.originsgenshin.element;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import com.mojang.serialization.Codec;
 
+import io.github.xrickastley.originsgenshin.util.JavaScriptUtil;
+
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.jetbrains.annotations.Nullable;
-
-import net.minecraft.util.dynamic.Codecs;
 
 /**
  * An {@code InternalCooldownTag} is a class used for holding unique instances of Internal Cooldown
@@ -21,14 +21,14 @@ import net.minecraft.util.dynamic.Codecs;
 public final class InternalCooldownTag {
 	private static final Map<String, InternalCooldownTag> INSTANCES = new ConcurrentHashMap<>();
 	public static final InternalCooldownTag NONE = new InternalCooldownTag(null);
-	public static final Codec<InternalCooldownTag> CODEC = Codecs.NON_EMPTY_STRING.xmap(InternalCooldownTag::new, InternalCooldownTag::getTag);
+	public static final Codec<InternalCooldownTag> CODEC = Codec.STRING.xmap(InternalCooldownTag::new, InternalCooldownTag::getTag);
 
 	private final @Nullable String tag;
 
 	private InternalCooldownTag(final @Nullable String tag) {
-		this.tag = tag;
+		this.tag = JavaScriptUtil.nullishCoalesing(tag, "");
 
-		if (tag != null) InternalCooldownTag.INSTANCES.put(tag, this);
+		if (tag != null && !tag.equals("")) InternalCooldownTag.INSTANCES.put(tag, this);
 	}
 
 	/**
@@ -41,7 +41,7 @@ public final class InternalCooldownTag {
 	 * @param tag The tag to get an {@code InternalCooldownTag} instance of.
 	 */
 	public static InternalCooldownTag of(final @Nullable String tag) {
-		return tag == null
+		return tag == null || tag.equals("")
 			? InternalCooldownTag.NONE
 			: InternalCooldownTag.tag(tag);
 	}
@@ -80,7 +80,7 @@ public final class InternalCooldownTag {
 	/**
 	 * Gets the tag of this {@code InternalCooldownTag}
 	 */
-	public @Nullable String getTag() {
+	public String getTag() {
 		return this.tag;
 	}
 

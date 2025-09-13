@@ -1,14 +1,20 @@
 package io.github.xrickastley.originsgenshin.element;
 
+import java.text.DecimalFormat;
 import java.util.UUID;
+
+import org.jetbrains.annotations.Nullable;
 
 import io.github.xrickastley.originsgenshin.component.ElementComponent;
 import io.github.xrickastley.originsgenshin.exception.ElementalApplicationOperationException.Operation;
+import io.github.xrickastley.originsgenshin.util.JavaScriptUtil;
+import io.github.xrickastley.originsgenshin.util.TextHelper;
 import io.github.xrickastley.originsgenshin.exception.ElementalApplicationOperationException;
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
+import net.minecraft.text.Text;
 import net.minecraft.world.World;
 
 public final class DurationElementalApplication extends ElementalApplication {
@@ -46,6 +52,27 @@ public final class DurationElementalApplication extends ElementalApplication {
 	@Override
 	public int getRemainingTicks() {
 		return (int) (appliedAt + duration - entity.getWorld().getTime());
+	}
+
+	@Override
+	public Text getText(@Nullable DecimalFormat gaugeFormat, @Nullable DecimalFormat durationFormat) {
+		gaugeFormat = JavaScriptUtil.nullishCoalesing(gaugeFormat, GAUGE_UNIT_FORMAT);
+		durationFormat = JavaScriptUtil.nullishCoalesing(durationFormat, DURATION_FORMAT);
+
+		return TextHelper.color(
+			Text.translatable("format.origins-genshin.elemental_application.duration", gaugeFormat.format(this.currentGauge), this.element.getString(), durationFormat.format(this.duration / 20.0)),
+			this.element.getDamageColor()	
+		);
+	}
+
+	public Text getTimerText(@Nullable DecimalFormat gaugeFormat, @Nullable DecimalFormat durationFormat) {
+		gaugeFormat = JavaScriptUtil.nullishCoalesing(gaugeFormat, GAUGE_UNIT_FORMAT);
+		durationFormat = JavaScriptUtil.nullishCoalesing(durationFormat, DURATION_FORMAT);
+
+		return TextHelper.color(
+			Text.translatable("format.origins-genshin.elemental_application.duration.timer", gaugeFormat.format(this.currentGauge), this.element.getString(), durationFormat.format(this.getRemainingTicks() / 20.0)),
+			this.element.getDamageColor()
+		);
 	}
 
 	/**

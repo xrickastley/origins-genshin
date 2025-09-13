@@ -3,8 +3,11 @@ package io.github.xrickastley.originsgenshin.element;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
+import java.text.DecimalFormat;
 import java.util.Objects;
 import java.util.UUID;
+
+import org.jetbrains.annotations.Nullable;
 
 import io.github.apace100.calio.data.SerializableData;
 import io.github.apace100.calio.data.SerializableDataType;
@@ -12,17 +15,24 @@ import io.github.apace100.calio.data.SerializableDataTypes;
 import io.github.xrickastley.originsgenshin.data.OriginsGenshinDataTypes;
 import io.github.xrickastley.originsgenshin.element.reaction.AbstractBurningElementalReaction;
 import io.github.xrickastley.originsgenshin.exception.ElementalApplicationOperationException.Operation;
+import io.github.xrickastley.originsgenshin.util.ClassInstanceUtil;
+import io.github.xrickastley.originsgenshin.util.JavaScriptUtil;
+import io.github.xrickastley.originsgenshin.util.TextHelper;
 import io.github.xrickastley.originsgenshin.exception.ElementalApplicationOperationException;
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtElement;
+import net.minecraft.text.Text;
 import net.minecraft.util.dynamic.Codecs;
 
 /**
  * A class representing an Elemental Application for an entity.
  */
 public abstract sealed class ElementalApplication permits DurationElementalApplication, GaugeUnitElementalApplication {
+	protected static final DecimalFormat GAUGE_UNIT_FORMAT = new DecimalFormat("0.0");
+	protected static final DecimalFormat DURATION_FORMAT = new DecimalFormat("0.00");
+
 	protected final Type type;
 	protected final Element element;
 	protected final LivingEntity entity;
@@ -93,6 +103,27 @@ public abstract sealed class ElementalApplication permits DurationElementalAppli
 	protected abstract double getDefaultDecayRate();
 
 	public abstract int getRemainingTicks();
+	
+	public Text getText() {
+		return this.getText(GAUGE_UNIT_FORMAT, DURATION_FORMAT);
+	}
+
+	public Text getText(@Nullable String gaugeFormat) {
+		return this.getText(new DecimalFormat(gaugeFormat), DURATION_FORMAT);
+	}
+
+	public Text getText(@Nullable DecimalFormat gaugeFormat) {
+		return this.getText(gaugeFormat, DURATION_FORMAT);
+	}
+	
+	public Text getText(@Nullable String gaugeFormat, @Nullable String durationFormat) {
+		return this.getText(
+			ClassInstanceUtil.<String, DecimalFormat>mapOrNull(gaugeFormat, DecimalFormat::new),
+			ClassInstanceUtil.<String, DecimalFormat>mapOrNull(durationFormat, DecimalFormat::new)
+		);
+	}
+	
+	public abstract Text getText(@Nullable DecimalFormat gaugeFormat, @Nullable DecimalFormat durationFormat);
 
 	/**
 	 * Returns whether this Elemental Application is using Gauge Units.
@@ -247,6 +278,38 @@ public abstract sealed class ElementalApplication permits DurationElementalAppli
 
 		Builder() {
 			this.isAura = true;
+		}
+
+		public static Text getText(Builder builder) {
+			return getText(builder, GAUGE_UNIT_FORMAT, DURATION_FORMAT);
+		}
+
+		public static Text getText(Builder builder, @Nullable String gaugeFormat) {
+			return getText(builder, new DecimalFormat(gaugeFormat), DURATION_FORMAT);
+		}
+
+		public static Text getText(Builder builder, @Nullable DecimalFormat gaugeFormat) {
+			return getText(builder, gaugeFormat, DURATION_FORMAT);
+		}
+
+		public static Text getText(Builder builder, @Nullable String gaugeFormat, @Nullable String durationFormat) {
+			return getText(
+				builder, 
+				ClassInstanceUtil.<String, DecimalFormat>mapOrNull(gaugeFormat, DecimalFormat::new),
+				ClassInstanceUtil.<String, DecimalFormat>mapOrNull(durationFormat, DecimalFormat::new)
+			);
+		}
+		
+		public static Text getText(Builder builder, @Nullable DecimalFormat gaugeFormat, @Nullable DecimalFormat durationFormat) {
+			gaugeFormat = JavaScriptUtil.nullishCoalesing(gaugeFormat, GAUGE_UNIT_FORMAT);
+			durationFormat = JavaScriptUtil.nullishCoalesing(durationFormat, DURATION_FORMAT);
+
+			return TextHelper.color(
+				builder.type == Type.GAUGE_UNIT
+					? Text.translatable("format.origins-genshin.elemental_application.gauge_unit", gaugeFormat.format(builder.gaugeUnits), builder.element.getString())
+					: Text.translatable("format.origins-genshin.elemental_application.duration", gaugeFormat.format(builder.gaugeUnits), builder.element.getString(), durationFormat.format(builder.duration / 20.0)),
+				builder.element.getDamageColor()
+			);
 		}
 
 		private Builder(Type type, Element element, boolean isAura, double gaugeUnits, double duration) {

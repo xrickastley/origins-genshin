@@ -14,6 +14,7 @@ import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import io.github.xrickastley.originsgenshin.component.ElementComponent;
@@ -60,6 +61,21 @@ public abstract class PlayerEntityMixin
 	@Override
 	public boolean originsgenshin$isCrit(DamageSource source) {
 		return this.originsgenshin$critDamageSources != null && this.originsgenshin$critDamageSources.contains(source);
+	}
+
+	@ModifyVariable(
+		method = "applyDamage",
+		at = @At(
+			value = "INVOKE_ASSIGN",
+			target = "Lnet/minecraft/entity/player/PlayerEntity;modifyAppliedDamage(Lnet/minecraft/entity/damage/DamageSource;F)F"
+		),
+		ordinal = 0,
+		argsOnly = true
+	)
+	private float applyCrystallizeShield(float amount, @Local(argsOnly = true) DamageSource source) {
+		final ElementComponent component = ElementComponent.KEY.get(this);
+
+		return amount - component.reduceCrystallizeShield(source, amount);
 	}
 
 	// why are there two seperate knockbacks :sob:

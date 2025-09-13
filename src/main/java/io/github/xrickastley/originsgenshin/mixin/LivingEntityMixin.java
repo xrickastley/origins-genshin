@@ -16,7 +16,6 @@ import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementalApplications;
 import io.github.xrickastley.originsgenshin.element.ElementalDamageSource;
 import io.github.xrickastley.originsgenshin.element.InternalCooldownContext;
-import io.github.xrickastley.originsgenshin.element.InternalCooldownType;
 import io.github.xrickastley.originsgenshin.entity.DendroCoreEntity;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinAttributes;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinGameRules;
@@ -79,19 +78,11 @@ public abstract class LivingEntityMixin extends Entity {
 		if (this.isWet() && this.getWorld().getGameRules().getBoolean(OriginsGenshinGameRules.HYDRO_FROM_WATER)) {
 			final ElementComponent component = ElementComponent.KEY.get(this);
 
-			component.addElementalApplication(
-				Element.HYDRO,
-				InternalCooldownContext.ofType(this, "origins-genshin:natural_environment", InternalCooldownType.INTERVAL_ONLY),
-				1.0
-			);
+			component.addElementalApplication(Element.HYDRO, InternalCooldownContext.ofNone(), 1.0);
 		} else if ((this.isOnFire() || this.getBlockStateAtPos().getBlock() == Blocks.FIRE) && this.getWorld().getGameRules().getBoolean(OriginsGenshinGameRules.PYRO_FROM_FIRE)) {
 			final ElementComponent component = ElementComponent.KEY.get(this);
 
-			component.addElementalApplication(
-				Element.PYRO,
-				InternalCooldownContext.ofType(this, "origins-genshin:natural_environment", InternalCooldownType.INTERVAL_ONLY),
-				1.0
-			);
+			component.addElementalApplication(Element.PYRO, InternalCooldownContext.ofNone(), 1.0);
 		}
 	}
 
