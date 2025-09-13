@@ -64,6 +64,14 @@ public class TextHelper {
 		return Text.literal(text).fillStyle(Style.EMPTY.withColor(rgbColor));
 	}
 
+	public static MutableText color(MutableText text, Color color) {
+		return TextHelper.color(text, color.asRGB());
+	}
+
+	public static MutableText color(MutableText text, int rgbColor) {
+		return text.fillStyle(text.getStyle().withColor(rgbColor));
+	}
+
 	public static MutableText noModifiers(MutableText text) {
 		return text.setStyle(
 			text.getStyle()

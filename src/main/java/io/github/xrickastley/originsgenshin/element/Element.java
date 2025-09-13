@@ -193,7 +193,7 @@ public enum Element {
 		final String fallback = string.substring(0, 1).toUpperCase() + string.substring(1).toLowerCase();
 
 		return Text
-			.translatableWithFallback("origins-genshin.element." + string.toLowerCase(), fallback)
+			.translatableWithFallback("element.origins-genshin." + string.toLowerCase(), fallback)
 			.getString();
 	}
 

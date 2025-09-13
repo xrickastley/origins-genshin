@@ -5,7 +5,6 @@ import com.google.gson.JsonSyntaxException;
 import java.util.LinkedList;
 import java.util.List;
 
-import io.github.apace100.apoli.Apoli;
 import io.github.apace100.apoli.data.ApoliDataTypes;
 import io.github.apace100.apoli.power.factory.action.ActionFactory;
 import io.github.apace100.apoli.util.MiscUtil;
@@ -52,7 +51,9 @@ public class ElementalDamageAction {
 
 			entity.damage(source, damageAmount);
 		} catch (JsonSyntaxException e) {
-			Apoli.LOGGER.error("Error trying to create damage source in a `damage` entity action: " + e.getMessage());
+			OriginsGenshin
+				.sublogger()
+				.error("Error trying to create damage source in a `damage` bi-entity action: " + e.getMessage(), e);
 		}
 	}
 

@@ -120,7 +120,7 @@ public final class CrystallizeShardEntity extends OriginsGenshinEntity {
 
 		final ElementComponent component = ElementComponent.KEY.get(target);
 
-		component.setCrystallizeShield(element, OriginsGenshin.getLevelMultiplier(this) * 6);
+		component.setCrystallizeShield(element, OriginsGenshin.getLevelMultiplier(this) * 3);
 
 		// sound?
 

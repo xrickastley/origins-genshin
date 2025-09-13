@@ -78,6 +78,15 @@ public final class ElementalInfusionComponent extends ItemComponent {
 			: InternalCooldownContext.Builder.ofNone();
 	}
 
+	public @Nullable ElementalApplication.Builder getElementalInfusion() {
+		return this.hasTag("elemental_infusion", NbtElement.COMPOUND_TYPE)
+			? ElementalApplication.Builder.CODEC
+				.parse(NbtOps.INSTANCE, this.getCompound("elemental_infusion"))
+				.resultOrPartial(OriginsGenshin.sublogger()::error)
+				.orElseThrow()
+			: null;
+	}
+
 	public void setInternalCooldown(InternalCooldownContext.Builder builder) {
 		final NbtElement element = InternalCooldownContext.Builder.CODEC
 			.encodeStart(NbtOps.INSTANCE, builder)
@@ -105,8 +114,6 @@ public final class ElementalInfusionComponent extends ItemComponent {
 				)
 			);
 		} catch (Exception e) {
-			OriginsGenshin.sublogger().error("Error on DS apply; supressing and skipping...", e);
-
 			return Optional.empty();
 		}
 	}
@@ -119,8 +126,6 @@ public final class ElementalInfusionComponent extends ItemComponent {
 		component.setElementalInfusion(applicationBuilder);
 		component.setInternalCooldown(icdBuilder);
 
-		ElementalInfusionComponent.KEY.sync(stack);
-
 		return true;
 	}
 
@@ -131,8 +136,6 @@ public final class ElementalInfusionComponent extends ItemComponent {
 
 		component.remove("elemental_infusion");
 		component.remove("internal_cooldown");
-
-		ElementalInfusionComponent.KEY.sync(stack);
 
 		return true;
 	}

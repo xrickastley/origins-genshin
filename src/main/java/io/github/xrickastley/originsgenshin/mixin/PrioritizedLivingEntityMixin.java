@@ -62,10 +62,6 @@ public abstract class PrioritizedLivingEntityMixin
 		return this.originsgenshin$plannedAttacker;
 	}
 
-	// TODO: add Frozen effect? or nah?
-	// a. totem removes both frozen effect + gauge
-	// b. totem applies, Frozen effect + gauge not touched (like Cryo)
-
 	@Inject(
 		method = "removeStatusEffectInternal",
 		at = @At("HEAD"),

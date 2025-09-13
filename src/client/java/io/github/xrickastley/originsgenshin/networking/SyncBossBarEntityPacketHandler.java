@@ -27,8 +27,6 @@ public class SyncBossBarEntityPacketHandler implements PacketHandler<SyncBossBar
 
 	@Override
 	public void receive(SyncBossBarEntityS2CPacket packet, ClientPlayerEntity player, PacketSender responseSender) {
-		OriginsGenshin.sublogger().info("RECEIEVE!");
-
 		final MinecraftClient client = MinecraftClient.getInstance();
 		final Map<UUID, ClientBossBar> bossBarMap = ((BossBarHudAccessor) client.inGameHud.getBossBarHud())
 			.getBossBars();

@@ -86,7 +86,7 @@ public class OriginsGenshinReloadListener implements SimpleSynchronousResourceRe
 				try (final InputStream stream = manager.getResourceOrThrow(id).getInputStream()) {
 					reloadOrLoad(registry, id, parseJson(stream), defaultKeys);
 				} catch (Exception e) {
-					LOGGER.error("An error occured while trying to load the entry at " + id + ": ", e);
+					LOGGER.error("An error occured while trying to load the entry at {}: ", id, e);
 				}
 			}
 

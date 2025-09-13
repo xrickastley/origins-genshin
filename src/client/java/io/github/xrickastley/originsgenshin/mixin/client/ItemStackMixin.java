@@ -12,14 +12,13 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 import com.llamalad7.mixinextras.sugar.Local;
 
 import io.github.xrickastley.originsgenshin.component.ElementalInfusionComponent;
-import io.github.xrickastley.originsgenshin.element.Element;
+import io.github.xrickastley.originsgenshin.element.ElementalApplication;
 import io.github.xrickastley.originsgenshin.element.InternalCooldownTag;
 import io.github.xrickastley.originsgenshin.element.InternalCooldownType;
 import io.github.xrickastley.originsgenshin.element.InternalCooldownContext.Builder;
 import io.github.xrickastley.originsgenshin.util.ClassInstanceUtil;
 import io.github.xrickastley.originsgenshin.util.Functions;
 import io.github.xrickastley.originsgenshin.util.JavaScriptUtil;
-import io.github.xrickastley.originsgenshin.util.TextHelper;
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;
@@ -39,7 +38,8 @@ public abstract class ItemStackMixin {
 		at = @At(
 			value = "INVOKE",
 			target = "Ljava/util/List;add(Ljava/lang/Object;)Z",
-			ordinal = 16
+			ordinal = 16,
+			shift = At.Shift.BEFORE
 		)
 	)
 	private void addInfusionData(@Nullable PlayerEntity player, TooltipContext context, CallbackInfoReturnable<List<Text>> cir, @Local List<Text> texts) {
@@ -50,11 +50,10 @@ public abstract class ItemStackMixin {
 		if (component == null || !component.hasElementalInfusion()) return;
 
 		final MutableText message = Text.empty();
-		final Element element = component.getElement();
 		final Builder builder = component.getInternalCooldown();
 
 		message.append(Text.translatable("item.origins-genshin.components.infusion.infusion").formatted(Formatting.WHITE));
-		message.append(TextHelper.color(String.format("%.1fU %s", component.getGaugeUnits(), element.getString()), element.getDamageColor()));
+		message.append(ElementalApplication.Builder.getText(component.getElementalInfusion(), "0.0"));
 
 		texts.add(message);
 
@@ -81,7 +80,7 @@ public abstract class ItemStackMixin {
 
 		final Text typeFormat = Text.empty()
 			.append("(")
-			.append(Text.translatable("origins-genshin.formats.icd_type", type.getResetInterval() / 20.0, type.getGaugeSequence()))
+			.append(Text.translatable("format.origins-genshin.icd_type", type.getResetInterval() / 20.0, type.getGaugeSequence()))
 			.append(")");
 
 		texts.add(
