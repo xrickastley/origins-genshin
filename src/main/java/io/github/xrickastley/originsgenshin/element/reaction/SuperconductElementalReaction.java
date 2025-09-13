@@ -7,7 +7,7 @@ import io.github.xrickastley.originsgenshin.util.TextHelper;
 public final class SuperconductElementalReaction extends AbstractSuperconductElementalReaction {
 	SuperconductElementalReaction() {
 		super(
-			new ElementalReactionSettings("Superconduct", OriginsGenshin.identifier("superconduct"), TextHelper.reaction("origins-genshin.element.superconduct", "#bcb0ff"))
+			new ElementalReactionSettings("Superconduct", OriginsGenshin.identifier("superconduct"), TextHelper.reaction("reaction.origins-genshin.superconduct", "#bcb0ff"))
 				.setReactionCoefficient(1.0)
 				.setAuraElement(Element.CRYO, 1)
 				.setTriggeringElement(Element.ELECTRO, 6)

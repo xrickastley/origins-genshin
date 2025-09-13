@@ -27,7 +27,7 @@ import javax.annotation.Nullable;
 public class ElectroChargedElementalReaction extends ElementalReaction {
 	ElectroChargedElementalReaction() {
 		super(
-			new ElementalReactionSettings("Electro-Charged", OriginsGenshin.identifier("electro-charged"), TextHelper.reaction("origins-genshin.element.electro-charged", "#d691fc"))
+			new ElementalReactionSettings("Electro-Charged", OriginsGenshin.identifier("electro-charged"), TextHelper.reaction("reaction.origins-genshin.electro-charged", "#d691fc"))
 				.setReactionCoefficient(0)
 				.setAuraElement(Element.ELECTRO, 5)
 				.setTriggeringElement(Element.HYDRO, 6)

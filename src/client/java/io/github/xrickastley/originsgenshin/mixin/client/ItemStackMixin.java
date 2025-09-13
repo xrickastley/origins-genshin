@@ -63,7 +63,7 @@ public abstract class ItemStackMixin {
 		@Nullable String tagString = ClassInstanceUtil.mapOrNull(builder, Functions.compose(Builder::getTag, InternalCooldownTag::getTag));
 
 		final Text tag = tagString != null
-			? Text.literal(tagString).formatted(Formatting.GRAY)
+			? Text.literal(tagString).formatted(Formatting.DARK_GRAY)
 			: Text.literal("none").formatted(Formatting.RED);
 
 		texts.add(
@@ -91,7 +91,7 @@ public abstract class ItemStackMixin {
 					Text.empty()
 						.append(type.getId().toString() + " ")
 						.append(typeFormat)
-						.formatted(Formatting.GRAY)
+						.formatted(Formatting.DARK_GRAY)
 				)
 		);
 	}

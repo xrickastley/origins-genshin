@@ -7,7 +7,7 @@ import io.github.xrickastley.originsgenshin.util.TextHelper;
 public final class CryoCrystallizeElementalReaction extends AbstractCrystallizeElementalReaction {
 	CryoCrystallizeElementalReaction() {
 		super(
-			new ElementalReactionSettings("Crystallize", OriginsGenshin.identifier("crystallize_cryo"), TextHelper.reaction("origins-genshin.element.crystallize", "#f79c00"))
+			new ElementalReactionSettings("Crystallize", OriginsGenshin.identifier("crystallize_cryo"), TextHelper.reaction("reaction.origins-genshin.crystallize", "#f79c00"))
 				.setReactionCoefficient(0.5)
 				.setAuraElement(Element.CRYO)
 				.setTriggeringElement(Element.GEO, 5)

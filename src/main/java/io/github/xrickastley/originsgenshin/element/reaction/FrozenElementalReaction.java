@@ -17,7 +17,7 @@ import javax.annotation.Nullable;
 public final class FrozenElementalReaction extends ElementalReaction {
 	FrozenElementalReaction() {
 		super(
-			new ElementalReactionSettings("Frozen", OriginsGenshin.identifier("frozen"), TextHelper.reaction("origins-genshin.element.frozen", "#b4ffff"))
+			new ElementalReactionSettings("Frozen", OriginsGenshin.identifier("frozen"), TextHelper.reaction("reaction.origins-genshin.frozen", "#b4ffff"))
 				.setReactionCoefficient(0)
 				.setAuraElement(Element.CRYO, 4)
 				.setTriggeringElement(Element.HYDRO, 3)

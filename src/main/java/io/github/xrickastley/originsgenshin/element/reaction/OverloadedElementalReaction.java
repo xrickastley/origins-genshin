@@ -25,7 +25,7 @@ import javax.annotation.Nullable;
 public class OverloadedElementalReaction extends ElementalReaction {
 	OverloadedElementalReaction() {
 		super(
-			new ElementalReactionSettings("Overloaded", OriginsGenshin.identifier("overloaded"), TextHelper.reaction("origins-genshin.element.overloaded", "#fc7fa4"))
+			new ElementalReactionSettings("Overloaded", OriginsGenshin.identifier("overloaded"), TextHelper.reaction("reaction.origins-genshin.overloaded", "#fc7fa4"))
 				.setReactionCoefficient(1.0)
 				.setAuraElement(Element.PYRO, 2)
 				.setTriggeringElement(Element.ELECTRO, 3)

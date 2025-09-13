@@ -14,7 +14,7 @@ import javax.annotation.Nullable;
 public final class QuickenElementalReaction extends ElementalReaction {
 	QuickenElementalReaction() {
 		super(
-			new ElementalReactionSettings("Quicken", OriginsGenshin.identifier("quicken"), TextHelper.reaction("origins-genshin.element.quicken", "#01e858"))
+			new ElementalReactionSettings("Quicken", OriginsGenshin.identifier("quicken"), TextHelper.reaction("reaction.origins-genshin.quicken", "#01e858"))
 				.setReactionCoefficient(1.0)
 				.setAuraElement(Element.DENDRO, 2)
 				.setTriggeringElement(Element.ELECTRO, 8)

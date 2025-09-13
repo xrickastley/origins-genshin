@@ -7,7 +7,7 @@ import io.github.xrickastley.originsgenshin.util.TextHelper;
 public final class SpreadElementalReaction extends AdditiveElementalReaction {
 	SpreadElementalReaction() {
 		super(
-			new ElementalReactionSettings("Spread", OriginsGenshin.identifier("spread"), TextHelper.reaction("origins-genshin.element.spread", "#01e858"))
+			new ElementalReactionSettings("Spread", OriginsGenshin.identifier("spread"), TextHelper.reaction("reaction.origins-genshin.spread", "#01e858"))
 				.setReactionCoefficient(0)
 				.setAuraElement(Element.QUICKEN)
 				.setTriggeringElement(Element.DENDRO, 1)
