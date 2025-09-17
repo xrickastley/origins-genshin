@@ -21,6 +21,7 @@
 	"text.autoconfig.origins-genshin.option.developer.commafyDamage.@Tooltip": "Whether damage is rendered with commas when possible.",
 
 	"entity.origins-genshin.dendro_core": "Dendro Core",
+	"entity.origins-genshin.crystallize_shard": "Crystallize Shard",
 
 	"effect.origins-genshin.cryo": "Cryo",
 	"effect.origins-genshin.frozen": "Frozen",
@@ -38,13 +39,21 @@
 	"death.attack.electro-charged.item": "%1$s was shocked to death by %2$s while wielding %3$s",
 	"death.attack.electro-charged.player": "%1$s was shocked to death whilst trying to escape %2$s",
 
-	"death.attack.overloaded": "%1$s was blown up",
-	"death.attack.overloaded.item": "%1$s was blown up by %2$s using %3$s",
-	"death.attack.overloaded.player": "%1$s was blown up whilst trying to escape %2$s",
+	"death.attack.overloaded": "%1$s was blown up in an electrifying explosion",
+	"death.attack.overloaded.item": "%1$s was blown up in an electrifying explosion by %2$s using %3$s",
+	"death.attack.overloaded.player": "%1$s was blown up in an electrifying explosion whilst trying to escape %2$s",
+
+	"death.attack.shatter": "%1$s shattered while being frozen",
+	"death.attack.shatter.item": "%1$s shattered while being frozen due to %2$s while wielding %3$s",
+	"death.attack.shatter.player": "%1$s shattered while being frozen whilst trying to escape %2$s",
 
 	"death.attack.superconduct": "%1$s experienced freezing cold conduction",
 	"death.attack.superconduct.item": "%1$s experienced freezing cold conduction due to %2$s while wielding %3$s",
 	"death.attack.superconduct.player": "%1$s experienced freezing cold conduction whilst trying to escape %2$s",
+
+	"death.attack.swirl": "%1$s was swept away by the wind",
+	"death.attack.swirl.item": "%1$s was swept away by the wind due to %2$s while wielding %3$s",
+	"death.attack.swirl.player": "%1$s was swept away by the wind whilst trying to escape %2$s",
 
 	"commands.bossbar.set.entity.success": "Custom bossbar %s now is now linked to %s",
 	"commands.bossbar.get.entity.success": "Custom bossbar %s is linked to entity %s",

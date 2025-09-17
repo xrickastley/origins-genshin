@@ -9,12 +9,11 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.item.AxeItem;
 import net.minecraft.item.PickaxeItem;
 import net.minecraft.item.ToolItem;
-import net.minecraft.text.Text;
 
 public final class HeavyShatterElementalReaction extends ShatterElementalReaction {
 	HeavyShatterElementalReaction() {
 		super(
-			new ElementalReactionSettings("Shatter", OriginsGenshin.identifier("shatter_heavy"), TextHelper.font(TextHelper.gradient(Text.translatable("reaction.origins-genshin.shatter").getString(), 0xcfffff, 0x70dee4), TextHelper.GENSHIN_FONT))
+			new ElementalReactionSettings("Shatter", OriginsGenshin.identifier("shatter_heavy"), TextHelper.reaction("reaction.origins-genshin.shatter", "#cfffff"))
 				.setReactionCoefficient(0)
 				.setAuraElement(Element.FREEZE)
 				.setTriggeringElement(Element.PHYSICAL, 0)
