@@ -275,7 +275,7 @@ public final class DendroCoreEntity extends OriginsGenshinEntity {
 
 			float damage = ElementalReaction.getReactionDamage(this, reactionMultiplier);
 
-			if (this.owners.contains(target.getUuid())) damage *= 0.05f;
+			if (this.owners.contains(target.getUuid())) damage *= 0.02f;
 
 			target.damage(source, damage);
 		}
