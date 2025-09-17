@@ -1,6 +1,9 @@
 package io.github.xrickastley.originsgenshin.renderer.entity;
 
+import java.util.Set;
+
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
+import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.entity.CrystallizeShardEntity;
 import io.github.xrickastley.originsgenshin.renderer.entity.model.CrystallizeShardEntityModel;
 
@@ -13,6 +16,8 @@ import net.minecraft.text.Text;
 import net.minecraft.util.Identifier;
 
 public class CrystallizeShardEntityRenderer extends LivingEntityRenderer<CrystallizeShardEntity, EntityModel<CrystallizeShardEntity>> {
+	private static final Set<Element> VALID_ELEMENTS = Set.of(Element.PYRO, Element.HYDRO, Element.ELECTRO, Element.CRYO, Element.GEO);
+
 	public CrystallizeShardEntityRenderer(EntityRendererFactory.Context context) {
 		super(
 			context,
@@ -26,7 +31,9 @@ public class CrystallizeShardEntityRenderer extends LivingEntityRenderer<Crystal
 	}
 
 	public Identifier getTexture(CrystallizeShardEntity entity) {
-		return OriginsGenshin.identifier("textures/entity/crystallize_shard/crystallize_shard.png");
+		return VALID_ELEMENTS.contains(entity.getElement())
+			? OriginsGenshin.identifier("textures/entity/crystallize_shard/crystallize_shard_" + entity.getElement().toString().toLowerCase() + ".png")
+			: OriginsGenshin.identifier("textures/entity/crystallize_shard/crystallize_shard.png");
 	}
 
 	@Override

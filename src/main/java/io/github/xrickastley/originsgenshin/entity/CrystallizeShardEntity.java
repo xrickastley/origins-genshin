@@ -12,11 +12,13 @@ import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.reaction.ElementalReaction;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinSoundEvents;
 import io.github.xrickastley.originsgenshin.util.ClassInstanceUtil;
-
+import io.github.xrickastley.originsgenshin.util.JavaScriptUtil;
 import net.fabricmc.fabric.api.networking.v1.FabricPacket;
 import net.fabricmc.fabric.api.networking.v1.PacketType;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
 import net.fabricmc.fabric.api.networking.v1.ServerPlayNetworking;
+import net.minecraft.entity.AnimationState;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.nbt.NbtCompound;
@@ -28,6 +30,7 @@ import net.minecraft.world.World;
 
 // Should technically extend Entity, but extends LivingEntity instead to NOT deal with more Networking and Spawn Packets.
 public final class CrystallizeShardEntity extends OriginsGenshinEntity {
+	public final AnimationState idleAnimationState = new AnimationState();
 	private @Nullable Element element;
 	private @Nullable UUID owner;
 
@@ -68,9 +71,15 @@ public final class CrystallizeShardEntity extends OriginsGenshinEntity {
 	public void tick() {
 		super.tick();
 
-		this.checkCrystallizeShield();
+    	if (this.getWorld().isClient()) this.idleAnimationState.start(this.age);
 
+		this.checkCrystallizeShield();
 		this.syncToPlayers();
+	}
+
+	@Override
+	public boolean collidesWith(Entity other) {
+		return other instanceof CrystallizeShardEntity;
 	}
 
 	/**
@@ -82,7 +91,9 @@ public final class CrystallizeShardEntity extends OriginsGenshinEntity {
 	 * While the element is considered {@code null}, the Crystallize Shard is not rendered. <br> <br>
 	 */
 	public @Nullable Element getElement() {
-		return element;
+		return this.getWorld().isClient
+			? element
+			: JavaScriptUtil.nullishCoalesing(element, Element.GEO);
 	}
 
 	public void syncFromPacket(SyncCrystallizeShardTypeS2CPacket packet) {
