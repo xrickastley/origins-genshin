@@ -169,7 +169,7 @@ public final class ElementComponentImpl implements ElementComponent {
 
 	@Override
 	public boolean canApplyElement(Element element, InternalCooldownContext icdContext, boolean handleICD) {
-		if (element.bypassesInternalCooldown() || !icdContext.hasOrigin()) return true;
+		if (element.bypassesInternalCooldown() || !icdContext.hasInternalCooldown()) return true;
 
 		return this.getElementHolder(element).canApplyElement(element, icdContext, true)
 			&& !ElementComponentImpl.DENIED_ENTITIES.stream().anyMatch(c -> c.isInstance(owner));

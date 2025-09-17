@@ -58,7 +58,7 @@ public abstract class EntityMixin {
 	)
 	private DamageSource applyElectroOnLightning(DamageSource source) {
 		return (Entity)(Object) this instanceof final LivingEntity entity && this.getWorld().getGameRules().getBoolean(OriginsGenshinGameRules.ELECTRO_FROM_LIGHTNING)
-			? new ElementalDamageSource(source, ElementalApplications.gaugeUnits(entity, Element.ELECTRO, 2.0), InternalCooldownContext.ofType(entity, "origins-genshin:natural_environment", InternalCooldownType.INTERVAL_ONLY))
+			? new ElementalDamageSource(source, ElementalApplications.gaugeUnits(entity, Element.ELECTRO, 2.0), InternalCooldownContext.ofType(null, "origins-genshin:natural_environment", InternalCooldownType.INTERVAL_ONLY).forced())
 			: source;
 	}
 

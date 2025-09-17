@@ -4,6 +4,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 
 import java.util.Objects;
+import java.util.UUID;
 
 import org.jetbrains.annotations.Nullable;
 
@@ -31,16 +32,15 @@ import net.minecraft.entity.LivingEntity;
  * from different entities are handled respectively, allowing the Internal Cooldown of entity "A"
  * to not conflict with that of entity "B". <br> <br>
  *
- * The <b>tag</b>, referred to as the {@link InternalCooldownTag} in this codebase, is internally a {@code String}
- * that identifes the attack. This tag can be shared or differ across different elemental attacks,
- * and is one of the factors that dictate Whether two elemental attacks (with the same
- * Element) share ICD. <br> <br>
+ * The <b>tag</b>, referred to as the {@link InternalCooldownTag} in this codebase, is internally a
+ * {@code String} that identifes the attack. This tag can be shared or differ across different 
+ * elemental attacks, and is one of the factors that dictate Whether two elemental attacks (with the
+ * same Element) share ICD. <br> <br>
  *
  * The <b>type</b>, referred to as the {@link InternalCooldownType} in this codebase, is an instance of
  * {@code InternalCooldownType} that controls the "Reset Interval" and the "Gauge Sequence" for an attack.
- * Much like the tag, this type can be shared or differ across different elemental attacks, and is
- * also one of the factors that dictate Whether two elemental attacks (with the same
- * Element) share ICD. <br> <br>
+ * Much like the tag, this type can be shared or differ across different elemental attacks, and is also
+ * one of the factors that dictate Whether two elemental attacks (with the same Element) share ICD. <br> <br>
  *
  * <h2>Sharing ICD</h2>
  *
@@ -58,17 +58,29 @@ import net.minecraft.entity.LivingEntity;
  * <h2>"Removing" ICD</h2>
  *
  * Internal Cooldown is <b>only</b> taken into account when an {@code origin} exists. If no {@code origin}
- * exists, the element is regarded to have been applied by <i>other</i> means, such as the environment.
+ * exists, the element is regarded to have been applied by <i>other</i> means, such as the environment. <br> <br>
+ * 
+ * The Internal Cooldown may still be taken into account without an {@code origin} by using 
+ * {@link InternalCooldownContext#forced() InternalCooldownContext#forced}. All forced Internal Cooldowns
+ * without an {@code origin} are grouped under this holder.
  */
 public final class InternalCooldownContext {
+	private static final UUID FORCE_HANDLER_UUID = UUID.fromString("301286c7-09eb-4ce0-a11a-94303bbc795e");
+
 	private final @Nullable LivingEntity origin;
 	private final InternalCooldownTag tag;
 	private final InternalCooldownType type;
+	private final boolean force;
 
 	public InternalCooldownContext(final @Nullable LivingEntity origin, final InternalCooldownTag tag, final InternalCooldownType type) {
+		this(origin, tag, type, false);
+	}
+
+	private InternalCooldownContext(final @Nullable LivingEntity origin, final InternalCooldownTag tag, final InternalCooldownType type, final boolean force) {
 		this.origin = origin;
 		this.tag = tag;
 		this.type = type;
+		this.force = force;
 	}
 
 	public static InternalCooldownContext ofNone() {
@@ -119,13 +131,29 @@ public final class InternalCooldownContext {
 		return new InternalCooldownContext.Builder();
 	}
 
+	private @Nullable UUID getUuid() {
+		return origin == null && force
+			? FORCE_HANDLER_UUID
+			: ClassInstanceUtil.mapOrNull(origin, Entity::getUuid);
+	}
+
 	public InternalCooldownContext withOrigin(@Nullable LivingEntity origin) {
 		return new InternalCooldownContext(origin, this.tag, this.type);
 	}
 
+	public InternalCooldownContext forced() {
+		return new InternalCooldownContext(this.origin, this.tag, this.type, true);
+	}
+
+	public boolean hasInternalCooldown() {
+		return this.getUuid() != null;
+	}
+
 	public @Nullable InternalCooldown getInternalCooldown(final ElementHolder holder) {
-		return origin != null
-			? this.getInternalCooldown(holder.internalCooldowns.computeIfAbsent(origin.getUuid(), e -> new InternalCooldownHolder(holder.getOwner())))
+		final UUID uuid = this.getUuid();
+
+		return uuid != null
+			? this.getInternalCooldown(holder.internalCooldowns.computeIfAbsent(uuid, e -> new InternalCooldownHolder(holder.getOwner())))
 			: null;
 	}
 
@@ -137,13 +165,13 @@ public final class InternalCooldownContext {
 		return this.origin != null;
 	}
 
-	public LivingEntity getOrigin() {
+	public @Nullable LivingEntity getOrigin() {
 		return this.origin;
 	}
 
 	@Override
 	public String toString() {
-		return String.format("InternalCooldownContext@%s[origin=%s,tag=%s,type=%s]", Integer.toHexString(this.hashCode()), origin == null ? "null" : origin, tag, type);
+		return String.format("InternalCooldownContext@%s[origin=%s,tag=%s,type=%s%s]", Integer.toHexString(this.hashCode()), origin == null ? "null" : origin, tag, type, origin == null ? ",force=" + force : "");
 	}
 
 	public static final class Builder {

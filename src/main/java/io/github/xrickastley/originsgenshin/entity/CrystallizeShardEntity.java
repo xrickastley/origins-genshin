@@ -141,6 +141,10 @@ public final class CrystallizeShardEntity extends OriginsGenshinEntity {
 		this.remove(RemovalReason.KILLED);
 	}
 
+	static {
+		ElementComponent.denyElementsFor(CrystallizeShardEntity.class);
+	}
+
 	public static class SyncCrystallizeShardTypeS2CPacket implements FabricPacket {
 		public static final PacketType<SyncCrystallizeShardTypeS2CPacket> TYPE = PacketType.create(
 			OriginsGenshin.identifier("s2c/sync_crystallize_shard_type"), SyncCrystallizeShardTypeS2CPacket::read
