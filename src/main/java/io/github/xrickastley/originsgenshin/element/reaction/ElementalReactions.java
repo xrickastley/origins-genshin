@@ -46,8 +46,7 @@ public class ElementalReactions {
 	public static final ElementalReaction ELECTRO_SWIRL = new ElectroSwirlElementalReaction();
 	public static final ElementalReaction CRYO_SWIRL = new CryoSwirlElementalReaction();
 	public static final ElementalReaction FROZEN_SWIRL = new FrozenSwirlElementalReaction();
-	// TODO: Crystallize Shards
-	// proper freaking model
+	// Creates a Crystallize Shard in front of the target.
 	public static final ElementalReaction PYRO_CRYSTALLIZE = new PyroCrystallizeElementalReaction();
 	public static final ElementalReaction HYDRO_CRYSTALLIZE = new HydroCrystallizeElementalReaction();
 	public static final ElementalReaction ELECTRO_CRYSTALLIZE = new ElectroCrystallizeElementalReaction();

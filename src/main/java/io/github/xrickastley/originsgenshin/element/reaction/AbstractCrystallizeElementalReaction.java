@@ -9,6 +9,7 @@ import io.github.xrickastley.originsgenshin.entity.CrystallizeShardEntity;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinEntities;
 import io.github.xrickastley.originsgenshin.util.Functions;
 import io.github.xrickastley.originsgenshin.util.MathHelper2;
+
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -81,14 +82,14 @@ public abstract sealed class AbstractCrystallizeElementalReaction
 	}
 
 	/**
-	 * Starting from the specified {@code initialBlockPos}, continuously scan by shfiting the 
+	 * Starting from the specified {@code initialBlockPos}, continuously scan by shfiting the
 	 * {@code initialBlockPos} by {@code shift} until the {@code Block} at the shifted pos
 	 * fulfills the {@code blockPredicate} or until {@code posPredicate} returns {@code false}. <br> <br>
-	 * 
-	 * Returns either an {@code Optional} containing the {@code BlockPos} such that 
+	 *
+	 * Returns either an {@code Optional} containing the {@code BlockPos} such that
 	 * {@code blockPredicate.test(world.getBlockState(blockPos))} returns {@code false} or an empty
 	 * {@code Optional} when {@code posPredicate.test(blockPos)} prematurely returns {@code false}.
-	 * 
+	 *
 	 * @param world The world.
 	 * @param originPos The origin block pos.
 	 * @param shift How much to shift by per iteration.
@@ -99,7 +100,7 @@ public abstract sealed class AbstractCrystallizeElementalReaction
 	private Optional<BlockPos> scan(final World world, final BlockPos originPos, final Vec3i shift, final Predicate<BlockState> blockPredicate, final Predicate<BlockPos> posPredicate) {
 		BlockPos blockPos = originPos;
 		BlockState blockState = world.getBlockState(blockPos);
-		
+
 		while (posPredicate.test(blockPos)) {
 			if (blockPredicate.test(blockState)) {
 				blockPos = blockPos.add(shift);

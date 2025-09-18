@@ -1,37 +1,29 @@
 package io.github.xrickastley.originsgenshin.mixin;
 
-import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
-import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
-
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinStatusEffects;
 
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItem;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.Hand;
-import net.minecraft.util.TypedActionResult;
-import net.minecraft.world.World;
+import net.minecraft.item.ItemPlacementContext;
+import net.minecraft.util.ActionResult;
 
 // Prioritized since Frozen **MUST** disable actions.
 @Mixin(value = BlockItem.class, priority = Integer.MIN_VALUE)
 public class BlockItemMixin {
-	@Final
-	@WrapOperation(
-		method = "useOnBlock",
-		at = @At(
-			value = "INVOKE",
-			target = "Lnet/minecraft/item/BlockItem;use(Lnet/minecraft/world/World;Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/util/Hand;)Lnet/minecraft/util/TypedActionResult;"
-		)
+	@Inject(
+		method = "place(Lnet/minecraft/item/ItemPlacementContext;)Lnet/minecraft/util/ActionResult;",
+		at = @At("HEAD"),
+		cancellable = true
 	)
-	private TypedActionResult<ItemStack> frozen_PreventItemUse(BlockItem instance, World world, PlayerEntity user, Hand hand, Operation<TypedActionResult<ItemStack>> original) {
-		ItemStack handStack = user.getStackInHand(hand);
+	private void frozenPreventsItemUse(ItemPlacementContext context, CallbackInfoReturnable<ActionResult> cir) {
+		final PlayerEntity player = context.getPlayer();
 
-		return user.hasStatusEffect(OriginsGenshinStatusEffects.FROZEN)
-			? TypedActionResult.fail(handStack)
-			: original.call(instance, world, user, hand);
+		if (player != null && player.hasStatusEffect(OriginsGenshinStatusEffects.FROZEN))
+			cir.setReturnValue(ActionResult.FAIL);
 	}
 }

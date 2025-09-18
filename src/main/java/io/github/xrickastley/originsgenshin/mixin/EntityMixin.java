@@ -1,18 +1,21 @@
 package io.github.xrickastley.originsgenshin.mixin;
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import com.llamalad7.mixinextras.sugar.Local;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
-import net.minecraft.entity.MovementType;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
+import org.jetbrains.annotations.Nullable;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
+import org.spongepowered.asm.mixin.injection.ModifyVariable;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 import io.github.xrickastley.originsgenshin.element.Element;
@@ -31,20 +34,29 @@ public abstract class EntityMixin {
 	@Shadow
 	public abstract World getWorld();
 
-	@Final
-	@Inject(
-		method = "move",
-		at = @At("HEAD"),
-		cancellable = true
+	@ModifyReturnValue(
+		method = "handleAttack",
+		at = @At("RETURN")
 	)
-	private void frozen_CantMove(MovementType movementType, Vec3d movement, CallbackInfo info) {
-		if (!((Entity)(Object) this instanceof final LivingEntity entity)) return;
+	private boolean noAttackIfAttackerFrozen(boolean original, @Local(argsOnly = true) Entity attacker) {
+		final boolean attackerHasFrozenEffect = attacker instanceof final LivingEntity livingAttacker
+			&& livingAttacker.hasStatusEffect(OriginsGenshinStatusEffects.FROZEN);
 
-		if (entity.hasStatusEffect(OriginsGenshinStatusEffects.FROZEN)) {
-			entity.setVelocity(0, 0, 0);
+		return original || attackerHasFrozenEffect;
+	}
 
-			info.cancel();
-		}
+	@ModifyVariable(
+		method = "setVelocity(Lnet/minecraft/util/math/Vec3d;)V",
+		at = @At("HEAD"),
+		argsOnly = true,
+		ordinal = 0
+	)
+	private Vec3d frozenPreventsMovement(Vec3d original) {
+		final @Nullable LivingEntity entity = ClassInstanceUtil.castOrNull(this, LivingEntity.class);
+
+		return entity != null && entity.hasStatusEffect(OriginsGenshinStatusEffects.FROZEN)
+			? new Vec3d(0, original.y, 0)
+			: original;
 	}
 
 	@Final
@@ -61,7 +73,6 @@ public abstract class EntityMixin {
 			? new ElementalDamageSource(source, ElementalApplications.gaugeUnits(entity, Element.ELECTRO, 2.0), InternalCooldownContext.ofType(null, "origins-genshin:natural_environment", InternalCooldownType.INTERVAL_ONLY).forced())
 			: source;
 	}
-
 	
 	// damn final modifier, fair enough though
 	// also probably not a good idea to AW it, it does have the right to be final.

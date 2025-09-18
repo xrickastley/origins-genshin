@@ -12,9 +12,11 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
+import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.component.ElementComponent;
 import io.github.xrickastley.originsgenshin.element.Element;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
+import io.github.xrickastley.originsgenshin.factory.OriginsGenshinStatusEffects;
 import io.github.xrickastley.originsgenshin.util.Array;
 import io.github.xrickastley.originsgenshin.util.CircleRenderer;
 import io.github.xrickastley.originsgenshin.util.Functions;
@@ -26,10 +28,19 @@ import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.util.Identifier;
 
 @Mixin(InGameHud.class)
-public class InGameHudMixin {
+public abstract class InGameHudMixin {
 	@Shadow
 	@Final
 	private MinecraftClient client;
+
+	@Shadow
+	@Final
+	private static Identifier POWDER_SNOW_OUTLINE;
+
+	@Shadow
+	private void renderOverlay(DrawContext context, Identifier texture, float opacity) {
+		throw new AssertionError();
+	}
 
 	@Inject(
 		method = "renderStatusBars",
@@ -49,13 +60,17 @@ public class InGameHudMixin {
 
 		y -= (10 * (offset));
 
+		final ElementComponent component = ElementComponent.KEY.get(player);
+
 		final double scaleFactor = MinecraftClient.getInstance().getWindow().getScaleFactor();
 		final Set<Identifier> existing = new HashSet<>();
-		final Array<Identifier> appliedElements = ElementComponent.KEY
-			.get(player)
+		final Array<Identifier> appliedElements = component
 			.getAppliedElements()
 			.map(Functions.compose(ElementalApplication::getElement, Element::getTexture))
 			.filter(existing::add);
+
+		if (component.getCrystallizeShield() != null && component.getCrystallizeShield().getRight() > 0)
+			appliedElements.add(OriginsGenshin.identifier("textures/status_effect/defense.png"));
 
 		for (int i = 0; i < appliedElements.length(); i++) {
 			final Identifier texture = appliedElements.get(i);
@@ -68,5 +83,18 @@ public class InGameHudMixin {
 
 			context.drawTexture(texture, x1, y, 9, 9, 0, 0, 9, 9, 9, 9);
 		}
+	}
+
+	@Inject(
+		method = "render(Lnet/minecraft/client/gui/DrawContext;F)V",
+		at = @At(
+			value = "INVOKE_ASSIGN",
+			target = "Lnet/minecraft/client/gui/hud/InGameHud;getTextRenderer()Lnet/minecraft/client/font/TextRenderer;",
+			shift = At.Shift.AFTER
+		)
+	)
+	private void renderFrozenOverlay(DrawContext context, float tickDelta, CallbackInfo ci) {
+		if (client.player != null && client.player.hasStatusEffect(OriginsGenshinStatusEffects.FROZEN))
+			this.renderOverlay(context, POWDER_SNOW_OUTLINE, 1.0F);
 	}
 }

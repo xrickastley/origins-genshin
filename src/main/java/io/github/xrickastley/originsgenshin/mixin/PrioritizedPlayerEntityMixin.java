@@ -30,9 +30,7 @@ public abstract class PrioritizedPlayerEntityMixin extends LivingEntity {
 		cancellable = true,
 		order = Integer.MAX_VALUE
 	)
-	protected void frozen_CantBreakBlocks(CallbackInfoReturnable<Boolean> info) {
-		final PlayerEntity player = ((PlayerEntity)(LivingEntity) this);
-
-		if (player.hasStatusEffect(OriginsGenshinStatusEffects.FROZEN)) info.setReturnValue(true);
+	private void frozenPreventsBreakingBlocks(CallbackInfoReturnable<Boolean> info) {
+		if (this.hasStatusEffect(OriginsGenshinStatusEffects.FROZEN)) info.setReturnValue(true);
 	};
 }

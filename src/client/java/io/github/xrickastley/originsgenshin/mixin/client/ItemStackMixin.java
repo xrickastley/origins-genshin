@@ -1,5 +1,7 @@
 package io.github.xrickastley.originsgenshin.mixin.client;
 
+import com.llamalad7.mixinextras.sugar.Local;
+
 import java.util.List;
 
 import org.jetbrains.annotations.Nullable;
@@ -9,16 +11,15 @@ import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
-import com.llamalad7.mixinextras.sugar.Local;
-
 import io.github.xrickastley.originsgenshin.component.ElementalInfusionComponent;
 import io.github.xrickastley.originsgenshin.element.ElementalApplication;
+import io.github.xrickastley.originsgenshin.element.InternalCooldownContext.Builder;
 import io.github.xrickastley.originsgenshin.element.InternalCooldownTag;
 import io.github.xrickastley.originsgenshin.element.InternalCooldownType;
-import io.github.xrickastley.originsgenshin.element.InternalCooldownContext.Builder;
 import io.github.xrickastley.originsgenshin.util.ClassInstanceUtil;
 import io.github.xrickastley.originsgenshin.util.Functions;
 import io.github.xrickastley.originsgenshin.util.JavaScriptUtil;
+
 import net.minecraft.client.item.TooltipContext;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.Item;

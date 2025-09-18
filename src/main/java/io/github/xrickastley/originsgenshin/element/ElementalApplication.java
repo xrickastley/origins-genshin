@@ -15,10 +15,10 @@ import io.github.apace100.calio.data.SerializableDataTypes;
 import io.github.xrickastley.originsgenshin.data.OriginsGenshinDataTypes;
 import io.github.xrickastley.originsgenshin.element.reaction.AbstractBurningElementalReaction;
 import io.github.xrickastley.originsgenshin.exception.ElementalApplicationOperationException.Operation;
+import io.github.xrickastley.originsgenshin.exception.ElementalApplicationOperationException;
 import io.github.xrickastley.originsgenshin.util.ClassInstanceUtil;
 import io.github.xrickastley.originsgenshin.util.JavaScriptUtil;
 import io.github.xrickastley.originsgenshin.util.TextHelper;
-import io.github.xrickastley.originsgenshin.exception.ElementalApplicationOperationException;
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.nbt.NbtCompound;
@@ -103,7 +103,7 @@ public abstract sealed class ElementalApplication permits DurationElementalAppli
 	protected abstract double getDefaultDecayRate();
 
 	public abstract int getRemainingTicks();
-	
+
 	public Text getText() {
 		return this.getText(GAUGE_UNIT_FORMAT, DURATION_FORMAT);
 	}
@@ -115,14 +115,14 @@ public abstract sealed class ElementalApplication permits DurationElementalAppli
 	public Text getText(@Nullable DecimalFormat gaugeFormat) {
 		return this.getText(gaugeFormat, DURATION_FORMAT);
 	}
-	
+
 	public Text getText(@Nullable String gaugeFormat, @Nullable String durationFormat) {
 		return this.getText(
 			ClassInstanceUtil.<String, DecimalFormat>mapOrNull(gaugeFormat, DecimalFormat::new),
 			ClassInstanceUtil.<String, DecimalFormat>mapOrNull(durationFormat, DecimalFormat::new)
 		);
 	}
-	
+
 	public abstract Text getText(@Nullable DecimalFormat gaugeFormat, @Nullable DecimalFormat durationFormat);
 
 	/**
@@ -294,12 +294,12 @@ public abstract sealed class ElementalApplication permits DurationElementalAppli
 
 		public static Text getText(Builder builder, @Nullable String gaugeFormat, @Nullable String durationFormat) {
 			return getText(
-				builder, 
+				builder,
 				ClassInstanceUtil.<String, DecimalFormat>mapOrNull(gaugeFormat, DecimalFormat::new),
 				ClassInstanceUtil.<String, DecimalFormat>mapOrNull(durationFormat, DecimalFormat::new)
 			);
 		}
-		
+
 		public static Text getText(Builder builder, @Nullable DecimalFormat gaugeFormat, @Nullable DecimalFormat durationFormat) {
 			gaugeFormat = JavaScriptUtil.nullishCoalesing(gaugeFormat, GAUGE_UNIT_FORMAT);
 			durationFormat = JavaScriptUtil.nullishCoalesing(durationFormat, DURATION_FORMAT);

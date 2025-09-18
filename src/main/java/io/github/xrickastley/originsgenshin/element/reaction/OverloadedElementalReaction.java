@@ -42,7 +42,7 @@ public class OverloadedElementalReaction extends ElementalReaction {
 		final double x = entity.getX();
 		final double y = entity.getY();
 		final double z = entity.getZ();
-		final float power = 3;
+		final float power = 2.5f; // TODO: test
 
 		final NonEntityDamagingExplosion explosion = new NonEntityDamagingExplosion(
 			world,

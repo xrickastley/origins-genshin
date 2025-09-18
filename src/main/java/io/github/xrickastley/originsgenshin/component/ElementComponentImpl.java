@@ -30,11 +30,14 @@ import io.github.xrickastley.originsgenshin.element.reaction.ElementalReaction;
 import io.github.xrickastley.originsgenshin.element.reaction.FrozenElementalReaction;
 import io.github.xrickastley.originsgenshin.element.reaction.QuickenElementalReaction;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinGameRules;
+import io.github.xrickastley.originsgenshin.factory.OriginsGenshinSoundEvents;
 import io.github.xrickastley.originsgenshin.registry.OriginsGenshinDamageTypeTags;
 import io.github.xrickastley.originsgenshin.registry.OriginsGenshinEntityTypeTags;
 import io.github.xrickastley.originsgenshin.registry.OriginsGenshinRegistries;
 import io.github.xrickastley.originsgenshin.util.Array;
+import io.github.xrickastley.originsgenshin.util.ClassInstanceUtil;
 import io.github.xrickastley.originsgenshin.util.ImmutablePair;
+import io.github.xrickastley.originsgenshin.util.JavaScriptUtil;
 
 import net.minecraft.entity.EntityType;
 import net.minecraft.entity.LivingEntity;
@@ -46,6 +49,7 @@ import net.minecraft.nbt.NbtList;
 import net.minecraft.registry.entry.RegistryEntry.Reference;
 import net.minecraft.registry.tag.TagKey;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
 
@@ -133,11 +137,21 @@ public final class ElementComponentImpl implements ElementComponent {
 
 	@Override
 	public float reduceCrystallizeShield(DamageSource source, float amount) {
-		if (!(source instanceof final ElementalDamageSource eds) || this.crystallizeShield == null) return 0;
+		if (this.crystallizeShield == null || this.crystallizeShield.isEmpty()) return 0;
+
+		final ElementalDamageSource eds = JavaScriptUtil.nullishCoalesing(
+			ClassInstanceUtil.castOrNull(source, ElementalDamageSource.class),
+			ElementalDamageSource.of(source, this.owner)
+		);
 
 		final float reduced = this.crystallizeShield.reduce(eds, amount);
 
 		if (reduced > 0) this.crystallizeShieldReducedAt = this.owner.age;
+
+		if (this.crystallizeShield == null || this.crystallizeShield.isEmpty()) {
+			this.owner.getWorld()
+				.playSound(null, this.owner.getBlockPos(), OriginsGenshinSoundEvents.CRYSTALLIZE_SHIELD_BREAK, SoundCategory.PLAYERS, 1.0f, 1.0f);
+		}
 
 		return reduced;
 	}
@@ -574,6 +588,9 @@ public final class ElementComponentImpl implements ElementComponent {
 			if ((this.appliedAt + 300 >= impl.owner.getWorld().getTime() && !this.isEmpty()) || impl.crystallizeShield == null) return;
 
 			impl.crystallizeShield = null;
+
+			impl.owner.getWorld()
+				.playSound(null, impl.owner.getBlockPos(), OriginsGenshinSoundEvents.CRYSTALLIZE_SHIELD_BREAK, SoundCategory.PLAYERS, 1.0f, 1.0f);
 
 			ElementComponent.sync(impl.owner);
 		}

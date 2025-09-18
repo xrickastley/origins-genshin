@@ -3,6 +3,7 @@ package io.github.xrickastley.originsgenshin.element;
 import org.jetbrains.annotations.Nullable;
 
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.damage.DamageType;
 import net.minecraft.registry.entry.RegistryEntry;
@@ -106,6 +107,24 @@ public final class ElementalDamageSource extends DamageSource {
 		this.original = null;
 		this.application = application;
 		this.icdContext = icdContext;
+	}
+
+	/**
+	 * Creates a standard {@code ElementalDamageSource} from the provided {@code DamageSource}. <br> <br>
+	 *
+	 * The provided {@code ElementalDamageSource} will be of the {@link Element#PHYSICAL} element
+	 * with {@code 0.0} gauge units with an Internal Cooldown tag and type of
+	 * {@link InternalCooldownTag#NONE} and {@link InternalCooldownType#NONE}, respectively.
+	 *
+	 * @param source The {@code DamageSource} to create a standard {@code ElementalDamageSource} out of.
+	 * @param target The target of the {@code DamageSource}.
+	 */
+	public static ElementalDamageSource of(final DamageSource source, final @Nullable LivingEntity target) {
+		return new ElementalDamageSource(
+			source,
+			ElementalApplications.gaugeUnits(target, Element.PHYSICAL, 0.0),
+			InternalCooldownContext.ofNone()
+		);
 	}
 
 	/**

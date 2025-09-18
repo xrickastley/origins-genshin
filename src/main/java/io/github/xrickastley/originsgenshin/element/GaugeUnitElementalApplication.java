@@ -8,9 +8,9 @@ import org.jetbrains.annotations.Nullable;
 
 import io.github.xrickastley.originsgenshin.component.ElementComponent;
 import io.github.xrickastley.originsgenshin.exception.ElementalApplicationOperationException.Operation;
+import io.github.xrickastley.originsgenshin.exception.ElementalApplicationOperationException;
 import io.github.xrickastley.originsgenshin.util.JavaScriptUtil;
 import io.github.xrickastley.originsgenshin.util.TextHelper;
-import io.github.xrickastley.originsgenshin.exception.ElementalApplicationOperationException;
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.nbt.NbtCompound;

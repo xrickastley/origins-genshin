@@ -1,13 +1,13 @@
 package io.github.xrickastley.originsgenshin.command;
 
-import java.util.concurrent.CompletableFuture;
-
 import com.mojang.brigadier.StringReader;
 import com.mojang.brigadier.arguments.ArgumentType;
 import com.mojang.brigadier.context.CommandContext;
 import com.mojang.brigadier.exceptions.CommandSyntaxException;
 import com.mojang.brigadier.suggestion.Suggestions;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
+
+import java.util.concurrent.CompletableFuture;
 
 import io.github.xrickastley.originsgenshin.element.InternalCooldownTag;
 import io.github.xrickastley.originsgenshin.util.ClassInstanceUtil;
@@ -46,7 +46,7 @@ public class InternalCooldownTagType implements ArgumentType<Holder<String>> {
 
 	public String lenientReadUnquotedString(final StringReader reader) {
 		final int start = reader.getCursor();
-		
+
 		while (reader.canRead() && reader.peek() != ' ') reader.skip();
 
 		return reader.getString().substring(start, reader.getCursor());

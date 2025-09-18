@@ -3,12 +3,12 @@ package io.github.xrickastley.originsgenshin.element;
 import com.mojang.brigadier.suggestion.SuggestionsBuilder;
 import com.mojang.serialization.Codec;
 
-import io.github.xrickastley.originsgenshin.util.JavaScriptUtil;
-
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
 import org.jetbrains.annotations.Nullable;
+
+import io.github.xrickastley.originsgenshin.util.JavaScriptUtil;
 
 /**
  * An {@code InternalCooldownTag} is a class used for holding unique instances of Internal Cooldown

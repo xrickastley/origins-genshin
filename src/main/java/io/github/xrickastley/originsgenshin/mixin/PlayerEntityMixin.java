@@ -23,6 +23,7 @@ import io.github.xrickastley.originsgenshin.element.ElementalApplications;
 import io.github.xrickastley.originsgenshin.element.ElementalDamageSource;
 import io.github.xrickastley.originsgenshin.element.InternalCooldownContext;
 import io.github.xrickastley.originsgenshin.entity.DendroCoreEntity;
+import io.github.xrickastley.originsgenshin.factory.OriginsGenshinSoundEvents;
 import io.github.xrickastley.originsgenshin.interfaces.IPlayerEntity;
 import io.github.xrickastley.originsgenshin.networking.ShowElementalDamageS2CPacket;
 import io.github.xrickastley.originsgenshin.util.BoxUtil;
@@ -36,6 +37,7 @@ import net.minecraft.entity.damage.DamageSource;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
@@ -74,8 +76,16 @@ public abstract class PlayerEntityMixin
 	)
 	private float applyCrystallizeShield(float amount, @Local(argsOnly = true) DamageSource source) {
 		final ElementComponent component = ElementComponent.KEY.get(this);
+		final float finalAmount = amount - component.reduceCrystallizeShield(source, amount);
 
-		return amount - component.reduceCrystallizeShield(source, amount);
+		if (finalAmount < amount) {
+			this.getWorld()
+				.playSound(null, this.getBlockPos(), OriginsGenshinSoundEvents.CRYSTALLIZE_SHIELD_HIT, SoundCategory.PLAYERS, 1.0f, 1.0f);
+		}
+
+		if (finalAmount <= 0) this.originsgenshin$setBlockedByCrystallizeShield(true);
+
+		return finalAmount;
 	}
 
 	// why are there two seperate knockbacks :sob:

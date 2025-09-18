@@ -28,6 +28,7 @@ import io.github.xrickastley.originsgenshin.util.ClassInstanceUtil;
 import io.github.xrickastley.originsgenshin.util.Functions;
 import io.github.xrickastley.originsgenshin.util.JavaScriptUtil;
 import io.github.xrickastley.originsgenshin.util.TextHelper;
+
 import net.minecraft.command.CommandRegistryAccess;
 import net.minecraft.command.argument.EntityArgumentType;
 import net.minecraft.command.argument.RegistryEntryArgumentType;
@@ -176,7 +177,7 @@ public class ElementCommand {
 		final double gaugeUnits = DoubleArgumentType.getDouble(context, "gaugeUnits");
 		final boolean aura = ElementCommand.getOrDefault(context, "isAura", Boolean.class, true);
 
-		if (!(entity instanceof final LivingEntity target)) 
+		if (!(entity instanceof final LivingEntity target))
 			return sendError(context, Text.translatable("commands.element.failed.entity", entity));
 
 		final ElementComponent component = ElementComponent.KEY.get(target);
@@ -188,7 +189,7 @@ public class ElementCommand {
 
 		if (reactions.isEmpty())
 			return sendFeedback(context, Text.translatable("commands.element.apply", element, entity.getDisplayName()), true);
-		else 
+		else
 			return sendFeedback(context, Text.translatable("commands.element.apply", element, entity.getDisplayName(), Texts.join(reactions, Functions.compose(ElementalReaction::getId, Identifier::toString, Text::literal))), true);
 	}
 
@@ -198,7 +199,7 @@ public class ElementCommand {
 		final double gaugeUnits = DoubleArgumentType.getDouble(context, "gaugeUnits");
 		final int duration = IntegerArgumentType.getInteger(context, "duration");
 
-		if (!(entity instanceof final LivingEntity target)) 
+		if (!(entity instanceof final LivingEntity target))
 			return sendError(context, Text.translatable("commands.element.failed.entity", entity));
 
 		final ElementComponent component = ElementComponent.KEY.get(target);
@@ -210,7 +211,7 @@ public class ElementCommand {
 
 		if (reactions.isEmpty())
 			return sendFeedback(context, Text.translatable("commands.element.apply", element, entity.getDisplayName()), true);
-		else 
+		else
 			return sendFeedback(context, Text.translatable("commands.element.apply", element, entity.getDisplayName(), Texts.join(reactions, Functions.compose(ElementalReaction::getId, Identifier::toString, Text::literal))), true);
 	}
 
@@ -218,7 +219,7 @@ public class ElementCommand {
 		final Entity entity = EntityArgumentType.getEntity(context, "target");
 		final Element element = ElementArgumentType.getElement(context, "element");
 
-		if (!(entity instanceof final LivingEntity target)) 
+		if (!(entity instanceof final LivingEntity target))
 			return sendError(context, Text.translatable("commands.element.failed.entity", entity));
 
 		final ElementComponent component = ElementComponent.KEY.get(target);
@@ -236,7 +237,7 @@ public class ElementCommand {
 
 		ElementComponent.sync(entity);
 
-		return sendFeedback(context, Text.translatable("commands.element.remove", element, entity), true);	
+		return sendFeedback(context, Text.translatable("commands.element.remove", element, entity), true);
 	}
 
 	private static int reduceElement(CommandContext<ServerCommandSource> context) throws CommandSyntaxException {
@@ -244,7 +245,7 @@ public class ElementCommand {
 		final Element element = ElementArgumentType.getElement(context, "element");
 		final double gaugeUnits = DoubleArgumentType.getDouble(context, "gaugeUnits");
 
-		if (!(entity instanceof final LivingEntity target)) 
+		if (!(entity instanceof final LivingEntity target))
 			return sendError(context, Text.translatable("commands.element.failed.entity", entity));
 
 		final ElementComponent component = ElementComponent.KEY.get(target);
@@ -273,7 +274,7 @@ public class ElementCommand {
 
 		if (appliedElements.isEmpty())
 			return sendError(context, Text.translatable("commands.element.query.multiple.none", entity));
-		
+
 		return sendFeedback(context, Text.translatable("commands.element.query.multiple.success", entity.getDisplayName(), Texts.join(appliedElements, ElementalApplication::getText)), true);
 	}
 
@@ -331,7 +332,7 @@ public class ElementCommand {
 			final Text icdTagText = tag == InternalCooldownTag.NONE
 				? TextHelper.color(Text.literal("none"), Formatting.RED.getColorValue())
 				: Text.literal(tag.getTag());
-			
+
 			final Text icdText = Text.empty()
 				.append(icdTagText)
 				.append("/" + type.getId());
@@ -381,7 +382,7 @@ public class ElementCommand {
 			final Text icdTagText = tag == InternalCooldownTag.NONE
 				? TextHelper.color(Text.literal("none"), Formatting.RED.getColorValue())
 				: Text.literal(tag.getTag());
-			
+
 			final Text icdText = Text.empty()
 				.append(icdTagText)
 				.append("/" + type.getId());

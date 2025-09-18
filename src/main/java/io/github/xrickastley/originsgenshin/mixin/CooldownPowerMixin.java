@@ -35,7 +35,7 @@ public abstract class CooldownPowerMixin
 		at = @At("RETURN"),
 		remap = false
 	)
-	private boolean frozen_CantUsePowers(boolean original) {
+	private boolean frozenPreventsPowerUse(boolean original) {
 		return original && !this.entity.hasStatusEffect(OriginsGenshinStatusEffects.FROZEN);
 	}
 }

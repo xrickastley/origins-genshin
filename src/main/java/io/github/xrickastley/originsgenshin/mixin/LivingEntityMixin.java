@@ -10,6 +10,7 @@ import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.*;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import io.github.xrickastley.originsgenshin.component.ElementComponent;
 import io.github.xrickastley.originsgenshin.element.Element;
@@ -20,6 +21,8 @@ import io.github.xrickastley.originsgenshin.element.InternalCooldownType;
 import io.github.xrickastley.originsgenshin.entity.DendroCoreEntity;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinAttributes;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinGameRules;
+import io.github.xrickastley.originsgenshin.factory.OriginsGenshinSoundEvents;
+import io.github.xrickastley.originsgenshin.interfaces.ILivingEntity;
 import io.github.xrickastley.originsgenshin.interfaces.IPlayerEntity;
 import io.github.xrickastley.originsgenshin.networking.ShowElementalDamageS2CPacket;
 import io.github.xrickastley.originsgenshin.registry.OriginsGenshinDamageTypeTags;
@@ -37,12 +40,16 @@ import net.minecraft.entity.effect.StatusEffectInstance;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.server.network.ServerPlayerEntity;
 import net.minecraft.server.world.ServerWorld;
+import net.minecraft.sound.SoundCategory;
 import net.minecraft.util.math.Box;
 import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
 
 @Mixin(LivingEntity.class)
-public abstract class LivingEntityMixin extends Entity {
+public abstract class LivingEntityMixin
+	extends Entity
+	implements ILivingEntity
+{
 	public LivingEntityMixin(final EntityType<? extends LivingEntity> entityType, final World world) {
 		super(entityType, world);
 		throw new AssertionError();
@@ -50,6 +57,8 @@ public abstract class LivingEntityMixin extends Entity {
 
 	@Unique
 	private float originsgenshin$subdamage;
+	@Unique
+	private boolean originsgenshin$blockedByCrystallizeShield = false; // true ONLY if ALL received DMG is blocked.
 
 	@ModifyReturnValue(
 		method = "createLivingAttributes",
@@ -80,7 +89,7 @@ public abstract class LivingEntityMixin extends Entity {
 			final ElementComponent component = ElementComponent.KEY.get(this);
 
 			component.addElementalApplication(
-				Element.HYDRO, 
+				Element.HYDRO,
 				InternalCooldownContext
 					.ofType(null, "origins-genshin:natural_environment", InternalCooldownType.INTERVAL_ONLY)
 					.forced(),
@@ -90,7 +99,7 @@ public abstract class LivingEntityMixin extends Entity {
 			final ElementComponent component = ElementComponent.KEY.get(this);
 
 			component.addElementalApplication(
-				Element.PYRO, 
+				Element.PYRO,
 				InternalCooldownContext
 					// Shares ICD with entries for has_pyro_infusion.
 					.ofType(null, "origins-genshin:natural_environment", InternalCooldownType.INTERVAL_ONLY)
@@ -98,6 +107,14 @@ public abstract class LivingEntityMixin extends Entity {
 				1.0
 			);
 		}
+	}
+
+	@Inject(
+		method = "damage",
+		at = @At("HEAD")
+	)
+	private void resetCrystallizeShieldBlockedState(DamageSource source, float amount, CallbackInfoReturnable<Boolean> ci) {
+		this.originsgenshin$blockedByCrystallizeShield = false;
 	}
 
 	@ModifyVariable(
@@ -113,8 +130,27 @@ public abstract class LivingEntityMixin extends Entity {
 	)
 	private float applyCrystallizeShield(float amount, @Local(argsOnly = true) DamageSource source) {
 		final ElementComponent component = ElementComponent.KEY.get(this);
+		final float finalAmount = amount - component.reduceCrystallizeShield(source, amount);
 
-		return amount - component.reduceCrystallizeShield(source, amount);
+		if (finalAmount < amount)
+			this.getWorld().playSound(null, this.getBlockPos(), OriginsGenshinSoundEvents.CRYSTALLIZE_SHIELD_HIT, SoundCategory.PLAYERS, 1.0f, 1.0f);
+
+		if (finalAmount <= 0) this.originsgenshin$blockedByCrystallizeShield = true;
+
+		return finalAmount;
+	}
+
+	@Inject(
+		method = "damage",
+		at = @At(
+			value = "INVOKE",
+			target = "Lnet/minecraft/entity/LivingEntity;applyDamage(Lnet/minecraft/entity/damage/DamageSource;F)V",
+			shift = At.Shift.AFTER
+		),
+		cancellable = true
+	)
+	private void cancelIfFullyBlocked(DamageSource source, float amount, CallbackInfoReturnable<Boolean> cir) {
+		if (this.originsgenshin$blockedByCrystallizeShield) cir.setReturnValue(false);
 	}
 
 	@ModifyExpressionValue(
@@ -135,7 +171,7 @@ public abstract class LivingEntityMixin extends Entity {
 		method = "applyDamage",
 		at = @At("TAIL")
 	)
-	private void damageHandlers_elements(final DamageSource source, float amount, CallbackInfo ci) {
+	private void elementDamageHandler(final DamageSource source, float amount, CallbackInfo ci) {
 		this.originsgenshin$triggerDendroCoreReactions(source);
 
 		if (!source.originsgenshin$displayDamage()) return;
@@ -199,5 +235,11 @@ public abstract class LivingEntityMixin extends Entity {
 		this.getWorld()
 			.getEntitiesByClass(DendroCoreEntity.class, BoxUtil.multiply(this.getBoundingBox(), 2), dc -> true)
 			.forEach(dc -> dc.damage(source, 1));
+	}
+
+	@Unique
+	@Override
+	public void originsgenshin$setBlockedByCrystallizeShield(boolean blocked) {
+		this.originsgenshin$blockedByCrystallizeShield = blocked;
 	}
 }

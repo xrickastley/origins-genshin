@@ -26,10 +26,10 @@ public class MathHelper2 {
 
 	/**
 	 * Creates a {@code BlockPos} from the provided {@code Vec3d}. <br> <br>
-	 * 
+	 *
 	 * This implementation ensures that the provided {@code Vec3d} relative to the world will
 	 * point to the same {@code BlockPos} returned by this method.
-	 * 
+	 *
 	 * @param pos The position to turn into a {@code BlockPos}.
 	 */
 	public static BlockPos asBlockPos(Vec3d pos) {

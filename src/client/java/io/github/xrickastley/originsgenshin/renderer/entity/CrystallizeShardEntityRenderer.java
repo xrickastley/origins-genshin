@@ -31,7 +31,7 @@ public class CrystallizeShardEntityRenderer extends LivingEntityRenderer<Crystal
 	}
 
 	public Identifier getTexture(CrystallizeShardEntity entity) {
-		return VALID_ELEMENTS.contains(entity.getElement())
+		return entity.getElement() != null && VALID_ELEMENTS.contains(entity.getElement())
 			? OriginsGenshin.identifier("textures/entity/crystallize_shard/crystallize_shard_" + entity.getElement().toString().toLowerCase() + ".png")
 			: OriginsGenshin.identifier("textures/entity/crystallize_shard/crystallize_shard.png");
 	}

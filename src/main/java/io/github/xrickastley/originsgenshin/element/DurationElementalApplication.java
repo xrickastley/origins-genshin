@@ -7,9 +7,9 @@ import org.jetbrains.annotations.Nullable;
 
 import io.github.xrickastley.originsgenshin.component.ElementComponent;
 import io.github.xrickastley.originsgenshin.exception.ElementalApplicationOperationException.Operation;
+import io.github.xrickastley.originsgenshin.exception.ElementalApplicationOperationException;
 import io.github.xrickastley.originsgenshin.util.JavaScriptUtil;
 import io.github.xrickastley.originsgenshin.util.TextHelper;
-import io.github.xrickastley.originsgenshin.exception.ElementalApplicationOperationException;
 
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.nbt.NbtCompound;
@@ -61,7 +61,7 @@ public final class DurationElementalApplication extends ElementalApplication {
 
 		return TextHelper.color(
 			Text.translatable("format.origins-genshin.elemental_application.duration", gaugeFormat.format(this.currentGauge), this.element.getString(), durationFormat.format(this.duration / 20.0)),
-			this.element.getDamageColor()	
+			this.element.getDamageColor()
 		);
 	}
 

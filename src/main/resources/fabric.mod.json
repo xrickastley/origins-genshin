@@ -1,9 +1,9 @@
 {
 	"schemaVersion": 1,
 	"id": "origins-genshin",
-	"version": "2.0.0-alpha",
+	"version": "${version}",
 	"name": "Origins: Genshin",
-	"description": "Adds Genshin-styled power rendering to the Origins mod.",
+	"description": "Adds Genshin-styled power rendering and Elemental Combat to the Origins mod.",
 	"authors": [
 		"_xRickAstley"
 	],

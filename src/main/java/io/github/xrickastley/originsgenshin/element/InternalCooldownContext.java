@@ -33,7 +33,7 @@ import net.minecraft.entity.LivingEntity;
  * to not conflict with that of entity "B". <br> <br>
  *
  * The <b>tag</b>, referred to as the {@link InternalCooldownTag} in this codebase, is internally a
- * {@code String} that identifes the attack. This tag can be shared or differ across different 
+ * {@code String} that identifes the attack. This tag can be shared or differ across different
  * elemental attacks, and is one of the factors that dictate Whether two elemental attacks (with the
  * same Element) share ICD. <br> <br>
  *
@@ -59,8 +59,8 @@ import net.minecraft.entity.LivingEntity;
  *
  * Internal Cooldown is <b>only</b> taken into account when an {@code origin} exists. If no {@code origin}
  * exists, the element is regarded to have been applied by <i>other</i> means, such as the environment. <br> <br>
- * 
- * The Internal Cooldown may still be taken into account without an {@code origin} by using 
+ *
+ * The Internal Cooldown may still be taken into account without an {@code origin} by using
  * {@link InternalCooldownContext#forced() InternalCooldownContext#forced}. All forced Internal Cooldowns
  * without an {@code origin} are grouped under this holder.
  */

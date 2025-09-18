@@ -28,7 +28,6 @@ import net.minecraft.client.gui.hud.ClientBossBar;
 import net.minecraft.entity.boss.BossBar;
 import net.minecraft.util.Identifier;
 
-// /bossbar set <id> entity <entity selector>
 @Mixin(BossBarHud.class)
 public class BossBarHudMixin {
 	@Shadow

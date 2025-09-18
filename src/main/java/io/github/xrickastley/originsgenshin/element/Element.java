@@ -187,7 +187,7 @@ public enum Element {
 	public boolean hasAuraTax() {
 		return settings.hasAuraTax;
 	}
-	
+
 	public String getString() {
 		final String string = this.toString();
 		final String fallback = string.substring(0, 1).toUpperCase() + string.substring(1).toLowerCase();

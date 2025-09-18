@@ -63,6 +63,22 @@ public abstract class PrioritizedLivingEntityMixin
 	}
 
 	@Inject(
+		method = "canHaveStatusEffect",
+		at = @At("HEAD"),
+		cancellable = true,
+		order = Integer.MIN_VALUE
+	)
+	// Frozen and Cryo **must** persist while their respective elements are applied.
+	private void forceElementEffects(StatusEffectInstance effect, CallbackInfoReturnable<Boolean> cir) {
+		final ElementComponent component = ElementComponent.KEY.get(this);
+		final StatusEffect type = effect.getEffectType();
+		final boolean override = (component.hasElementalApplication(Element.CRYO) && type == OriginsGenshinStatusEffects.CRYO)
+			|| (component.hasElementalApplication(Element.FREEZE) && type == OriginsGenshinStatusEffects.FROZEN);
+
+		if (override) cir.setReturnValue(override);
+	}
+
+	@Inject(
 		method = "removeStatusEffectInternal",
 		at = @At("HEAD"),
 		cancellable = true
@@ -84,7 +100,7 @@ public abstract class PrioritizedLivingEntityMixin
 	private Iterator<StatusEffectInstance> replaceIterator(Iterator<StatusEffectInstance> value) {
 		final ElementComponent component = ElementComponent.KEY.get(this);
 
-		return FilteredIterator.of(value, 
+		return FilteredIterator.of(value,
 			v -> !(v.getEffectType() == OriginsGenshinStatusEffects.CRYO && component.hasElementalApplication(Element.CRYO)
 				|| v.getEffectType() == OriginsGenshinStatusEffects.FROZEN && component.hasElementalApplication(Element.FREEZE))
 		);

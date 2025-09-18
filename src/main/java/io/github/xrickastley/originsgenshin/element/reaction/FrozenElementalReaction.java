@@ -68,7 +68,7 @@ public final class FrozenElementalReaction extends ElementalReaction {
 	// These "mixins" are injected pieces of code (likening @Inject) that allow Burning to work properly, and allow others to easily see the way it was hardcoded.
 	public static boolean mixin$pseudoReapplication(ElementalApplication application, ElementComponent component) {
 		return component.hasElementalApplication(Element.FREEZE)
-			&& (application.getElement() == Element.CRYO 
+			&& (application.getElement() == Element.CRYO
 			|| (application.getElement() == Element.HYDRO && !component.hasElementalApplication(Element.HYDRO)));
 	}
 }

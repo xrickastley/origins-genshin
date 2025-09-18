@@ -13,6 +13,7 @@ import io.github.xrickastley.originsgenshin.element.reaction.ElementalReaction;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinSoundEvents;
 import io.github.xrickastley.originsgenshin.util.ClassInstanceUtil;
 import io.github.xrickastley.originsgenshin.util.JavaScriptUtil;
+
 import net.fabricmc.fabric.api.networking.v1.FabricPacket;
 import net.fabricmc.fabric.api.networking.v1.PacketType;
 import net.fabricmc.fabric.api.networking.v1.PlayerLookup;
@@ -112,7 +113,7 @@ public final class CrystallizeShardEntity extends OriginsGenshinEntity {
 	private void checkCrystallizeShield() {
 		if (this.getWorld().isClient) return;
 
-		final List<LivingEntity> entities = ElementalReaction.getEntitiesInAoE(this, 1.0, e -> !(e instanceof CrystallizeShardEntity));
+		final List<LivingEntity> entities = ElementalReaction.getEntitiesInAoE(this, 1.0, e -> !(e instanceof OriginsGenshinEntity));
 		final @Nullable LivingEntity owner = this.getEntityFromUUID(this.owner);
 
 		@Nullable LivingEntity target = null;
@@ -133,10 +134,12 @@ public final class CrystallizeShardEntity extends OriginsGenshinEntity {
 
 		final ElementComponent component = ElementComponent.KEY.get(target);
 
-		component.setCrystallizeShield(element, OriginsGenshin.getLevelMultiplier(this) * 3);
-		
+		component.setCrystallizeShield(element, OriginsGenshin.getLevelMultiplier(this));
+
 		this.getWorld()
 			.playSound(null, this.getBlockPos(), OriginsGenshinSoundEvents.CRYSTALLIZE_SHIELD, SoundCategory.PLAYERS, 1.0f, 1.0f);
+
+		// TODO: crystallize shield hit sound?
 
 		this.remove(RemovalReason.KILLED);
 	}

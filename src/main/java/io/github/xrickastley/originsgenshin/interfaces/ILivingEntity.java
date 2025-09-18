@@ -19,4 +19,12 @@ public interface ILivingEntity {
 	default @Nullable Entity originsgenshin$getPlannedAttacker() {
 		return null;
 	}
+
+	/**
+	 * Sets whether or not the damage was blocked by the Crystallize Shield. <br> <br>
+	 *
+	 * To <b>only</b> be used by subclasses of {@code LivingEntity} that don't call upon
+	 * {@link LivingEntity#applyDamage LivingEntity#applyDamage}.
+	 */
+	default void originsgenshin$setBlockedByCrystallizeShield(boolean blocked) {}
 }

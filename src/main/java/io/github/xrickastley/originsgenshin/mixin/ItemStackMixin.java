@@ -1,13 +1,12 @@
 package io.github.xrickastley.originsgenshin.mixin;
 
 import com.llamalad7.mixinextras.injector.ModifyReturnValue;
+import com.llamalad7.mixinextras.injector.wrapoperation.Operation;
+import com.llamalad7.mixinextras.injector.wrapoperation.WrapOperation;
 
-import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
-import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 import io.github.xrickastley.originsgenshin.component.ElementalInfusionComponent;
 import io.github.xrickastley.originsgenshin.element.Element;
@@ -32,16 +31,20 @@ public abstract class ItemStackMixin {
 	@Shadow
 	public abstract boolean hasNbt();
 
-	@Final
-	@Inject(
+
+	@WrapOperation(
 		method = "use",
-		at = @At("HEAD"),
-		cancellable = true
+		at = @At(
+			value = "INVOKE",
+			target = "Lnet/minecraft/item/Item;use(Lnet/minecraft/world/World;Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/util/Hand;)Lnet/minecraft/util/TypedActionResult;"
+		)
 	)
-	private void preventItemUse(World world, PlayerEntity user, Hand hand, CallbackInfoReturnable<TypedActionResult<ItemStack>> cir) {
+	private TypedActionResult<ItemStack> frozenPreventsItemUse(Item instance, World world, PlayerEntity user, Hand hand, Operation<TypedActionResult<ItemStack>> original) {
 		ItemStack handStack = user.getStackInHand(hand);
 
-		if (user.hasStatusEffect(OriginsGenshinStatusEffects.FROZEN)) cir.setReturnValue(TypedActionResult.fail(handStack));
+		return user.hasStatusEffect(OriginsGenshinStatusEffects.FROZEN)
+			? TypedActionResult.fail(handStack)
+			: original.call(instance, world, user, hand);
 	}
 
 	@ModifyReturnValue(
