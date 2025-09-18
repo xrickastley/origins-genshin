@@ -1,0 +1,50 @@
+{
+  "reaction": {
+    "category": "player",
+    "sounds": [
+      {
+        "name": "origins-genshin:reaction"
+      }
+    ]
+  },
+  "dendro_core_explosion": {
+    "category": "player",
+    "sounds": [
+      {
+        "name": "origins-genshin:dendro_core_explosion"
+      }
+    ]
+  },
+  "sprawling_shot_hit": {
+    "category": "player",
+    "sounds": [
+      {
+        "name": "origins-genshin:sprawling_shot_hit"
+      }
+    ]
+  },
+  "crystallize_shield": {
+    "category": "player",
+    "sounds": [
+      {
+        "name": "origins-genshin:crystallize_shield"
+      }
+    ]
+  },
+  "crystallize_shield.hit": {
+    "category": "player",
+    "sounds": [
+      {
+        "name": "origins-genshin:crystallize_shield_hit"
+      }
+    ]
+  },
+  "crystallize_shield.break": {
+    "category": "player",
+    "sounds": [
+      {
+        "name": "origins-genshin:crystallize_shield_break"
+      }
+    ]
+  }
+}

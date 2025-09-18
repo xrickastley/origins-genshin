@@ -1,9 +1,9 @@
 {
 	"schemaVersion": 1,
 	"id": "origins-genshin",
-	"version": "1.1.0-1.20.2",
+	"version": "${version}",
 	"name": "Origins: Genshin",
-	"description": "Adds Genshin-styled power rendering to the Origins mod.",
+	"description": "Adds Genshin-styled power rendering and Elemental Combat to the Origins mod.",
 	"authors": [
 		"_xRickAstley"
 	],
@@ -24,10 +24,17 @@
 		],
 		"modmenu": [
 			"io.github.xrickastley.originsgenshin.OriginsGenshinModMenu"
+		],
+		"cardinal-components": [
+			"io.github.xrickastley.originsgenshin.OriginsGenshinComponents"
 		]
 	},
 	"mixins": [
-		"origins-genshin.mixins.json"
+		"origins-genshin.mixins.json",
+		{
+			"config": "origins-genshin.mixins.client.json",
+			"environment": "client"
+		}
 	],
 	"depends": {
 		"fabricloader": ">=0.16.2",
@@ -35,5 +42,26 @@
 		"java": ">=17",
 		"fabric-api": "*",
 		"origins": ">=1.11.3"
+	},
+	"custom": {
+		"loom:injected_interfaces": {
+			"net/minecraft/class_1291": [
+				"io/github/xrickastley/originsgenshin/interfaces/EntityAwareEffect"
+			],
+			"net/minecraft/class_1309": [
+				"io/github/xrickastley/originsgenshin/interfaces/ILivingEntity"
+			],
+			"net/minecraft/class_1282": [
+				"io/github/xrickastley/originsgenshin/interfaces/IDamageSource"
+			],
+			"net/minecraft/class_1259": [
+				"io/github/xrickastley/originsgenshin/interfaces/IBossBar"
+			]
+		},
+		"cardinal-components": [
+			"origins-genshin:elements",
+			"origins-genshin:elemental_infusion",
+			"origins-genshin:frozen_effect"
+		]
 	}
 }

@@ -1,0 +1,30 @@
+package io.github.xrickastley.originsgenshin.interfaces;
+
+import org.jetbrains.annotations.Nullable;
+
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.LivingEntity;
+
+public interface ILivingEntity {
+	/**
+	 * Gets the "planned" attacker. This is updated at the <i>very</i> start of the damage method,
+	 * meaning that the attacker may not be able to attack after all succeeding conditions are
+	 * checked. <br> <br>
+	 *
+	 * This is the attacker of the <i>most recent</i> {@code DamageSource} passed through
+	 * {@link LivingEntity#damage LivingEntity#damage}.
+	 *
+	 * @see LivingEntity#getAttacker()
+	 */
+	default @Nullable Entity originsgenshin$getPlannedAttacker() {
+		return null;
+	}
+
+	/**
+	 * Sets whether or not the damage was blocked by the Crystallize Shield. <br> <br>
+	 *
+	 * To <b>only</b> be used by subclasses of {@code LivingEntity} that don't call upon
+	 * {@link LivingEntity#applyDamage LivingEntity#applyDamage}.
+	 */
+	default void originsgenshin$setBlockedByCrystallizeShield(boolean blocked) {}
+}

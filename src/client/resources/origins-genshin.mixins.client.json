@@ -1,0 +1,17 @@
+{
+  "required": true,
+  "package": "io.github.xrickastley.originsgenshin.mixin.client",
+  "compatibilityLevel": "JAVA_17",
+  "mixins": [
+    "AbstractInventoryScreenMixin",
+    "BossBarHud$1Mixin",
+    "BossBarHudAccessor",
+    "BossBarHudMixin",
+    "InGameHudMixin",
+    "ItemStackMixin",
+    "LivingEntityRendererMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}

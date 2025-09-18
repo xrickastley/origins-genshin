@@ -1,0 +1,110 @@
+package io.github.xrickastley.originsgenshin.mixin;
+
+import com.llamalad7.mixinextras.sugar.Local;
+
+import org.spongepowered.asm.mixin.Final;
+import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Mutable;
+import org.spongepowered.asm.mixin.Pseudo;
+import org.spongepowered.asm.mixin.Shadow;
+import org.spongepowered.asm.mixin.injection.At;
+import org.spongepowered.asm.mixin.injection.Inject;
+import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
+
+import io.github.apace100.apoli.component.PowerHolderComponent;
+import io.github.apace100.apoli.power.ActiveCooldownPower;
+import io.github.apace100.apoli.power.Power;
+import io.github.apace100.calio.data.SerializableData;
+import io.github.apace100.calio.data.SerializableDataTypes;
+import io.github.apace100.origins.origin.Origin;
+import io.github.xrickastley.originsgenshin.interfaces.IActiveCooldownPower;
+import io.github.xrickastley.originsgenshin.interfaces.IOrigin;
+
+import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.util.Identifier;
+
+import javax.annotation.Nullable;
+
+@Pseudo
+@Mixin(Origin.class)
+public class OriginMixin implements IOrigin {
+	@Mutable
+	@Final
+	@Shadow(remap = false)
+	public static final SerializableData DATA = Origin.DATA;
+
+	protected Identifier elementalBurstPower = null;
+	protected Identifier elementalSkillPower = null;
+
+	public boolean hasElementalBurstPower(PlayerEntity player) {
+		return this.getElementalBurstPower(player) != null;
+	}
+
+	public @Nullable ActiveCooldownPower getElementalBurstPower(PlayerEntity player) {
+		if (elementalBurstPower == null) return null;
+
+		try {
+			ActiveCooldownPower power = null;
+
+			for (Power power2 : PowerHolderComponent.KEY.get(player).getPowers()) {
+				if (power2.getType().getIdentifier().equals(elementalBurstPower)) power = (ActiveCooldownPower) power2;
+			}
+
+			if (power == null) return null;
+
+			return ((IActiveCooldownPower)(Object) power).hasElementalBurst()
+				? power
+				: null;
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
+	public boolean hasElementalSkillPower(PlayerEntity player) {
+		return this.getElementalSkillPower(player) != null;
+	}
+
+	public @Nullable ActiveCooldownPower getElementalSkillPower(PlayerEntity player) {
+		if (elementalSkillPower == null) return null;
+
+		try {
+			ActiveCooldownPower power = null;
+
+			for (Power power2 : PowerHolderComponent.KEY.get(player).getPowers()) {
+				if (power2.getType().getIdentifier().equals(elementalSkillPower)) power = (ActiveCooldownPower) power2;
+			}
+
+			if (power == null) return null;
+
+			return ((IActiveCooldownPower)(Object) power).hasElementalSkill()
+				? power
+				: null;
+		} catch (Exception e) {
+			return null;
+		}
+	}
+
+	@Inject(
+		method = "toData()Lio/github/apace100/calio/data/SerializableData$Instance;",
+		at = @At(value = "TAIL", shift = At.Shift.BEFORE),
+		remap = false
+	)
+	private void addToDataInstance(CallbackInfoReturnable<SerializableData.Instance> ci, @Local SerializableData.Instance data) {
+		data.set("elemental_burst", elementalBurstPower);
+		data.set("elemental_skill", elementalSkillPower);
+	}
+
+	@Inject(
+		method = "createFromData",
+		at = @At(value = "TAIL", shift = At.Shift.BEFORE)
+	)
+	private static void addOriginData(Identifier id, SerializableData.Instance data, CallbackInfoReturnable<Origin> ci, @Local Origin origin) {
+		if (data.isPresent("elemental_burst")) ((OriginMixin)(Object) origin).elementalBurstPower = data.getId("elemental_burst");
+		if (data.isPresent("elemental_skill")) ((OriginMixin)(Object) origin).elementalSkillPower = data.getId("elemental_skill");
+	}
+
+	static {
+		DATA.add("elemental_skill", SerializableDataTypes.IDENTIFIER, null)
+			.add("elemental_burst", SerializableDataTypes.IDENTIFIER, null);
+	}
+}

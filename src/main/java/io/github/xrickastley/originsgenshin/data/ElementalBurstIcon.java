@@ -2,7 +2,6 @@ package io.github.xrickastley.originsgenshin.data;
 
 import io.github.apace100.apoli.power.PowerType;
 import io.github.apace100.apoli.power.factory.condition.ConditionFactory;
-
 import io.github.xrickastley.originsgenshin.util.Color;
 
 import net.minecraft.entity.Entity;

@@ -1,0 +1,47 @@
+package io.github.xrickastley.originsgenshin.factory;
+
+import java.util.function.Supplier;
+
+import io.github.xrickastley.originsgenshin.OriginsGenshin;
+import io.github.xrickastley.originsgenshin.entity.CrystallizeShardEntity;
+import io.github.xrickastley.originsgenshin.entity.DendroCoreEntity;
+import io.github.xrickastley.originsgenshin.entity.OriginsGenshinEntity;
+
+import net.fabricmc.fabric.api.object.builder.v1.entity.FabricDefaultAttributeRegistry;
+import net.fabricmc.fabric.api.object.builder.v1.entity.FabricEntityTypeBuilder;
+import net.minecraft.entity.EntityDimensions;
+import net.minecraft.entity.EntityType;
+import net.minecraft.entity.LivingEntity;
+import net.minecraft.entity.SpawnGroup;
+import net.minecraft.entity.attribute.DefaultAttributeContainer;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
+
+public class OriginsGenshinEntities {
+	public static final EntityType<DendroCoreEntity> DENDRO_CORE = FabricEntityTypeBuilder
+		.<DendroCoreEntity>create(SpawnGroup.MISC, DendroCoreEntity::new)
+		.dimensions(EntityDimensions.fixed(0.3125f, 0.4296875f))
+		.trackRangeBlocks(64)
+		.build();
+
+	public static final EntityType<CrystallizeShardEntity> CRYSTALLIZE_SHARD = FabricEntityTypeBuilder
+		.<CrystallizeShardEntity>create(SpawnGroup.MISC, CrystallizeShardEntity::new)
+		.dimensions(EntityDimensions.fixed(0.3125f, 0.4296875f))
+		.trackRangeBlocks(64)
+		.build();
+
+	public static void register() {
+		register("dendro_core", OriginsGenshinEntities.DENDRO_CORE, OriginsGenshinEntity::getAttributeBuilder);
+		register("crystallize_shard", OriginsGenshinEntities.CRYSTALLIZE_SHARD, OriginsGenshinEntity::getAttributeBuilder);
+	}
+
+	private static <T extends LivingEntity> EntityType<T> register(String id, EntityType<T> entityType, Supplier<DefaultAttributeContainer.Builder> builderSupplier) {
+		return register(id, entityType, builderSupplier.get());
+	}
+
+	private static <T extends LivingEntity> EntityType<T> register(String id, EntityType<T> entityType, DefaultAttributeContainer.Builder builder) {
+		FabricDefaultAttributeRegistry.register(entityType, builder);
+
+		return Registry.register(Registries.ENTITY_TYPE, OriginsGenshin.identifier(id), entityType);
+	}
+}

@@ -9,4 +9,5 @@ public interface Colors {
 	public static final Color DENDRO = Color.fromRGBAHex("#b2ec2b");
 	public static final Color CRYO = Color.fromRGBAHex("#d0fdfe");
 	public static final Color GEO = Color.fromRGBAHex("#f3d862");
+	public static final Color PHYSICAL = Color.fromRGBAHex("#ffffff");
 }

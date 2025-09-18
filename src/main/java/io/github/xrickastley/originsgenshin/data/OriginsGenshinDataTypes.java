@@ -1,18 +1,53 @@
 package io.github.xrickastley.originsgenshin.data;
 
+import java.util.List;
+
 import io.github.apace100.apoli.data.ApoliDataTypes;
 import io.github.apace100.apoli.power.factory.condition.ConditionFactory;
 import io.github.apace100.calio.ClassUtil;
 import io.github.apace100.calio.data.SerializableData;
 import io.github.apace100.calio.data.SerializableDataType;
 import io.github.apace100.calio.data.SerializableDataTypes;
-
+import io.github.xrickastley.originsgenshin.element.Element;
+import io.github.xrickastley.originsgenshin.element.ElementalApplication;
+import io.github.xrickastley.originsgenshin.element.InternalCooldownContext;
+import io.github.xrickastley.originsgenshin.element.InternalCooldownTag;
+import io.github.xrickastley.originsgenshin.element.InternalCooldownType;
+import io.github.xrickastley.originsgenshin.element.reaction.ElementalReaction;
+import io.github.xrickastley.originsgenshin.registry.OriginsGenshinRegistries;
 import io.github.xrickastley.originsgenshin.util.Color;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.util.Pair;
 
 public class OriginsGenshinDataTypes {
+	public static final SerializableDataType<Element> ELEMENT
+		= SerializableDataType.enumValue(Element.class);
+
+	public static final SerializableDataType<List<Element>> ELEMENTS
+		= SerializableDataType.list(OriginsGenshinDataTypes.ELEMENT);
+
+	public static final SerializableDataType<InternalCooldownType> INTERNAL_COOLDOWN_TYPE
+		= SerializableDataType.registry(InternalCooldownType.class, OriginsGenshinRegistries.INTERNAL_COOLDOWN_TYPE);
+
+	public static final SerializableDataType<ElementalReaction> ELEMENTAL_REACTION
+		= SerializableDataType.registry(ElementalReaction.class, OriginsGenshinRegistries.ELEMENTAL_REACTION);
+
+	public static final SerializableDataType<List<ElementalReaction>> ELEMENTAL_REACTIONS
+		= SerializableDataType.list(OriginsGenshinDataTypes.ELEMENTAL_REACTION);
+
+	public static final SerializableDataType<InternalCooldownTag> INTERNAL_COOLDOWN_TAG
+		= SerializableDataType.wrap(InternalCooldownTag.class, SerializableDataTypes.STRING, InternalCooldownTag::getTag, InternalCooldownTag::tag);
+
+	public static final SerializableDataType<ElementalApplication.Type> ELEMENTAL_APPLICATION_TYPE
+		= SerializableDataType.enumValue(ElementalApplication.Type.class);
+
+	public static final SerializableDataType<ElementalApplication.Builder> ELEMENTAL_APPLICATION_BUILDER
+		= ElementalApplication.Builder.DATA;
+
+	public static final SerializableDataType<InternalCooldownContext.Builder> INTERNAL_COOLDOWN_CONTEXT_BUILDER
+		= InternalCooldownContext.Builder.DATA;
+
 	public static final SerializableDataType<Color> COLOR
 		= SerializableDataType.compound(
 			Color.class,
@@ -81,7 +116,7 @@ public class OriginsGenshinDataTypes {
 			ElementalSkillIcon.class,
 			new SerializableData()
 				.add("icon", SerializableDataTypes.IDENTIFIER) // The icon to render, if condition is true.
-				.add("cooldown", ApoliDataTypes.POWER_TYPE, null) // The cooldown value to use. If not supplied, uses the cooldown of the Power this Elemental Skill is attached to. 
+				.add("cooldown", ApoliDataTypes.POWER_TYPE, null) // The cooldown value to use. If not supplied, uses the cooldown of the Power this Elemental Skill is attached to.
 				.add("reverse", SerializableDataTypes.BOOLEAN, false)
 				.add("charges", SerializableDataTypes.INT, 1)
 				.add("charge_render", OriginsGenshinDataTypes.CHARGE_RENDER, ChargeRender.DEFAULT)

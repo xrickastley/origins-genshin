@@ -22,7 +22,7 @@ public class ChargeRender {
 
 	protected ChargeRender setElementalSkillIcon(ElementalSkillIcon skillIcon) {
 		this.skillIcon = skillIcon;
-		
+
 		return this;
 	}
 

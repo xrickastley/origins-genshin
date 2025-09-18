@@ -8,7 +8,7 @@ import net.minecraft.client.MinecraftClient;
 public class Rescaler {
 	protected double originalX;
 	protected double originalY;
-	
+
 	public Rescaler(double originalX, double originalY) {
 		this.originalX = originalX;
 		this.originalY = originalY;

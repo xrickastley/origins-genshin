@@ -1,23 +1,15 @@
 package io.github.xrickastley.originsgenshin.util;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class Color {
-	public static final Color BLANK = Color.fromRGBAHex("#ffffff00");
-	public static final Color PYRO = Color.fromRGBAHex("#fda96f");
-	public static final Color HYDRO = Color.fromRGBAHex("#0ae5ff");
-	public static final Color ANEMO = Color.fromRGBAHex("#a7f4ce");
-	public static final Color ELECTRO = Color.fromRGBAHex("#e2b9ff");
-	public static final Color DENDRO = Color.fromRGBAHex("#b2ec2b");
-	public static final Color CRYO = Color.fromRGBAHex("#d0fdfe");
-	public static final Color GEO = Color.fromRGBAHex("#f3d862");
-
-	protected int red;
-	protected int green;
-	protected int blue;
-	protected float alpha;
+public final class Color {
+	private final int red;
+	private final int green;
+	private final int blue;
+	private final float alpha;
 
 	public Color(int red, int green, int blue) {
 		this(red, green, blue, 1F);
@@ -28,6 +20,10 @@ public class Color {
 		this.red = Math.min(255, Math.max(red, 0));
 		this.green = Math.min(255, Math.max(green, 0));
 		this.blue = Math.min(255, Math.max(blue, 0));
+	}
+
+	private Color(double red, double green, double blue, double alpha) {
+		this((int) red, (int) green, (int) blue, (float) alpha);
 	}
 
 	public int getRed() {
@@ -45,7 +41,7 @@ public class Color {
 	public float getAlpha() {
 		return alpha;
 	}
-	
+
 	/**
 	 * Gets the {@code red} value as a percent.
 	 * @return The {@code red} value as a percent from {@code 0} to {@code 255}, defined as {@code red / 255}.
@@ -80,12 +76,20 @@ public class Color {
 
 	public String asHex() {
 		return String.format(
-			"#%s%s%s%s", 
-			Integer.toHexString(red), 
-			Integer.toHexString(green), 
-			Integer.toHexString(blue), 
+			"#%s%s%s%s",
+			Integer.toHexString(red),
+			Integer.toHexString(green),
+			Integer.toHexString(blue),
 			Integer.toHexString((int) (alpha * 255))
 		);
+	}
+
+	public int asRGB() {
+		int r = red & 0xFF;
+		int g = green & 0xFF;
+		int b = blue & 0xFF;
+
+		return (r << 16) | (g << 8) | b;
 	}
 
 	public int asARGB() {
@@ -93,7 +97,7 @@ public class Color {
 		int r = red & 0xFF;
 		int g = green & 0xFF;
 		int b = blue & 0xFF;
-	
+
 		return (a << 24) | (r << 16) | (g << 8) | b;
 	}
 
@@ -113,7 +117,7 @@ public class Color {
 	public Color add(double factor) {
 		return add(factor, factor, factor, factor);
 	}
-	
+
 	/**
 	 * Adds all the values of this {@code Color} by their respective factors.
 	 * @param r The factor to add to the red value.
@@ -124,7 +128,7 @@ public class Color {
 	public Color add(double r, double g, double b) {
 		return add(r, g, b, 1);
 	}
-	
+
 	/**
 	 * Adds all the values of this {@code Color} by their respective factors.
 	 * @param r The factor to add to the red value.
@@ -134,60 +138,39 @@ public class Color {
 	 * @return This {@code Color} object.
 	 */
 	public Color add(double r, double g, double b, double a) {
-		this.red += r;
-		this.green += g;
-		this.blue += b;
-		this.alpha += a;
-
-		normalizeColors();
-
-		return this;
+		return new Color(this.red + r, this.green + g, this.blue + b, this.alpha + a);
 	}
 
 	/**
-	 * Multiplies this {@code Color} by {@code factor}.
+	 * Creates a new color based on this {@code Color} multiplied by {@code factor}.
 	 * @param factor The factor to multiply this color with.
-	 * @return This {@code Color} object.
+	 * @return The resulting {@code Color} object.
 	 */
 	public Color multiply(double factor) {
 		return multiply(factor, factor, factor, factor);
 	}
-	
+
 	/**
-	 * Multiplies all the values of this {@code Color} by their respective factors.
+	 * Creates a new color based on this {@code Color} multiplied by their respective factors.
 	 * @param r The factor to multiply the red value with.
 	 * @param g The factor to multiply the green value with.
 	 * @param b The factor to multiply the blue value with.
-	 * @return This {@code Color} object.
+	 * @return The resulting {@code Color} object.
 	 */
 	public Color multiply(double r, double g, double b) {
 		return multiply(r, g, b, 1);
 	}
-	
+
 	/**
-	 * Multiplies all the values of this {@code Color} by their respective factors.
+	 * Creates a new color based on this {@code Color} multiplied by their respective factors.
 	 * @param r The factor to multiply the red value with.
 	 * @param g The factor to multiply the green value with.
 	 * @param b The factor to multiply the blue value with.
 	 * @param a The factor to multiply the alpha value with.
-	 * @return This {@code Color} object.
+	 * @return The resulting {@code Color} object.
 	 */
 	public Color multiply(double r, double g, double b, double a) {
-		this.red *= r;
-		this.green *= g;
-		this.blue *= b;
-		this.alpha *= a;
-
-		normalizeColors();
-
-		return this;
-	}
-
-	private void normalizeColors() {
-		this.alpha = Math.min(1, Math.max(this.alpha, 0));
-		this.red = Math.min(255, Math.max(this.red, 0));
-		this.green = Math.min(255, Math.max(this.green, 0));
-		this.blue = Math.min(255, Math.max(this.blue, 0));
+		return new Color(this.red * r, this.green * g, this.blue * b, this.alpha * a);
 	}
 
 	@Override
@@ -202,10 +185,10 @@ public class Color {
 	 */
 	public static Color fromRGBAHex(String rgbaHex) {
 		Pattern pattern = Pattern.compile("[a-f0-9]{2}");
-        Matcher matcher = pattern.matcher(rgbaHex.strip().replace("#", "").toLowerCase());
-        ArrayList<String> hexCodes = new ArrayList<>();
+		Matcher matcher = pattern.matcher(rgbaHex.strip().replace("#", "").toLowerCase());
+		ArrayList<String> hexCodes = new ArrayList<>();
 
-        while (matcher.find()) hexCodes.add(matcher.group());
+		while (matcher.find()) hexCodes.add(matcher.group());
 
 		return new Color(
 			Integer.parseInt(hexCodes.get(0), 16),
@@ -216,14 +199,40 @@ public class Color {
 				: 1
 		);
 	}
-	
+
 	public static Color fromARGBHex(int argbHex) {
-		int alpha = (argbHex >> 24) & 0xFF;
-		int red = (argbHex >> 16) & 0xFF;
-		int green = (argbHex >> 8) & 0xFF;
+		int alpha = argbHex >>> 24;
+		int red = argbHex >>> 16 & 0xFF;
+		int green = argbHex >>> 8 & 0xFF;
 		int blue = argbHex & 0xFF;
 		float a = alpha / 255f;
 
 		return new Color(red, green, blue, a);
+	}
+
+	public static List<Color> gradient(final Color start, final Color end, final int steps) {
+		return Color.gradient(start, end, steps, Ease.LINEAR);
+	}
+
+	public static List<Color> gradient(final Color start, final Color end, final int steps, final Ease ease) {
+		final List<Color> result = new ArrayList<>();
+
+		for (int i = 0; i < steps; i++)
+			result.add(Color.gradientStep(start, end, (double) i / (double) (steps - 1), ease));
+
+		return result;
+	}
+
+	public static Color gradientStep(final Color start, final Color end, final double step) {
+		return Color.gradientStep(start, end, step, Ease.LINEAR);
+	}
+
+	public static Color gradientStep(final Color start, final Color end, final double step, final Ease ease) {
+		return new Color(
+			ease.applyLerp(step, start.red, end.red),
+			ease.applyLerp(step, start.green, end.green),
+			ease.applyLerp(step, start.blue, end.blue),
+			ease.applyLerp(step, start.alpha, end.alpha)
+		);
 	}
 }
