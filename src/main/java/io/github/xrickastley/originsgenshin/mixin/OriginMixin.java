@@ -27,11 +27,11 @@ import net.minecraft.network.PacketByteBuf;
 import net.minecraft.util.Identifier;
 
 @Pseudo
-@Mixin(value = Origin.class, remap = false)
+@Mixin(Origin.class)
 public class OriginMixin implements IOrigin {
 	@Mutable
 	@Final
-	@Shadow
+	@Shadow(remap = false)
 	public static SerializableData DATA;
 
 	protected Identifier originsgenshin$elementalBurstPower = null;
@@ -91,8 +91,7 @@ public class OriginMixin implements IOrigin {
 			value = "INVOKE",
 			target = "Lio/github/apace100/calio/data/SerializableData;write(Lnet/minecraft/network/PacketByteBuf;Lio/github/apace100/calio/data/SerializableData$Instance;)V",
 			shift = At.Shift.BEFORE
-		),
-		remap = false
+		)
 	)
 	private void addToDataInstance(PacketByteBuf buf, CallbackInfo ci, @Local SerializableData.Instance data) {
 		data.set("elemental_burst", originsgenshin$elementalBurstPower);

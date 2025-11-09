@@ -25,7 +25,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 
 @Pseudo
-@Mixin(value = ActiveCooldownPower.class, remap = false)
+@Mixin(ActiveCooldownPower.class)
 public abstract class ActiveCooldownPowerMixin
 	extends CooldownPower
 	implements IActiveCooldownPower
