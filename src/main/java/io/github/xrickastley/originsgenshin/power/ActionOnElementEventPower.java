@@ -9,7 +9,7 @@ import org.jetbrains.annotations.Nullable;
 
 import io.github.apace100.apoli.power.Power;
 import io.github.apace100.apoli.power.PowerType;
-import io.github.xrickastley.originsgenshin.element.Element;
+import io.github.xrickastley.sevenelements.element.Element;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;

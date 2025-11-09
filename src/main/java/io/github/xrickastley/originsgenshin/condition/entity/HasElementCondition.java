@@ -4,10 +4,10 @@ import java.util.List;
 
 import io.github.apace100.apoli.power.factory.condition.ConditionFactory;
 import io.github.apace100.calio.data.SerializableData;
-import io.github.xrickastley.originsgenshin.OriginsGenshin;
-import io.github.xrickastley.originsgenshin.component.ElementComponent;
-import io.github.xrickastley.originsgenshin.data.OriginsGenshinDataTypes;
-import io.github.xrickastley.originsgenshin.element.Element;
+import io.github.xrickastley.originsgenshin.data.SevenElementsDataTypes;
+import io.github.xrickastley.sevenelements.SevenElements;
+import io.github.xrickastley.sevenelements.component.ElementComponent;
+import io.github.xrickastley.sevenelements.element.Element;
 
 import net.minecraft.entity.Entity;
 
@@ -26,9 +26,9 @@ public class HasElementCondition {
 
 	public static ConditionFactory<Entity> getFactory() {
 		return new ConditionFactory<>(
-			OriginsGenshin.identifier("has_element"),
+			SevenElements.identifier("has_element"),
 			new SerializableData()
-				.add("elements", OriginsGenshinDataTypes.ELEMENTS),
+				.add("elements", SevenElementsDataTypes.ELEMENTS),
 			HasElementCondition::condition
 		);
 	}

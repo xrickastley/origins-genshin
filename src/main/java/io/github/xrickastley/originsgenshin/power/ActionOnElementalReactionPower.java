@@ -7,15 +7,15 @@ import java.util.function.Consumer;
 
 import org.jetbrains.annotations.Nullable;
 
-import io.github.apace100.apoli.Apoli;
 import io.github.apace100.apoli.data.ApoliDataTypes;
 import io.github.apace100.apoli.power.Power;
 import io.github.apace100.apoli.power.PowerType;
 import io.github.apace100.apoli.power.factory.PowerFactory;
 import io.github.apace100.calio.data.SerializableData;
 import io.github.apace100.calio.data.SerializableDataTypes;
-import io.github.xrickastley.originsgenshin.data.OriginsGenshinDataTypes;
-import io.github.xrickastley.originsgenshin.element.reaction.ElementalReaction;
+import io.github.xrickastley.originsgenshin.data.SevenElementsDataTypes;
+import io.github.xrickastley.sevenelements.SevenElements;
+import io.github.xrickastley.sevenelements.element.reaction.ElementalReaction;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -45,15 +45,15 @@ public class ActionOnElementalReactionPower extends Power {
 		if (origin == null && entityAction != null) {
 			entityAction.accept(target);
 		} else if (bientityAction != null) {
-		bientityAction.accept(new Pair<>(origin, target));
+			bientityAction.accept(new Pair<>(origin, target));
 		}
 	}
 
     public static PowerFactory<?> createFactory() {
         return new PowerFactory<>(
-            Apoli.identifier("action_on_elemental_reaction"),
+            SevenElements.identifier("action_on_elemental_reaction"),
             new SerializableData()
-				.add("reactions", OriginsGenshinDataTypes.ELEMENTAL_REACTIONS)
+				.add("reactions", SevenElementsDataTypes.ELEMENTAL_REACTIONS)
                 .add("entity_action", ApoliDataTypes.ENTITY_ACTION, null)
                 .add("bientity_action", ApoliDataTypes.ENTITY_ACTION, null)
 				.add("always_trigger", SerializableDataTypes.BOOLEAN, false),

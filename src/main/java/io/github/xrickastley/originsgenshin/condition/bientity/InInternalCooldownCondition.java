@@ -4,12 +4,12 @@ import org.jetbrains.annotations.Nullable;
 
 import io.github.apace100.apoli.power.factory.condition.ConditionFactory;
 import io.github.apace100.calio.data.SerializableData;
-import io.github.xrickastley.originsgenshin.OriginsGenshin;
-import io.github.xrickastley.originsgenshin.component.ElementComponent;
-import io.github.xrickastley.originsgenshin.data.OriginsGenshinDataTypes;
-import io.github.xrickastley.originsgenshin.element.Element;
-import io.github.xrickastley.originsgenshin.element.InternalCooldownContext;
-import io.github.xrickastley.originsgenshin.util.ClassInstanceUtil;
+import io.github.xrickastley.originsgenshin.data.SevenElementsDataTypes;
+import io.github.xrickastley.sevenelements.SevenElements;
+import io.github.xrickastley.sevenelements.component.ElementComponent;
+import io.github.xrickastley.sevenelements.element.Element;
+import io.github.xrickastley.sevenelements.element.InternalCooldownContext;
+import io.github.xrickastley.sevenelements.util.ClassInstanceUtil;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
@@ -35,10 +35,10 @@ public class InInternalCooldownCondition {
 
 	public static ConditionFactory<Pair<Entity, Entity>> getFactory() {
 		return new ConditionFactory<>(
-			OriginsGenshin.identifier("in_internal_cooldown"),
+			SevenElements.identifier("in_internal_cooldown"),
 			new SerializableData()
-				.add("element", OriginsGenshinDataTypes.ELEMENT)
-				.add("internal_cooldown", OriginsGenshinDataTypes.INTERNAL_COOLDOWN_CONTEXT_BUILDER, InternalCooldownContext.Builder.ofNone()),
+				.add("element", SevenElementsDataTypes.ELEMENT)
+				.add("internal_cooldown", SevenElementsDataTypes.INTERNAL_COOLDOWN_CONTEXT_BUILDER, InternalCooldownContext.Builder.ofNone()),
 			InInternalCooldownCondition::condition
 		);
 	}
