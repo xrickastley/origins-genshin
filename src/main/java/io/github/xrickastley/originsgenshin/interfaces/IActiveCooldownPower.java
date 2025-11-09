@@ -4,8 +4,8 @@ import io.github.xrickastley.originsgenshin.data.ElementalBurst;
 import io.github.xrickastley.originsgenshin.data.ElementalSkill;
 
 public interface IActiveCooldownPower {
-	public boolean hasElementalBurst();
-	public ElementalBurst getElementalBurst();
-	public boolean hasElementalSkill();
-	public ElementalSkill getElementalSkill();
+	public boolean originsgenshin$hasElementalBurst();
+	public ElementalBurst originsgenshin$getElementalBurst();
+	public boolean originsgenshin$hasElementalSkill();
+	public ElementalSkill originsgenshin$getElementalSkill();
 }

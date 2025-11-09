@@ -46,7 +46,7 @@ public class OriginsGenshinClient implements ClientModInitializer {
 		for (Origin origin : ModComponents.ORIGIN.get(client.player).getOrigins().values()) {
 			IOrigin originMixinData = ((IOrigin)(Object) origin);
 
-			if (originMixinData.hasElementalBurstPower(client.player)) ELEMENTAL_BURST_RENDERER.setOrPersist(originMixinData.getElementalBurstPower(client.player));
+			if (originMixinData.originsgenshin$hasElementalBurstPower(client.player)) ELEMENTAL_BURST_RENDERER.setOrPersist(originMixinData.originsgenshin$getElementalBurstPower(client.player));
 		}
 
 		ELEMENTAL_BURST_RENDERER.render(context, tickDeltaManager);
@@ -56,7 +56,7 @@ public class OriginsGenshinClient implements ClientModInitializer {
 		for (Origin origin : ModComponents.ORIGIN.get(client.player).getOrigins().values()) {
 			IOrigin originMixinData = ((IOrigin)(Object) origin);
 
-			if (originMixinData.hasElementalSkillPower(client.player)) ELEMENTAL_SKILL_RENDERER.setOrPersist(originMixinData.getElementalSkillPower(client.player));
+			if (originMixinData.originsgenshin$hasElementalSkillPower(client.player)) ELEMENTAL_SKILL_RENDERER.setOrPersist(originMixinData.originsgenshin$getElementalSkillPower(client.player));
 		}
 
 		ELEMENTAL_SKILL_RENDERER.render(context, tickDeltaManager);

@@ -6,6 +6,7 @@ import java.util.function.Function;
 
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Pseudo;
+import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.ModifyArg;
 
@@ -24,7 +25,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 
 @Pseudo
-@Mixin(ActiveCooldownPower.class)
+@Mixin(value = ActiveCooldownPower.class, remap = false)
 public abstract class ActiveCooldownPowerMixin
 	extends CooldownPower
 	implements IActiveCooldownPower
@@ -34,35 +35,43 @@ public abstract class ActiveCooldownPowerMixin
 		throw new AssertionError();
 	}
 
-	protected ElementalBurst elementalBurst;
-	protected ElementalSkill elementalSkill;
+	@Unique
+	protected ElementalBurst originsgenshin$elementalBurst;
+	@Unique
+	protected ElementalSkill originsgenshin$elementalSkill;
 
-	protected void setElementalBurst(ElementalBurst elementalBurst) {
-		this.elementalBurst = elementalBurst;
+	@Unique
+	protected void originsgenshin$setElementalBurst(ElementalBurst elementalBurst) {
+		this.originsgenshin$elementalBurst = elementalBurst;
 
-		if (this.elementalBurst != null) this.elementalBurst.setPower(((ActiveCooldownPower)(Object) this));
+		if (this.originsgenshin$elementalBurst != null) this.originsgenshin$elementalBurst.setPower(((ActiveCooldownPower)(Object) this));
 	}
 
-	public boolean hasElementalBurst() {
-		return this.elementalBurst != null;
+	@Unique
+	protected void originsgenshin$setElementalSkill(ElementalSkill elementalSkill) {
+		this.originsgenshin$elementalSkill = elementalSkill;
+
+		if (this.originsgenshin$elementalSkill != null) this.originsgenshin$elementalSkill.setPower(((ActiveCooldownPower)(Object) this));
 	}
 
-	public ElementalBurst getElementalBurst() {
-		return this.elementalBurst;
+	@Unique
+	public boolean originsgenshin$hasElementalBurst() {
+		return this.originsgenshin$elementalBurst != null;
 	}
 
-	protected void setElementalSkill(ElementalSkill elementalSkill) {
-		this.elementalSkill = elementalSkill;
-
-		if (this.elementalSkill != null) this.elementalSkill.setPower(((ActiveCooldownPower)(Object) this));
+	@Unique
+	public ElementalBurst originsgenshin$getElementalBurst() {
+		return this.originsgenshin$elementalBurst;
 	}
 
-	public boolean hasElementalSkill() {
-		return this.elementalSkill != null;
+	@Unique
+	public boolean originsgenshin$hasElementalSkill() {
+		return this.originsgenshin$elementalSkill != null;
 	}
 
-	public ElementalSkill getElementalSkill() {
-		return this.elementalSkill;
+	@Unique
+	public ElementalSkill originsgenshin$getElementalSkill() {
+		return this.originsgenshin$elementalSkill;
 	}
 
 	@ModifyArg(
@@ -93,8 +102,8 @@ public abstract class ActiveCooldownPowerMixin
 				);
 
 				power.setKey(data.get("key"));
-				if (data.isPresent("elemental_burst")) ((ActiveCooldownPowerMixin)(Object) power).setElementalBurst(data.get("elemental_burst"));
-				else if (data.isPresent("elemental_skill")) ((ActiveCooldownPowerMixin)(Object) power).setElementalSkill(data.get("elemental_skill"));
+				if (data.isPresent("elemental_burst")) ((ActiveCooldownPowerMixin)(Object) power).originsgenshin$setElementalBurst(data.get("elemental_burst"));
+				else if (data.isPresent("elemental_skill")) ((ActiveCooldownPowerMixin)(Object) power).originsgenshin$setElementalSkill(data.get("elemental_skill"));
 
 				return power;
 			};

@@ -6,7 +6,7 @@ import org.jetbrains.annotations.Nullable;
 
 import io.github.apace100.apoli.component.PowerHolderComponent;
 import io.github.apace100.apoli.power.Power;
-import io.github.apace100.apoli.util.IdentifierAlias;
+import io.github.apace100.apoli.util.NamespaceAlias;
 import io.github.xrickastley.originsgenshin.OriginsGenshin;
 import io.github.xrickastley.originsgenshin.factory.OriginsGenshinFactories;
 import io.github.xrickastley.originsgenshin.power.ActionOnElementAppliedPower;
@@ -26,7 +26,7 @@ public class SevenElementsIntegration implements ModIntegration {
 	public void onIntegrationInitialize() {
 		OriginsGenshinFactories.registerAll();
 
-		IdentifierAlias.addNamespaceAlias("origins-genshin", "seven-elements");
+		NamespaceAlias.addAlias("origins-genshin", "seven-elements");
 
 		ElementEvents.APPLIED
 			.register((element, application) -> callElementEventActions(ActionOnElementAppliedPower.class, element, application));

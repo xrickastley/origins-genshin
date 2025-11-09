@@ -59,7 +59,7 @@ public class ElementalSkillRenderer extends PowerRenderer {
 	 * @return Whether the elemental Skill power was replaced.
 	 */
 	public boolean setOrPersist(ActiveCooldownPower newPower) {
-		if (newPower == null || !((IActiveCooldownPower) newPower).hasElementalSkill()) return false;
+		if (newPower == null || !((IActiveCooldownPower) newPower).originsgenshin$hasElementalSkill()) return false;
 
 		this.power = newPower;
 
@@ -80,7 +80,7 @@ public class ElementalSkillRenderer extends PowerRenderer {
 		}
 
 		try {
-			final ElementalSkill elementalSkillData = ((IActiveCooldownPower) power).getElementalSkill();
+			final ElementalSkill elementalSkillData = ((IActiveCooldownPower) power).originsgenshin$getElementalSkill();
 			final ElementalSkillIcon skillIcon = elementalSkillData.getRenderedIcon(client.player);
 
 			if (elementalSkillData == null || !elementalSkillData.shouldRender() || skillIcon == null) return;

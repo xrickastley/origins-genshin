@@ -34,8 +34,7 @@ public class ElementalBurstRenderer extends PowerRenderer {
 	 * @return Whether the elemental burst power was replaced.
 	 */
 	public boolean setOrPersist(ActiveCooldownPower newPower) {
-		newPower.toJson().has("elemental_burst");
-		if (newPower == null || !((IActiveCooldownPower) newPower).hasElementalBurst()) return false;
+		if (newPower == null || !((IActiveCooldownPower) newPower).originsgenshin$hasElementalBurst()) return false;
 
 		this.power = newPower;
 
@@ -57,7 +56,7 @@ public class ElementalBurstRenderer extends PowerRenderer {
 		}
 
 		try {
-			final ElementalBurst elementalBurstData = ((IActiveCooldownPower) power).getElementalBurst();
+			final ElementalBurst elementalBurstData = ((IActiveCooldownPower) power).originsgenshin$getElementalBurst();
 			final ElementalBurstIcon burstIcon = elementalBurstData.getRenderedIcon(client.player);
 
 			if (elementalBurstData == null || !elementalBurstData.shouldRender() || burstIcon == null) return;

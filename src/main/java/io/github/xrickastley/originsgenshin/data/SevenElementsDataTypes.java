@@ -20,6 +20,7 @@ import io.github.xrickastley.sevenelements.element.InternalCooldownTag;
 import io.github.xrickastley.sevenelements.element.reaction.ElementalReaction;
 import io.github.xrickastley.sevenelements.registry.SevenElementsRegistries;
 
+import net.minecraft.nbt.NbtCompound;
 import net.minecraft.nbt.NbtOps;
 
 public class SevenElementsDataTypes {
@@ -51,7 +52,7 @@ public class SevenElementsDataTypes {
 		return new SerializableDataType<>(
 			dataClass,
 			(buf, inst) -> buf.writeNbt(
-				codec
+				(NbtCompound) codec
 					.encodeStart(OriginsGenshin.attemptRegistryWrap(NbtOps.INSTANCE), inst)
 					.getOrThrow(false, message -> {})
 			),
@@ -60,9 +61,6 @@ public class SevenElementsDataTypes {
 				.getOrThrow(false, message -> {}),
 			json -> codec
 				.parse(OriginsGenshin.attemptRegistryWrap(JsonOps.INSTANCE), json)
-				.getOrThrow(false, message -> {}),
-			inst -> codec
-				.encodeStart(OriginsGenshin.attemptRegistryWrap(JsonOps.INSTANCE), inst)
 				.getOrThrow(false, message -> {})
 		);
 	}
@@ -99,8 +97,7 @@ public class SevenElementsDataTypes {
 				}
 
 				throw new JsonSyntaxException("Expected value to be either an integer or a string.");
-			},
-			inst -> new JsonPrimitive(inst.toString())
+			}
 		);
 	}
 

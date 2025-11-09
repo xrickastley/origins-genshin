@@ -6,8 +6,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
-import org.apache.commons.lang3.function.TriConsumer;
 import org.joml.Matrix4f;
+
+import io.github.xrickastley.originsgenshin.util.functions.TriConsumer;
 
 import net.minecraft.client.MinecraftClient;
 import net.minecraft.client.render.BufferBuilder;
